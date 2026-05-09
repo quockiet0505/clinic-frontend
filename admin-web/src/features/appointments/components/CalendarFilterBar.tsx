@@ -1,0 +1,60 @@
+import React from 'react';
+import { CalendarDays, UserSquare2 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+
+interface CalendarFilterBarProps {
+  doctorFilter: string;
+  setDoctorFilter: (val: string) => void;
+  selectedDate: string;
+  setSelectedDate: (date: string) => void;
+}
+
+export default function CalendarFilterBar({
+  doctorFilter, setDoctorFilter, selectedDate, setSelectedDate
+}: CalendarFilterBarProps) {
+  return (
+    <div className="flex flex-col xl:flex-row justify-between gap-4 items-center bg-white p-3 rounded-2xl border border-slate-200 shadow-sm shrink-0">
+      
+      {/* LEFT: DATE PICKER */}
+      <div className="flex items-center gap-2 w-full xl:w-auto bg-slate-50 rounded-xl border border-slate-200 px-3 h-10">
+        <CalendarDays size={16} className="text-slate-400" />
+        <span className="text-sm font-bold text-slate-500 whitespace-nowrap">Go to date:</span>
+        <Input 
+          type="date" 
+          value={selectedDate} 
+          onChange={(e) => setSelectedDate(e.target.value)}
+          className="h-8 border-0 bg-transparent p-0 focus-visible:ring-0 w-full sm:w-36 cursor-pointer font-bold text-blue-600"
+        />
+      </div>
+
+      {/* RIGHT: DOCTOR FILTER & STATUS LEGEND */}
+      <div className="flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto px-2 xl:px-0">
+        
+        {/* Legend mapped to DB Statuses */}
+        <div className="hidden lg:flex items-center gap-4 px-4 text-xs font-bold text-slate-500">
+          <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-blue-400"></div> Confirmed</div>
+          <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-amber-400"></div> Pending</div>
+          <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded-full bg-emerald-400"></div> Checked-In / Done</div>
+          <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-rose-400"></div> Cancelled</div>
+        </div>
+
+        <div className="hidden lg:block h-8 w-px bg-slate-200"></div>
+
+        {/* Doctor Filter */}
+        <div className="flex items-center gap-2 bg-slate-50 rounded-xl border border-slate-200 px-3 h-10 w-full sm:w-auto">
+          <UserSquare2 size={16} className="text-slate-400" />
+          <select 
+            value={doctorFilter} 
+            onChange={(e) => setDoctorFilter(e.target.value)}
+            className="h-8 w-full sm:w-48 bg-transparent text-sm font-bold text-slate-600 focus:outline-none cursor-pointer"
+          >
+            <option value="ALL">All Providers</option>
+            <option value="Dr. Sarah Smith">Dr. Sarah Smith</option>
+            <option value="Dr. Robert Davis">Dr. Robert Davis</option>
+          </select>
+        </div>
+      </div>
+      
+    </div>
+  );
+}

@@ -1,0 +1,31 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+admin-web/node_modules/
+patient-web/node_modules/
+
+# Build outputs
+dist/
+.next/
+out/
+build/
+mobile-app/build/
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.DS_Store
+
+# Flutter/Dart specific
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+mobile-app/.flutter-plugins
+mobile-app/.flutter-plugins-dependencies

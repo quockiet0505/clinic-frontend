@@ -1,0 +1,45 @@
+import React from 'react';
+import { Eye, Stethoscope } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import StatusBadge from '@/components/common/StatusBadge';
+import { MedicalRecord } from '../types/medical';
+
+export default function MedicalRecordTable({ data, onViewDetail }: { data: MedicalRecord[], onViewDetail: (id: number) => void }) {
+  return (
+    <div className="bg-white rounded-[32px] shadow-sm border border-slate-200 flex-1 overflow-hidden">
+      <Table>
+        <TableHeader className="bg-slate-50">
+          <TableRow className="h-14">
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Date & Record ID</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Patient</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Diagnosis & Provider</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Status</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Action</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.map(rec => (
+            <TableRow key={rec.record_id} className="hover:bg-slate-50/50">
+              <TableCell className="px-8 py-4">
+                <p className="font-bold text-slate-900">{rec.created_at}</p>
+                <p className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">REC-{rec.record_id}</p>
+              </TableCell>
+              <TableCell><p className="font-bold text-slate-900">{rec.patient_name}</p></TableCell>
+              <TableCell>
+                <p className="font-bold text-slate-800">{rec.diagnosis}</p>
+                <p className="text-xs text-slate-500 mt-1 font-medium flex items-center gap-1"><Stethoscope size={12}/> {rec.doctor_name}</p>
+              </TableCell>
+              <TableCell className="text-center"><StatusBadge status={rec.status} /></TableCell>
+              <TableCell className="text-right pr-8">
+                <Button onClick={() => onViewDetail(rec.record_id)} variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl text-blue-600 border-slate-200 hover:bg-blue-50">
+                  <Eye size={16}/>
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
