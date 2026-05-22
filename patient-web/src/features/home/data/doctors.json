@@ -1,0 +1,242 @@
+[
+  {
+    "id": "digimed_NAMNT",
+    "fullName": "BS CKII. Ngô Trung Nam",
+    "specialtyName": "Sản phụ khoa",
+    "rating": 5,
+    "consultationFee": 200000,
+    "avatarUrl": "/images/doctors/doctor-digimed_NAMNT.jpg"
+  },
+  {
+    "id": "digimed_TUANL715",
+    "fullName": "BS. Lê Tuấn",
+    "specialtyName": "Nội khoa",
+    "rating": 5,
+    "consultationFee": 150000,
+    "avatarUrl": "/images/doctors/doctor-digimed_TUANL715.jpg"
+  },
+  {
+    "id": "digimed_MANHNT505",
+    "fullName": "BS. Nguyễn Trường Mạnh",
+    "specialtyName": "Vô sinh - Hiếm muộn",
+    "rating": 5,
+    "consultationFee": 200000,
+    "avatarUrl": "/images/doctors/doctor-digimed_MANHNT505.jpg"
+  },
+  {
+    "id": "digimed_MAYTT869",
+    "fullName": "Bác sĩ Trần Thị Mây",
+    "specialtyName": "Tâm lý",
+    "rating": 5,
+    "consultationFee": 300000,
+    "avatarUrl": "/images/doctors/doctor-digimed_MAYTT869.jpg"
+  },
+  {
+    "id": "digimed_KHOIVD039",
+    "fullName": "Bác sĩ Vũ Đình Khôi",
+    "specialtyName": "Bệnh lý truyền nhiễm xã hội",
+    "rating": 5,
+    "consultationFee": 450000,
+    "avatarUrl": "/images/doctors/doctor-digimed_KHOIVD039.jpg"
+  },
+  {
+    "id": "digimed_KHOADD",
+    "fullName": "BS.CKI. Đỗ Đăng Khoa",
+    "specialtyName": "Tim mạch can thiệp",
+    "rating": 5,
+    "consultationFee": 200000,
+    "avatarUrl": "/images/doctors/doctor-digimed_KHOADD.jpg"
+  },
+  {
+    "id": "digimed_HAVUT",
+    "fullName": "BS CKI. Vũ Thị Hà",
+    "specialtyName": "Mắt",
+    "rating": 5,
+    "consultationFee": 150000,
+    "avatarUrl": "/images/doctors/doctor-digimed_HAVUT.jpg"
+  },
+  {
+    "id": "digimed_SENNT816",
+    "fullName": "BS CKI. Nguyễn Thị Sen",
+    "specialtyName": "Da liễu",
+    "rating": 5,
+    "consultationFee": 200000,
+    "avatarUrl": "/images/doctors/doctor-digimed_SENNT816.jpg"
+  },
+  {
+    "id": "digimed_THIENLH",
+    "fullName": "Ths BS. Lê Hoàng Thiên",
+    "specialtyName": "Nội tổng quát",
+    "rating": 5,
+    "consultationFee": 149000,
+    "avatarUrl": "/images/doctors/doctor-digimed_THIENLH.jpg"
+  },
+  {
+    "id": "digimed_BAODQ",
+    "fullName": "BS. Đặng Quốc Bảo",
+    "specialtyName": "Nhi khoa",
+    "rating": 5,
+    "consultationFee": 200000,
+    "avatarUrl": "/images/doctors/doctor-digimed_BAODQ.jpg"
+  },
+  {
+    "id": "digimed_THUHTA",
+    "fullName": "BS. Hoàng Thị Anh Thư",
+    "specialtyName": "Tâm lý",
+    "rating": 5,
+    "consultationFee": 250000650000,
+    "avatarUrl": "/images/doctors/doctor-digimed_THUHTA.jpg"
+  },
+  {
+    "id": "digimed_THIENNP410",
+    "fullName": "BS CKI. Nguyễn Phúc Thiện",
+    "specialtyName": "Nội tim mạch",
+    "rating": 5,
+    "consultationFee": 300000,
+    "avatarUrl": "/images/doctors/doctor-digimed_THIENNP410.jpg"
+  },
+  {
+    "id": "digimed_HUONGNT195",
+    "fullName": "Bác sĩ Nguyễn Thị Hường",
+    "specialtyName": "Mắt",
+    "rating": 5,
+    "consultationFee": 150000,
+    "avatarUrl": "/images/doctors/doctor-digimed_HUONGNT195.jpg"
+  },
+  {
+    "id": "digimed_THUVT739",
+    "fullName": "BS. Vũ Thị Thư",
+    "specialtyName": "Tâm thần - tâm lý",
+    "rating": 5,
+    "consultationFee": 300000,
+    "avatarUrl": "/images/doctors/doctor-digimed_THUVT739.jpg"
+  },
+  {
+    "id": "digimed_HANHLHN",
+    "fullName": "BS CKI. Lê Ngọc Hồng Hạnh - Bv Nhi đồng 2",
+    "specialtyName": "Nhi - Thần kinh",
+    "rating": 5,
+    "consultationFee": 200000,
+    "avatarUrl": "/images/doctors/doctor-digimed_HANHLHN.jpg"
+  },
+  {
+    "id": "digimed_TANVUL",
+    "fullName": "Ths BS. Lê Vũ Tân - Phòng khám Nam Học và hiếm muộn Khang Trí",
+    "specialtyName": "Nam khoa",
+    "rating": 5,
+    "consultationFee": 200000,
+    "avatarUrl": "/images/doctors/doctor-digimed_TANVUL.jpg"
+  },
+  {
+    "id": "digimed_HUONGTH",
+    "fullName": "Ths BS. Trần Thị Oanh - BV Hùng Vương",
+    "specialtyName": "Sản khoa",
+    "rating": 5,
+    "consultationFee": 150000,
+    "avatarUrl": "/images/doctors/doctor-digimed_HUONGTH.jpg"
+  },
+  {
+    "id": "20de90c054c24de6b0c364316e394aa8",
+    "fullName": "Ths BS. Trịnh Xuân Quân",
+    "specialtyName": "Tai mũi họng",
+    "rating": 5,
+    "consultationFee": 150000,
+    "avatarUrl": "/images/doctors/doctor-20de90c054c24de6b0c364316e394aa8.jpg"
+  },
+  {
+    "id": "digimed_NGAPT462",
+    "fullName": "Bác sĩ Phan Thị Nga - Bv Nhi Đồng Nai",
+    "specialtyName": "Nhi khoa",
+    "rating": 5,
+    "consultationFee": 150000,
+    "avatarUrl": "/images/doctors/doctor-digimed_NGAPT462.jpg"
+  },
+  {
+    "id": "digimed_HIEULC",
+    "fullName": "ThS CKI BSNT. Lê Chí Hiếu",
+    "specialtyName": "Nhi khoa",
+    "rating": 5,
+    "consultationFee": 300000,
+    "avatarUrl": "/images/doctors/doctor-digimed_HIEULC.jpg"
+  },
+  {
+    "id": "2f3caacda3124217a9c4be86b846f19d",
+    "fullName": "Ths BS. Nguyễn Ngọc Bách - Nhi Đồng 1",
+    "specialtyName": "Nhi khoa",
+    "rating": 5,
+    "consultationFee": 150000,
+    "avatarUrl": "/images/doctors/doctor-2f3caacda3124217a9c4be86b846f19d.jpg"
+  },
+  {
+    "id": "digimed_NHICTL482",
+    "fullName": "Bác sĩ Ca Thị Lan Nhi",
+    "specialtyName": "Sản phụ khoa",
+    "rating": 5,
+    "consultationFee": 200000,
+    "avatarUrl": "/images/doctors/doctor-digimed_NHICTL482.jpg"
+  },
+  {
+    "id": "digimed_LINHNTM",
+    "fullName": "Ths BS. Nguyễn Thị Mỹ Linh",
+    "specialtyName": "Cơ Xương Khớp",
+    "rating": 5,
+    "consultationFee": 220000,
+    "avatarUrl": "/images/doctors/doctor-digimed_LINHNTM.jpg"
+  },
+  {
+    "id": "digimed_CONGH894",
+    "fullName": "Bác sĩ Huỳnh Công - Bệnh viện Đa khoa Quảng Nam",
+    "specialtyName": "Vô sinh - Hiếm muộn",
+    "rating": 5,
+    "consultationFee": 150000,
+    "avatarUrl": "/images/doctors/doctor-digimed_CONGH894.jpg"
+  },
+  {
+    "id": "digimed_BAOND",
+    "fullName": "Ths BS. Nguyễn Đức Bảo",
+    "specialtyName": "Tai mũi họng",
+    "rating": 5,
+    "consultationFee": 150000,
+    "avatarUrl": "/images/doctors/doctor-digimed_BAOND.jpg"
+  },
+  {
+    "id": "digimed_DUYNQ",
+    "fullName": "Bác sĩ Nguyễn Quốc Duy - Nhi Khoa Sunshine",
+    "specialtyName": "Nhi - Dinh Dưỡng",
+    "rating": 5,
+    "consultationFee": 200000,
+    "avatarUrl": "/images/doctors/doctor-digimed_DUYNQ.jpg"
+  },
+  {
+    "id": "digimed_DUNGNT",
+    "fullName": "Bác sĩ Ngô Tài Dũng - Nhi đồng 2",
+    "specialtyName": "Nhi khoa",
+    "rating": 5,
+    "consultationFee": 250000,
+    "avatarUrl": "/images/doctors/doctor-digimed_DUNGNT.jpg"
+  },
+  {
+    "id": "digimed_HAPB",
+    "fullName": "BS.CKI. Phan Bá Hà",
+    "specialtyName": "Nội khoa",
+    "rating": 5,
+    "consultationFee": 150000,
+    "avatarUrl": "/images/doctors/doctor-digimed_HAPB.jpg"
+  },
+  {
+    "id": "digimed_TANDT",
+    "fullName": "Ths BS. Đỗ Thanh Tân",
+    "specialtyName": "Nhi khoa",
+    "rating": 5,
+    "consultationFee": 150000,
+    "avatarUrl": "/images/doctors/doctor-digimed_TANDT.jpg"
+  },
+  {
+    "id": "f3bc60c501e4497897a6b7ced212af41",
+    "fullName": "TS BS. Phạm Minh Triết - Nguyên Trưởng Khoa Tâm Lý BV Nhi Đồng 1",
+    "specialtyName": "Tâm lý",
+    "rating": 5,
+    "consultationFee": 1100000,
+    "avatarUrl": "/images/doctors/doctor-f3bc60c501e4497897a6b7ced212af41.jpg"
+  }
+]

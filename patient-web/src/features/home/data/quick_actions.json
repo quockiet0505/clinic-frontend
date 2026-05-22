@@ -1,0 +1,50 @@
+[
+  {
+    "id": "5ee7090454419e0019192012",
+    "title": "Đặt khám tại cơ sở",
+    "iconUrl": "/icons/quick-actions/dat-kham-tai-co-so.png",
+    "slug": "dat-kham-tai-co-so"
+  },
+  {
+    "id": "6822bc5bcdeed50744296164",
+    "title": "Đặt khám chuyên khoa",
+    "iconUrl": "/icons/quick-actions/dat-kham-chuyen-khoa.png",
+    "slug": "dat-kham-chuyen-khoa"
+  },
+  {
+    "id": "64afcda8448150fc6562bb5b",
+    "title": "Gọi video với bác sĩ",
+    "iconUrl": "/icons/quick-actions/goi-video-voi-bac-si.png",
+    "slug": "tu-van-kham-benh-tu-xa"
+  },
+  {
+    "id": "60ea6cd637a2390220004e63",
+    "title": "Đặt lịch xét nghiệm",
+    "iconUrl": "/icons/quick-actions/dat-lich-xet-nghiem.png",
+    "slug": "dat-lich-xet-nghiem"
+  },
+  {
+    "id": "677f6d4de85c06126d7a41a7",
+    "title": "Đặt khám ngoài giờ",
+    "iconUrl": "/icons/quick-actions/dat-kham-ngoai-gio.png",
+    "slug": "dat-kham-ngoai-gio"
+  },
+  {
+    "id": "686cc698f2076557d390dfff",
+    "title": "Giúp việc cá nhân",
+    "iconUrl": "/icons/quick-actions/giup-viec-ca-nhan.png",
+    "slug": "giup-viec-ca-nhan"
+  },
+  {
+    "id": "689ac5016583f56a0540e608",
+    "title": "Khám doanh nghiệp",
+    "iconUrl": "/icons/quick-actions/kham-doanh-nghiep.png",
+    "slug": "kham-suc-khoe-doanh-nghiep"
+  },
+  {
+    "id": "60c0928f37a2392830001af3",
+    "title": "Đặt khám theo bác sĩ",
+    "iconUrl": "/icons/quick-actions/dat-kham-theo-bac-si.png",
+    "slug": "dat-kham-theo-bac-si"
+  }
+]

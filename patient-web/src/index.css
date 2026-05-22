@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+[data-radix-popper-content-wrapper] { outline: none !important; }
+
+button:focus,
+button:focus-visible,
+[data-state='open']:focus,
+.rdp-button:focus,
+.rdp-day:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}

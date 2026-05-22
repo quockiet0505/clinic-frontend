@@ -1,0 +1,207 @@
+[
+  {
+    "id": 1,
+    "name": "Bác sĩ Gia Đình",
+    "iconUrl": "/icons/specialties/bac-si-gia-dinh.png"
+  },
+  {
+    "id": 2,
+    "name": "Tiêu Hóa Gan Mật",
+    "iconUrl": "/icons/specialties/tieu-hoa-gan-mat.png"
+  },
+  {
+    "id": 3,
+    "name": "Nội Tổng Quát",
+    "iconUrl": "/icons/specialties/noi-tong-quat.png"
+  },
+  {
+    "id": 4,
+    "name": "Nội Tiết",
+    "iconUrl": "/icons/specialties/noi-tiet.png"
+  },
+  {
+    "id": 5,
+    "name": "Da liễu",
+    "iconUrl": "/icons/specialties/da-lieu.png"
+  },
+  {
+    "id": 6,
+    "name": "Nội Tim Mạch",
+    "iconUrl": "/icons/specialties/noi-tim-mach.png"
+  },
+  {
+    "id": 7,
+    "name": "Nội Thần Kinh",
+    "iconUrl": "/icons/specialties/noi-than-kinh.png"
+  },
+  {
+    "id": 8,
+    "name": "Nội Cơ Xương Khớp",
+    "iconUrl": "/icons/specialties/noi-co-xuong-khop.png"
+  },
+  {
+    "id": 9,
+    "name": "Tai Mũi Họng",
+    "iconUrl": "/icons/specialties/tai-mui-hong.png"
+  },
+  {
+    "id": 10,
+    "name": "Mắt",
+    "iconUrl": "/icons/specialties/mat.png"
+  },
+  {
+    "id": 11,
+    "name": "Nội Tiêu Hoá",
+    "iconUrl": "/icons/specialties/noi-tieu-hoa.png"
+  },
+  {
+    "id": 12,
+    "name": "Nội Truyền Nhiễm",
+    "iconUrl": "/icons/specialties/noi-truyen-nhiem.png"
+  },
+  {
+    "id": 13,
+    "name": "Nội Hô Hấp",
+    "iconUrl": "/icons/specialties/noi-ho-hap.png"
+  },
+  {
+    "id": 14,
+    "name": "Nội Tiết Niệu",
+    "iconUrl": "/icons/specialties/noi-tiet-nieu.png"
+  },
+  {
+    "id": 15,
+    "name": "Ngoại Cơ Xương Khớp",
+    "iconUrl": "/icons/specialties/ngoai-co-xuong-khop.png"
+  },
+  {
+    "id": 16,
+    "name": "Sản - Phụ Khoa",
+    "iconUrl": "/icons/specialties/san-phu-khoa.png"
+  },
+  {
+    "id": 17,
+    "name": "Ngoại Tiêu Hoá",
+    "iconUrl": "/icons/specialties/ngoai-tieu-hoa.png"
+  },
+  {
+    "id": 18,
+    "name": "Ngoại Tiết Niệu",
+    "iconUrl": "/icons/specialties/ngoai-tiet-nieu.png"
+  },
+  {
+    "id": 19,
+    "name": "Tâm Lý",
+    "iconUrl": "/icons/specialties/tam-ly.png"
+  },
+  {
+    "id": 21,
+    "name": "Tâm Thần Kinh",
+    "iconUrl": "/icons/specialties/tam-than-kinh.png"
+  },
+  {
+    "id": 22,
+    "name": "Ngoại Hô Hấp",
+    "iconUrl": "/icons/specialties/ngoai-ho-hap.png"
+  },
+  {
+    "id": 23,
+    "name": "Ngoại Thần Kinh",
+    "iconUrl": "/icons/specialties/ngoai-than-kinh.png"
+  },
+  {
+    "id": 24,
+    "name": "Lồng Ngực - Mạch Máu",
+    "iconUrl": "/icons/specialties/long-nguc-mach-mau.png"
+  },
+  {
+    "id": 25,
+    "name": "Dinh Dưỡng",
+    "iconUrl": "/icons/specialties/dinh-duong.png"
+  },
+  {
+    "id": 26,
+    "name": "Thẩm mỹ da",
+    "iconUrl": "/icons/specialties/tham-my-da.png"
+  },
+  {
+    "id": 27,
+    "name": "Ngoại Tổng Quát",
+    "iconUrl": "/icons/specialties/ngoai-tong-quat.png"
+  },
+  {
+    "id": 28,
+    "name": "Dị Ứng - Miễn Dịch Lâm Sàng",
+    "iconUrl": "/icons/specialties/di-ung-mien-dich-lam-sang.png"
+  },
+  {
+    "id": 29,
+    "name": "Răng Hàm Mặt",
+    "iconUrl": "/icons/specialties/rang-ham-mat.png"
+  },
+  {
+    "id": 30,
+    "name": "Chấn Thương Chỉnh Hình",
+    "iconUrl": "/icons/specialties/chan-thuong-chinh-hinh.png"
+  },
+  {
+    "id": 31,
+    "name": "Vô Sinh - Hiếm Muộn",
+    "iconUrl": "/icons/specialties/vo-sinh-hiem-muon.png"
+  },
+  {
+    "id": 32,
+    "name": "Ngoại Ung Bướu",
+    "iconUrl": "/icons/specialties/ngoai-ung-buou.png"
+  },
+  {
+    "id": 33,
+    "name": "Ung Bướu",
+    "iconUrl": "/icons/specialties/ung-buou.png"
+  },
+  {
+    "id": 34,
+    "name": "Nam Khoa",
+    "iconUrl": "/icons/specialties/nam-khoa.png"
+  },
+  {
+    "id": 35,
+    "name": "Lão Khoa",
+    "iconUrl": "/icons/specialties/lao-khoa.png"
+  },
+  {
+    "id": 36,
+    "name": "Vật Lý Trị Liệu - Phục Hồi Chức Năng",
+    "iconUrl": "/icons/specialties/vat-ly-tri-lieu-phuc-hoi-chuc-nang.png"
+  },
+  {
+    "id": 37,
+    "name": "Y Học Cổ Truyền",
+    "iconUrl": "/icons/specialties/y-hoc-co-truyen.png"
+  },
+  {
+    "id": 38,
+    "name": "Tim Mạch Can Thiệp",
+    "iconUrl": "/icons/specialties/tim-mach-can-thiep.png"
+  },
+  {
+    "id": 39,
+    "name": "Tạo hình thẩm mỹ",
+    "iconUrl": "/icons/specialties/tao-hinh-tham-my.png"
+  },
+  {
+    "id": 40,
+    "name": "Cơ Xương Khớp - Chiropractic",
+    "iconUrl": "/icons/specialties/co-xuong-khop-chiropractic.png"
+  },
+  {
+    "id": 41,
+    "name": "Nha Khoa",
+    "iconUrl": "/icons/specialties/nha-khoa.png"
+  },
+  {
+    "id": 42,
+    "name": "Nhi Khoa",
+    "iconUrl": "/icons/specialties/nhi-khoa.png"
+  }
+]
