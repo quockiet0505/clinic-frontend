@@ -17,8 +17,8 @@ import { MyAppointments } from '@/features/appointments/pages/MyAppointments';
 import { AppointmentDetail } from '@/features/appointments/pages/AppointmentDetail';
 
 // // Patient Area Features
-// import { MyProfile } from '@/features/profile/pages/MyProfile';
-// import { MyRecords } from '@/features/records/pages/MyRecords';
+import { MyProfile } from '@/features/profile/pages/MyProfile';
+import { MyRecords } from '@/features/records/pages/MyRecords';
 
 // // Chatbot (If you still want it as a separate page, though usually a floating widget)
 // import { FloatingChatbot } from '@/features/chatbot/components/FloatingChatbot';
@@ -44,8 +44,8 @@ export const router = createBrowserRouter([
           { path: 'my', element: <MyAppointments /> },
         ]
       },
-      // { path: 'profile', element: <MyProfile /> },
-      // { path: 'records', element: <MyRecords /> },
+      { path: 'profile', element: <MyProfile /> },
+      { path: 'records', element: <MyRecords /> },
       // { path: 'chatbot', element: <FloatingChatbot /> },
     ]
   },

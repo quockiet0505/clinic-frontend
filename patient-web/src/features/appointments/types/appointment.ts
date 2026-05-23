@@ -41,15 +41,17 @@ export interface Expertise {
      description: string;    
    }
    
-   // Dữ liệu cho trang Danh sách Lịch khám của tôi
-   export interface AppointmentHistory {
-     id: number;
-     doctorName: string;
-     expertiseName: string;
-     appointmentDate: string;
-     timeStart: string;
-     timeEnd: string;
-     status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
-     clinicName: string;
-     cancelReason?: string;
-   }
+   export type AppointmentStatus = 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
+
+    export interface AppointmentHistoryItem {
+      id: string;
+      appointmentDate: string; // YYYY-MM-DD
+      timeStart: string;
+      timeEnd: string;
+      status: AppointmentStatus;
+      doctorName: string;
+      specialty: string;
+      facility: string;
+      symptoms: string;
+      createdAt: string;
+    }

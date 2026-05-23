@@ -1,10 +1,11 @@
 // src/features/appointments/api/appointmentApi.ts
-import type { AppointmentHistory, AvailableDate, Doctor, Expertise, Service, TimeSlot } from '../types/appointment';
+import type { AppointmentHistory, AppointmentHistoryItem, AvailableDate, Doctor, Expertise, Service, TimeSlot } from '../types/appointment';
 
 // Thêm trường description vào các Interface (sếp có thể update trực tiếp trong types/appointment.ts)
 // export interface Expertise { id: number; name: string; description?: string; }
 // export interface Service { id: number; name: string; price: number; description?: string; }
 // export interface Doctor { id: number; expertiseId: number; fullName: string; description?: string; }
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const appointmentApi = {
   getExpertises(): Promise<any[]> {
@@ -56,4 +57,53 @@ export const appointmentApi = {
       { timeStart: '13:30:00', timeEnd: '14:00:00', displayTime: '13:30 - 14:00', period: 'afternoon', isAvailable: true },
     ]);
   },
+
+  getMyAppointments: async (): Promise<AppointmentHistoryItem[]> => {
+    await delay(800); // Simulate network latency
+
+    return [
+      {
+        id: 'APT-2026-0522',
+        appointmentDate: '2026-05-25',
+        timeStart: '08:00',
+        timeEnd: '08:30',
+        status: 'CONFIRMED',
+        doctorName: 'BS. Trần Thị Mây',
+        specialty: 'Nội Tổng Quát',
+        facility: 'Phòng khám Đa khoa ClinicPro',
+        symptoms: 'Khám sức khỏe định kỳ',
+        createdAt: '2026-05-20T10:30:00Z'
+      },
+      {
+        id: 'APT-2026-0510',
+        appointmentDate: '2026-05-10',
+        timeStart: '14:00',
+        timeEnd: '14:30',
+        status: 'COMPLETED',
+        doctorName: 'BS CKII. Ngô Trung Nam',
+        specialty: 'Nội Tim Mạch',
+        facility: 'Phòng khám Đa khoa ClinicPro',
+        symptoms: 'Tức ngực, khó thở',
+        createdAt: '2026-05-05T09:15:00Z'
+      },
+      {
+        id: 'APT-2026-0401',
+        appointmentDate: '2026-04-05',
+        timeStart: '09:30',
+        timeEnd: '10:00',
+        status: 'CANCELLED',
+        doctorName: 'Hệ thống sắp xếp',
+        specialty: 'Cơ Xương Khớp',
+        facility: 'Phòng khám Đa khoa ClinicPro',
+        symptoms: 'Đau lưng cấp',
+        createdAt: '2026-04-01T14:20:00Z'
+      }
+    ];
+  },
+
+  // Cancel an appointment
+  cancelAppointment: async (id: string): Promise<{ success: boolean; message: string }> => {
+    await delay(1000);
+    return { success: true, message: 'Hủy lịch khám thành công!' };
+  }
 };

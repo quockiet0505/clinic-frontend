@@ -1,5 +1,37 @@
 @import "tailwindcss";
 
+/* Định nghĩa theme màu sắc của riêng bạn */
+@theme {
+  /* Màu chính (primary) */
+  --color-primary-50: #eaf7fd;
+  --color-primary-500: #00b5f1;
+  --color-primary-600: #0098cc;
+
+  /* Màu thương hiệu (chữ đậm) */
+  --color-brand-dark: #003B5C;
+
+  /* Màu nền trang */
+  --color-background-light: #f5f7f9;
+
+  /* Màu cảnh báo / hotline */
+  --color-warning: #ff8a00;
+
+  /* Màu ngày nghỉ lễ */
+  --color-holiday: #fed7aa;
+
+  /* Màu border mặc định */
+  --color-border-default: #e2e8f0;
+
+  /* Màu nền disabled */
+  --color-bg-disabled: #f1f5f9;
+
+  /* THÊM: Màu trạng thái (Success / Danger) */
+  --color-success-50: #f0fdf4;
+  --color-success-600: #16a34a;
+  --color-danger-50: #fef2f2;
+  --color-danger-500: #ef4444;
+}
+
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;
