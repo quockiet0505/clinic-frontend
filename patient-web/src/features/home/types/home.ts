@@ -1,30 +1,30 @@
 export interface QuickAction {
-  id: string | number;
+  id: number;
   title: string;
   iconUrl: string;
-  slug?: string;
 }
 
 export interface Specialty {
-  id: string | number;
-  name: string;
+  expertiseId: number;
+  expertiseName: string;
   iconUrl: string;
 }
 
 export interface Doctor {
-  id: string | number;
+  staffId: number;
   fullName: string;
-  specialtyName: string;
-  rating: number;
-  consultationFee: number;
-  avatarUrl: string;
+  imageUrl: string;
+  expertise?: {
+    expertiseId: number;
+    expertiseName: string;
+  };
+  consultationFee?: number; 
 }
 
 export interface ServicePackage {
-  id: string | number;
-  title: string;
-  clinicName?: string;
-  originalPrice: number;
-  discountPrice: number;
+  serviceId: number;
+  serviceName: string;
+  price: number;
+  discountPrice: number | null;
   imageUrl: string;
 }

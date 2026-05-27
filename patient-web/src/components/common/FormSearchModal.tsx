@@ -69,7 +69,7 @@ export const FormSearchModal: React.FC<FormSearchModalProps> = ({
         <DialogTrigger asChild>
           <button
             disabled={disabled}
-            className={`relative flex w-full items-center justify-between h-[52px] rounded-2xl border border-slate-200 bg-white px-4 text-left shadow-none transition-all focus:ring-2 focus:ring-[#00b5f1]/20 disabled:cursor-not-allowed disabled:bg-slate-50 ${
+            className={`cursor-pointer relative flex w-full items-center justify-between h-[52px] rounded-2xl border border-slate-200 bg-white px-4 text-left shadow-none transition-all focus:ring-2 focus:ring-[#00b5f1]/20 disabled:cursor-not-allowed disabled:bg-slate-50 ${
               TriggerIcon ? 'pl-12' : ''
             }`}
           >

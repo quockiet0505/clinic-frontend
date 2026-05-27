@@ -1,30 +1,62 @@
-// src/features/records/types/record.ts
-
 export interface PrescriptionItem {
-     id: string;
-     medicineName: string;
-     dosage: string;
-     quantity: string;
-     instructions: string;
-   }
-   
-   export interface LabResult {
-     id: string;
-     testName: string;
-     resultValue: string;
-     normalRange: string;
-     status: 'NORMAL' | 'ABNORMAL';
-   }
-   
-   export interface MedicalRecord {
-     id: string;
-     visitDate: string; // YYYY-MM-DD
-     doctorName: string;
-     specialty: string;
-     facility: string;
-     symptoms: string;
-     diagnosis: string;
-     notes?: string;
-     prescriptions?: PrescriptionItem[];
-     labResults?: LabResult[];
-   }
+  medicineId?: number;
+  medicineName: string;
+  unit: string;
+  quantity: number;
+  dosage: string;
+  price?: number;
+}
+
+export interface Prescription {
+  prescriptionId: number;
+  recordId: number;
+  items: PrescriptionItem[];
+  createdAt: string;
+}
+
+export interface ServiceResult {
+  resultId: number;
+  resultData: string;
+  conclusion: string;
+  attachmentUrl?: string;
+  enteredBy: string;
+  enteredAt: string;
+}
+
+export interface ServiceOrder {
+  orderId: number;
+  serviceId: number;
+  serviceName: string;
+  status: string;
+  orderedBy: string;
+  createdAt: string;
+  result?: ServiceResult;
+}
+
+export interface FollowUp {
+  followUpId: number;
+  doctorName: string;
+  scheduledDatetime: string;
+  note: string;
+  status: string;
+}
+
+export interface MedicalRecord {
+  recordId: number;
+  patientId: number;
+  appointmentId?: number;
+  mainDoctorId: number;
+  mainDoctorName: string;
+  diagnosis: string;
+  treatment: string;
+  note?: string;
+  status: 'IN_PROGRESS' | 'WAITING_RESULT' | 'DONE' | 'CANCELLED';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MedicalRecordDetail extends MedicalRecord {
+  prescription?: Prescription;
+  serviceOrders: ServiceOrder[];
+  followUps: FollowUp[];
+}

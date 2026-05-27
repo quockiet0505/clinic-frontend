@@ -1,22 +1,25 @@
-// src/features/profile/types/profile.ts
-
-// Maps to the 'patient' and 'account' tables
 export interface PatientProfile {
-     id: number;
-     accountId: number;
-     email: string; // From account
-     fullName: string;
-     phone: string;
-     gender: 'MALE' | 'FEMALE' | 'OTHER' | '';
-     dateOfBirth: string; // Format: YYYY-MM-DD
-     address: string;
-     avatarUrl?: string;
-   }
-   
-   export interface UpdateProfilePayload {
-     fullName: string;
-     phone: string;
-     gender: string;
-     dateOfBirth: string;
-     address: string;
-   }
+  patient_id: number;
+  account_id: number;
+  email: string;
+  full_name: string;
+  phone?: string;
+  gender?: 'MALE' | 'FEMALE' | 'OTHER';
+  date_of_birth?: string;
+  address?: string;
+  avatar_url?: string;
+}
+
+export interface UpdateProfilePayload {
+  full_name: string;
+  phone?: string;
+  gender?: string;
+  date_of_birth?: string;
+  address?: string;
+}
+
+export interface ChangePasswordRequest {
+  old_password: string;
+  new_password: string;
+  confirm_password: string;
+}

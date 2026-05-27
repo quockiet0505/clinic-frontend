@@ -2,36 +2,46 @@
 
 /* Định nghĩa theme màu sắc của riêng bạn */
 @theme {
-  /* Màu chính (primary) */
+  /* Primary */
   --color-primary-50: #eaf7fd;
+  --color-primary-100: #dff4ff;
+  --color-primary-200: #c8ecfb;
+  --color-primary-300: #aee4fa;
   --color-primary-500: #00b5f1;
   --color-primary-600: #0098cc;
 
-  /* Màu thương hiệu (chữ đậm) */
-  --color-brand-dark: #003B5C;
+  /* Gradient mềm */
+  --color-gradient-blue: #dff4ff;
+  --color-gradient-blue-light: #eef9ff;
+  --color-gradient-white-blue: #f5fbff;
+  --color-gradient-white-cold: #f8fdff;
 
-  /* Màu nền trang */
+  /* Brand */
+  --color-brand-dark: #003b5c;
+
+  /* Background */
   --color-background-light: #f5f7f9;
 
-  /* Màu cảnh báo / hotline */
+  /* Warning */
   --color-warning: #ff8a00;
 
-  /* Màu ngày nghỉ lễ */
+  /* Holiday */
   --color-holiday: #fed7aa;
 
-  /* Màu border mặc định */
+  /* Border */
   --color-border-default: #e2e8f0;
 
-  /* Màu nền disabled */
+  /* Disabled */
   --color-bg-disabled: #f1f5f9;
 
-  /* THÊM: Màu trạng thái (Success / Danger) */
+  /* Success */
   --color-success-50: #f0fdf4;
   --color-success-600: #16a34a;
+
+  /* Danger */
   --color-danger-50: #fef2f2;
   --color-danger-500: #ef4444;
 }
-
 @layer base {
   html {
     font-family: 'Inter', system-ui, sans-serif;

@@ -1,5 +1,3 @@
-// src/components/common/Pagination.tsx
-
 import React from 'react';
 
 import {
@@ -25,11 +23,13 @@ export const Pagination: React.FC<PaginationProps> = ({
   if (totalPages <= 1) return null;
 
   return (
-    <ShadcnPagination>
-      <PaginationContent>
+    <ShadcnPagination className="mt-12">
+
+      <PaginationContent className="gap-2">
+
         <PaginationItem>
           <PaginationPrevious
-            className="cursor-pointer"
+            className="cursor-pointer rounded-xl border border-slate-200 bg-white hover:bg-primary-50 hover:border-primary-200 transition-all"
             onClick={() => {
               if (currentPage > 1) {
                 onPageChange(currentPage - 1);
@@ -43,20 +43,26 @@ export const Pagination: React.FC<PaginationProps> = ({
 
           return (
             <PaginationItem key={page}>
+
               <PaginationLink
                 isActive={page === currentPage}
                 onClick={() => onPageChange(page)}
-                className="cursor-pointer"
+                className={`cursor-pointer rounded-xl min-w-[42px] h-[42px] flex items-center justify-center border transition-all duration-200 ${
+                  page === currentPage
+                    ? 'bg-primary-500 text-white border-primary-500 shadow-md hover:bg-primary-600'
+                    : 'bg-white border-slate-200 text-slate-600 hover:border-primary-200 hover:bg-primary-50 hover:text-primary-500'
+                }`}
               >
                 {page}
               </PaginationLink>
+
             </PaginationItem>
           );
         })}
 
         <PaginationItem>
           <PaginationNext
-            className="cursor-pointer"
+            className="cursor-pointer rounded-xl border border-slate-200 bg-white hover:bg-primary-50 hover:border-primary-200 transition-all"
             onClick={() => {
               if (currentPage < totalPages) {
                 onPageChange(currentPage + 1);
@@ -64,6 +70,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             }}
           />
         </PaginationItem>
+
       </PaginationContent>
     </ShadcnPagination>
   );

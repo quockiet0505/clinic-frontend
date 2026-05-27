@@ -1,4 +1,3 @@
-// src/features/profile/components/PasswordChangeForm.tsx
 import React, { useState } from 'react';
 import { KeyRound, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,11 +25,15 @@ export const PasswordChangeForm: React.FC = () => {
     }
 
     try {
-      const res = await profileApi.changePassword(passwords.oldPass, passwords.newPass);
+      const res = await profileApi.changePassword({
+        old_password: passwords.oldPass,
+        new_password: passwords.newPass,
+        confirm_password: passwords.confirmPass,
+      });
       setMessage({ type: 'success', text: res.message });
-      setPasswords({ oldPass: '', newPass: '', confirmPass: '' }); 
-    } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || 'Đổi mật khẩu thất bại' });
+      setPasswords({ oldPass: '', newPass: '', confirmPass: '' });
+    } catch (err) {
+      setMessage({ type: 'error', text: err.response?.data?.message || 'Đổi mật khẩu thất bại' });
     } finally {
       setIsLoading(false);
     }

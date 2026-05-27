@@ -1,12 +1,5 @@
-// src/features/home/pages/ServiceDirectory.tsx
-
-import React, { useState } from 'react';
-
-import {
-  CheckCircle2,
-  Phone,
-  Building2,
-} from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { CheckCircle2, Building2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 
@@ -17,188 +10,208 @@ import {
   SectionContainer,
 } from '@/components/common';
 
-import { homeApi } from '@/features/home/api/homeApi';
+import { homeApi } from '../api/homeApi';
+import { getStaticUrl } from '@/utils/url';
 
-import type {
-  ServicePackage,
-} from '@/features/home/types/home';
+import type { ServicePackage } from '../types/home';
 
-export const ServiceDirectory: React.FC =
-  () => {
-    const allServices: ServicePackage[] =
-      homeApi.getListServices();
+export const ServiceDirectory: React.FC = () => {
+  const [services, setServices] = useState<ServicePackage[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    const [searchTerm, setSearchTerm] =
-      useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [priceFilter, setPriceFilter] = useState<
+    'all' | 'low' | 'high'
+  >('all');
 
-    const [currentPage, setCurrentPage] =
-      useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
 
-    const itemsPerPage = 10;
+  const itemsPerPage = 10;
 
-    const formatPrice = (
-      price: number,
-    ) => {
-      return new Intl.NumberFormat(
-        'vi-VN',
-        {
-          style: 'currency',
-          currency: 'VND',
-        },
-      ).format(price);
-    };
+  const staticUrl = getStaticUrl();
 
-    const filteredServices =
-      allServices.filter((service) =>
-        service.title
-          .toLowerCase()
-          .includes(
-            searchTerm.toLowerCase(),
-          ),
-      );
+  useEffect(() => {
+    homeApi
+      .getServices()
+      .then(setServices)
+      .finally(() => setLoading(false));
+  }, []);
 
-    const totalPages =
-      Math.ceil(
-        filteredServices.length /
-          itemsPerPage,
-      ) || 1;
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    }).format(price);
+  };
 
-    const currentItems =
-      filteredServices.slice(
-        (currentPage - 1) *
-          itemsPerPage,
-        currentPage *
-          itemsPerPage,
-      );
+  const filteredServices = services.filter((s) => {
+    const matchesSearch = s.serviceName
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
 
+    const price = s.discountPrice || s.price;
+
+    const matchesPrice =
+      priceFilter === 'all'
+        ? true
+        : priceFilter === 'low'
+        ? price < 500000
+        : price >= 500000;
+
+    return matchesSearch && matchesPrice;
+  });
+
+  const totalPages =
+    Math.ceil(filteredServices.length / itemsPerPage) || 1;
+
+  const currentItems = filteredServices.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  if (loading) {
     return (
-      <main className="w-full min-h-screen bg-[#f5f7f9] pb-16">
-        <div className="relative w-full bg-[#eaf4fa] pt-10 pb-20">
-          <SectionContainer className="max-w-6xl">
-            <div className="bg-white rounded-[24px] p-8 shadow-sm max-w-3xl border border-slate-100">
-              <h1 className="text-[24px] font-black text-[#00b5f1] uppercase tracking-wide mb-5">
-                Đặt lịch xét nghiệm
-              </h1>
+      <div className="flex justify-center py-20">
+        Đang tải...
+      </div>
+    );
+  }
 
-              <div className="flex flex-col gap-2.5 text-[#003B5C] font-medium text-[13.5px] mb-6">
-                <p className="flex items-start gap-3">
-                  <CheckCircle2 className="w-[18px] h-[18px] text-green-500 shrink-0 mt-0.5" />
+  return (
+    <main className="w-full min-h-screen bg-[linear-gradient(180deg,#eef9ff_0%,#f8fcff_22%,#ffffff_42%)] pb-16">
+      
+      <div className="relative w-full pt-10 pb-24">
+        
+        <SectionContainer className="max-w-6xl">
+          
+          <div className="bg-white/95 backdrop-blur-sm rounded-[32px] p-8 shadow-[0_12px_40px_rgba(15,23,42,0.06)] max-w-3xl border border-white">
 
-                  Đặt lịch trực tiếp
-                </p>
+            <h1 className="text-3xl font-black text-primary-500 uppercase tracking-wide mb-6">
+              Đặt lịch xét nghiệm
+            </h1>
 
-                <p className="flex items-start gap-3">
-                  <CheckCircle2 className="w-[18px] h-[18px] text-green-500 shrink-0 mt-0.5" />
+            <div className="flex flex-col gap-3 text-brand-dark font-medium text-[15px] mb-7">
 
-                  Giảm thời gian chờ
-                </p>
-              </div>
+              <p className="flex items-start gap-3">
+                <CheckCircle2 className="w-[18px] h-[18px] text-green-500 shrink-0 mt-0.5" />
+                Đặt lịch trực tiếp
+              </p>
 
-              <div className="w-full h-px bg-slate-200 mb-5"></div>
+              <p className="flex items-start gap-3">
+                <CheckCircle2 className="w-[18px] h-[18px] text-green-500 shrink-0 mt-0.5" />
+                Giảm thời gian chờ
+              </p>
 
-              <div className="flex items-center gap-3">
-                <a
-                  href="tel:19002115"
-                  className="text-[#00b5f1] font-black text-lg flex items-center gap-2"
-                >
-                  <Phone className="w-4 h-4" />
-
-                  19002115
-                </a>
-
-                <Button className="bg-[#f58220] hover:bg-[#e0751a] text-white">
-                  Chat ngay
-                </Button>
-              </div>
             </div>
-          </SectionContainer>
 
-          <div className="absolute left-0 right-0 -bottom-7 flex justify-center z-20 px-4">
-            <div className="w-full max-w-4xl">
-              <SearchFilterBar
-                value={searchTerm}
-                onChange={(value) => {
-                  setSearchTerm(value);
-                  setCurrentPage(1);
-                }}
-                placeholder="Tìm kiếm dịch vụ..."
-              />
+            <div className="w-full h-px bg-slate-200 mb-6"></div>
+
+            <div className="flex items-center gap-3">
+              
+              <a
+                href="tel:19002115"
+                className="text-primary-500 font-black text-lg flex items-center gap-2"
+              >
+                19002115
+              </a>
+
+              <Button className="bg-warning hover:bg-warning/90 text-white rounded-full px-5">
+                Chat ngay
+              </Button>
+
             </div>
+
           </div>
+
+        </SectionContainer>
+
+        <div className="absolute left-0 right-0 -bottom-9 flex justify-center z-20 px-4">
+
+          <SearchFilterBar
+            value={searchTerm}
+            onChange={(val) => {
+              setSearchTerm(val);
+              setCurrentPage(1);
+            }}
+            priceFilter={priceFilter}
+            onPriceFilterChange={(val) => {
+              setPriceFilter(val);
+              setCurrentPage(1);
+            }}
+            placeholder="Tìm kiếm dịch vụ..."
+          />
+
         </div>
+      </div>
 
-        <SectionContainer className="max-w-5xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-[60px] mb-10">
-            {currentItems.length >
-            0 ? (
-              currentItems.map(
-                (service) => (
-                  <div
-                    key={service.id}
-                    className="bg-white rounded-2xl p-4 shadow-md border border-slate-100 flex gap-4 hover:shadow-xl transition-all"
-                  >
-                    <div className="w-[72px] h-[72px] bg-[#eaf4fa] rounded-2xl p-3 flex items-center justify-center">
-                      <img
-                        src={
-                          service.imageUrl
-                        }
-                        alt={
-                          service.title
-                        }
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
+      <SectionContainer className="max-w-5xl">
 
-                    <div className="flex-1 flex flex-col justify-between">
-                      <div>
-                        <h3 className="font-bold text-[#003B5C] text-[16px] mb-2 line-clamp-2">
-                          {
-                            service.title
-                          }
-                        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-[72px] mb-12">
 
-                        <div className="flex items-start gap-2 text-slate-500 text-sm">
-                          <Building2 className="w-4 h-4 mt-[2px]" />
+          {currentItems.length > 0 ? (
+            currentItems.map((service) => (
+              
+              <div
+              key={service.serviceId}
+              className="bg-white/95 backdrop-blur-sm rounded-3xl p-5 border border-transparent hover:border-primary-500 shadow-[0_8px_30px_rgba(15,23,42,0.06)] hover:shadow-[0_16px_40px_rgba(15,23,42,0.12)] hover:-translate-y-1 transition-all duration-300 flex gap-4 cursor-pointer hover:bg-primary-50/30"
+            >
 
-                          <span>
-                            {
-                              service.clinicName
-                            }
-                          </span>
-                        </div>
-                      </div>
+                <div className="w-[76px] h-[76px] bg-primary-50 rounded-2xl p-3 flex items-center justify-center shrink-0">
+                  <img
+                    src={`${staticUrl}${service.imageUrl}`}
+                    alt={service.serviceName}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
 
-                      <div className="flex items-center justify-between mt-4">
-                        <span className="text-[#f58220] font-black">
-                          {formatPrice(
-                            service.discountPrice,
-                          )}
-                        </span>
+                <div className="flex-1 flex flex-col justify-between">
 
-                        <Button className="bg-[#00b5f1] hover:bg-[#0092c4] text-white rounded-full">
-                          Đặt khám
-                        </Button>
-                      </div>
+                  <div>
+                    <h3 className="font-bold text-brand-dark text-[16px] leading-snug mb-2 line-clamp-2">
+                      {service.serviceName}
+                    </h3>
+
+                    <div className="flex items-start gap-2 text-slate-500 text-sm">
+                      <Building2 className="w-4 h-4 mt-[2px]" />
+                      <span>ClinicPro</span>
                     </div>
                   </div>
-                ),
-              )
-            ) : (
-              <div className="col-span-full">
-                <EmptyState
-                  title="Không tìm thấy dịch vụ"
-                  description="Vui lòng thử từ khóa khác."
-                />
-              </div>
-            )}
-          </div>
 
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
-        </SectionContainer>
-      </main>
-    );
-  };
+                  <div className="flex items-center justify-between mt-5">
+
+                    <span className="text-warning font-black text-[17px]">
+                      {formatPrice(
+                        service.discountPrice || service.price
+                      )}
+                    </span>
+
+                    <Button className="bg-primary-500 hover:bg-primary-600 text-white rounded-full px-5">
+                      Đặt khám
+                    </Button>
+
+                  </div>
+
+                </div>
+
+              </div>
+            ))
+          ) : (
+            <div className="col-span-full">
+              <EmptyState
+                title="Không tìm thấy dịch vụ"
+                description="Vui lòng thử từ khóa khác."
+              />
+            </div>
+          )}
+        </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+
+      </SectionContainer>
+    </main>
+  );
+};

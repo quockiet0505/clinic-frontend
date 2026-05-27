@@ -14,7 +14,7 @@ interface Option {
 }
 
 interface FormSelectProps {
-  label: string;
+  label?: string;
   placeholder?: string;
   value: string;
   onChange: (value: string) => void;
@@ -22,6 +22,7 @@ interface FormSelectProps {
   icon?: LucideIcon;
   required?: boolean;
   disabled?: boolean;
+  compact?: boolean;
 }
 
 export const FormSelect: React.FC<FormSelectProps> = ({
@@ -33,39 +34,40 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   icon: Icon,
   required,
   disabled,
+  compact = false,
 }) => {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[14px] font-bold text-[#003B5C]">
-        {label}
-        {required && <span className="text-red-500 ml-1">*</span>}
-      </label>
-
+      {label && (
+        <label className="text-sm font-bold text-brand-dark">
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </label>
+      )}
       <div className="relative">
         {Icon && (
-          /* Ensure icon is positioned correctly and does not block clicks */
           <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
-            <Icon className="w-5 h-5 text-[#00b5f1]" />
+            <Icon className="w-5 h-5 text-primary-500" />
           </div>
         )}
-
-        {/* Prevent Shadcn crash by mapping empty string to 'none' if undefined */}
         <Select value={value || undefined} onValueChange={onChange} disabled={disabled}>
           <SelectTrigger
-            className={`w-full h-[48px] rounded-2xl border-slate-200 bg-white text-left text-[14.5px] font-medium text-[#003B5C] shadow-none focus:ring-2 focus:ring-[#00b5f1]/20 ${
-              Icon ? 'pl-12' : 'px-4'
+            className={`w-full cursor-pointer ${
+              compact ? 'h-[56px]' : 'h-[52px]'
+            } rounded-2xl border border-slate-200 bg-white text-left text-sm font-semibold text-brand-dark shadow-sm transition-all hover:shadow-md focus:ring-4 focus:ring-primary-500/10 ${
+              Icon ? 'pl-12 pr-4' : 'px-4'
             }`}
           >
             <SelectValue placeholder={placeholder} />
           </SelectTrigger>
-
-          {/* ADDED: bg-white and z-50 to fix the transparent background overlap issue */}
-          <SelectContent className="rounded-2xl border border-slate-200 bg-white shadow-xl z-50">
+          <SelectContent
+            className="min-w-[var(--radix-select-trigger-width)] !border-0 ring-0 outline-none shadow-xl rounded-2xl bg-white p-2"
+          >
             {options.map((item) => (
               <SelectItem
                 key={item.value}
                 value={item.value || 'none'}
-                className="cursor-pointer py-2.5 text-[14.5px] font-medium hover:bg-[#eaf7fd] hover:text-[#00b5f1]"
+                className="cursor-pointer rounded-xl py-3 px-3 text-sm font-semibold text-slate-700 transition-all hover:bg-primary-50 hover:text-primary-500 focus:bg-primary-50 focus:text-primary-500"
               >
                 {item.label}
               </SelectItem>

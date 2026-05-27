@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { FloatingChatbot } from '@/features/chatbot/components/FloatingChatbot';
 
 export const MainLayout: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ export const MainLayout: React.FC = () => {
 
       {/* Universal company footer directory metadata */}
       <Footer />
+      <FloatingChatbot />
     </div>
   );
 };

@@ -1,35 +1,16 @@
-// src/components/common/Logo.tsx
+import React, { useEffect, useState } from 'react';
+import { getStaticUrl } from '@/utils/url';
+import { homeApi } from '@/features/home/api/homeApi';
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+export const Logo: React.FC = () => {
+  const [logoUrl, setLogoUrl] = useState('/images/logos/logo.png');
+  const staticUrl = getStaticUrl();
 
-interface LogoProps {
-  className?: string;
-}
+  useEffect(() => {
+    homeApi.getLogo()
+      .then(url => setLogoUrl(url))
+      .catch(() => console.error('Failed to load logo'));
+  }, []);
 
-export const Logo: React.FC<LogoProps> = ({
-  className = '',
-}) => {
-  return (
-    <Link
-      to="/"
-      className={`flex items-center gap-2 ${className}`}
-    >
-      <img
-        src="/images/logo.png"
-        alt="Logo"
-        className="w-10 h-10 object-contain"
-      />
-
-      <div className="flex flex-col leading-none">
-        <span className="font-black text-[#00b5f1] text-lg">
-          MEDPRO
-        </span>
-
-        <span className="text-[11px] text-slate-500">
-          Healthcare Platform
-        </span>
-      </div>
-    </Link>
-  );
+  return <img src={`${staticUrl}${logoUrl}`} alt="Clinic Logo" className="h-10" />;
 };

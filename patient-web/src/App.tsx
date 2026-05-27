@@ -1,9 +1,15 @@
 import { RouterProvider } from 'react-router-dom';
 import { router } from './routes';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { ToastProvider } from '@/hooks/useToast';
 
 function App() {
   return (
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <ToastProvider>
+        <RouterProvider router={router} />
+      </ToastProvider>
+    </AuthProvider>
   );
 }
 

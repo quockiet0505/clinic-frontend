@@ -1,77 +1,77 @@
 import React from 'react';
-import { Calendar, User, FileText, MapPin, Eye } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Calendar, User, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
-import { PrescriptionDetailModal } from './PrescriptionDetailModal';
-import { LabResultViewerModal } from './LabResultViewerModal';
-import type { MedicalRecord } from '../types/record';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import type { MedicalRecord } from '../types/record';
 
-export const MedicalHistoryTimeline: React.FC<{ records: MedicalRecord[] }> = ({ records }) => {
+interface MedicalHistoryTimelineProps {
+  records: MedicalRecord[];
+}
+
+export const MedicalHistoryTimeline: React.FC<MedicalHistoryTimelineProps> = ({ records }) => {
   const navigate = useNavigate();
-  if (records.length === 0) return null;
+
+  const getStatusBadge = (status: MedicalRecord['status']) => {
+    switch (status) {
+      case 'DONE':
+        return <span className="px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">Hoàn thành</span>;
+      case 'IN_PROGRESS':
+        return <span className="px-2 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">Đang xử lý</span>;
+      case 'WAITING_RESULT':
+        return <span className="px-2 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700">Chờ kết quả</span>;
+      case 'CANCELLED':
+        return <span className="px-2 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700">Đã hủy</span>;
+      default:
+        return <span className="px-2 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-700">{status}</span>;
+    }
+  };
 
   return (
-    <div className="relative border-l-2 border-primary-500/20 ml-3 md:ml-6 space-y-10 py-4">
+    <div className="space-y-6">
       {records.map((record) => (
-        <div key={record.id} className="relative pl-8 md:pl-12">
-          {/* Timeline Node */}
-          <div className="absolute -left-[11px] top-4 w-5 h-5 rounded-full bg-white border-4 border-primary-500 shadow-sm"></div>
-
-          <Card className="rounded-3xl border-border-default shadow-sm hover:shadow-md transition-shadow bg-white overflow-hidden">
-            <div className="bg-background-light px-6 py-4 border-b border-border-default flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-primary-600 font-black text-[16px]">
-                <Calendar className="w-5 h-5" />
-                {format(new Date(record.visitDate), "dd 'tháng' MM, yyyy", { locale: vi })}
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="px-3 py-1 rounded-full bg-white border border-border-default text-xs font-bold text-slate-500">
-                  Mã BA: {record.id}
-                </span>
-                <Button variant="ghost" size="sm" onClick={() => navigate(`/records/detail/${record.id}`)} className="text-primary-500 hover:text-primary-600 hover:bg-primary-50 font-bold h-8">
-                   <Eye className="w-4 h-4 mr-1"/> Xem chi tiết
-                </Button>
-              </div>
+        <Card
+          key={record.recordId}
+          className="rounded-2xl border-border-default shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
+        >
+          <div className="bg-primary-50/30 px-6 py-4 border-b border-border-default flex flex-wrap justify-between items-center gap-3">
+            <div className="flex items-center gap-2 text-primary-600 font-bold text-sm">
+              <Calendar className="w-4 h-4" />
+              {record.createdAt && !isNaN(new Date(record.createdAt).getTime())
+                  ? format(
+                      new Date(record.createdAt),
+                      "dd 'tháng' MM, yyyy",
+                      { locale: vi }
+                    )
+                  : 'Không có ngày'}
             </div>
-
-            <CardContent className="p-6 md:p-8 flex flex-col gap-6">
-              <div className="flex flex-wrap gap-x-8 gap-y-3 text-[14.5px] font-medium text-slate-600 pb-6 border-b border-border-default">
-                <div className="flex items-center gap-2"><User className="w-4 h-4 text-primary-500" /> <span className="text-brand-dark font-bold">{record.doctorName}</span> ({record.specialty})</div>
-                <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary-500" /> {record.facility}</div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate(`/records/detail/${record.recordId}`)}
+              className="rounded-xl border-primary-500/30 text-primary-600 hover:bg-primary-50"
+            >
+              <Eye className="w-4 h-4 mr-1" /> Chi tiết
+            </Button>
+          </div>
+          <CardContent className="p-6">
+            <div className="flex flex-wrap justify-between items-start gap-4 mb-4">
+              <div className="flex items-center gap-2 text-slate-600">
+                <User className="w-4 h-4 text-primary-500" />
+                <span className="font-medium">{record.mainDoctorName}</span>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="flex flex-col gap-2">
-                  <span className="text-[13px] font-bold text-slate-400 uppercase tracking-wider">Triệu chứng lâm sàng</span>
-                  <p className="text-brand-dark text-[15px] leading-relaxed">{record.symptoms}</p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <span className="text-[13px] font-bold text-slate-400 uppercase tracking-wider">Chẩn đoán</span>
-                  <div className="flex items-start gap-2">
-                    <FileText className="w-5 h-5 text-warning shrink-0 mt-0.5" />
-                    <p className="text-brand-dark font-bold text-[15px] leading-relaxed">{record.diagnosis}</p>
-                  </div>
-                </div>
-              </div>
-
-              {record.notes && (
-                <div className="bg-warning/10 border border-warning/20 p-4 rounded-2xl text-[14.5px] text-brand-dark">
-                  <span className="font-bold text-warning mr-2">Lời dặn:</span> {record.notes}
-                </div>
-              )}
-
-              {/* Import các component nhỏ vào đây */}
-              {(record.prescriptions || record.labResults) && (
-                <div className="flex flex-wrap gap-4 pt-2">
-                  {record.prescriptions && <PrescriptionDetailModal items={record.prescriptions} />}
-                  {record.labResults && <LabResultViewerModal items={record.labResults} />}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+              {getStatusBadge(record.status)}
+            </div>
+            <div className="space-y-1">
+              <p>
+                <span className="font-bold text-brand-dark">Chẩn đoán:</span> {record.diagnosis}
+              </p>
+              <p className="text-sm text-slate-500">Mã hồ sơ: {record.recordId}</p>
+            </div>
+          </CardContent>
+        </Card>
       ))}
     </div>
   );

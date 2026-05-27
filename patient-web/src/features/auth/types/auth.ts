@@ -1,14 +1,30 @@
-// Define User structure aligned with 'account' and 'patient' database tables
 export interface User {
-     id: number;
-     accountId: number;
-     email: string;
-     fullName: string; // REQUIRED field in 'patient' table
-     phone?: string;   // OPTIONAL field in 'patient' table
-     role: 'PATIENT';  // Explicitly restrict to Patient role
-   }
-   
-   export interface AuthResponse {
-     user: User;
-     token: string;
-   }
+  accountId: number;
+  email: string;
+  roles: string[];
+  fullName?: string;
+  phone?: string;
+  address?: string;
+  gender?: string;
+  dateOfBirth?: string;
+  patientId?: number;
+}
+
+export interface AuthResponse {
+  accountId: number;
+  email: string;
+  token: string;
+  roles: string[];
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  fullName: string;
+  email: string;
+  password: string;
+  phone?: string;
+}
