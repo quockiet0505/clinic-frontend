@@ -1,24 +1,56 @@
-import { LoginResponse } from '../types/auth';
+import axiosInstance from '@/config/axios';
+import type { ApiResponse } from '@/config/api';
+import type { LoginResponse, User } from '../types/auth';
+
+interface StaffLoginData {
+  accountId: number;
+  email: string;
+  token: string;
+  roles: string[];
+}
 
 export const authApi = {
-  login: async (email: string, password: string): Promise<LoginResponse> => {
-    // Simulate network delay for API call
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (email === 'admin@clinic.com' && password === '123456') {
-          resolve({
-            user: { 
-              id: 'USR-01', 
-              email: 'admin@clinic.com', 
-              fullName: 'System Admin', 
-              role: 'ADMIN' 
-            },
-            token: 'mock-jwt-token-12345'
-          });
-        } else {
-          reject(new Error('Invalid email or password.'));
-        }
-      }, 1000);
-    });
-  }
+
+  login: async (
+    email: string,
+    password: string
+  ): Promise<LoginResponse> => {
+
+    const response =
+      await axiosInstance.post<ApiResponse<StaffLoginData>>(
+        '/auth/staff/login',
+        { email, password }
+      );
+
+    const { success, message, data } = response.data;
+
+    if (!success) {
+      throw new Error(message);
+    }
+
+    let role: User['role'] = 'STAFF';
+
+    if (data.roles.includes('ROLE_ADMIN')) {
+      role = 'ADMIN';
+    }
+    else if (data.roles.includes('ROLE_DOCTOR')) {
+      role = 'DOCTOR';
+    }
+    else if (data.roles.includes('ROLE_LAB_TECH')) {
+      role = 'LAB_TECH';
+    }
+
+    const user: User = {
+      id: data.accountId.toString(),
+      email: data.email,
+      fullName: data.email.split('@')[0],
+      role,
+      roles: data.roles,
+    };
+
+    return {
+      user,
+      token: data.token,
+    };
+  },
 };

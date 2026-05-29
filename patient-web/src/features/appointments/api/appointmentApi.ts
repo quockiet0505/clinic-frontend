@@ -1,36 +1,43 @@
-// src/features/appointments/api/appointmentApi.ts
-import type { AppointmentHistory, AppointmentHistoryItem, AvailableDate, Doctor, Expertise, Service, TimeSlot } from '../types/appointment';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import axiosInstance from '@/config/axios';
+import type { ApiResponse } from '@/config/api';
+import type {
+  AppointmentHistoryItem,
+  AvailableDate,
+  BookingFormState,
+  Doctor,
+  Expertise,
+  Service,
+  TimeSlotRaw,
+  TimeSlot,
+} from '../types/appointment';
 
-// Thêm trường description vào các Interface (sếp có thể update trực tiếp trong types/appointment.ts)
-// export interface Expertise { id: number; name: string; description?: string; }
-// export interface Service { id: number; name: string; price: number; description?: string; }
-// export interface Doctor { id: number; expertiseId: number; fullName: string; description?: string; }
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+// Helper to compute displayTime and period from timeStart/timeEnd
+function enrichTimeSlot(slot: TimeSlotRaw): TimeSlot {
+  const displayTime = `${slot.timeStart.substring(0, 5)} - ${slot.timeEnd.substring(0, 5)}`;
+  const hour = parseInt(slot.timeStart.split(':')[0], 10);
+  const period = hour < 12 ? 'morning' : 'afternoon';
+  return { ...slot, displayTime, period };
+}
 
 export const appointmentApi = {
-  getExpertises(): Promise<any[]> {
-    return Promise.resolve([
-      { id: 1, name: 'Nội Tim mạch - Tổng quát', description: 'Triệu chứng: Đau thắt ngực / Tim đập nhanh kèm khó thở / Mạch không đều / Rối loạn mỡ máu...' },
-      { id: 2, name: 'Nội thần kinh', description: 'Triệu chứng: Ngồi lâu đứng dậy bị choáng / Mất ngủ thường xuyên / Đau đầu không rõ nguyên nhân...' },
-      { id: 3, name: 'Cơ Xương Khớp', description: 'Triệu chứng: Đau các khớp tay - chân / Đau lưng / Bong gân / Chấn thương thể thao...' },
-    ]);
+  // Public endpoints
+  getExpertises: async (): Promise<Expertise[]> => {
+    const res = await axiosInstance.get<ApiResponse<Expertise[]>>('/expertise');
+    return res.data.data;
   },
 
-  getServices(): Promise<any[]> {
-    return Promise.resolve([
-      { id: 1, name: 'Khám dịch vụ thường', price: 200000, description: 'Khám chuyên khoa tiêu chuẩn với bác sĩ điều trị.' },
-      { id: 2, name: 'Khám chuyên gia VIP', price: 500000, description: 'Được ưu tiên khám trước, khám trực tiếp với Trưởng/Phó khoa.' },
-    ]);
+  getServices: async (): Promise<Service[]> => {
+    const res = await axiosInstance.get<ApiResponse<Service[]>>('/services');
+    return res.data.data;
   },
 
-  getDoctorsByExpertise(expertiseId: number): Promise<any[]> {
-    return Promise.resolve([
-      { id: 1, expertiseId, fullName: 'BS CKII. Ngô Trung Nam', description: 'Hơn 20 năm kinh nghiệm. Trưởng khoa Nội.' },
-      { id: 2, expertiseId, fullName: 'BS. Trần Thị Mây', description: 'Chuyên gia tư vấn và điều trị các bệnh lý phức tạp.' },
-    ]);
+  getDoctorsByExpertise: async (expertiseId: number): Promise<Doctor[]> => {
+    const res = await axiosInstance.get<ApiResponse<Doctor[]>>(`/staffs?expertiseId=${expertiseId}&staffType=DOCTOR`);
+    return res.data.data;
   },
 
-  getAvailableDates(): Promise<AvailableDate[]> {
+  getAvailableDates: async (): Promise<AvailableDate[]> => {
     const dates: AvailableDate[] = [];
     const today = new Date();
     for (let i = 1; i <= 14; i++) {
@@ -39,71 +46,96 @@ export const appointmentApi = {
       const yyyy = nextDate.getFullYear();
       const mm = String(nextDate.getMonth() + 1).padStart(2, '0');
       const dd = String(nextDate.getDate()).padStart(2, '0');
-      const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+      const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       dates.push({
         dateString: `${yyyy}-${mm}-${dd}`,
         displayDate: `${dd}/${mm}`,
-        dayOfWeek: days[nextDate.getDay()],
+        dayOfWeek: weekdays[nextDate.getDay()],
       });
     }
-    return Promise.resolve(dates);
+    return dates;
   },
 
-  getTimeSlots(appointmentDate: string, p0: number): Promise<TimeSlot[]> {
-    return Promise.resolve([
-      { timeStart: '08:00:00', timeEnd: '08:30:00', displayTime: '08:00 - 08:30', period: 'morning', isAvailable: true },
-      { timeStart: '08:30:00', timeEnd: '09:00:00', displayTime: '08:30 - 09:00', period: 'morning', isAvailable: true },
-      { timeStart: '09:00:00', timeEnd: '09:30:00', displayTime: '09:00 - 09:30', period: 'morning', isAvailable: false },
-      { timeStart: '13:30:00', timeEnd: '14:00:00', displayTime: '13:30 - 14:00', period: 'afternoon', isAvailable: true },
-    ]);
+  getTimeSlots: async (appointmentDate: string, doctorId: number): Promise<TimeSlot[]> => {
+    // TODO: replace with real backend when available
+    // const res = await axiosInstance.get<ApiResponse<TimeSlotRaw[]>>(`/appointments/slots?doctorId=${doctorId}&date=${appointmentDate}`);
+    // return res.data.data.map(enrichTimeSlot);
+    const mockSlots: TimeSlotRaw[] = [
+      { timeStart: '08:00:00', timeEnd: '08:30:00', isAvailable: true },
+      { timeStart: '08:30:00', timeEnd: '09:00:00', isAvailable: true },
+      { timeStart: '09:00:00', timeEnd: '09:30:00', isAvailable: false },
+      { timeStart: '13:30:00', timeEnd: '14:00:00', isAvailable: true },
+    ];
+    return mockSlots.map(enrichTimeSlot);
+  },
+
+  // Authenticated endpoints
+  createAppointment: async (
+    data: BookingFormState
+  ): Promise<{
+    success: boolean;
+    message: string;
+  }> => {
+  
+    const payload = {
+      appointmentDate: data.appointmentDate,
+      timeStart: data.timeStart,
+      timeEnd: data.timeEnd,
+  
+      mainDoctorId:
+        data.doctorId || null,
+  
+      expertiseId:
+        data.expertiseId || null,
+  
+      serviceId:
+        data.serviceId || null,
+  
+      appointmentType: 'ONLINE',
+  
+      createdBy: 'PATIENT',
+  
+      note: data.description,
+    };
+  
+    const res =
+      await axiosInstance.post(
+        '/appointments',
+        payload
+      );
+  
+    return {
+      success: res.data.success,
+      message: res.data.message,
+    };
   },
 
   getMyAppointments: async (): Promise<AppointmentHistoryItem[]> => {
-    await delay(800); // Simulate network latency
-
-    return [
-      {
-        id: 'APT-2026-0522',
-        appointmentDate: '2026-05-25',
-        timeStart: '08:00',
-        timeEnd: '08:30',
-        status: 'CONFIRMED',
-        doctorName: 'BS. Trần Thị Mây',
-        specialty: 'Nội Tổng Quát',
-        facility: 'Phòng khám Đa khoa ClinicPro',
-        symptoms: 'Khám sức khỏe định kỳ',
-        createdAt: '2026-05-20T10:30:00Z'
-      },
-      {
-        id: 'APT-2026-0510',
-        appointmentDate: '2026-05-10',
-        timeStart: '14:00',
-        timeEnd: '14:30',
-        status: 'COMPLETED',
-        doctorName: 'BS CKII. Ngô Trung Nam',
-        specialty: 'Nội Tim Mạch',
-        facility: 'Phòng khám Đa khoa ClinicPro',
-        symptoms: 'Tức ngực, khó thở',
-        createdAt: '2026-05-05T09:15:00Z'
-      },
-      {
-        id: 'APT-2026-0401',
-        appointmentDate: '2026-04-05',
-        timeStart: '09:30',
-        timeEnd: '10:00',
-        status: 'CANCELLED',
-        doctorName: 'Hệ thống sắp xếp',
-        specialty: 'Cơ Xương Khớp',
-        facility: 'Phòng khám Đa khoa ClinicPro',
-        symptoms: 'Đau lưng cấp',
-        createdAt: '2026-04-01T14:20:00Z'
-      }
-    ];
+    const res = await axiosInstance.get<ApiResponse<AppointmentHistoryItem[]>>('/appointments/my');
+    return res.data.data;
   },
 
-  // Cancel an appointment
-  cancelAppointment: async (id: string): Promise<{ success: boolean; message: string }> => {
-    await delay(1000);
-    return { success: true, message: 'Hủy lịch khám thành công!' };
-  }
+  cancelAppointment: async (id: string, reason: string): Promise<{ success: boolean; message: string }> => {
+    const res = await axiosInstance.patch<ApiResponse<unknown>>(`/appointments/${id}/cancel?reason=${encodeURIComponent(reason)}`);
+    return { success: res.data.success, message: res.data.message };
+  },
+
+  getDoctorById: async (
+    doctorId: number
+  ): Promise<Doctor> => {
+    const res =
+      await axiosInstance.get<
+        ApiResponse<Doctor>
+      >(`/staffs/${doctorId}`);
+  
+    return res.data.data;
+  },
+
+  getDoctors: async (): Promise<Doctor[]> => {
+    const res = await axiosInstance.get<ApiResponse<Doctor[]>>(
+      '/staffs/doctors'
+    );
+  
+    return res.data.data;
+  },
 };

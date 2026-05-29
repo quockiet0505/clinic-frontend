@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Search, CheckCircle2, ChevronRight, ChevronLeft } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { CheckCircle2, ChevronRight, ChevronLeft } from 'lucide-react';
+import { SearchInput } from '@/components/common/SearchInput';
 import { homeApi } from '@/features/home/api/homeApi';
 import { getStaticUrl } from '@/utils/url';
+import { useNavigate } from 'react-router-dom';
 
 interface QuickAction {
   id: number;
@@ -11,17 +12,56 @@ interface QuickAction {
 }
 
 export const HeroSection: React.FC = () => {
+  const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(true);
   const [quickActions, setQuickActions] = useState<QuickAction[]>([]);
   const [bannerUrl, setBannerUrl] = useState('/images/banners/hero-banner.webp');
+  const [searchKeyword, setSearchKeyword] = useState('');
   const staticUrl = getStaticUrl();
+
+  // const
+  const handleQuickActionClick = (title: string) => {
+    const value = title.toLowerCase();
+  
+    if (value.includes('bác sĩ')) {
+      navigate('/appointments/book?source=doctor');
+    }
+  
+    else if (
+      value.includes('chuyên khoa') ||
+      value.includes('khám chuyên khoa')
+    ) {
+      navigate('/appointments/book?source=specialty');
+    }
+  
+    else if (
+      value.includes('dịch vụ') ||
+      value.includes('xét nghiệm')
+    ) {
+      navigate('/appointments/book?source=service');
+    }
+  
+    else {
+      navigate('/appointments/book');
+    }
+  
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
 
   useEffect(() => {
     homeApi.getQuickActions().then(setQuickActions).catch(console.error);
     homeApi.getBanner().then(url => setBannerUrl(url)).catch(console.error);
   }, []);
+
+  const handleSearch = (keyword: string) => {
+    setSearchKeyword(keyword);
+    console.log('Searching for:', keyword);
+  };
 
   const handleScroll = () => {
     if (scrollRef.current) {
@@ -61,9 +101,12 @@ export const HeroSection: React.FC = () => {
           <h1 className="text-2xl md:text-4xl font-bold text-white mb-6 text-center drop-shadow-md">
             Kết nối Người Dân với Cơ sở & Dịch vụ Y tế hàng đầu
           </h1>
-          <div className="w-full max-w-3xl relative flex items-center bg-white rounded-full p-1 shadow-lg border border-slate-100 mb-8">
-            <div className="pl-4 pr-2"><Search className="h-5 w-5 text-slate-400" /></div>
-            <Input type="text" placeholder="Tìm kiếm gói khám..." className="flex-1 border-0 shadow-none focus-visible:ring-0 text-base rounded-full h-12" />
+          <div className="w-full max-w-3xl mb-8">
+            <SearchInput
+              value={searchKeyword}
+              onSearch={handleSearch}
+              placeholder="Tìm kiếm gói khám..."
+            />
           </div>
           <div className="flex flex-col items-start gap-2.5 text-white font-medium text-sm md:text-base drop-shadow-md mx-auto">
             <p className="flex items-center gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-green-400 fill-white/20 shrink-0" /><span>Đặt khám nhanh - Lấy số thứ tự trực tuyến - Tư vấn sức khỏe từ xa</span></p>
@@ -83,7 +126,11 @@ export const HeroSection: React.FC = () => {
           )}
           <div ref={scrollRef} onScroll={handleScroll} className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 pt-2 px-2 w-fit max-w-full mx-auto justify-center [&::-webkit-scrollbar]:hidden">
             {quickActions.map((action) => (
-              <div key={action.id} className="min-w-[130px] max-w-[130px] h-[130px] snap-start shrink-0 bg-white rounded-2xl p-4 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center">
+              <div
+                key={action.id}
+                onClick={() => handleQuickActionClick(action.title)}
+                className="min-w-[130px] max-w-[130px] h-[130px] snap-start shrink-0 bg-white rounded-2xl p-4 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center"
+              >
                 <div className="h-12 w-12 mb-3 flex items-center justify-center">
                   <img
                     src={`${staticUrl}${action.iconUrl}`}

@@ -56,12 +56,12 @@ export const FormSearchModal: React.FC<FormSearchModalProps> = ({
   const handleSelect = (val: string) => {
     onChange(val);
     setOpen(false);
-    setSearchQuery(''); // Reset search khi đóng
+    setSearchQuery('');
   };
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[14px] font-bold text-[#003B5C]">
+      <label className="text-[14px] font-bold text-brand-dark">
         {label} {required && <span className="text-red-500 ml-1">*</span>}
       </label>
 
@@ -69,25 +69,25 @@ export const FormSearchModal: React.FC<FormSearchModalProps> = ({
         <DialogTrigger asChild>
           <button
             disabled={disabled}
-            className={`cursor-pointer relative flex w-full items-center justify-between h-[52px] rounded-2xl border border-slate-200 bg-white px-4 text-left shadow-none transition-all focus:ring-2 focus:ring-[#00b5f1]/20 disabled:cursor-not-allowed disabled:bg-slate-50 ${
+            className={`cursor-pointer relative flex w-full items-center justify-between h-[52px] rounded-2xl border border-slate-200 bg-white px-4 text-left shadow-none transition-all focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:bg-slate-50 ${
               TriggerIcon ? 'pl-12' : ''
             }`}
           >
             {TriggerIcon && (
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[#00b5f1]">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-500">
                 <TriggerIcon className="h-5 w-5" />
               </div>
             )}
-            <span className={`truncate text-[14.5px] font-medium ${selectedOption ? 'text-[#003B5C]' : 'text-slate-500'}`}>
+            <span className={`truncate text-[14.5px] font-medium ${selectedOption ? 'text-brand-dark' : 'text-slate-500'}`}>
               {selectedOption ? selectedOption.label : placeholder}
             </span>
             <ChevronDown className="h-5 w-5 text-slate-400 shrink-0" />
           </button>
         </DialogTrigger>
 
-        <DialogContent className="max-w-[500px] rounded-2xl p-0 gap-0 overflow-hidden bg-[#f5f7f9]">
+        <DialogContent className="max-w-[500px] rounded-2xl p-0 gap-0 overflow-hidden bg-slate-50">
           <DialogHeader className="bg-white p-4 border-b border-slate-100">
-            <DialogTitle className="text-center text-[18px] font-black text-[#003B5C]">
+            <DialogTitle className="text-center text-[18px] font-black text-brand-dark">
               {modalTitle}
             </DialogTitle>
           </DialogHeader>
@@ -120,19 +120,19 @@ export const FormSearchModal: React.FC<FormSearchModalProps> = ({
                     <button
                       key={opt.value}
                       onClick={() => handleSelect(opt.value)}
-                      className={`flex items-start gap-4 rounded-2xl border p-4 text-left transition-all ${
+                      className={`cursor-pointer flex items-start gap-4 rounded-2xl border p-4 text-left transition-all ${
                         isSelected
-                          ? 'border-[#00b5f1] bg-[#eaf7fd] shadow-sm'
-                          : 'border-slate-200 bg-white hover:border-[#00b5f1]/50'
+                          ? 'border-primary-500 bg-primary-50 shadow-sm'
+                          : 'border-slate-200 bg-white hover:border-primary-500/50'
                       }`}
                     >
                       {Icon && (
-                        <div className={`mt-1 shrink-0 ${isSelected ? 'text-[#00b5f1]' : 'text-slate-400'}`}>
+                        <div className={`mt-1 shrink-0 ${isSelected ? 'text-primary-500' : 'text-slate-400'}`}>
                           <Icon className="h-6 w-6" />
                         </div>
                       )}
                       <div className="flex-1 flex flex-col gap-1">
-                        <span className={`text-[15px] font-bold ${isSelected ? 'text-[#00b5f1]' : 'text-[#003B5C]'}`}>
+                        <span className={`text-[15px] font-bold ${isSelected ? 'text-primary-500' : 'text-brand-dark'}`}>
                           {opt.label}
                         </span>
                         {opt.description && (
@@ -141,7 +141,7 @@ export const FormSearchModal: React.FC<FormSearchModalProps> = ({
                           </span>
                         )}
                       </div>
-                      {isSelected && <Check className="h-5 w-5 text-[#00b5f1] shrink-0 mt-1" />}
+                      {isSelected && <Check className="h-5 w-5 text-primary-500 shrink-0 mt-1" />}
                     </button>
                   );
                 })

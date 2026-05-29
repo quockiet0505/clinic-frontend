@@ -2,6 +2,7 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './routes';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { ToastProvider } from '@/hooks/useToast';
+ 
 
 function App() {
   return (

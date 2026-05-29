@@ -1,18 +1,16 @@
 import axios from 'axios';
 
-// Create an Axios instance
-const axiosClient = axios.create({
-  baseURL:  'http://localhost:5000/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+const axiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1',
+  timeout: 10000,
+  headers: { 'Content-Type': 'application/json' },
 });
 
-// Add a request interceptor (Auto attach Token)
-axiosClient.interceptors.request.use(
+// Request interceptor: gắn token
+axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('clinic_token');
-    if (token && config.headers) {
+    if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -20,12 +18,11 @@ axiosClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Add a response interceptor (Handle Token Expiration)
-axiosClient.interceptors.response.use(
+// Response interceptor: xử lý 401
+axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      // Auto logout if token is expired/invalid
+    if (error.response?.status === 401) {
       localStorage.removeItem('clinic_token');
       localStorage.removeItem('clinic_user');
       window.location.href = '/login';
@@ -34,4 +31,4 @@ axiosClient.interceptors.response.use(
   }
 );
 
-export default axiosClient;
+export default axiosInstance;

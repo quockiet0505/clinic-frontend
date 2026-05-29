@@ -1,38 +1,58 @@
 import axiosInstance from '@/config/axios';
 import type { RegisterRequest, AuthResponse } from '../types/auth';
 
+interface ApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
+
 export const authApi = {
   login: async (
     email: string,
     password: string
   ): Promise<AuthResponse> => {
-  
-    const response = await axiosInstance.post(
+
+    const response = await axiosInstance.post<ApiResponse<AuthResponse>>(
       '/auth/patient/login',
       {
         email,
         password,
       }
     );
-  
-    console.log('LOGIN RESPONSE:', response.data);
-  
+
+    const apiResponse = response.data;
+
     localStorage.setItem(
       'token',
-      response.data.token
+      apiResponse.data.token
     );
-  
-    return response.data;
+
+    return apiResponse.data;
   },
-  register: async (data: RegisterRequest): Promise<AuthResponse> => {
-    const response = await axiosInstance.post('/auth/patient/register', data);
-    return response.data;
+
+  register: async (
+    data: RegisterRequest
+  ): Promise<AuthResponse> => {
+
+    const response = await axiosInstance.post<ApiResponse<AuthResponse>>(
+      '/auth/patient/register',
+      data
+    );
+
+    return response.data.data;
   },
+
   logout: async () => {
     await axiosInstance.post('/auth/logout');
   },
+
   getCurrentUser: async () => {
-    const response = await axiosInstance.get('/auth/me');
-    return response.data; // { accountId, email, roles }
+
+    const response = await axiosInstance.get(
+      '/auth/me'
+    );
+
+    return response.data.data;
   },
 };

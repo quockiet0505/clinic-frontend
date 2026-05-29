@@ -2,34 +2,49 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   CalendarDays,
-  ChevronDown,
   FileText,
   LogOut,
   Menu,
   Phone,
-  Search,
   User,
   UserCircle,
   X,
 } from 'lucide-react';
 import { Logo } from '@/components/common/Logo';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { FormSelect } from '@/components/common/FormSelect';
+import { HoverDropdown } from '@/components/common/HoverDropdown';
+import { GradientButton } from '@/components/common/GradientButton';
+import { HeaderMenuDropdown } from '@/components/common/index';
 import { useAuth } from '@/hooks/useAuth';
+import { appointmentApi } from '@/features/appointments/api/appointmentApi';
+import type { Expertise, Service } from '@/features/appointments/types/appointment';
 
 export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [language, setLanguage] = useState('vi');
+  const [expertises, setExpertises] = useState<Expertise[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout, loading } = useAuth();
+
+  // Fetch dữ liệu cho dropdown chuyên khoa & xét nghiệm
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [exps, servs] = await Promise.all([
+          appointmentApi.getExpertises(),
+          appointmentApi.getServices(),
+        ]);
+        setExpertises(exps);
+        setServices(servs);
+      } catch (error) {
+        console.error('Failed to fetch menu data:', error);
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -38,14 +53,6 @@ export const Header: React.FC = () => {
   }, []);
 
   const isActive = (path: string) => location.pathname === path;
-
-  const navItems = [
-    { name: 'Trang chủ', path: '/' },
-    { name: 'Dịch vụ', path: '/services' },
-    { name: 'Bác sĩ', path: '/doctors' },
-    { name: 'Đặt khám', path: '/appointments/book' },
-    { name: 'Liên hệ', path: '/contact' },
-  ];
 
   const handleLogout = async () => {
     await logout();
@@ -72,6 +79,32 @@ export const Header: React.FC = () => {
     { label: 'English', value: 'en' },
   ];
 
+  // Dữ liệu cho dropdown Bác sĩ (tĩnh)
+  const doctorMenuItems = [
+    { label: 'Tất cả bác sĩ', to: '/doctors' },
+    { label: 'Bác sĩ nổi bật', to: '/doctors/featured' },
+    { label: 'Đặt khám bác sĩ', to: '/appointments/book?mode=doctor' },
+  ];
+
+  // Dữ liệu cho dropdown Chuyên khoa (động)
+  const expertiseMenuItems = [
+    ...expertises.slice(0, 8).map(exp => ({
+      label: exp.expertiseName,
+      to: `/appointments/book?expertiseId=${exp.expertiseId}`,
+    })),
+    // Trong Header.tsx, phần expertiseMenuItems
+  { label: 'Xem tất cả →', to: '/#specialties-section', isSpecial: true } 
+  ];
+
+  // Dữ liệu cho dropdown Xét nghiệm (động)
+  const serviceMenuItems = [
+    ...services.slice(0, 6).map(svc => ({
+      label: svc.serviceName,
+      to: `/appointments/book?serviceId=${svc.serviceId}`,
+    })),
+    { label: 'Xem tất cả →', to: '/services', isSpecial: true },
+  ];
+
   return (
     <header
       className={`sticky top-0 z-40 w-full bg-white transition-all duration-300 ${
@@ -80,194 +113,250 @@ export const Header: React.FC = () => {
     >
       <div className="container mx-auto px-4 lg:px-8">
         <div className="flex items-center justify-between gap-6">
-          {/* LOGO */}
-          <div className="flex-shrink-0">
+          {/* Logo */}
+          <Link to="/" className="flex-shrink-0">
             <Logo />
-          </div>
+          </Link>
 
-          {/* DESKTOP NAV */}
+          {/* Desktop Navigation */}
           <nav className="hidden xl:flex items-center gap-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`px-4 py-2.5 rounded-full font-semibold text-sm transition-all duration-200 ${
-                  isActive(item.path)
-                    ? 'bg-primary-50 text-primary-500'
-                    : 'text-slate-600 hover:text-primary-500 hover:bg-slate-50'
-                }`}
-              >
-                {item.name}
-              </Link>
-            ))}
+            {/* Trang chủ */}
+            <Link
+              to="/"
+              className={`relative px-4 py-2 rounded-full font-semibold text-sm transition-all duration-200 ${
+                isActive('/')
+                  ? 'text-primary-500'
+                  : 'text-slate-700 hover:text-primary-500'
+              }`}
+            >
+              Trang chủ
+              {isActive('/') && (
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-[3px] w-8 rounded-full bg-primary-500" />
+              )}
+            </Link>
+
+            {/* Bác sĩ dropdown */}
+            <HeaderMenuDropdown
+              title="Bác sĩ"
+              active={location.pathname.includes('/doctors')}
+              items={doctorMenuItems}
+              width="w-48"
+            />
+
+            {/* Chuyên khoa dropdown */}
+            <HeaderMenuDropdown
+              title="Chuyên khoa"
+              active={location.pathname.includes('/specialties')}
+              items={expertiseMenuItems}
+              width="w-48"
+            />
+
+            {/* Xét nghiệm dropdown */}
+            <HeaderMenuDropdown
+              title="Xét nghiệm"
+              active={location.pathname.includes('/services')}
+              items={serviceMenuItems}
+              width="w-65"
+            />
+
+            {/* Liên hệ */}
+            <Link
+              to="/contact"
+              className={`relative px-4 py-2 rounded-full font-semibold text-sm transition-all duration-200 ${
+                isActive('/contact')
+                  ? 'text-primary-500'
+                  : 'text-slate-700 hover:text-primary-500'
+              }`}
+            >
+              Liên hệ
+              {isActive('/contact') && (
+                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-[3px] w-8 rounded-full bg-primary-500" />
+              )}
+            </Link>
           </nav>
 
-          {/* SEARCH */}
-          <div className="hidden lg:flex flex-1 max-w-sm relative group">
-            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
-            </div>
-            <input
-              type="text"
-              placeholder="Tìm bác sĩ, chuyên khoa, dịch vụ..."
-              className="w-full bg-slate-100 border border-transparent text-slate-800 text-sm rounded-full pl-10 pr-4 py-2.5 focus:outline-none focus:bg-white focus:border-primary-500/30 focus:ring-4 focus:ring-primary-500/10 transition-all"
-            />
-          </div>
-
-          {/* RIGHT SECTION (DESKTOP) */}
+          {/* Right side: Phone + booking link, Language, Login */}
           <div className="hidden md:flex items-center gap-4 flex-shrink-0">
-            {/* Hotline */}
             <div className="flex flex-col items-end">
               <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                 Tư vấn / Đặt khám
               </span>
-              <a
-                href="tel:19002115"
-                className="flex items-center gap-1.5 text-warning font-black text-lg hover:scale-105 transition-transform"
-              >
-                <Phone className="w-4 h-4 fill-current" />
-                1900 2115
-              </a>
+              <div className="flex items-center gap-3">
+                <a
+                  href="tel:19002115"
+                  className="flex items-center gap-1.5 text-warning font-black text-lg hover:scale-105 transition-transform"
+                >
+                  <Phone className="w-4 h-4 fill-current" /> 1900 2115
+                </a>
+                <Link
+                  to="/appointments/book"
+                  className="text-primary-500 font-bold text-sm hover:underline"
+                >
+                  Đặt khám
+                </Link>
+              </div>
             </div>
 
             <div className="w-px h-10 bg-slate-200" />
 
             {/* Language Selector */}
-            <div className="w-[130px]">
-              <FormSelect
-                compact
-                value={language}
-                onChange={setLanguage}
-                options={languageOptions}
-                placeholder="Ngôn ngữ"
-              />
-            </div>
+            <HoverDropdown
+              value={language}
+              items={languageOptions}
+              onChange={setLanguage}
+            />
 
             <div className="w-px h-10 bg-slate-200" />
 
-            {/* Auth Section */}
+            {/* Nút đăng nhập (dùng GradientButton) */}
             {loading ? null : !isAuthenticated ? (
-              <Link
-                to="/auth/login"
-                className="group flex items-center gap-2 bg-primary-500 text-white px-6 py-2.5 rounded-full font-bold text-sm hover:bg-primary-600 hover:shadow-lg transition-all duration-200"
+              <GradientButton
+                onClick={() => navigate('/auth/login')}
+                icon={<User className="w-4 h-4" />}
               >
-                <User className="w-4 h-4" />
                 Đăng nhập
-              </Link>
+              </GradientButton>
             ) : (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="cursor-pointer flex items-center gap-2 bg-slate-100 hover:bg-slate-200 rounded-full px-4 py-2 transition-all duration-200">
-                    <span className="text-sm font-bold text-slate-700">
-                      {getInitials()} {displayName}
-                    </span>
-                    <ChevronDown className="h-4 w-4 text-slate-500" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="start"
-                  className="w-max max-w-[90vw] !border-0 ring-0 outline-none shadow-xl rounded-2xl bg-white p-2"
-                >
-                  <div className="px-3 py-3 border-b border-border-default">
-                    <p className="text-sm font-bold text-brand-dark">{displayName}</p>
-                    <p className="text-xs text-slate-500 mt-0.5 break-all">{user?.email}</p>
+              <div className="relative group">
+                <button className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 rounded-full px-4 py-2 transition-all">
+                  <span className="text-sm font-bold text-slate-700">
+                    {getInitials()} {displayName}
+                  </span>
+                </button>
+                <div className="absolute right-0 top-full pt-2 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50">
+                  <div className="w-56 rounded-xl bg-white border border-slate-100 shadow-lg overflow-hidden">
+                    <div className="px-4 py-3 border-b border-slate-100">
+                      <p className="text-sm font-bold text-brand-dark">{displayName}</p>
+                      <p className="text-xs text-slate-500 mt-0.5 break-all">{user?.email}</p>
+                    </div>
+                    <button
+                      onClick={() => navigate('/profile')}
+                      className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
+                      <UserCircle className="inline mr-2 h-4 w-4" />
+                      Hồ sơ cá nhân
+                    </button>
+                    <button
+                      onClick={() => navigate('/appointments/my')}
+                      className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
+                      <CalendarDays className="inline mr-2 h-4 w-4" />
+                      Lịch sử đặt khám
+                    </button>
+                    <button
+                      onClick={() => navigate('/records')}
+                      className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
+                      <FileText className="inline mr-2 h-4 w-4" />
+                      Hồ sơ y tế
+                    </button>
+                    <div className="border-t border-slate-100 my-1" />
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <LogOut className="inline mr-2 h-4 w-4" />
+                      Đăng xuất
+                    </button>
                   </div>
-                  <DropdownMenuItem
-                    onClick={() => navigate('/profile')}
-                    className="cursor-pointer py-3 px-3 text-slate-700 rounded-xl transition-all duration-200 hover:bg-primary-50 hover:text-primary-500 focus:bg-primary-50 focus:text-primary-500"
-                  >
-                    <UserCircle className="mr-2 h-4 w-4" />
-                    Hồ sơ cá nhân
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => navigate('/appointments/my')}
-                    className="cursor-pointer py-3 px-3 text-slate-700 rounded-xl transition-all duration-200 hover:bg-primary-50 hover:text-primary-500 focus:bg-primary-50 focus:text-primary-500"
-                  >
-                    <CalendarDays className="mr-2 h-4 w-4" />
-                    Lịch sử đặt khám
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => navigate('/records')}
-                    className="cursor-pointer py-3 px-3 text-slate-700 rounded-xl transition-all duration-200 hover:bg-primary-50 hover:text-primary-500 focus:bg-primary-50 focus:text-primary-500"
-                  >
-                    <FileText className="mr-2 h-4 w-4" />
-                    Hồ sơ y tế
-                  </DropdownMenuItem>
-                  <div className="border-t border-border-default my-2" />
-                  <DropdownMenuItem
-                    onClick={handleLogout}
-                    className="cursor-pointer py-3 px-3 text-red-600 rounded-xl transition-all duration-200 hover:bg-red-50 focus:bg-red-50"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Đăng xuất
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                </div>
+              </div>
             )}
           </div>
 
-          {/* MOBILE SHEET MENU */}
+          {/* Mobile Menu Button */}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
               <button className="xl:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-all">
                 <Menu className="w-6 h-6" />
               </button>
             </SheetTrigger>
-            <SheetContent
-              side="right"
-              className="w-[320px] p-0 border-l-border-default bg-white"
-            >
+            <SheetContent side="right" className="w-[320px] p-0 border-l-border-default bg-white">
               <div className="flex flex-col h-full">
                 <div className="flex items-center justify-between px-6 py-5 border-b border-border-default">
                   <Logo />
                   <button
                     onClick={() => setIsSheetOpen(false)}
-                    className="p-1 text-slate-400 hover:text-slate-600 transition-colors"
+                    className="p-1 text-slate-400 hover:text-slate-600"
                   >
                     <X className="w-5 h-5" />
                   </button>
                 </div>
-
                 <div className="px-6 py-5 border-b border-border-default">
                   {isAuthenticated ? (
                     <div className="flex items-center gap-3">
                       <div className="w-11 h-11 rounded-full bg-primary-50 text-primary-500 flex items-center justify-center font-bold text-base">
                         {getInitials()}
                       </div>
-                      <div className="flex-1 ">
+                      <div className="flex-1">
                         <p className="font-bold text-brand-dark text-sm">{displayName}</p>
                         <p className="text-xs text-slate-500 mt-0.5 break-all">{user?.email}</p>
                       </div>
                     </div>
                   ) : (
-                    <Link
-                      to="/auth/login"
-                      onClick={() => setIsSheetOpen(false)}
-                      className="cursor-pointer flex items-center justify-center bg-primary-500 text-white rounded-xl h-12 font-bold text-sm w-full hover:bg-primary-600 transition-all"
+                    <GradientButton
+                      onClick={() => navigate('/auth/login')}
+                      className="w-full justify-center"
                     >
                       Đăng nhập
-                    </Link>
+                    </GradientButton>
                   )}
                 </div>
-
                 <div className="flex-1 overflow-y-auto px-4 py-4">
                   <div className="flex flex-col gap-1">
-                    {navItems.map((item) => (
+                    <Link
+                      to="/"
+                      onClick={() => setIsSheetOpen(false)}
+                      className={`px-4 py-3 rounded-xl text-[15px] font-semibold transition-all ${
+                        isActive('/')
+                          ? 'bg-primary-50 text-primary-500'
+                          : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      Trang chủ
+                    </Link>
+                    <Link
+                      to="/doctors"
+                      onClick={() => setIsSheetOpen(false)}
+                      className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50"
+                    >
+                      Bác sĩ
+                    </Link>
+                    <Link
+                      to="/specialties"
+                      onClick={() => setIsSheetOpen(false)}
+                      className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50"
+                    >
+                      Chuyên khoa
+                    </Link>
+                    <Link
+                      to="/services"
+                      onClick={() => setIsSheetOpen(false)}
+                      className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50"
+                    >
+                      Xét nghiệm
+                    </Link>
+                    <Link
+                      to="/contact"
+                      onClick={() => setIsSheetOpen(false)}
+                      className={`px-4 py-3 rounded-xl text-[15px] font-semibold transition-all ${
+                        isActive('/contact')
+                          ? 'bg-primary-50 text-primary-500'
+                          : 'text-slate-700 hover:bg-slate-50'
+                      }`}
+                    >
+                      Liên hệ
+                    </Link>
+                    <div className="pt-2">
                       <Link
-                        key={item.path}
-                        to={item.path}
+                        to="/appointments/book"
                         onClick={() => setIsSheetOpen(false)}
-                        className={`px-4 py-3 rounded-xl text-[15px] font-semibold transition-all ${
-                          isActive(item.path)
-                            ? 'bg-primary-50 text-primary-500'
-                            : 'text-slate-700 hover:bg-slate-50'
-                        }`}
+                        className="flex items-center justify-center bg-primary-500 text-white rounded-xl h-12 font-bold text-sm w-full hover:bg-primary-600"
                       >
-                        {item.name}
+                        Đặt khám
                       </Link>
-                    ))}
+                    </div>
                   </div>
-
                   {isAuthenticated && (
                     <>
                       <div className="h-px bg-border-default my-5" />
@@ -275,21 +364,21 @@ export const Header: React.FC = () => {
                         <Link
                           to="/profile"
                           onClick={() => setIsSheetOpen(false)}
-                          className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50 transition-all"
+                          className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50"
                         >
                           Hồ sơ cá nhân
                         </Link>
                         <Link
                           to="/appointments/my"
                           onClick={() => setIsSheetOpen(false)}
-                          className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50 transition-all"
+                          className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50"
                         >
                           Lịch sử đặt khám
                         </Link>
                         <Link
                           to="/records"
                           onClick={() => setIsSheetOpen(false)}
-                          className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50 transition-all"
+                          className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50"
                         >
                           Hồ sơ y tế
                         </Link>
@@ -297,12 +386,11 @@ export const Header: React.FC = () => {
                     </>
                   )}
                 </div>
-
                 {isAuthenticated && (
                   <div className="p-4 border-t border-border-default">
                     <button
                       onClick={handleLogout}
-                      className="w-full h-12 rounded-xl bg-red-50 text-red-600 font-bold text-sm hover:bg-red-100 transition-all"
+                      className="w-full h-12 rounded-xl bg-red-50 text-red-600 font-bold text-sm hover:bg-red-100"
                     >
                       Đăng xuất
                     </button>

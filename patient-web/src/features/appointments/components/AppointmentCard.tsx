@@ -1,94 +1,72 @@
-import React from 'react';
-import { CalendarDays, Clock, MapPin, Stethoscope, ChevronRight } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import { CancelAppointmentDialog } from './CancelAppointmentDialog';
-import type { AppointmentHistoryItem } from '../types/appointment';
+import React, { useState } from 'react';
 import { format } from 'date-fns';
 
-interface Props {
+import { CalendarDays, Clock3, MapPin, Stethoscope, User, XCircle } from 'lucide-react';
+import { CancelAppointmentDialog } from './CancelAppointmentDialog';
+import type { AppointmentHistoryItem } from '../types/appointment';
+
+interface AppointmentCardProps {
   appointment: AppointmentHistoryItem;
   onCancelSuccess: () => void;
 }
 
-export const AppointmentCard: React.FC<Props> = ({ appointment, onCancelSuccess }) => {
-  const navigate = useNavigate();
-  
-  // Dùng màu mặc định Tailwind (green, slate) cho các trạng thái chung, màu primary cho trạng thái chờ khám
-  const getStatusStyles = (status: string) => {
-    switch (status) {
-      case 'PENDING':
-      case 'CONFIRMED':
-        return 'bg-primary-50 text-primary-600 border border-primary-200';
-      case 'COMPLETED':
-        return 'bg-green-50 text-green-700 border border-green-200';
-      case 'CANCELLED':
-        return 'bg-slate-100 text-slate-500 border border-slate-200';
-      default:
-        return 'bg-slate-100 text-slate-500';
-    }
+const getStatusBadge = (status: AppointmentHistoryItem['status']) => {
+  const styles: Record<string, string> = {
+    PENDING: 'bg-yellow-100 text-yellow-700',
+    CONFIRMED: 'bg-green-100 text-green-700',
+    CHECKED_IN: 'bg-blue-100 text-blue-700',
+    IN_PROGRESS: 'bg-purple-100 text-purple-700',
+    WAITING_RESULT: 'bg-orange-100 text-orange-700',
+    COMPLETED: 'bg-gray-100 text-gray-700',
+    CANCELLED: 'bg-red-100 text-red-600',
   };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'PENDING': return 'CHỜ XÁC NHẬN';
-      case 'CONFIRMED': return 'ĐÃ XÁC NHẬN';
-      case 'COMPLETED': return 'ĐÃ KHÁM';
-      case 'CANCELLED': return 'ĐÃ HỦY';
-      default: return status;
-    }
+  const labels: Record<string, string> = {
+    PENDING: 'Pending',
+    CONFIRMED: 'Confirmed',
+    CHECKED_IN: 'Checked In',
+    IN_PROGRESS: 'In Progress',
+    WAITING_RESULT: 'Waiting Result',
+    COMPLETED: 'Completed',
+    CANCELLED: 'Cancelled',
   };
+  return <span className={`px-2 py-1 rounded-full text-xs font-bold ${styles[status] || 'bg-gray-100'}`}>{labels[status] || status}</span>;
+};
 
-  const isUpcoming = appointment.status === 'CONFIRMED' || appointment.status === 'PENDING';
+export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, onCancelSuccess }) => {
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
   return (
-    <Card className={`rounded-3xl border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer group bg-white overflow-hidden ${appointment.status === 'CANCELLED' ? 'opacity-70' : ''}`}>
-      <CardContent className="p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        
-        <div className="flex-1 flex flex-col gap-4 w-full">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className={`px-3 py-1.5 rounded-lg text-[11px] font-black tracking-wider ${getStatusStyles(appointment.status)}`}>
-              {getStatusText(appointment.status)}
-            </span>
-            <div className={`flex items-center gap-4 font-bold text-[15px] ${appointment.status === 'CANCELLED' ? 'text-slate-400' : 'text-brand-dark'}`}>
-              <span className="flex items-center gap-1.5">
-                <CalendarDays className={`w-4 h-4 ${appointment.status === 'CANCELLED' ? '' : 'text-primary-500'}`}/> 
-                {format(new Date(appointment.appointmentDate), "dd/MM/yyyy")}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Clock className={`w-4 h-4 ${appointment.status === 'CANCELLED' ? '' : 'text-warning'}`}/> 
-                {appointment.timeStart} - {appointment.timeEnd}
-              </span>
-            </div>
+    <div className="bg-white rounded-2xl shadow-sm border border-border-default p-5 hover:shadow-md transition">
+      <div className="flex flex-wrap justify-between items-start gap-3">
+        <div>
+          <div className="flex items-center gap-2 text-sm text-slate-500">
+            <CalendarDays className="w-4 h-4" />
+            {format(new Date(appointment.appointmentDate), 'dd/MM/yyyy')}
+            <Clock3 className="w-4 h-4 ml-2" />
+            {appointment.timeStart} - {appointment.timeEnd}
           </div>
-          
-          <div className="flex flex-col gap-2 mt-2">
-            <p className="text-[16px] font-black text-brand-dark flex items-start gap-2.5 group-hover:text-primary-600 transition-colors">
-              <Stethoscope className="w-5 h-5 text-primary-500 shrink-0 mt-0.5" /> 
-              <span>Khám {appointment.specialty} - <span>{appointment.doctorName}</span></span>
-            </p>
-            <p className="text-[14.5px] text-slate-500 flex items-start gap-2.5 font-medium">
-              <MapPin className="w-5 h-5 text-primary-500 shrink-0" /> {appointment.facility}
-            </p>
+          <h3 className="font-bold text-brand-dark text-lg mt-1">{appointment.doctorName}</h3>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-600 mt-2">
+            <div className="flex items-center gap-1"><Stethoscope className="w-4 h-4 text-primary-500" />{appointment.specialty}</div>
+            <div className="flex items-center gap-1"><User className="w-4 h-4 text-primary-500" />{appointment.symptoms}</div>
+            <div className="flex items-center gap-1"><MapPin className="w-4 h-4 text-primary-500" />{appointment.facility}</div>
           </div>
         </div>
-
-        <div className="flex flex-row md:flex-col gap-3 w-full md:w-auto border-t border-slate-100 md:border-0 pt-5 md:pt-0">
-          <Button 
-            onClick={() => navigate('/appointments/detail')}
-            variant="outline" 
-            className="flex-1 md:w-auto rounded-xl border-slate-200 text-brand-dark hover:border-primary-500 hover:text-primary-500 hover:bg-primary-50 font-bold h-11 transition-all cursor-pointer"
-          >
-            Xem chi tiết <ChevronRight className="w-4 h-4 ml-1" />
-          </Button>
-          
-          {isUpcoming && (
-            <CancelAppointmentDialog appointmentId={appointment.id} onSuccess={onCancelSuccess} />
+        <div className="flex items-center gap-3">
+          {getStatusBadge(appointment.status)}
+          {appointment.status !== 'CANCELLED' && appointment.status !== 'COMPLETED' && (
+            <button onClick={() => setCancelDialogOpen(true)} className="text-red-500 hover:text-red-700 transition">
+              <XCircle className="w-5 h-5" />
+            </button>
           )}
         </div>
-
-      </CardContent>
-    </Card>
+      </div>
+      <CancelAppointmentDialog
+        open={cancelDialogOpen}
+        onOpenChange={setCancelDialogOpen}
+        appointmentId={appointment.id}
+        onSuccess={onCancelSuccess}
+      />
+    </div>
   );
 };

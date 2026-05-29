@@ -9,7 +9,7 @@ export const LandingPage: React.FC = () => {
   const [specialties, setSpecialties] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [services, setServices] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -24,16 +24,17 @@ export const LandingPage: React.FC = () => {
         setServices(servs);
       } catch (error) {
         console.error('Failed to load home data', error);
-      } finally {
-        setLoading(false);
-      }
+      } 
+      // finally {
+      //   setLoading(false);
+      // }
     };
     fetchData();
   }, []);
 
-  if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">Đang tải...</div>;
-  }
+  // if (loading) {
+  //   return <div className="flex justify-center items-center min-h-screen">Đang tải...</div>;
+  // }
 
   return (
     <main className="w-full min-h-screen overflow-x-hidden">

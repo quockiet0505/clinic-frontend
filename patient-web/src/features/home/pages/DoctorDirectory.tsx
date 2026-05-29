@@ -1,21 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { CheckCircle2,  Star, User, Stethoscope, ClipboardList, CalendarDays, CircleDollarSign, ChevronsRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { CheckCircle2, Star, User, Stethoscope, ClipboardList, CalendarDays, CircleDollarSign, ChevronsRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { EmptyState, Pagination, SearchFilterBar, SectionContainer } from '@/components/common';
+import { EmptyState, Pagination, SearchFilterBar, SectionContainer, ActionButton } from '@/components/common';
 import { homeApi } from '../api/homeApi';
 import { getStaticUrl } from '@/utils/url';
 import type { Doctor } from '../types/home';
 
 export const DoctorDirectory: React.FC = () => {
+  const navigate = useNavigate();
+  // ... các state và logic giữ nguyên
   const [doctors, setDoctors] = useState<Doctor[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const staticUrl = getStaticUrl();
 
   useEffect(() => {
-    homeApi.getDoctors().then(setDoctors).finally(() => setLoading(false));
+    homeApi.getDoctors().then(setDoctors);
   }, []);
 
   const formatPrice = (price: number) => {
@@ -31,10 +33,17 @@ export const DoctorDirectory: React.FC = () => {
   const currentItems = filteredDoctors.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   const defaultRating = 4.5;
 
-  if (loading) return <div className="flex justify-center py-20">Đang tải...</div>;
+  const handleBooking = (doctorId: number) => {
+    navigate(`/appointments/book?type=doctor&doctorId=${doctorId}`);
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
 
   return (
     <main className="w-full min-h-screen bg-[linear-gradient(180deg,#eef9ff_0%,#f8fcff_22%,#ffffff_42%)] pb-16">
+      {/* ... phần header giữ nguyên ... */}
       <div className="relative w-full bg-transparent pt-10 pb-24">
         <SectionContainer className="max-w-6xl">
           <div className="bg-white rounded-3xl p-8 shadow-sm max-w-3xl border border-slate-100">
@@ -61,7 +70,7 @@ export const DoctorDirectory: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-[60px] mb-10">
           {currentItems.length > 0 ? (
             currentItems.map((doctor, idx) => (
-              <div key={doctor.staffId} className=" cursor-pointer bg-white rounded-2xl p-5 shadow-md border border-slate-100 flex flex-col sm:flex-row gap-5 hover:shadow-xl hover:border-primary-500 transition-all">
+              <div key={doctor.staffId} className="cursor-pointer bg-white rounded-2xl p-5 shadow-md border border-slate-100 flex flex-col sm:flex-row gap-5 hover:shadow-xl hover:border-primary-500 transition-all">
                 <div className="w-[130px] shrink-0 flex flex-col gap-3">
                   <div className="w-full h-[140px] bg-slate-100 rounded-xl overflow-hidden">
                     <img src={`${staticUrl}${doctor.imageUrl}`} alt={doctor.fullName} className="w-full h-full object-cover" />
@@ -81,7 +90,14 @@ export const DoctorDirectory: React.FC = () => {
                     <div className="flex items-start gap-2"><CalendarDays className="w-4 h-4 text-slate-400 shrink-0" /><span>Hẹn khám</span></div>
                     <div className="flex items-start gap-2"><CircleDollarSign className="w-4 h-4 text-slate-400 shrink-0" /><span>{formatPrice(doctor.consultationFee || 200000)}</span></div>
                   </div>
-                  <Button className="mt-5 bg-primary-500 hover:bg-primary-600 text-white rounded-full">Đặt ngay</Button>
+                  {/* Thay Button bằng ActionButton, */}
+                  <ActionButton
+                    onClick={() => handleBooking(doctor.staffId)}
+                    // className="mt-5 rounded-full "
+                    className="mt-4 h-11 px-6 text-sm"
+                  >
+                    Đặt ngay
+                  </ActionButton>
                 </div>
               </div>
             ))
