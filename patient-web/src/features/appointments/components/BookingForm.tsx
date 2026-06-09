@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Activity, Stethoscope, BriefcaseMedical } from 'lucide-react';
+import { Activity, Stethoscope, BriefcaseMedical, CalendarDays, FileText, CheckCircle2 } from 'lucide-react';
 import { FormSearchModal, FormTextarea } from '@/components/common';
 import { TimeSlotPicker } from './TimeSlotPicker';
 import { appointmentApi } from '../api/appointmentApi';
@@ -45,16 +45,14 @@ export const BookingForm: React.FC<BookingFormProps> = ({
     description: '',
   });
 
-  // QUY TẮC HIỂN THỊ (đã sửa)
   const showExpertise = !isServiceBooking && mode !== 'service';
-  const showDoctor = !isServiceBooking && mode !== 'service';   // 👈 bỏ !isDoctorBooking
+  const showDoctor = !isServiceBooking && mode !== 'service';   
   const showService = isServiceBooking || mode === 'service';
 
   const expertiseDisabled = isDoctorBooking || isExpertiseBooking;
   const doctorDisabled = isDoctorBooking;
   const serviceDisabled = isServiceBooking;
 
-  // 1. Fetch danh mục chính
   useEffect(() => {
     const fetchInitial = async () => {
       try {
@@ -67,13 +65,12 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         setServices(servs);
         setDates(avDates);
       } catch {
-        toast({ title: 'Error', description: 'Failed to load booking data', variant: 'destructive' });
+        toast({ title: 'Lỗi', description: 'Không thể tải dữ liệu đặt khám', variant: 'destructive' });
       }
     };
     fetchInitial();
   }, [toast]);
 
-  // 2. Nếu có doctorId: lấy thông tin bác sĩ, set expertise và cập nhật danh sách doctors
   useEffect(() => {
     if (!preselectedDoctorId) return;
     setLoading(prev => ({ ...prev, doctor: true }));
@@ -84,7 +81,6 @@ export const BookingForm: React.FC<BookingFormProps> = ({
           doctorId: doctor.staffId,
           expertiseId: doctor.expertiseId ?? '',
         }));
-        // Lấy danh sách bác sĩ theo chuyên khoa (để dropdown hiển thị đúng tên)
         if (doctor.expertiseId) {
           return appointmentApi.getDoctorsByExpertise(doctor.expertiseId);
         }
@@ -97,7 +93,6 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       .finally(() => setLoading(prev => ({ ...prev, doctor: false })));
   }, [preselectedDoctorId]);
 
-  // 3. Nếu có expertiseId (không có doctorId): lấy danh sách bác sĩ theo chuyên khoa
   useEffect(() => {
     if (!preselectedExpertiseId || preselectedDoctorId) return;
     appointmentApi.getDoctorsByExpertise(preselectedExpertiseId)
@@ -105,7 +100,6 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       .catch(console.error);
   }, [preselectedExpertiseId, preselectedDoctorId]);
 
-  // 4. Khi người dùng thay đổi chuyên khoa (nếu không bị disable và không phải doctor booking)
   useEffect(() => {
     if (!formData.expertiseId || expertiseDisabled || isDoctorBooking) return;
     appointmentApi.getDoctorsByExpertise(Number(formData.expertiseId))
@@ -113,16 +107,16 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       .catch(console.error);
   }, [formData.expertiseId, expertiseDisabled, isDoctorBooking]);
 
-  // 5. Lấy khung giờ
   useEffect(() => {
-    if (!formData.appointmentDate || !formData.doctorId) {
+    if (!formData.appointmentDate || (!formData.doctorId && showDoctor)) {
       setTimeSlots([]);
       return;
     }
-    appointmentApi.getTimeSlots(formData.appointmentDate, Number(formData.doctorId))
+    const targetDoctor = showDoctor ? Number(formData.doctorId) : 0;
+    appointmentApi.getTimeSlots(formData.appointmentDate, targetDoctor)
       .then(setTimeSlots)
       .catch(console.error);
-  }, [formData.appointmentDate, formData.doctorId]);
+  }, [formData.appointmentDate, formData.doctorId, showDoctor]);
 
   const updateFormData = useCallback((data: Partial<BookingFormState>) => {
     setFormData(prev => ({ ...prev, ...data }));
@@ -130,7 +124,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
 
   const handleSubmit = async () => {
     if (!formData.appointmentDate || !formData.timeStart || !formData.description.trim()) {
-      toast({ title: 'Missing info', description: 'Please fill all required fields', variant: 'destructive' });
+      toast({ title: 'Thiếu thông tin', description: 'Vui lòng điền đầy đủ các thông tin bắt buộc', variant: 'destructive' });
       return;
     }
     try {
@@ -138,21 +132,36 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       if (result.success) {
         onSubmit(formData);
       } else {
-        toast({ title: 'Error', description: result.message, variant: 'destructive' });
+        toast({ title: 'Lỗi', description: result.message, variant: 'destructive' });
       }
     } catch {
-      toast({ title: 'Error', description: 'Failed to create appointment', variant: 'destructive' });
+      toast({ title: 'Lỗi', description: 'Không thể tạo lịch hẹn', variant: 'destructive' });
     }
   };
 
+  useEffect(() => {
+    setFormData(prev => ({
+      ...prev,
+      expertiseId: preselectedExpertiseId ?? '',
+      serviceId: preselectedServiceId ?? '',
+      doctorId: preselectedDoctorId ?? '',
+      timeStart: '',
+      timeEnd: '',
+    }));
+  }, [preselectedExpertiseId, preselectedServiceId, preselectedDoctorId]);
+
   const isFormValid = Boolean(formData.appointmentDate && formData.timeStart && formData.description.trim());
 
-  // Helper để hiển thị đúng label khi field bị disabled
+  // TÍNH TOÁN TRẠNG THÁI TIẾN TRÌNH
+  const isStep1Done = Boolean(formData.appointmentDate && formData.timeStart);
+  const isStep2Done = Boolean(isStep1Done && formData.description.trim().length > 0);
+  const isStep3Done = isFormValid;
+
   const getExpertiseOptions = () => {
     if (expertiseDisabled && formData.expertiseId) {
       const found = expertises.find(e => e.expertiseId === Number(formData.expertiseId));
       if (found) return [{ value: String(found.expertiseId), label: found.expertiseName, icon: Activity }];
-      if (loading.doctor) return [{ value: String(formData.expertiseId), label: 'Loading...', icon: Activity }];
+      if (loading.doctor) return [{ value: String(formData.expertiseId), label: 'Đang tải...', icon: Activity }];
     }
     return expertises.map(e => ({ value: String(e.expertiseId), label: e.expertiseName, description: e.description, icon: Activity }));
   };
@@ -161,7 +170,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
     if (serviceDisabled && preselectedServiceId) {
       const found = services.find(s => s.serviceId === preselectedServiceId);
       if (found) return [{ value: String(found.serviceId), label: found.serviceName, description: found.description, icon: BriefcaseMedical }];
-      return [{ value: String(preselectedServiceId), label: 'Loading...', icon: BriefcaseMedical }];
+      return [{ value: String(preselectedServiceId), label: 'Đang tải...', icon: BriefcaseMedical }];
     }
     return services.map(s => ({ value: String(s.serviceId), label: `${s.serviceName} - ${s.price.toLocaleString('vi-VN')}đ`, description: s.description, icon: BriefcaseMedical }));
   };
@@ -170,30 +179,59 @@ export const BookingForm: React.FC<BookingFormProps> = ({
     if (doctorDisabled && preselectedDoctorId) {
       const found = doctors.find(d => d.staffId === preselectedDoctorId);
       if (found) return [{ value: String(found.staffId), label: found.fullName, description: found.description, icon: Stethoscope }];
-      if (loading.doctor) return [{ value: String(preselectedDoctorId), label: 'Loading...', icon: Stethoscope }];
-      return [{ value: String(preselectedDoctorId), label: 'Doctor not found', icon: Stethoscope }];
+      if (loading.doctor) return [{ value: String(preselectedDoctorId), label: 'Đang tải...', icon: Stethoscope }];
+      return [{ value: String(preselectedDoctorId), label: 'Không tìm thấy bác sĩ', icon: Stethoscope }];
     }
     return [
-      { value: 'none', label: 'Auto assign doctor' },
+      { value: 'none', label: 'Sắp xếp bác sĩ ngẫu nhiên' },
       ...doctors.map(d => ({ value: String(d.staffId), label: d.fullName, description: d.description, icon: Stethoscope })),
     ];
   };
 
   return (
     <div className="flex flex-col gap-8">
-      <h2 className="text-2xl font-black text-brand-dark text-center">
-        {isDoctorBooking ? 'Doctor Consultation' : isServiceBooking ? 'Service Booking' : 'Book Appointment'}
-      </h2>
+      {/* HEADER BẢN CŨ CÓ THÊM THANH MINI STEPPER */}
+      <div className="flex flex-col items-center mb-2">
+        <h2 className="text-[26px] font-black text-brand-dark text-center mb-6">
+          {isDoctorBooking ? 'Đặt khám Bác sĩ' : isServiceBooking ? 'Đặt lịch Xét nghiệm' : 'Đăng ký Khám bệnh'}
+        </h2>
+        
+        {/* MINI PROGRESS BAR (ICONS ONLY) */}
+        <div className="relative flex justify-between items-center w-48 mb-2">
+          {/* Progress Line Background */}
+          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-0.5 bg-slate-200 z-0"></div>
+          {/* Active Progress Line */}
+          <div 
+            className="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 bg-primary-500 z-0 transition-all duration-500"
+            style={{ width: isStep2Done ? '100%' : isStep1Done ? '50%' : '0%' }}
+          ></div>
+
+          {/* Icon 1: Calendar */}
+          <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center border-2 bg-white transition-colors duration-300 ${isStep1Done ? 'border-primary-500 text-primary-500' : 'border-primary-500 text-primary-500'}`}>
+            <CalendarDays className="w-4 h-4" />
+          </div>
+
+          {/* Icon 2: Document */}
+          <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center border-2 bg-white transition-colors duration-300 ${isStep2Done ? 'border-primary-500 text-primary-500' : isStep1Done ? 'border-primary-500 text-primary-500' : 'border-slate-200 text-slate-300'}`}>
+            <FileText className="w-4 h-4" />
+          </div>
+
+          {/* Icon 3: Check */}
+          <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center border-2 bg-white transition-colors duration-300 ${isStep3Done ? 'border-primary-500 bg-primary-500 text-white' : isStep2Done ? 'border-primary-500 text-primary-500' : 'border-slate-200 text-slate-300'}`}>
+            <CheckCircle2 className="w-4 h-4" />
+          </div>
+        </div>
+      </div>
 
       <div className="flex flex-col gap-7">
         {showExpertise && (
           <FormSearchModal
-            label="Specialty"
+            label="Chuyên khoa"
             triggerIcon={Activity}
-            modalTitle="Select Specialty"
+            modalTitle="Chọn Chuyên khoa"
             value={String(formData.expertiseId)}
             disabled={expertiseDisabled}
-            placeholder="Select specialty"
+            placeholder="Chọn chuyên khoa"
             onChange={(val) => updateFormData({ expertiseId: Number(val), doctorId: '', timeStart: '', timeEnd: '' })}
             options={getExpertiseOptions()}
           />
@@ -201,12 +239,12 @@ export const BookingForm: React.FC<BookingFormProps> = ({
 
         {showService && (
           <FormSearchModal
-            label="Service"
+            label="Dịch vụ"
             triggerIcon={BriefcaseMedical}
-            modalTitle="Select Service"
+            modalTitle="Chọn Dịch vụ"
             value={String(formData.serviceId)}
             disabled={serviceDisabled}
-            placeholder="Select service"
+            placeholder="Chọn dịch vụ"
             onChange={(val) => updateFormData({ serviceId: Number(val) })}
             options={getServiceOptions()}
           />
@@ -214,12 +252,12 @@ export const BookingForm: React.FC<BookingFormProps> = ({
 
         {showDoctor && (
           <FormSearchModal
-            label="Doctor"
+            label="Bác sĩ"
             triggerIcon={Stethoscope}
-            modalTitle="Select Doctor"
+            modalTitle="Chọn Bác sĩ"
             value={String(formData.doctorId)}
             disabled={doctorDisabled}
-            placeholder="Choose doctor or leave empty"
+            placeholder="Chọn bác sĩ hoặc để trống"
             onChange={(val) => updateFormData({ doctorId: val === 'none' ? '' : Number(val), timeStart: '', timeEnd: '' })}
             options={getDoctorOptions()}
           />
@@ -228,21 +266,21 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         <TimeSlotPicker formData={formData} updateForm={updateFormData} dates={dates} timeSlots={timeSlots} />
 
         <FormTextarea
-          label="Symptoms / Medical condition"
+          label="Triệu chứng / Lý do khám"
           required
           value={formData.description}
           onChange={(value) => updateFormData({ description: value })}
-          placeholder="Describe your symptoms..."
+          placeholder="Mô tả triệu chứng của bạn..."
         />
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end mt-4">
         <button
           onClick={handleSubmit}
           disabled={!isFormValid}
-          className="cursor-pointer bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl h-12 px-12 shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition"
+          className="cursor-pointer bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl h-12 px-12 shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
-          Confirm
+          Xác nhận đặt lịch
         </button>
       </div>
     </div>

@@ -20,3 +20,5 @@ export * from './ActionButton';
 export * from './ScrollToHash';
 export * from './GradientButton';
 export * from './HeaderMenuDropdown';
+export * from './ScrollToTop';
+export * from './ImageWithFallback';

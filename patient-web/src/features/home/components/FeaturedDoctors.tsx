@@ -4,6 +4,7 @@ import { Star, User, Stethoscope, CircleDollarSign, Hospital } from 'lucide-reac
 import { CarouselWrapper, SectionContainer, SectionHeader, ViewAllButton, ActionButton } from '@/components/common';
 import { getStaticUrl } from '@/utils/url';
 import { useNavigate } from 'react-router-dom';
+import { ImageWithFallback } from '@/components/common/ImageWithFallback';
 import type { Doctor } from '../types/home';
 
 interface Props {
@@ -42,7 +43,7 @@ export const FeaturedDoctors: React.FC<Props> = ({ doctors }) => {
   };
 
   return (
-    <section className="py-14 bg-gradient-to-b from-gradient-blue via-gradient-white-cold to-white">
+    <section id="featured-doctors-section" className="py-14 bg-gradient-to-b from-gradient-blue via-gradient-white-cold to-white">
       <SectionContainer className="relative">
         <SectionHeader title="Bác sĩ tư vấn khám bệnh qua video" />
         <CarouselWrapper>
@@ -53,12 +54,12 @@ export const FeaturedDoctors: React.FC<Props> = ({ doctors }) => {
               className="cursor-pointer min-w-[270px] max-w-[270px] shrink-0 snap-start bg-white rounded-xl shadow-md border border-slate-100 flex flex-col overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
               <div className="flex justify-center pt-6 pb-4">
-                <div className="w-28 h-28 rounded-full overflow-hidden bg-slate-100">
-                  <img
+                <div className="w-28 h-28 rounded-full overflow-hidden bg-slate-100 relative">
+                  <ImageWithFallback
                     src={`${staticUrl}${doctor.imageUrl}`}
                     alt={doctor.fullName}
                     className="w-full h-full object-cover"
-                    onError={(e) => (e.currentTarget.src = '/images/default-avatar.png')}
+                    containerClassName="absolute inset-0 w-full h-full"
                   />
                 </div>
               </div>

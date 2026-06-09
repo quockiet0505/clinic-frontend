@@ -34,19 +34,41 @@ export const MyProfile: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background-light">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
-      </div>
+      <main className="min-h-screen bg-background-light py-10">
+        <SectionContainer className="max-w-6xl">
+          <div className="h-8 bg-slate-200 rounded animate-pulse w-48 mb-6"></div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div className="lg:col-span-4">
+              <div className="h-80 bg-slate-200 rounded-3xl animate-pulse w-full"></div>
+            </div>
+            <div className="lg:col-span-8 flex flex-col gap-6">
+              <div className="h-14 bg-slate-200 rounded-2xl animate-pulse w-full md:w-64"></div>
+              <div className="h-96 bg-slate-200 rounded-3xl animate-pulse w-full"></div>
+            </div>
+          </div>
+        </SectionContainer>
+      </main>
     );
   }
 
   if (error || !profile) {
+    const isForbidden = error === 'Forbidden' || error?.includes('403');
     return (
       <div className="min-h-screen flex items-center justify-center bg-background-light">
-        <Card className="p-8 text-center">
-          <p className="text-red-500">{error || 'Không có dữ liệu'}</p>
-          <button onClick={fetchProfile} className="mt-4 px-4 py-2 bg-primary-500 text-white rounded-full">
-            Thử lại
+        <Card className="p-8 text-center max-w-sm rounded-3xl shadow-sm border-0">
+          <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <User className="w-8 h-8" />
+          </div>
+          <h2 className="text-lg font-bold text-brand-dark mb-2">
+            {isForbidden ? 'Không có quyền truy cập' : 'Chưa có dữ liệu hồ sơ'}
+          </h2>
+          <p className="text-slate-500 font-medium mb-6 text-sm">
+            {isForbidden 
+              ? 'Phiên đăng nhập đã hết hạn hoặc bạn không có quyền truy cập trang này.' 
+              : 'Chúng tôi không tìm thấy thông tin hồ sơ của bạn. Vui lòng thử lại.'}
+          </p>
+          <button onClick={() => window.location.href = isForbidden ? '/auth/login' : '/'} className="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl w-full cursor-pointer transition-colors shadow-sm">
+            {isForbidden ? 'Đăng nhập lại' : 'Quay về trang chủ'}
           </button>
         </Card>
       </div>
@@ -54,78 +76,78 @@ export const MyProfile: React.FC = () => {
   }
 
   const fullName = profile.full_name || '';
-  const initials = fullName
-    ? fullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
-    : 'KH';
-
   return (
     <main className="min-h-screen bg-background-light py-10">
       <SectionContainer className="max-w-6xl">
-        <h1 className="text-2xl font-black text-brand-dark mb-6">Quản lý hồ sơ</h1>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Sidebar trái */}
-          <div className="lg:col-span-4 flex flex-col gap-6 lg:sticky top-24">
-            <Card className="rounded-3xl border-border-default shadow-sm overflow-hidden bg-white">
-              <CardContent className="p-8 flex flex-col items-center text-center">
-                <div className="w-24 h-24 bg-primary-50 border-[6px] border-white outline outline-1 outline-border-default rounded-full flex items-center justify-center shadow-sm mb-4">
-                  <span className="text-2xl font-black text-primary-500">{initials}</span>
-                </div>
-                <h2 className="text-xl font-black text-brand-dark mb-2">{profile.full_name}</h2>
-                <span className="px-4 py-1.5 rounded-full text-[11px] font-bold bg-primary-500 text-white mb-6 uppercase tracking-wider">Bệnh nhân</span>
-                <div className="w-full h-px bg-border-default mb-6" />
-                <div className="flex flex-col gap-5 w-full text-left text-[14px] text-slate-600 font-medium">
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                      <Phone className="w-4 h-4 text-primary-500" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[12px] text-slate-400 font-bold uppercase">Số điện thoại</span>
-                      <span className="text-brand-dark">{profile.phone || 'Chưa cập nhật'}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                      <Mail className="w-4 h-4 text-primary-500" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[12px] text-slate-400 font-bold uppercase">Email</span>
-                      <span className="text-brand-dark break-all">{profile.email}</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="mt-0.5 w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
-                      <MapPin className="w-4 h-4 text-primary-500" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[12px] text-slate-400 font-bold uppercase">Địa chỉ</span>
-                      <span className="text-brand-dark leading-relaxed">{profile.address || 'Chưa cập nhật'}</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Phần bên phải */}
-          <div className="lg:col-span-8 flex flex-col">
-            <Tabs defaultValue="personal" className="w-full flex flex-col">
-              <div className="bg-white border border-border-default p-1.5 rounded-2xl mb-6 shadow-sm flex items-center w-full md:w-fit">
-                <TabsList className="bg-transparent h-11 w-full md:w-auto p-0 gap-1 flex justify-start rounded-none">
+        <Tabs defaultValue="personal" className="w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* Sidebar trái: Tiêu đề + Thông tin */}
+            <div className="lg:col-span-4 flex flex-col gap-6 lg:sticky top-24">
+              <div className="bg-slate-100 p-1.5 rounded-2xl flex items-center w-full">
+                <TabsList className="bg-transparent h-11 w-full p-0 flex gap-1 rounded-none">
                   <TabsTrigger 
                     value="personal" 
-                    className="rounded-xl flex-1 md:flex-none px-6 h-full font-bold text-slate-600 transition-all duration-200 gap-2 whitespace-nowrap data-[state=active]:bg-primary-500 data-[state=active]:text-white"
+                    className="rounded-xl flex-1 px-2 h-full text-[14px] font-bold text-slate-500 transition-all gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm cursor-pointer"
                   >
-                    <User className="w-4 h-4" /> Thông tin cá nhân
+                    <User className="w-4 h-4" /> Thông tin
                   </TabsTrigger>
                   <TabsTrigger 
                     value="security" 
-                    className="rounded-xl flex-1 md:flex-none px-6 h-full font-bold text-slate-600 transition-all duration-200 gap-2 whitespace-nowrap data-[state=active]:bg-primary-500 data-[state=active]:text-white"
+                    className="rounded-xl flex-1 px-2 h-full text-[14px] font-bold text-slate-500 transition-all gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm cursor-pointer"
                   >
-                    <ShieldCheck className="w-4 h-4" /> Đổi mật khẩu
+                    <ShieldCheck className="w-4 h-4" /> Bảo mật
                   </TabsTrigger>
                 </TabsList>
               </div>
-              <Card className="rounded-3xl border-border-default shadow-sm bg-white overflow-hidden">
+              
+              <Card className="rounded-3xl border-slate-200 shadow-sm overflow-hidden bg-white">
+                <CardContent className="p-8 flex flex-col items-center text-center">
+                  <div className="w-24 h-24 bg-primary-50 border-[6px] border-white outline outline-1 outline-slate-100 rounded-full flex items-center justify-center shadow-sm mb-4">
+                    <span className="text-3xl font-black text-primary-500">
+                      {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U'}
+                    </span>
+                  </div>
+                  <h2 className="text-xl font-bold text-brand-dark">{profile?.full_name}</h2>
+                  <p className="text-primary-600 font-medium text-[14px] bg-primary-50 px-3 py-1 rounded-full mt-2">Bệnh nhân</p>
+
+                  <div className="w-full border-t border-slate-100 my-6"></div>
+
+                  <div className="w-full flex flex-col gap-4 text-left">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-primary-500 shrink-0">
+                        <Phone className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-[12px] font-semibold text-slate-400 uppercase tracking-wider">Điện thoại</p>
+                        <p className="font-medium text-slate-700 text-[14.5px]">{profile?.phone || 'Chưa cập nhật'}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-primary-500 shrink-0">
+                        <Mail className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-[12px] font-semibold text-slate-400 uppercase tracking-wider">Email</p>
+                        <p className="font-medium text-slate-700 text-[14.5px] break-all">{profile?.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-primary-500 shrink-0">
+                        <MapPin className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-[12px] font-semibold text-slate-400 uppercase tracking-wider">Địa chỉ</p>
+                        <p className="font-medium text-slate-700 text-[14.5px] leading-tight">{profile?.address || 'Chưa cập nhật'}</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Phần bên phải: Nội dung Form */}
+            <div className="lg:col-span-8 flex flex-col">
+              <Card className="rounded-3xl border-slate-200 shadow-sm bg-white overflow-hidden">
                 <TabsContent value="personal" className="outline-none mt-0">
                   <div className="p-8">
                     <h3 className="text-[18px] font-black text-brand-dark mb-6">Cập nhật hồ sơ bệnh nhân</h3>
@@ -139,9 +161,9 @@ export const MyProfile: React.FC = () => {
                   </div>
                 </TabsContent>
               </Card>
-            </Tabs>
+            </div>
           </div>
-        </div>
+        </Tabs>
       </SectionContainer>
     </main>
   );

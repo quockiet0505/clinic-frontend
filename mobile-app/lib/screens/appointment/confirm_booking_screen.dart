@@ -1,5 +1,6 @@
-// --- lib/screens/appointment/confirm_booking_screen.dart ---
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:provider/provider.dart';
+import 'package:clinic_management_system/providers/appointment_provider.dart';
 
 class ConfirmBookingScreen extends StatefulWidget {
   const ConfirmBookingScreen({super.key});
@@ -9,19 +10,19 @@ class ConfirmBookingScreen extends StatefulWidget {
 }
 
 class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
-  bool _isLoading = false;
 
-  void _handleConfirm() async {
-    setState(() => _isLoading = true);
-    
-    // Simulate API call to save appointment
-    await Future.delayed(const Duration(seconds: 2));
+  void _handleConfirm(AppointmentProvider provider) async {
+    final success = await provider.confirmBooking();
     
     if (!mounted) return;
-    setState(() => _isLoading = false);
 
-    // Show Success Dialog
-    _showSuccessDialog();
+    if (success) {
+      _showSuccessDialog();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(provider.error ?? 'Booking failed')),
+      );
+    }
   }
 
   void _showSuccessDialog() {
@@ -39,10 +40,10 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.success.withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 64),
+                child: const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 64),
               ),
               const SizedBox(height: 24),
               Text('Booking Successful!', style: AppStyles.heading2.copyWith(color: AppColors.textMainLight)),
@@ -75,48 +76,48 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
-      appBar: AppBar(
-        backgroundColor: AppColors.bgLight,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textMainLight),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text('Confirm Booking', style: AppStyles.heading2.copyWith(color: AppColors.textMainLight)),
-        centerTitle: true,
+      appBar: const GradientAppBar(
+        title: 'Xác nhận Đặt lịch',
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 1. Doctor Information Card
-                  _buildSectionTitle('Doctor Info'),
-                  const SizedBox(height: 12),
-                  _buildDoctorCard(),
-                  const SizedBox(height: 32),
+      body: Consumer<AppointmentProvider>(
+        builder: (context, provider, child) {
+          final doctor = provider.selectedDoctor;
+          if (doctor == null) return const Center(child: Text("Missing Data"));
 
-                  // 2. Appointment Schedule Card
-                  _buildSectionTitle('Schedule Details'),
-                  const SizedBox(height: 12),
-                  _buildScheduleCard(),
-                  const SizedBox(height: 32),
+          return Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 1. Doctor Information Card
+                      _buildSectionTitle('Doctor Info'),
+                      const SizedBox(height: 12),
+                      _buildDoctorCard(doctor),
+                      const SizedBox(height: 32),
 
-                  // 3. Payment Summary Card
-                  _buildSectionTitle('Payment Summary'),
-                  const SizedBox(height: 12),
-                  _buildPaymentSummaryCard(),
-                ],
+                      // 2. Appointment Schedule Card
+                      _buildSectionTitle('Schedule Details'),
+                      const SizedBox(height: 12),
+                      _buildScheduleCard(provider.selectedDate ?? '', provider.selectedTime ?? ''),
+                      const SizedBox(height: 32),
+
+                      // 3. Payment Summary Card
+                      _buildSectionTitle('Payment Summary'),
+                      const SizedBox(height: 12),
+                      _buildPaymentSummaryCard(),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-          
-          // 4. Bottom Action Bar
-          _buildBottomBar(),
-        ],
+              
+              // 4. Bottom Action Bar
+              _buildBottomBar(provider),
+            ],
+          );
+        },
       ),
     );
   }
@@ -125,7 +126,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
     return Text(title, style: AppStyles.heading3.copyWith(color: AppColors.textMainLight));
   }
 
-  Widget _buildDoctorCard() {
+  Widget _buildDoctorCard(Map<String, dynamic> doctor) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -135,18 +136,25 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
       ),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(16),
-            child: Image.network('https://i.pravatar.cc/150?img=5', height: 70, width: 70, fit: BoxFit.cover),
+          Hero(
+            tag: 'doctor_img_${doctor['staffId']}',
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.network(
+                doctor['imageUrl'] ?? 'https://via.placeholder.com/150',
+                height: 70, width: 70, fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200], height: 70, width: 70, child: const Icon(Icons.person, color: Colors.grey)),
+              ),
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Dr. Alexa Johnson', style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold)),
+                Text('Dr. ${doctor['fullName']}', style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text('Neurology', style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
+                Text(doctor['expertiseName'] ?? 'Specialist', style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
               ],
             ),
           ),
@@ -155,7 +163,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
     );
   }
 
-  Widget _buildScheduleCard() {
+  Widget _buildScheduleCard(String date, String time) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -165,12 +173,12 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
       ),
       child: Column(
         children: [
-          _buildInfoRow(Icons.calendar_month_rounded, 'Date', 'Thu, Oct 27, 2026'),
+          _buildInfoRow(Icons.calendar_month_rounded, 'Date', date),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Divider(color: Color(0xFFF1F1F1), thickness: 1),
           ),
-          _buildInfoRow(Icons.access_time_rounded, 'Time', '10:00 AM - 10:30 AM'),
+          _buildInfoRow(Icons.access_time_rounded, 'Time', time),
         ],
       ),
     );
@@ -198,7 +206,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
       ),
       child: Column(
         children: [
-          _buildPriceRow('Consultation Fee', '\$60.00'),
+          _buildPriceRow('Consultation Fee', '\$50.00'),
           const SizedBox(height: 12),
           _buildPriceRow('Admin Fee', '\$2.00'),
           const Padding(
@@ -209,7 +217,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('Total', style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold)),
-              Text('\$62.00', style: AppStyles.heading2.copyWith(color: AppColors.primary)),
+              Text('\$52.00', style: AppStyles.heading2.copyWith(color: AppColors.primary)),
             ],
           ),
         ],
@@ -227,7 +235,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
     );
   }
 
-  Widget _buildBottomBar() {
+  Widget _buildBottomBar(AppointmentProvider provider) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -239,8 +247,8 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
       ),
       child: CustomButton(
         text: 'Confirm & Book',
-        isLoading: _isLoading,
-        onPressed: _handleConfirm,
+        isLoading: provider.isLoading,
+        onPressed: () => _handleConfirm(provider),
       ),
     );
   }

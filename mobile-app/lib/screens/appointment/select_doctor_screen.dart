@@ -1,5 +1,7 @@
-// --- lib/screens/appointment/select_doctor_screen.dart ---
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:provider/provider.dart';
+import 'package:clinic_management_system/providers/home_provider.dart';
+import 'package:clinic_management_system/providers/appointment_provider.dart';
 
 class SelectDoctorScreen extends StatefulWidget {
   const SelectDoctorScreen({super.key});
@@ -15,94 +17,131 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
-      appBar: AppBar(
-        backgroundColor: AppColors.bgLight,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textMainLight),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text('Select Doctor', style: AppStyles.heading2.copyWith(color: AppColors.textMainLight)),
-        centerTitle: true,
+      appBar: const GradientAppBar(
+        title: 'Chọn Bác sĩ',
       ),
-      body: Column(
-        children: [
-          // 1. Search Bar
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: CustomTextField(
-              hintText: 'Search doctor, specialty...',
-              prefixIcon: Icons.search_rounded,
-            ),
-          ),
+      body: Consumer2<HomeProvider, AppointmentProvider>(
+        builder: (context, homeProvider, appointmentProvider, child) {
+          if (homeProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-          // 2. Specialty Categories (Fetched from MockData)
-          SizedBox(
-            height: 50,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              itemCount: MockData.specialties.length,
-              itemBuilder: (context, index) {
-                final isSelected = _selectedSpecialtyIndex == index;
-                final specialty = MockData.specialties[index];
-                
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedSpecialtyIndex = index),
-                  child: Container(
-                    margin: const EdgeInsets.only(right: 12),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: isSelected ? AppColors.primary : Colors.transparent,
-                      border: Border.all(
-                        color: isSelected ? AppColors.primary : AppColors.textSubLight.withOpacity(0.2),
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          specialty['icon'], 
-                          size: 20, 
-                          color: isSelected ? Colors.white : AppColors.textSubLight
+          return Column(
+            children: [
+              // 1. Search Bar
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 48,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [BoxShadow(color: AppColors.textSubLight.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))],
                         ),
-                        const SizedBox(width: 8),
-                        Text(
-                          specialty['name'],
+                        child: Row(
+                          children: [
+                            Icon(Icons.search_rounded, color: AppColors.textSubLight.withOpacity(0.7)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Tìm kiếm bác sĩ, chuyên khoa...',
+                                  hintStyle: AppStyles.bodyMedium.copyWith(color: AppColors.textSubLight.withOpacity(0.7)),
+                                  border: InputBorder.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Container(
+                      height: 48, width: 48,
+                      decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 4))]),
+                      child: IconButton(
+                        icon: const Icon(Icons.tune_rounded, color: Colors.white, size: 24),
+                        onPressed: () {},
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // 2. Specialty Categories
+              SizedBox(
+                height: 50,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: homeProvider.specialties.length + 1, // +1 for "All"
+                  itemBuilder: (context, index) {
+                    final isSelected = _selectedSpecialtyIndex == index;
+                    final isAll = index == 0;
+                    final specialtyName = isAll ? 'Tất cả' : homeProvider.specialties[index - 1]['expertiseName'];
+                    
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedSpecialtyIndex = index),
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isSelected ? AppColors.primary : Colors.transparent,
+                          border: Border.all(
+                            color: isSelected ? AppColors.primary : AppColors.textSubLight.withOpacity(0.2),
+                          ),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Text(
+                          specialtyName ?? '',
                           style: AppStyles.bodyMedium.copyWith(
                             color: isSelected ? Colors.white : AppColors.textSubLight,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 20),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
 
-          // 3. Doctors List (Fetched from MockData)
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              itemCount: MockData.popularDoctors.length,
-              itemBuilder: (context, index) {
-                final doctor = MockData.popularDoctors[index];
-                return _buildDoctorCard(doctor);
-              },
-            ),
-          ),
-        ],
+              // 3. Doctors List
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: homeProvider.doctors.length,
+                  itemBuilder: (context, index) {
+                    final doctor = homeProvider.doctors[index];
+                    
+                    // Basic filtering logic based on specialty
+                    if (_selectedSpecialtyIndex != 0) {
+                      final selectedSpecialty = homeProvider.specialties[_selectedSpecialtyIndex - 1]['expertiseName'];
+                      if (doctor['expertiseName'] != selectedSpecialty) {
+                        return const SizedBox.shrink();
+                      }
+                    }
+
+                    return _buildDoctorCard(context, doctor, appointmentProvider, homeProvider);
+                  },
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildDoctorCard(Map<String, dynamic> doctor) {
+  Widget _buildDoctorCard(BuildContext context, Map<String, dynamic> doctor, AppointmentProvider appointmentProvider, HomeProvider homeProvider) {
     return GestureDetector(
       onTap: () {
-        // Navigate to Step 2: Select Date & Time
+        appointmentProvider.selectDoctor(doctor);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const SelectTimeScreen()),
@@ -125,13 +164,17 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
         ),
         child: Row(
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                doctor['image'],
-                height: 80,
-                width: 80,
-                fit: BoxFit.cover,
+            Hero(
+              tag: 'doctor_img_${doctor['staffId']}',
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.network(
+                  homeProvider.fixImageUrl(doctor['imageUrl']),
+                  height: 80,
+                  width: 80,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200], height: 80, width: 80, child: const Icon(Icons.person, color: Colors.grey)),
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -140,14 +183,14 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    doctor['name'],
+                    doctor['fullName'] ?? 'Unknown',
                     style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${doctor['specialty']} • TrustCare Clinic',
+                    '${doctor['expertiseName']} • ClinicCare',
                     style: AppStyles.caption.copyWith(color: AppColors.textSubLight),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -161,14 +204,13 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
                           const Icon(Icons.star_rounded, color: AppColors.warning, size: 18),
                           const SizedBox(width: 4),
                           Text(
-                            '${doctor['rating']} (${doctor['reviews']})',
+                            '5.0 (120)',
                             style: AppStyles.caption.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
-                      // Fallback fee to $50 if not present in MockData
                       Text(
-                        '\$${doctor['fee'] ?? '50'}',
+                        '\$50', // Would get from API /doctor_service_price if available
                         style: AppStyles.bodyLarge.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
                       ),
                     ],

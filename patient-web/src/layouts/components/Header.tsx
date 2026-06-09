@@ -15,6 +15,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { HoverDropdown } from '@/components/common/HoverDropdown';
 import { GradientButton } from '@/components/common/GradientButton';
 import { HeaderMenuDropdown } from '@/components/common/index';
+import { NotificationPanel } from '@/features/home/components/NotificationPanel';
 import { useAuth } from '@/hooks/useAuth';
 import { appointmentApi } from '@/features/appointments/api/appointmentApi';
 import type { Expertise, Service } from '@/features/appointments/types/appointment';
@@ -75,14 +76,14 @@ export const Header: React.FC = () => {
   const displayName = user?.fullName || user?.email?.split('@')[0] || 'Tài khoản';
 
   const languageOptions = [
-    { label: 'Tiếng Việt', value: 'vi' },
-    { label: 'English', value: 'en' },
+    { label: 'Tiếng Việt', value: 'vi', icon: 'https://flagcdn.com/w20/vn.png' },
+    { label: 'English', value: 'en', icon: 'https://flagcdn.com/w20/gb.png' },
   ];
 
   // Dữ liệu cho dropdown Bác sĩ (tĩnh)
   const doctorMenuItems = [
     { label: 'Tất cả bác sĩ', to: '/doctors' },
-    { label: 'Bác sĩ nổi bật', to: '/doctors/featured' },
+    { label: 'Bác sĩ nổi bật', to: '/#featured-doctors-section' },
     { label: 'Đặt khám bác sĩ', to: '/appointments/book?mode=doctor' },
   ];
 
@@ -92,8 +93,11 @@ export const Header: React.FC = () => {
       label: exp.expertiseName,
       to: `/appointments/book?expertiseId=${exp.expertiseId}`,
     })),
-    // Trong Header.tsx, phần expertiseMenuItems
-  { label: 'Xem tất cả →', to: '/#specialties-section', isSpecial: true } 
+    {
+      label: 'Xem tất cả',
+      to: '/#specialties-section',
+      isSpecial: true,
+    },
   ];
 
   // Dữ liệu cho dropdown Xét nghiệm (động)
@@ -102,13 +106,13 @@ export const Header: React.FC = () => {
       label: svc.serviceName,
       to: `/appointments/book?serviceId=${svc.serviceId}`,
     })),
-    { label: 'Xem tất cả →', to: '/services', isSpecial: true },
+    { label: 'Xem tất cả', to: '/services', isSpecial: true },
   ];
 
   return (
     <header
-      className={`sticky top-0 z-40 w-full bg-white transition-all duration-300 ${
-        isScrolled ? 'shadow-md py-2' : 'border-b border-border-default py-4'
+      className={`sticky top-0 z-[100] w-full transition-all duration-300 bg-white backdrop-blur-md ${
+        isScrolled ? 'shadow-soft py-2' : 'border-b border-border-default py-4'
       }`}
     >
       <div className="container mx-auto px-4 lg:px-8">
@@ -199,6 +203,14 @@ export const Header: React.FC = () => {
 
             <div className="w-px h-10 bg-slate-200" />
 
+            {/* Notification Panel */}
+            {isAuthenticated && (
+              <>
+                <NotificationPanel />
+                <div className="w-px h-10 bg-slate-200" />
+              </>
+            )}
+
             {/* Language Selector */}
             <HoverDropdown
               value={language}
@@ -218,46 +230,70 @@ export const Header: React.FC = () => {
               </GradientButton>
             ) : (
               <div className="relative group">
-                <button className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 rounded-full px-4 py-2 transition-all">
+                <button className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 rounded-full px-4 py-2 transition-all cursor-pointer border border-slate-200">
                   <span className="text-sm font-bold text-slate-700">
                     {getInitials()} {displayName}
                   </span>
                 </button>
-                <div className="absolute right-0 top-full pt-2 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50">
-                  <div className="w-56 rounded-xl bg-white border border-slate-100 shadow-lg overflow-hidden">
-                    <div className="px-4 py-3 border-b border-slate-100">
-                      <p className="text-sm font-bold text-brand-dark">{displayName}</p>
-                      <p className="text-xs text-slate-500 mt-0.5 break-all">{user?.email}</p>
+                <div className="absolute right-0 top-full pt-3 opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-300 z-50">
+                  <div className="w-64 rounded-2xl bg-white border border-slate-100 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] overflow-hidden flex flex-col">
+                    <div className="px-5 py-4 border-b border-slate-100 bg-slate-50/50">
+                      <p className="text-sm font-black text-brand-dark">{displayName}</p>
+                      <p className="text-xs text-slate-500 mt-1 break-all font-medium">{user?.email}</p>
                     </div>
-                    <button
-                      onClick={() => navigate('/profile')}
-                      className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
-                    >
-                      <UserCircle className="inline mr-2 h-4 w-4" />
-                      Hồ sơ cá nhân
-                    </button>
-                    <button
-                      onClick={() => navigate('/appointments/my')}
-                      className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
-                    >
-                      <CalendarDays className="inline mr-2 h-4 w-4" />
-                      Lịch sử đặt khám
-                    </button>
-                    <button
-                      onClick={() => navigate('/records')}
-                      className="w-full text-left px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
-                    >
-                      <FileText className="inline mr-2 h-4 w-4" />
-                      Hồ sơ y tế
-                    </button>
-                    <div className="border-t border-slate-100 my-1" />
-                    <button
-                      onClick={handleLogout}
-                      className="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
-                    >
-                      <LogOut className="inline mr-2 h-4 w-4" />
-                      Đăng xuất
-                    </button>
+                    <div className="p-2 flex flex-col gap-1">
+                      <button
+                        onClick={() => navigate('/profile')}
+                        className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
+                      >
+                        <UserCircle className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
+                        Hồ sơ cá nhân
+                      </button>
+                      <button
+                        onClick={() => navigate('/appointments/my')}
+                        className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
+                      >
+                        <CalendarDays className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
+                        Lịch sử đặt khám
+                      </button>
+                      <button
+                        onClick={() => navigate('/records')}
+                        className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
+                      >
+                        <FileText className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
+                        Hồ sơ y tế
+                      </button>
+                      <button
+                        onClick={() => navigate('/records/prescriptions')}
+                        className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
+                      >
+                        <FileText className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
+                        Đơn thuốc
+                      </button>
+                      <button
+                        onClick={() => navigate('/records/lab-results')}
+                        className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
+                      >
+                        <FileText className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
+                        Kết quả xét nghiệm
+                      </button>
+                      <button
+                        onClick={() => navigate('/profile/billing')}
+                        className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
+                      >
+                        <FileText className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
+                        Lịch sử thanh toán
+                      </button>
+                    </div>
+                    <div className="p-2 border-t border-slate-100 bg-slate-50/50">
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 transition-colors cursor-pointer flex items-center"
+                      >
+                        <LogOut className="mr-3 h-4 w-4" />
+                        Đăng xuất
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

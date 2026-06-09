@@ -2,19 +2,21 @@
 
 /* Định nghĩa theme màu sắc của riêng bạn */
 @theme {
-  /* Primary */
-  --color-primary-50: #eaf7fd;
-  --color-primary-100: #dff4ff;
-  --color-primary-200: #c8ecfb;
-  --color-primary-300: #aee4fa;
-  --color-primary-500: #00b5f1;
-  --color-primary-600: #0098cc;
+  /* Primary (Sky Blue - Hiện đại, Y tế, Tin cậy) */
+  --color-primary-50: #f0f9ff;
+  --color-primary-100: #e0f2fe;
+  --color-primary-200: #bae6fd;
+  --color-primary-300: #7dd3fc;
+  --color-primary-400: #38bdf8;
+  --color-primary-500: #0ea5e9;
+  --color-primary-600: #0284c7;
+  --color-primary-700: #0369a1;
 
-  /* Gradient mềm */
-  --color-gradient-blue: #dff4ff;
-  --color-gradient-blue-light: #eef9ff;
-  --color-gradient-white-blue: #f5fbff;
-  --color-gradient-white-cold: #f8fdff;
+  /* Gradient mềm (Modern Soft Gradients) */
+  --color-gradient-blue: #e0f2fe;
+  --color-gradient-blue-light: #f0f9ff;
+  --color-gradient-white-blue: #f8fafc;
+  --color-gradient-white-cold: #ffffff;
 
   /* Brand */
   --color-brand-dark: #003b5c;
@@ -41,10 +43,36 @@
   /* Danger */
   --color-danger-50: #fef2f2;
   --color-danger-500: #ef4444;
+
+  /* Nâng cấp UI */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+
+  --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  --shadow-soft-lg: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
 }
 @layer base {
-  html {
+  html, body {
     font-family: 'Inter', system-ui, sans-serif;
+    @apply bg-background-light text-slate-800;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/50;
+  }
+  .glass-dark {
+    @apply bg-brand-dark/80 backdrop-blur-md border border-brand-dark/50 text-white;
+  }
+  .img-fallback-gradient {
+    @apply bg-gradient-to-br from-primary-50 to-primary-100;
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-soft-lg;
   }
 }
 

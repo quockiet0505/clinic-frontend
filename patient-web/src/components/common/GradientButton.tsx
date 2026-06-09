@@ -37,11 +37,11 @@ export const GradientButton: React.FC<GradientButtonProps> = ({
 
         hover:ring-0
         hover:bg-gradient-to-r
-        hover:from-sky-600
-        hover:via-sky-500
-        hover:to-cyan-400
+        hover:from-primary-600
+        hover:to-primary-400
+        hover:shadow-lg
         hover:text-white
-        hover:-translate-y-[1px]
+        hover:-translate-y-1 hover:scale-[1.02]
 
         focus:outline-none
         focus:ring-0

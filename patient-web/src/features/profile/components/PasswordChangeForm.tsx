@@ -49,22 +49,22 @@ export const PasswordChangeForm: React.FC = () => {
 
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-bold text-brand-dark">Mật khẩu hiện tại <span className="text-red-500">*</span></label>
-        <Input required type="password" value={passwords.oldPass} onChange={e => handleChange('oldPass', e.target.value)} className="h-12 rounded-2xl px-4 border-border-default focus-visible:ring-primary-500/20 focus-visible:border-primary-500 shadow-none" />
+        <Input required type="password" value={passwords.oldPass} onChange={e => handleChange('oldPass', e.target.value)} className="h-11 rounded-xl px-4 border-slate-200 focus-visible:ring-primary-500/20 focus-visible:border-primary-500 shadow-sm" />
       </div>
 
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-bold text-brand-dark">Mật khẩu mới <span className="text-red-500">*</span></label>
-        <Input required type="password" value={passwords.newPass} onChange={e => handleChange('newPass', e.target.value)} className="h-12 rounded-2xl px-4 border-border-default focus-visible:ring-primary-500/20 focus-visible:border-primary-500 shadow-none" />
+        <Input required type="password" value={passwords.newPass} onChange={e => handleChange('newPass', e.target.value)} className="h-11 rounded-xl px-4 border-slate-200 focus-visible:ring-primary-500/20 focus-visible:border-primary-500 shadow-sm" />
       </div>
 
       <div className="flex flex-col gap-2">
         <label className="text-[14px] font-bold text-brand-dark">Xác nhận mật khẩu mới <span className="text-red-500">*</span></label>
-        <Input required type="password" value={passwords.confirmPass} onChange={e => handleChange('confirmPass', e.target.value)} className="h-12 rounded-2xl px-4 border-border-default focus-visible:ring-primary-500/20 focus-visible:border-primary-500 shadow-none" />
+        <Input required type="password" value={passwords.confirmPass} onChange={e => handleChange('confirmPass', e.target.value)} className="h-11 rounded-xl px-4 border-slate-200 focus-visible:ring-primary-500/20 focus-visible:border-primary-500 shadow-sm" />
       </div>
 
-      <div className="pt-2">
-        <Button disabled={isLoading} type="submit" className="bg-primary-500 hover:bg-primary-600 text-white rounded-xl h-12 px-8 font-bold shadow-md transition-all">
-          {isLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Đang xử lý...</> : <><KeyRound className="w-4 h-4 mr-2" /> Đổi mật khẩu</>}
+      <div className="pt-2 flex justify-end">
+        <Button disabled={isLoading} type="submit" className="bg-primary-500 hover:bg-primary-600 text-white rounded-xl h-11 px-8 font-bold shadow-sm transition-all cursor-pointer">
+          {isLoading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Đang xử lý...</> : <><KeyRound className="w-4 h-4 mr-2" /> Lưu thay đổi</>}
         </Button>
       </div>
     </form>

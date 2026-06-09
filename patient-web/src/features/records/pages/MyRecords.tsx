@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { FileText, Loader2 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { SectionContainer } from '@/components/common';
 import { MedicalHistoryTimeline } from '../components/MedicalHistoryTimeline';
-import { RecordFilterBar } from '../components/RecordFilterBar';
 import { recordApi } from '../api/recordApi';
 import type { MedicalRecord } from '../types/record';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { SearchInput } from '@/components/common/SearchInput';
 import { useToast } from '@/hooks/useToast';
 
 type StatusFilter = 'ALL' | MedicalRecord['status'];
@@ -17,25 +16,40 @@ export const MyRecords: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('ALL');
   const { toast } = useToast();
+  
+  const [isOpen, setIsOpen] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 150);
+  };
+
+  const handleSelect = (val: StatusFilter) => {
+    setStatusFilter(val);
+    setIsOpen(false);
+  };
 
   useEffect(() => {
     const fetchRecords = async () => {
       try {
         const data = await recordApi.getMedicalHistory();
         setRecords(data);
-      } catch {
-        toast({
-          title: 'Lỗi',
-          description: 'Không thể tải hồ sơ y tế. Vui lòng thử lại sau.',
-          variant: 'destructive',
-        });
+      } catch (error: any) {
+        console.error('Failed to fetch medical records:', error);
+        setRecords([]);
       } finally {
         setLoading(false);
       }
     };
     fetchRecords();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // chỉ chạy một lần khi mount
+  }, []);
 
   const filteredRecords = records.filter(record => {
     const matchesSearch =
@@ -47,9 +61,17 @@ export const MyRecords: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background-light">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-500" />
-      </div>
+      <main className="min-h-screen bg-background-light py-10">
+        <SectionContainer className="max-w-5xl">
+          <div className="animate-pulse flex flex-col gap-4">
+            <div className="h-8 bg-slate-200 rounded w-1/4 mb-2"></div>
+            <div className="h-4 bg-slate-200 rounded w-1/3 mb-6"></div>
+            <div className="h-12 bg-slate-200 rounded-xl w-full mb-8"></div>
+            <div className="h-32 bg-slate-200 rounded-2xl w-full"></div>
+            <div className="h-32 bg-slate-200 rounded-2xl w-full"></div>
+          </div>
+        </SectionContainer>
+      </main>
     );
   }
 
@@ -63,20 +85,52 @@ export const MyRecords: React.FC = () => {
               Lịch sử khám bệnh, đơn thuốc và kết quả xét nghiệm.
             </p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <RecordFilterBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-            <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val as StatusFilter)}>
-              <SelectTrigger className="w-[160px] h-12 rounded-2xl bg-white border-border-default">
-                <SelectValue placeholder="Trạng thái" />
-              </SelectTrigger>
-              <SelectContent className="rounded-xl border-0 shadow-lg">
-                <SelectItem value="ALL">Tất cả</SelectItem>
-                <SelectItem value="IN_PROGRESS">Đang xử lý</SelectItem>
-                <SelectItem value="WAITING_RESULT">Chờ kết quả</SelectItem>
-                <SelectItem value="DONE">Hoàn thành</SelectItem>
-                <SelectItem value="CANCELLED">Đã hủy</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex flex-col sm:flex-row gap-3 items-center">
+            <div className="w-full md:w-80">
+              <SearchInput
+                value={searchQuery}
+                onSearch={setSearchQuery}
+                placeholder="Tìm theo bác sĩ, chẩn đoán..."
+                className="h-11"
+              />
+            </div>
+            <div 
+              className="w-full sm:w-44 shrink-0 relative z-50"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              <button className={`w-full h-11 flex items-center justify-between px-4 rounded-full bg-white border shadow-sm font-medium text-slate-700 cursor-pointer transition-colors ${isOpen ? 'border-primary-500 text-primary-600' : 'border-slate-200'}`}>
+                <span className="text-[14px]">
+                  {statusFilter === 'ALL' && 'Tất cả trạng thái'}
+                  {statusFilter === 'IN_PROGRESS' && 'Đang xử lý'}
+                  {statusFilter === 'WAITING_RESULT' && 'Chờ kết quả'}
+                  {statusFilter === 'DONE' && 'Hoàn thành'}
+                  {statusFilter === 'CANCELLED' && 'Đã hủy'}
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${isOpen ? 'rotate-180 text-primary-500' : 'text-slate-400'}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+              <div className={`absolute left-0 right-0 top-full pt-2 transition-all duration-200 ${isOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
+                <div className="rounded-2xl bg-white border border-slate-100 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] p-1.5 flex flex-col gap-0.5 max-h-64 overflow-y-auto">
+                  {[
+                    { value: 'ALL', label: 'Tất cả trạng thái' },
+                    { value: 'IN_PROGRESS', label: 'Đang xử lý' },
+                    { value: 'WAITING_RESULT', label: 'Chờ kết quả' },
+                    { value: 'DONE', label: 'Hoàn thành' },
+                    { value: 'CANCELLED', label: 'Đã hủy' },
+                  ].map(item => (
+                    <button
+                      key={item.value}
+                      onClick={() => handleSelect(item.value as StatusFilter)}
+                      className={`w-full text-left cursor-pointer py-2 px-3 text-[13.5px] font-medium rounded-xl transition-all ${
+                        statusFilter === item.value ? 'bg-primary-50 text-primary-600' : 'text-slate-700 hover:bg-primary-50 hover:text-primary-600'
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         {filteredRecords.length > 0 ? (

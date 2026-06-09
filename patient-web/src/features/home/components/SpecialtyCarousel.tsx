@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import { SectionContainer, SectionHeader, ViewAllButton } from '@/components/common';
 import { getStaticUrl } from '@/utils/url';
 import { useNavigate } from 'react-router-dom';
+import { ImageWithFallback } from '@/components/common/ImageWithFallback';
 import type { Specialty } from '../types/home';
 
 interface Props {
@@ -60,11 +61,12 @@ export const SpecialtyCarousel: React.FC<Props> = ({ specialties }) => {
               onClick={() => handleSpecialtyClick(item.expertiseId)}
               className="cursor-pointer flex flex-col items-center text-center group"
             >
-              <div className="h-[60px] w-[60px] mb-3 flex items-center justify-center">
-                <img
+              <div className="h-[60px] w-[60px] mb-3 flex items-center justify-center relative">
+                <ImageWithFallback
                   src={`${staticUrl}${item.iconUrl}`}
                   alt={item.expertiseName}
-                  className="max-w-full max-h-full transition-transform duration-300 group-hover:scale-110"
+                  className="max-w-full max-h-full transition-transform duration-300 group-hover:scale-110 object-contain"
+                  containerClassName="absolute inset-0 w-full h-full flex items-center justify-center"
                 />
               </div>
               <span className="font-medium text-sm text-brand-dark group-hover:text-primary-500 transition-colors px-1 leading-snug">

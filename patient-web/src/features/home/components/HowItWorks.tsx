@@ -4,6 +4,7 @@ import { Building2, CircleDollarSign } from 'lucide-react';
 import { CarouselWrapper, SectionContainer, SectionHeader, ViewAllButton, ActionButton } from '@/components/common';
 import { getStaticUrl } from '@/utils/url';
 import { useNavigate } from 'react-router-dom';
+import { ImageWithFallback } from '@/components/common/ImageWithFallback';
 import type { ServicePackage } from '../types/home';
 
 interface Props {
@@ -42,12 +43,12 @@ export const HowItWorks: React.FC<Props> = ({ services }) => {
               onClick={() => handleServiceClick(service.serviceId)}
               className="cursor-pointer min-w-[270px] max-w-[270px] shrink-0 snap-start bg-white rounded-xl overflow-hidden shadow-md border border-slate-100 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
-              <div className="w-full h-[160px] overflow-hidden bg-slate-50">
-                <img
+              <div className="w-full h-[160px] overflow-hidden bg-slate-50 relative">
+                <ImageWithFallback
                   src={`${staticUrl}${service.imageUrl}`}
                   alt={service.serviceName}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                  onError={(e) => (e.currentTarget.src = '/images/services/default.jpg')}
+                  containerClassName="absolute inset-0 w-full h-full"
                 />
               </div>
               <div className="p-4 flex flex-col flex-1">

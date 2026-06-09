@@ -102,8 +102,8 @@ export const HeaderMenuDropdown: React.FC<HeaderMenuDropdownProps> = ({
       >
         <div
           className={`
-            ${width} overflow-hidden rounded-2xl bg-white
-            border border-slate-100 shadow-lg
+            ${width} overflow-hidden rounded-2xl bg-white/95 backdrop-blur-md
+            border border-slate-100 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)]
           `}
         >
           {items.map((item, idx) => {

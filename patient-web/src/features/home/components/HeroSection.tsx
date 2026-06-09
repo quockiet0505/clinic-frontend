@@ -4,6 +4,7 @@ import { SearchInput } from '@/components/common/SearchInput';
 import { homeApi } from '@/features/home/api/homeApi';
 import { getStaticUrl } from '@/utils/url';
 import { useNavigate } from 'react-router-dom';
+import { ImageWithFallback } from '@/components/common/ImageWithFallback';
 
 interface QuickAction {
   id: number;
@@ -91,11 +92,11 @@ export const HeroSection: React.FC = () => {
   return (
     <div className="relative bg-white pb-0">
       <div className="relative w-full h-[400px] md:h-[480px]">
-        <img
+        <ImageWithFallback
           src={`${staticUrl}${bannerUrl}`}
           alt="Hero Banner"
           className="w-full h-full object-cover"
-          onError={(e) => (e.currentTarget.src = `${staticUrl}/images/default-banner.jpg`)}
+          containerClassName="absolute inset-0 w-full h-full"
         />
         <div className="absolute inset-0 flex flex-col items-center pt-8 md:pt-16 px-4 bg-gradient-to-b from-brand-dark/10 via-transparent to-transparent">
           <h1 className="text-2xl md:text-4xl font-bold text-white mb-6 text-center drop-shadow-md">
@@ -132,11 +133,11 @@ export const HeroSection: React.FC = () => {
                 className="min-w-[130px] max-w-[130px] h-[130px] snap-start shrink-0 bg-white rounded-2xl p-4 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center"
               >
                 <div className="h-12 w-12 mb-3 flex items-center justify-center">
-                  <img
+                  <ImageWithFallback
                     src={`${staticUrl}${action.iconUrl}`}
                     alt={action.title}
                     className="max-w-full max-h-full hover:scale-110 transition-transform duration-300"
-                    onError={(e) => (e.currentTarget.src = `${staticUrl}/icons/placeholder.png`)}
+                    containerClassName="w-full h-full"
                   />
                 </div>
                 <span className="font-semibold text-slate-700 text-xs leading-tight hover:text-primary-500 transition-colors">{action.title}</span>

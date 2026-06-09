@@ -13,6 +13,7 @@ export interface PatientProfile {
 export interface UpdateProfilePayload {
   full_name: string;
   phone?: string;
+  email?: string;
   gender?: string;
   date_of_birth?: string;
   address?: string;

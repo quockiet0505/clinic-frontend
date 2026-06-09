@@ -24,24 +24,21 @@ export const HoverDropdown: React.FC<HoverDropdownProps> = ({
     <div className="relative group">
       {/* Trigger */}
       <button
-        className="flex items-center gap-2 h-[42px] px-3 rounded-xl border border-primary-200 bg-gradient-to-b from-gradient-white-blue to-gradient-blue-light hover:shadow-md transition-all cursor-pointer"
+        className="flex items-center justify-center gap-1.5 h-10 px-2 hover:bg-slate-50 rounded-full transition-colors cursor-pointer bg-transparent"
       >
         {activeItem?.icon && (
           <img
             src={activeItem.icon}
             alt={activeItem.label}
-            className="w-6 h-4 rounded-sm object-cover"
+            className="w-[28px] h-[20px] rounded-[2px] object-cover shadow-sm"
           />
         )}
-        <span className="font-semibold text-sm text-primary-500">
-          {activeItem?.label}
-        </span>
-        <ChevronDown className="w-4 h-4 text-primary-500 transition-transform duration-200 group-hover:rotate-180" />
+        <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
       </button>
 
       {/* Dropdown */}
       <div
-        className="absolute top-[48px] left-0 min-w-[100px] w-max overflow-hidden rounded-xl border border-primary-100 bg-white shadow-lg opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50"
+        className="absolute top-full right-0 mt-2 p-1.5 w-max min-w-[140px] overflow-hidden rounded-xl border border-slate-100 bg-white shadow-lg opacity-0 invisible translate-y-2 group-hover:opacity-100 group-hover:visible group-hover:translate-y-0 transition-all duration-200 z-50 flex flex-col gap-1"
       >
         {items.map((item) => {
           const isActive = item.value === value;
@@ -49,24 +46,18 @@ export const HoverDropdown: React.FC<HoverDropdownProps> = ({
             <button
               key={item.value}
               onClick={() => onChange(item.value)}
-              className={`relative w-full flex items-center gap-3 px-4 py-2.5 text-left whitespace-nowrap transition-all cursor-pointer ${
-                isActive
-                  ? 'bg-primary-50 text-primary-500'
-                  : 'text-brand-dark hover:bg-white hover:text-primary-500'
+              className={`flex items-center gap-3 w-full h-10 px-3 rounded-lg transition-all cursor-pointer ${
+                isActive ? 'bg-primary-50 text-primary-600 font-semibold' : 'hover:bg-slate-50 text-slate-700 font-medium'
               }`}
             >
-              {/* Blue line left */}
-              {isActive && (
-                <div className="absolute left-0 top-0 h-full w-[3px] bg-primary-500" />
-              )}
               {item.icon && (
                 <img
                   src={item.icon}
                   alt={item.label}
-                  className="w-6 h-4 rounded-sm object-cover"
+                  className="w-[28px] h-[20px] rounded-[2px] object-cover shadow-sm"
                 />
               )}
-              <span className="font-medium text-sm">{item.label}</span>
+              <span className="text-sm">{item.label}</span>
             </button>
           );
         })}

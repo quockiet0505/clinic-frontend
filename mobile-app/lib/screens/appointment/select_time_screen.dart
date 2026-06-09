@@ -1,5 +1,7 @@
-// --- lib/screens/appointment/select_time_screen.dart ---
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:provider/provider.dart';
+import 'package:clinic_management_system/providers/appointment_provider.dart';
+import 'confirm_booking_screen.dart';
 
 class SelectTimeScreen extends StatefulWidget {
   const SelectTimeScreen({super.key});
@@ -10,96 +12,139 @@ class SelectTimeScreen extends StatefulWidget {
 
 class _SelectTimeScreenState extends State<SelectTimeScreen> {
   int _selectedDateIndex = 0;
-  int _selectedTimeIndex = -1;
 
-  // Mock Data: Next 7 days
-  final List<Map<String, String>> _availableDates = [
-    {'day': 'Mon', 'date': '24'},
-    {'day': 'Tue', 'date': '25'},
-    {'day': 'Wed', 'date': '26'},
-    {'day': 'Thu', 'date': '27'},
-    {'day': 'Fri', 'date': '28'},
-    {'day': 'Sat', 'date': '29'},
-    {'day': 'Sun', 'date': '30'},
-  ];
+  // Next 7 days
+  List<Map<String, String>> _generateDates() {
+    final List<Map<String, String>> dates = [];
+    final now = DateTime.now();
+    final weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    
+    for (int i = 0; i < 7; i++) {
+      final date = now.add(Duration(days: i));
+      dates.add({
+        'day': weekDays[date.weekday - 1],
+        'date': date.day.toString().padLeft(2, '0'),
+        'fullDate': "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}"
+      });
+    }
+    return dates;
+  }
 
-  // Mock Data: Time slots
-  final List<String> _morningSlots = ['09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM'];
-  final List<String> _afternoonSlots = ['01:00 PM', '01:30 PM', '02:00 PM', '02:30 PM', '03:00 PM', '04:00 PM'];
+  late List<Map<String, String>> _availableDates;
 
-  void _handleContinue() {
-    if (_selectedTimeIndex == -1) {
+  @override
+  void initState() {
+    super.initState();
+    _availableDates = _generateDates();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppointmentProvider>().selectDate(_availableDates[0]['fullDate']!);
+    });
+  }
+
+  void _handleContinue(AppointmentProvider provider) {
+    if (provider.selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please select a time slot first')),
       );
       return;
     }
     // TODO: Navigate to Confirm Booking Screen
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => const ConfirmBookingScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const ConfirmBookingScreen()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
-      appBar: AppBar(
-        backgroundColor: AppColors.bgLight,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.textMainLight),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text('Select Date & Time', style: AppStyles.heading2.copyWith(color: AppColors.textMainLight)),
-        centerTitle: true,
+      appBar: const GradientAppBar(
+        title: 'Chọn Ngày & Giờ',
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 1. Date Selection Section
-                  Text('October 2026', style: AppStyles.heading3.copyWith(color: AppColors.textMainLight)),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: 85,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _availableDates.length,
-                      itemBuilder: (context, index) {
-                        return _buildDateCard(index);
-                      },
+      body: Consumer<AppointmentProvider>(
+        builder: (context, provider, child) {
+          final selectedDoctor = provider.selectedDoctor;
+          if (selectedDoctor == null) {
+            return const Center(child: Text("No doctor selected."));
+          }
+
+          return Column(
+            children: [
+              // Doctor Info Header
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+                child: Row(
+                  children: [
+                    Hero(
+                      tag: 'doctor_img_${selectedDoctor['staffId']}',
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          selectedDoctor['imageUrl'] ?? 'https://via.placeholder.com/150',
+                          height: 60, width: 60, fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200], height: 60, width: 60, child: const Icon(Icons.person, color: Colors.grey)),
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 32),
-
-                  // 2. Morning Time Slots
-                  Text('Morning', style: AppStyles.heading3.copyWith(color: AppColors.textMainLight)),
-                  const SizedBox(height: 16),
-                  _buildTimeGrid(_morningSlots, 0),
-                  
-                  const SizedBox(height: 32),
-
-                  // 3. Afternoon Time Slots
-                  Text('Afternoon', style: AppStyles.heading3.copyWith(color: AppColors.textMainLight)),
-                  const SizedBox(height: 16),
-                  _buildTimeGrid(_afternoonSlots, _morningSlots.length),
-                ],
+                    const SizedBox(width: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Dr. ${selectedDoctor['fullName']}', style: AppStyles.heading3.copyWith(color: AppColors.textMainLight)),
+                        Text(selectedDoctor['expertiseName'] ?? 'Specialist', style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          ),
-          
-          // 4. Bottom Action Bar
-          _buildBottomBar(),
-        ],
+
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 1. Date Selection
+                      Text(DateTime.now().year.toString(), style: AppStyles.heading3.copyWith(color: AppColors.textMainLight)),
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        height: 85,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _availableDates.length,
+                          itemBuilder: (context, index) {
+                            return _buildDateCard(index, provider);
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+
+                      // 2. Time Slots
+                      Text('Available Time', style: AppStyles.heading3.copyWith(color: AppColors.textMainLight)),
+                      const SizedBox(height: 16),
+                      
+                      if (provider.isLoading)
+                        const Center(child: CircularProgressIndicator())
+                      else if (provider.availableSlots.isEmpty)
+                        const Center(child: Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: Text("No available slots on this date."),
+                        ))
+                      else
+                        _buildTimeGrid(provider),
+                    ],
+                  ),
+                ),
+              ),
+              
+              // Bottom Action Bar
+              _buildBottomBar(provider),
+            ],
+          );
+        },
       ),
     );
   }
 
-  // Helper Widget: Date Card
-  Widget _buildDateCard(int index) {
+  Widget _buildDateCard(int index, AppointmentProvider provider) {
     final isSelected = _selectedDateIndex == index;
     final date = _availableDates[index];
 
@@ -107,8 +152,8 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
       onTap: () {
         setState(() {
           _selectedDateIndex = index;
-          _selectedTimeIndex = -1; // Reset time when date changes
         });
+        provider.selectDate(date['fullDate']!);
       },
       child: Container(
         width: 65,
@@ -145,8 +190,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     );
   }
 
-  // Helper Widget: Time Slots Grid
-  Widget _buildTimeGrid(List<String> slots, int startIndexOffset) {
+  Widget _buildTimeGrid(AppointmentProvider provider) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -156,15 +200,15 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
       ),
-      itemCount: slots.length,
+      itemCount: provider.availableSlots.length,
       itemBuilder: (context, index) {
-        // Calculate global index to keep track across both morning and afternoon lists
-        final globalIndex = startIndexOffset + index;
-        final isSelected = _selectedTimeIndex == globalIndex;
+        final time = provider.availableSlots[index];
+        final isSelected = provider.selectedTime == time;
 
         return GestureDetector(
-          onTap: () => setState(() => _selectedTimeIndex = globalIndex),
-          child: Container(
+          onTap: () => provider.selectTime(time),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: isSelected ? AppColors.primary : Colors.white,
@@ -172,9 +216,12 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
               border: Border.all(
                 color: isSelected ? AppColors.primary : AppColors.textSubLight.withOpacity(0.2),
               ),
+              boxShadow: isSelected ? [
+                BoxShadow(color: AppColors.primary.withOpacity(0.2), blurRadius: 8, offset: const Offset(0, 4))
+              ] : [],
             ),
             child: Text(
-              slots[index],
+              time,
               style: AppStyles.bodyMedium.copyWith(
                 color: isSelected ? Colors.white : AppColors.textMainLight,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -186,8 +233,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     );
   }
 
-  // Helper Widget: Bottom Bar with Price and Button
-  Widget _buildBottomBar() {
+  Widget _buildBottomBar(AppointmentProvider provider) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -206,7 +252,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
           Expanded(
             child: CustomButton(
               text: 'Continue',
-              onPressed: _handleContinue,
+              onPressed: () => _handleContinue(provider),
             ),
           ),
         ],

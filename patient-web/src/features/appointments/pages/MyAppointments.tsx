@@ -21,8 +21,9 @@ export const MyAppointments: React.FC = () => {
     try {
       const data = await appointmentApi.getMyAppointments();
       setAppointments(data);
-    } catch (error) {
-      toast({ title: 'Error', description: 'Failed to load appointments', variant: 'destructive' });
+    } catch (error: any) {
+      console.error('Failed to fetch appointments:', error);
+      setAppointments([]);
     } finally {
       setLoading(false);
     }
@@ -42,29 +43,45 @@ export const MyAppointments: React.FC = () => {
   }, [appointments, search, status]);
 
   if (loading) {
-    return <div className="flex justify-center py-20">Loading...</div>;
+    return (
+      <main className="min-h-screen bg-background-light py-10">
+        <SectionContainer className="max-w-5xl space-y-6">
+          <div className="animate-pulse flex flex-col gap-4">
+            <div className="h-8 bg-slate-200 rounded w-1/4 mb-2"></div>
+            <div className="h-4 bg-slate-200 rounded w-1/3 mb-6"></div>
+            <div className="h-12 bg-slate-200 rounded-xl w-full mb-4"></div>
+            <div className="h-40 bg-slate-200 rounded-3xl w-full"></div>
+            <div className="h-40 bg-slate-200 rounded-3xl w-full"></div>
+          </div>
+        </SectionContainer>
+      </main>
+    );
   }
 
   return (
     <main className="min-h-screen bg-background-light py-10">
-      <SectionContainer className="max-w-5xl space-y-6">
-        <div>
-          <h1 className="text-2xl font-black text-brand-dark mb-2">My Appointments</h1>
-          <p className="text-sm text-slate-500">Track your appointment history and status.</p>
+      <SectionContainer className="max-w-5xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-2xl font-black text-brand-dark mb-2">Lịch sử đặt khám</h1>
+            <p className="text-[14.5px] text-slate-500 font-medium">Theo dõi lịch sử và trạng thái các lịch hẹn của bạn.</p>
+          </div>
+          <AppointmentFilterBar search={search} onSearchChange={setSearch} status={status} onStatusChange={setStatus} />
         </div>
-        <AppointmentFilterBar search={search} onSearchChange={setSearch} status={status} onStatusChange={setStatus} />
         <div className="flex flex-col gap-4 mt-2">
           {filteredAppointments.length > 0 ? (
             filteredAppointments.map(item => (
               <AppointmentCard key={item.id} appointment={item} onCancelSuccess={fetchAppointments} />
             ))
           ) : (
-            <Card className="rounded-3xl p-16 text-center">
-              <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Card className="rounded-3xl border-border-default shadow-sm p-12 text-center flex flex-col items-center justify-center bg-white">
+              <div className="w-20 h-20 bg-primary-50 rounded-full flex items-center justify-center mb-4">
                 <CalendarOff className="w-10 h-10 text-primary-500" />
               </div>
-              <h2 className="text-xl font-black text-brand-dark mb-2">No appointments found</h2>
-              <p className="text-slate-500 text-sm">You have no appointments matching your filters.</p>
+              <h2 className="text-xl font-black text-brand-dark mb-2">Chưa có lịch hẹn nào</h2>
+              <p className="text-slate-500 text-[15px] font-medium max-w-md">
+                Bạn chưa có lịch đặt khám nào hoặc không có lịch hẹn nào khớp với bộ lọc.
+              </p>
             </Card>
           )}
         </div>

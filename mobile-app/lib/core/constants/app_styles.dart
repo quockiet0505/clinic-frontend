@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppStyles {
-  static final TextStyle _baseStyle = GoogleFonts.poppins();
+  static final TextStyle _baseStyle = GoogleFonts.inter();
 
   static final TextStyle heading1 = _baseStyle.copyWith(fontSize: 28, fontWeight: FontWeight.bold, height: 1.3);
   static final TextStyle heading2 = _baseStyle.copyWith(fontSize: 24, fontWeight: FontWeight.bold);

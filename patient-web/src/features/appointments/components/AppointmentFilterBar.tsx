@@ -1,7 +1,5 @@
-import React from 'react';
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import React, { useState, useRef } from 'react';
+import { SearchInput } from '@/components/common/SearchInput';
 import type { AppointmentStatus } from '../types/appointment';
 
 interface AppointmentFilterBarProps {
@@ -17,33 +15,77 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
   status,
   onStatusChange,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 150);
+  };
+
+  const handleSelect = (val: AppointmentStatus | 'ALL') => {
+    onStatusChange(val);
+    setIsOpen(false);
+  };
+
   return (
-    <div className="flex flex-col sm:flex-row gap-4">
-      <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <Input
+    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto items-center">
+      <div className="w-full md:w-80">
+        <SearchInput
           value={search}
-          onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Search by doctor, specialty..."
-          className="pl-10 rounded-xl h-11 bg-white border-border-default"
+          onSearch={onSearchChange}
+          placeholder="Tìm theo tên bác sĩ..."
+          className="h-11"
         />
       </div>
-      <div className="w-full sm:w-48">
-        <Select value={status} onValueChange={(val) => onStatusChange(val as AppointmentStatus | 'ALL')}>
-          <SelectTrigger className="rounded-xl h-11 bg-white border-border-default">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All</SelectItem>
-            <SelectItem value="PENDING">Pending</SelectItem>
-            <SelectItem value="CONFIRMED">Confirmed</SelectItem>
-            <SelectItem value="CHECKED_IN">Checked In</SelectItem>
-            <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-            <SelectItem value="WAITING_RESULT">Waiting Result</SelectItem>
-            <SelectItem value="COMPLETED">Completed</SelectItem>
-            <SelectItem value="CANCELLED">Cancelled</SelectItem>
-          </SelectContent>
-        </Select>
+      <div 
+        className="w-full sm:w-44 shrink-0 relative z-50"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <button className={`w-full h-11 flex items-center justify-between px-4 rounded-full bg-white border shadow-sm font-medium text-slate-700 cursor-pointer transition-colors ${isOpen ? 'border-primary-500 text-primary-600' : 'border-slate-200'}`}>
+          <span className="text-[14px]">
+            {status === 'ALL' && 'Tất cả trạng thái'}
+            {status === 'PENDING' && 'Chờ xác nhận'}
+            {status === 'CONFIRMED' && 'Đã xác nhận'}
+            {status === 'CHECKED_IN' && 'Đã đến viện'}
+            {status === 'IN_PROGRESS' && 'Đang khám'}
+            {status === 'WAITING_RESULT' && 'Chờ kết quả'}
+            {status === 'COMPLETED' && 'Hoàn thành'}
+            {status === 'CANCELLED' && 'Đã hủy'}
+          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${isOpen ? 'rotate-180 text-primary-500' : 'text-slate-400'}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div className={`absolute left-0 right-0 top-full pt-2 transition-all duration-200 ${isOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
+          <div className="rounded-2xl bg-white border border-slate-100 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] p-1.5 flex flex-col gap-0.5 max-h-64 overflow-y-auto">
+            {[
+              { value: 'ALL', label: 'Tất cả trạng thái' },
+              { value: 'PENDING', label: 'Chờ xác nhận' },
+              { value: 'CONFIRMED', label: 'Đã xác nhận' },
+              { value: 'CHECKED_IN', label: 'Đã đến viện' },
+              { value: 'IN_PROGRESS', label: 'Đang khám' },
+              { value: 'WAITING_RESULT', label: 'Chờ kết quả' },
+              { value: 'COMPLETED', label: 'Hoàn thành' },
+              { value: 'CANCELLED', label: 'Đã hủy' },
+            ].map(item => (
+              <button
+                key={item.value}
+                onClick={() => handleSelect(item.value as any)}
+                className={`w-full text-left cursor-pointer py-2 px-3 text-[13.5px] font-medium rounded-xl transition-all ${
+                  status === item.value ? 'bg-primary-50 text-primary-600' : 'text-slate-700 hover:bg-primary-50 hover:text-primary-600'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

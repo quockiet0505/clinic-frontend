@@ -3,6 +3,7 @@
 // Flutter Material & Google Fonts
 export 'package:flutter/material.dart';
 export 'package:google_fonts/google_fonts.dart';
+export 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // Core constants & Theme
 export 'package:clinic_management_system/core/core.dart';
@@ -14,13 +15,18 @@ export 'package:clinic_management_system/routes/app_routes.dart';
 export 'package:clinic_management_system/models/user_model.dart';
 export 'package:clinic_management_system/models/doctor_model.dart';
 
-// Utils & Mock Data (FIXED: Added this line to resolve the MockData error)
+// Utils & Mock Data
 export 'package:clinic_management_system/utils/mock_data.dart';
+
+// Providers
+export 'package:clinic_management_system/providers/auth_provider.dart';
 
 // Common Widgets
 export 'package:clinic_management_system/widgets/common/custom_button.dart';
 export 'package:clinic_management_system/widgets/common/custom_textfield.dart';
 export 'package:clinic_management_system/widgets/common/social_button.dart';
+export 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
+export 'package:clinic_management_system/widgets/common/gradient_button.dart';
 
 // Main Screens (Auth & Home)
 export 'package:clinic_management_system/screens/auth/login_screen.dart';

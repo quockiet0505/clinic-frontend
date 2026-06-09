@@ -19,8 +19,8 @@ interface Props {
   confirmColor?: 'rose' | 'amber' | 'blue';
 }
 
-export default function ActionReasonDialog({ 
-  isOpen, onClose, onConfirm, title, description, 
+export default function ActionReasonDialog({
+  isOpen, onClose, onConfirm, title, description,
   actorLabel, actorOptions, reasonLabel = "Reason", confirmText = "Confirm", confirmColor = "rose"
 }: Props) {
   const [actorValue, setActorValue] = useState(actorOptions ? actorOptions[0].value : '');
