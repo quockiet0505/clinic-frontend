@@ -63,10 +63,10 @@ export const HowItWorks: React.FC<Props> = ({ services }) => {
                   <div className="flex items-center gap-2 text-[13px]">
                     <CircleDollarSign className="w-[18px] h-[18px] text-slate-500" />
                     <span className="text-warning font-bold text-[15px]">
-                      {formatPrice(service.discountPrice || service.price)}
+                      {formatPrice(service.discountPrice || service.originalPrice || 0)}
                     </span>
-                    {service.discountPrice && service.discountPrice < service.price && (
-                      <span className="text-slate-400 line-through">{formatPrice(service.price)}</span>
+                    {service.discountPrice && service.originalPrice && service.discountPrice < service.originalPrice && (
+                      <span className="text-slate-400 line-through">{formatPrice(service.originalPrice) }</span>
                     )}
                   </div>
                 </div>

@@ -33,7 +33,7 @@ export const ServiceDirectory: React.FC = () => {
     const matchesSearch = s.serviceName.toLowerCase().includes(searchTerm.toLowerCase());
     
     let matchesPrice = true;
-    const price = s.discountPrice || s.price;
+    const price = s.discountPrice || s.originalPrice || 0;
     if (priceFilter === 'LOW') matchesPrice = price < 500000;
     else if (priceFilter === 'MEDIUM') matchesPrice = price >= 500000 && price <= 2000000;
     else if (priceFilter === 'HIGH') matchesPrice = price > 2000000;
@@ -56,7 +56,7 @@ export const ServiceDirectory: React.FC = () => {
     <main className="w-full min-h-screen bg-[#f4f8fb] pb-16">
       <div className="relative w-full min-h-[380px] flex items-center justify-center bg-[#154679] pt-10 pb-20">
         <div className="absolute inset-0 z-0">
-          <img src={`${staticUrl}/images/banners/service.webp`} onError={(e) => e.currentTarget.src = `${staticUrl}/images/service.jpg`} alt="Service Banner" className="w-full h-full object-cover opacity-30 mix-blend-overlay" />
+          <img src={`${staticUrl}/images/banners/service.webp`} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop'; }} alt="Service Banner" className="w-full h-full object-cover opacity-30 mix-blend-overlay" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#154679]/95 via-[#154679]/80 to-transparent"></div>
         </div>
         <SectionContainer className="max-w-6xl relative z-10 w-full text-white">
@@ -148,7 +148,7 @@ export const ServiceDirectory: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-5 gap-4">
-                    <span className="text-[#ff6b00] font-black text-[18px]">{formatPrice(service.discountPrice || service.price)}</span>
+                    <span className="text-[#ff6b00] font-black text-[18px]">{formatPrice(service.discountPrice || service.originalPrice || 0)}</span>
                     <ActionButton
                       onClick={() => handleBooking(service.serviceId)}
                       className="h-[42px] px-6 text-[14.5px] font-bold rounded-xl shadow-lg shadow-primary-500/20"

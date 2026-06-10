@@ -14,17 +14,15 @@ export interface Doctor {
   staffId: number;
   fullName: string;
   imageUrl: string;
-  expertise?: {
-    expertiseId: number;
-    expertiseName: string;
-  };
+  expertiseName: string;
+  experience: string;
   consultationFee?: number; 
 }
 
 export interface ServicePackage {
   serviceId: number;
   serviceName: string;
-  price: number;
+  originalPrice: number;
   discountPrice: number | null;
   imageUrl: string;
 }

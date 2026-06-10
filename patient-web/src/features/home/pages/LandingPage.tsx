@@ -16,8 +16,8 @@ export const LandingPage: React.FC = () => {
       try {
         const [specs, docs, servs] = await Promise.all([
           homeApi.getSpecialties(),
-          homeApi.getDoctors(),
-          homeApi.getServices(),
+          homeApi.getFeaturedDoctors(),
+          homeApi.getFeaturedServices(),
         ]);
         setSpecialties(specs);
         setDoctors(docs);
@@ -36,10 +36,19 @@ export const LandingPage: React.FC = () => {
   //   return <div className="flex justify-center items-center min-h-screen">Đang tải...</div>;
   // }
 
+  // Sort specialties: ones with at least one doctor appear first
+  const sortedSpecialties = [...specialties].sort((a: any, b: any) => {
+    const aHasDoctor = doctors.some((doc: any) => doc.expertiseId === a.expertiseId);
+    const bHasDoctor = doctors.some((doc: any) => doc.expertiseId === b.expertiseId);
+    if (aHasDoctor && !bHasDoctor) return -1;
+    if (!aHasDoctor && bHasDoctor) return 1;
+    return 0;
+  });
+
   return (
     <main className="w-full min-h-screen overflow-x-hidden">
       <HeroSection />
-      <SpecialtyCarousel specialties={specialties} />
+      <SpecialtyCarousel specialties={sortedSpecialties} />
       <FeaturedDoctors doctors={doctors} />
       <HowItWorks services={services} />
     </main>

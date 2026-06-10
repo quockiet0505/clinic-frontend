@@ -42,7 +42,7 @@ export const profileApi = {
 
     const response = await axiosInstance.put<
       ApiResponse<unknown>
-    >('/account/change-password', data);
+    >('/auth/change-password', data);
 
     return {
       message: response.data.message,

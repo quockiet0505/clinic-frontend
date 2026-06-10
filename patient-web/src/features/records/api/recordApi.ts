@@ -130,13 +130,23 @@ export const recordApi = {
   },
 
   getRecordDetail: async (recordId: number): Promise<MedicalRecordDetail> => {
-    const response = await axiosInstance.get<ApiMedicalRecordDetailResponse>(`/medical-records/${recordId}`);
-    const data = response.data;
+    const response = await axiosInstance.get<{data: ApiMedicalRecordDetailResponse}>(`/medical-records/${recordId}`);
+    const data = response.data.data;
     return {
       ...transformMedicalRecord(data),
       prescription: data.prescription ? transformPrescription(data.prescription) : undefined,
       serviceOrders: data.serviceOrders.map(transformServiceOrder),
       followUps: data.followUps.map(transformFollowUp),
     };
+  },
+
+  getPrescriptions: async (): Promise<Prescription[]> => {
+    const response = await axiosInstance.get<{data: ApiPrescription[]}>('/prescriptions/my');
+    return response.data.data.map(transformPrescription);
+  },
+
+  getLabResults: async (): Promise<any[]> => {
+    const response = await axiosInstance.get<{data: any[]}>('/service-results/my');
+    return response.data.data;
   },
 };

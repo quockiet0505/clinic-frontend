@@ -46,7 +46,7 @@ export const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, o
     setIsLoading(true);
     setMessage({ type: '', text: '' });
     try {
-      await profileApi.updateProfile(formData);
+      await profileApi.updateMyProfile(formData);
       setMessage({ type: 'success', text: 'Cập nhật thông tin thành công!' });
       if (onSuccess) onSuccess();
     } catch (error: any) {

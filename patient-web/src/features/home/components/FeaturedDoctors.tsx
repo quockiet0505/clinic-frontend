@@ -27,7 +27,6 @@ export const FeaturedDoctors: React.FC<Props> = ({ doctors }) => {
   };
 
   const defaultRating = 4.5;
-  const defaultConsultationFee = 200000;
 
   const handleDoctorClick = (doctorId: number) => {
     navigate(`/appointments/book?doctorId=${doctorId}`);
@@ -76,21 +75,23 @@ export const FeaturedDoctors: React.FC<Props> = ({ doctors }) => {
               <div className="p-4 flex-1 flex flex-col text-brand-dark">
                 <div className="min-h-[72px]">
                   <p className="text-sm">BS.</p>
-                  <h3 className="font-bold text-lg leading-tight mb-2">{formatDoctorName(doctor.fullName)}</h3>
+                  <h3 className="font-bold text-lg leading-tight mb-2 line-clamp-2" title={formatDoctorName(doctor.fullName)}>{formatDoctorName(doctor.fullName)}</h3>
                 </div>
                 <div className="flex items-center gap-2 mb-2">
                   <Stethoscope className="w-[18px] h-[18px] text-slate-500 shrink-0" />
-                  <span className="line-clamp-1 text-slate-600">
-                    {doctor.expertise?.expertiseName || 'Chuyên khoa tổng quát'}
+                  <span className="line-clamp-1 text-slate-600" title={doctor.expertiseName || 'Chuyên khoa tổng quát'}>
+                    {doctor.expertiseName || 'Chuyên khoa tổng quát'}
                   </span>
                 </div>
                 <div className="flex items-center gap-2 mb-2">
-                  <CircleDollarSign className="w-[18px] h-[18px] text-slate-500 shrink-0" />
-                  <span className="text-slate-600">{formatPrice(defaultConsultationFee)}</span>
+                  <Hospital className="w-[18px] h-[18px] text-slate-500 shrink-0" />
+                  <span className="line-clamp-1 text-slate-600" title={doctor.experience || 'Nhiều năm kinh nghiệm'}>
+                    Kinh nghiệm: {doctor.experience || 'Nhiều năm'}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Hospital className="w-[18px] h-[18px] text-slate-500 shrink-0" />
-                  <span className="line-clamp-1 text-slate-600">Bác sĩ chuyên khoa</span>
+                  <CircleDollarSign className="w-[18px] h-[18px] text-slate-500 shrink-0" />
+                  <span className="text-slate-600">Từ {formatPrice(200000)}</span>
                 </div>
                 <ActionButton
                   onClick={(e) => {

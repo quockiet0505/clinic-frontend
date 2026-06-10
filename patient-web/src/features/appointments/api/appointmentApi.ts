@@ -57,16 +57,8 @@ export const appointmentApi = {
   },
 
   getTimeSlots: async (appointmentDate: string, doctorId: number): Promise<TimeSlot[]> => {
-    // TODO: replace with real backend when available
-    // const res = await axiosInstance.get<ApiResponse<TimeSlotRaw[]>>(`/appointments/slots?doctorId=${doctorId}&date=${appointmentDate}`);
-    // return res.data.data.map(enrichTimeSlot);
-    const mockSlots: TimeSlotRaw[] = [
-      { timeStart: '08:00:00', timeEnd: '08:30:00', isAvailable: true },
-      { timeStart: '08:30:00', timeEnd: '09:00:00', isAvailable: true },
-      { timeStart: '09:00:00', timeEnd: '09:30:00', isAvailable: false },
-      { timeStart: '13:30:00', timeEnd: '14:00:00', isAvailable: true },
-    ];
-    return mockSlots.map(enrichTimeSlot);
+    const res = await axiosInstance.get<ApiResponse<TimeSlotRaw[]>>(`/appointments/slots?doctorId=${doctorId}&date=${appointmentDate}`);
+    return res.data.data.map(enrichTimeSlot);
   },
 
   // Authenticated endpoints

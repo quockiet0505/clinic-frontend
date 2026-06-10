@@ -33,8 +33,8 @@ export const DoctorDirectory: React.FC = () => {
   };
 
   const filteredDoctors = doctors.filter((doc) => {
-    const matchesSearch = doc.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || doc.expertise?.expertiseName?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSpecialty = specialtyFilter === 'ALL' || doc.expertise?.expertiseName === specialtyFilter;
+    const matchesSearch = doc.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || doc.expertiseName?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSpecialty = specialtyFilter === 'ALL' || doc.expertiseName === specialtyFilter;
     
     let matchesPrice = true;
     const fee = doc.consultationFee || 300000;
@@ -57,13 +57,13 @@ export const DoctorDirectory: React.FC = () => {
     });
   };
 
-  const specialties = Array.from(new Set(doctors.map(d => d.expertise?.expertiseName).filter(Boolean)));
+  const specialties = Array.from(new Set(doctors.map(d => d.expertiseName).filter(Boolean)));
 
   return (
     <main className="w-full min-h-screen bg-[#f4f8fb] pb-16">
       <div className="relative w-full min-h-[380px] flex items-center justify-center bg-[#154679] pt-10 pb-20">
         <div className="absolute inset-0 z-0">
-          <img src={`${staticUrl}/images/banners/doctor.webp`} onError={(e) => e.currentTarget.src = `${staticUrl}/images/doctor.jpg`} alt="Doctor Banner" className="w-full h-full object-cover opacity-30 mix-blend-overlay" />
+          <img src={`${staticUrl}/images/banners/doctor.webp`} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop'; }} alt="Doctor Banner" className="w-full h-full object-cover opacity-30 mix-blend-overlay" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#154679]/95 via-[#154679]/80 to-transparent"></div>
         </div>
         <SectionContainer className="max-w-6xl relative z-10 w-full text-white">
@@ -191,7 +191,7 @@ export const DoctorDirectory: React.FC = () => {
                   <div className="flex flex-col gap-3 text-[14.5px] flex-1 text-slate-700">
                     <div className="flex items-start gap-3">
                       <Stethoscope className="w-4.5 h-4.5 text-slate-400 shrink-0 mt-0.5" />
-                      <span>Chuyên khoa: <span className="font-medium text-brand-dark">{doctor.expertise?.expertiseName || 'Chuyên khoa tổng quát'}</span></span>
+                      <span>Chuyên khoa: <span className="font-medium text-brand-dark">{doctor.expertiseName || 'Chuyên khoa tổng quát'}</span></span>
                     </div>
                     <div className="flex items-start gap-3">
                       <ClipboardList className="w-4.5 h-4.5 text-slate-400 shrink-0 mt-0.5" />

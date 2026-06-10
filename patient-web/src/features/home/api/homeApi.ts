@@ -12,8 +12,18 @@ export const homeApi = {
     return res.data.data;
   },
 
+  getFeaturedDoctors: async () => {
+    const res = await axiosInstance.get('/staffs/doctors/featured');
+    return res.data.data;
+  },
+
   getServices: async () => {
     const res = await axiosInstance.get('/services');
+    return res.data.data;
+  },
+
+  getFeaturedServices: async () => {
+    const res = await axiosInstance.get('/services/featured');
     return res.data.data;
   },
 

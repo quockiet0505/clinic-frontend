@@ -256,13 +256,7 @@ export const Header: React.FC = () => {
                         <CalendarDays className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
                         Lịch sử đặt khám
                       </button>
-                      <button
-                        onClick={() => navigate('/records')}
-                        className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
-                      >
-                        <FileText className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
-                        Hồ sơ y tế
-                      </button>
+
                       <button
                         onClick={() => navigate('/records/prescriptions')}
                         className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
@@ -276,13 +270,6 @@ export const Header: React.FC = () => {
                       >
                         <FileText className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
                         Kết quả xét nghiệm
-                      </button>
-                      <button
-                        onClick={() => navigate('/profile/billing')}
-                        className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
-                      >
-                        <FileText className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
-                        Lịch sử thanh toán
                       </button>
                     </div>
                     <div className="p-2 border-t border-slate-100 bg-slate-50/50">
@@ -411,13 +398,7 @@ export const Header: React.FC = () => {
                         >
                           Lịch sử đặt khám
                         </Link>
-                        <Link
-                          to="/records"
-                          onClick={() => setIsSheetOpen(false)}
-                          className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50"
-                        >
-                          Hồ sơ y tế
-                        </Link>
+
                       </div>
                     </>
                   )}
