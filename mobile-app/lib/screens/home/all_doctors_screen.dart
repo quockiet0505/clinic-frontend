@@ -1,25 +1,121 @@
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:clinic_management_system/widgets/common/custom_search_bar.dart';
+import 'package:clinic_management_system/utils/image_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/home_provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
 import 'package:clinic_management_system/screens/appointment/select_time_screen.dart';
+import 'package:clinic_management_system/models/doctor_model.dart';
+import 'package:clinic_management_system/utils/currency_formatter.dart';
 
-class AllDoctorsScreen extends StatelessWidget {
+class AllDoctorsScreen extends StatefulWidget {
   const AllDoctorsScreen({super.key});
+
+  @override
+  State<AllDoctorsScreen> createState() => _AllDoctorsScreenState();
+}
+
+class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
+  int _selectedSpecialtyIndex = 0;
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
-      body: Consumer<HomeProvider>(
-        builder: (context, provider, child) {
+      appBar: const GradientAppBar(
+        title: 'Tất cả Bác sĩ',
+      ),
+      body: Consumer2<HomeProvider, AppointmentProvider>(
+        builder: (context, homeProvider, appointmentProvider, child) {
+          if (homeProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
           return Column(
             children: [
-              _buildHeader(context),
+              // 1. Search Bar
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: CustomSearchBar(
+                  hintText: 'Tìm kiếm bác sĩ, chuyên khoa...',
+                  autofocus: true,
+                  onChanged: (val) {
+                    setState(() {
+                      _searchQuery = val.toLowerCase();
+                    });
+                  },
+                  onFilterTap: () {},
+                ),
+              ),
+
+              // 2. Specialty Categories
+              SizedBox(
+                height: 50,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: homeProvider.specialties.length + 1, // +1 for "All"
+                  itemBuilder: (context, index) {
+                    final isSelected = _selectedSpecialtyIndex == index;
+                    final isAll = index == 0;
+                    final specialtyName = isAll ? 'Tất cả' : homeProvider.specialties[index - 1]['expertiseName'];
+                    
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedSpecialtyIndex = index),
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 12),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isSelected ? AppColors.primary : Colors.transparent,
+                          border: Border.all(
+                            color: isSelected ? AppColors.primary : AppColors.textSubLight.withValues(alpha: 0.2),
+                          ),
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        child: Text(
+                          specialtyName ?? '',
+                          style: AppStyles.bodyMedium.copyWith(
+                            color: isSelected ? Colors.white : AppColors.textSubLight,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // 3. Doctors List
               Expanded(
-                child: provider.isLoading
-                    ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-                    : _buildDoctorList(context, provider),
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(horizontal: 20).copyWith(bottom: 100),
+                  itemCount: homeProvider.doctors.length,
+                  itemBuilder: (context, index) {
+                    final doctor = homeProvider.doctors[index];
+                    
+                    // Basic filtering logic based on specialty
+                    if (_selectedSpecialtyIndex != 0) {
+                      final selectedSpecialty = homeProvider.specialties[_selectedSpecialtyIndex - 1]['expertiseName'];
+                      if (doctor.specialty != selectedSpecialty) {
+                        return const SizedBox.shrink();
+                      }
+                    }
+
+                    // Filtering based on search query
+                    if (_searchQuery.isNotEmpty) {
+                      final doctorName = (doctor.name ?? '').toLowerCase();
+                      final doctorSpec = (doctor.specialty ?? '').toLowerCase();
+                      if (!doctorName.contains(_searchQuery) && !doctorSpec.contains(_searchQuery)) {
+                        return const SizedBox.shrink();
+                      }
+                    }
+
+                    return _buildDoctorCard(context, doctor, appointmentProvider, homeProvider);
+                  },
+                ),
               ),
             ],
           );
@@ -28,199 +124,89 @@ class AllDoctorsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFFDBEAFE), // Blue-100
-            Colors.white,
+  Widget _buildDoctorCard(BuildContext context, DoctorModel doctor, AppointmentProvider appointmentProvider, HomeProvider homeProvider) {
+    return GestureDetector(
+      onTap: () {
+        appointmentProvider.selectDoctor(doctor);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SelectTimeScreen()),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.textSubLight.withValues(alpha: 0.1)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            ),
           ],
         ),
-      ),
-      child: SafeArea(
-        bottom: false,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Container(
-                    height: 40, width: 40,
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))]),
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight, size: 18),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ),
-                  const Expanded(
-                    child: Text('Tất cả Bác sĩ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textMainLight), textAlign: TextAlign.center),
-                  ),
-                  const SizedBox(width: 40), // Balance the back button
-                ],
+        child: Row(
+          children: [
+            Hero(
+              tag: 'all_doctor_img_${doctor.id}', // changed tag to avoid conflict if both screens in stack
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.network(
+                  ImageUtils.fixImageUrl(doctor.imageUrl),
+                  height: 80,
+                  width: 80,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200], height: 80, width: 80, child: const Icon(Icons.person, color: Colors.grey)),
+                ),
               ),
-              const SizedBox(height: 24),
-              Row(
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Container(
-                      height: 48,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [BoxShadow(color: AppColors.textSubLight.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))],
-                      ),
-                      child: Row(
+                  Text(
+                    doctor.name ?? 'Unknown',
+                    style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${doctor.specialty} • ClinicCare',
+                    style: AppStyles.caption.copyWith(color: AppColors.textSubLight),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
                         children: [
-                          Icon(Icons.search_rounded, color: AppColors.textSubLight.withOpacity(0.7)),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TextField(
-                              decoration: InputDecoration(
-                                hintText: 'Tìm kiếm bác sĩ...',
-                                hintStyle: AppStyles.bodyMedium.copyWith(color: AppColors.textSubLight.withOpacity(0.7)),
-                                border: InputBorder.none,
-                              ),
-                            ),
+                          const Icon(Icons.star_rounded, color: AppColors.warning, size: 18),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${doctor.rating.toStringAsFixed(1)} (${doctor.viewCount})',
+                            style: AppStyles.caption.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Container(
-                    height: 48, width: 48,
-                    decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 4))]),
-                    child: IconButton(
-                      icon: const Icon(Icons.tune_rounded, color: Colors.white, size: 24),
-                      onPressed: () {},
-                    ),
+                      Text(
+                        CurrencyFormatter.formatVND(doctor.consultationFee),
+                        style: AppStyles.bodyLarge.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
-  }
-
-  Widget _buildDoctorList(BuildContext context, HomeProvider provider) {
-    final doctors = provider.doctors;
-    
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      itemCount: doctors.length,
-      itemBuilder: (context, index) {
-        final doctor = doctors[index];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 20),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(color: AppColors.primary.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 5)),
-            ],
-          ),
-          child: Column(
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Doctor Image
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Image.network(
-                      provider.fixImageUrl(doctor['imageUrl']),
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        width: 80, height: 80,
-                        decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.1), borderRadius: BorderRadius.circular(16)),
-                        child: const Icon(Icons.person, color: AppColors.primary, size: 40),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // Doctor Info
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          doctor['doctorName'] ?? 'Bác sĩ',
-                          style: AppStyles.heading3.copyWith(fontSize: 16, color: AppColors.textMainLight),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          doctor['specialty'] ?? 'Chuyên khoa Nội',
-                          style: AppStyles.bodyMedium.copyWith(color: AppColors.textSubLight, fontWeight: FontWeight.w600),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Icon(Icons.star_rounded, color: Colors.orange[400], size: 16),
-                            const SizedBox(width: 4),
-                            Text('4.8 (120+)', style: AppStyles.caption.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMainLight)),
-                            const SizedBox(width: 12),
-                            Icon(Icons.work_history_rounded, color: AppColors.primary, size: 14),
-                            const SizedBox(width: 4),
-                            Text('> 5 năm', style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.bgLight,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Giá khám', style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
-                          const SizedBox(height: 2),
-                          Text('${doctor['price'] ?? '150.000'} VND', style: AppStyles.bodyMedium.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: 36,
-                      child: GradientButton(
-                        text: 'Đặt khám',
-                        height: 36,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        onPressed: () {
-                          context.read<AppointmentProvider>().selectDoctor(doctor);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectTimeScreen()));
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

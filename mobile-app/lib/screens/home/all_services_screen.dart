@@ -135,7 +135,7 @@ class AllServicesScreen extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
                     child: Image.network(
-                      provider.fixImageUrl(service['imageUrl']),
+                      provider.fixImageUrl(service.imageUrl),
                       width: 70,
                       height: 70,
                       fit: BoxFit.cover,
@@ -153,14 +153,14 @@ class AllServicesScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          service['serviceName'] ?? 'Dịch vụ',
+                          service.serviceName ?? 'Dịch vụ',
                           style: AppStyles.heading3.copyWith(fontSize: 16, color: AppColors.textMainLight),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          '${service['price'] ?? 0} VND',
+                          '${service.discountPrice ?? service.originalPrice} VND',
                           style: AppStyles.bodyLarge.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
                         ),
                       ],
@@ -176,7 +176,7 @@ class AllServicesScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  service['description'] ?? 'Dịch vụ chẩn đoán chính xác bằng công nghệ hiện đại, kết quả được trả nhanh chóng.',
+                  service.description ?? 'Dịch vụ chẩn đoán chính xác bằng công nghệ hiện đại, kết quả được trả nhanh chóng.',
                   style: AppStyles.caption.copyWith(color: AppColors.textSubLight, height: 1.4),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,

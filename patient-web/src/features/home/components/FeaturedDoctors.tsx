@@ -44,7 +44,7 @@ export const FeaturedDoctors: React.FC<Props> = ({ doctors }) => {
   return (
     <section id="featured-doctors-section" className="py-14 bg-gradient-to-b from-gradient-blue via-gradient-white-cold to-white">
       <SectionContainer className="relative">
-        <SectionHeader title="Bác sĩ tư vấn khám bệnh qua video" />
+        <SectionHeader title="Bác sĩ tư vấn khám bệnh " />
         <CarouselWrapper>
           {doctors.map((doctor, index) => (
             <div

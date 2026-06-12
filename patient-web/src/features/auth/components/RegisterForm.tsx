@@ -121,7 +121,7 @@ export const RegisterForm: React.FC = () => {
             onClick={handleNextStep}
             className="h-12 rounded-2xl bg-primary-500 hover:bg-gradient-to-r hover:from-primary-600 hover:to-primary-400 text-white font-bold text-sm mt-2 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer group"
           >
-            Tiếp theo <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+            Tiếp theo 
           </Button>
         </div>
       )}

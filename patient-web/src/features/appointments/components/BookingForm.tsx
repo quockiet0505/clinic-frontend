@@ -190,39 +190,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
 
   return (
     <div className="flex flex-col gap-8">
-      {/* HEADER BẢN CŨ CÓ THÊM THANH MINI STEPPER */}
-      <div className="flex flex-col items-center mb-2">
-        <h2 className="text-[26px] font-black text-brand-dark text-center mb-6">
-          {isDoctorBooking ? 'Đặt khám Bác sĩ' : isServiceBooking ? 'Đặt lịch Xét nghiệm' : 'Đăng ký Khám bệnh'}
-        </h2>
-        
-        {/* MINI PROGRESS BAR (ICONS ONLY) */}
-        <div className="relative flex justify-between items-center w-48 mb-2">
-          {/* Progress Line Background */}
-          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-0.5 bg-slate-200 z-0"></div>
-          {/* Active Progress Line */}
-          <div 
-            className="absolute left-0 top-1/2 -translate-y-1/2 h-0.5 bg-primary-500 z-0 transition-all duration-500"
-            style={{ width: isStep2Done ? '100%' : isStep1Done ? '50%' : '0%' }}
-          ></div>
-
-          {/* Icon 1: Calendar */}
-          <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center border-2 bg-white transition-colors duration-300 ${isStep1Done ? 'border-primary-500 text-primary-500' : 'border-primary-500 text-primary-500'}`}>
-            <CalendarDays className="w-4 h-4" />
-          </div>
-
-          {/* Icon 2: Document */}
-          <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center border-2 bg-white transition-colors duration-300 ${isStep2Done ? 'border-primary-500 text-primary-500' : isStep1Done ? 'border-primary-500 text-primary-500' : 'border-slate-200 text-slate-300'}`}>
-            <FileText className="w-4 h-4" />
-          </div>
-
-          {/* Icon 3: Check */}
-          <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center border-2 bg-white transition-colors duration-300 ${isStep3Done ? 'border-primary-500 bg-primary-500 text-white' : isStep2Done ? 'border-primary-500 text-primary-500' : 'border-slate-200 text-slate-300'}`}>
-            <CheckCircle2 className="w-4 h-4" />
-          </div>
-        </div>
-      </div>
-
+  
       <div className="flex flex-col gap-7">
         {showExpertise && (
           <FormSearchModal

@@ -1,26 +1,67 @@
 import 'package:flutter/material.dart';
 import '../core/network/dio_client.dart';
 import 'package:dio/dio.dart';
+import '../models/appointment_model.dart';
+import '../models/doctor_model.dart';
+import '../models/service_model.dart';
+import '../services/booking_service.dart';
 
 class AppointmentProvider extends ChangeNotifier {
-  final DioClient _dioClient = DioClient();
+  final BookingService _bookingService = BookingService();
 
-  Map<String, dynamic>? selectedDoctor;
+  DoctorModel? selectedDoctor;
+  ServiceModel? selectedService;
+  Map<String, dynamic>? selectedSpecialty;
   String? selectedDate;
-  String? selectedTime;
+  Map<String, dynamic>? selectedTimeSlot;
+  int? selectedExpertiseId;
+  String note = '';
 
   bool isLoading = false;
   String? error;
 
-  List<String> availableSlots = [];
+  List<Map<String, dynamic>> availableSlots = [];
 
-  List<Map<String, dynamic>> myAppointments = [];
+  List<AppointmentModel> myAppointments = [];
 
-  void selectDoctor(Map<String, dynamic> doctor) {
+  void selectDoctor(DoctorModel doctor) {
     selectedDoctor = doctor;
+    selectedService = null;
+    selectedSpecialty = null;
+    selectedExpertiseId = doctor.expertiseId;
     selectedDate = null;
-    selectedTime = null;
+    selectedTimeSlot = null;
+    note = '';
     availableSlots = [];
+    notifyListeners();
+  }
+
+  void selectService(ServiceModel service) {
+    selectedService = service;
+    selectedDoctor = null;
+    selectedSpecialty = null;
+    selectedExpertiseId = null;
+    selectedDate = null;
+    selectedTimeSlot = null;
+    note = '';
+    availableSlots = [];
+    notifyListeners();
+  }
+
+  void selectSpecialty(Map<String, dynamic> specialty) {
+    selectedSpecialty = specialty;
+    selectedDoctor = null;
+    selectedService = null;
+    selectedExpertiseId = specialty['expertiseId'];
+    selectedDate = null;
+    selectedTimeSlot = null;
+    note = '';
+    availableSlots = [];
+    notifyListeners();
+  }
+
+  void updateNote(String newNote) {
+    note = newNote;
     notifyListeners();
   }
 
@@ -30,12 +71,12 @@ class AppointmentProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _dioClient.dio.get('/appointments/my');
-      myAppointments = List<Map<String, dynamic>>.from(response.data['data']);
-    } on DioException catch (e) {
-      error = e.message;
+      final data = await _bookingService.getMyAppointments();
+      myAppointments = data
+              .map((e) => AppointmentModel.fromJson(e))
+              .toList();
     } catch (e) {
-      error = e.toString();
+      error = e.toString().replaceAll('Exception: ', '');
     } finally {
       isLoading = false;
       notifyListeners();
@@ -44,37 +85,35 @@ class AppointmentProvider extends ChangeNotifier {
 
   void selectDate(String date) {
     selectedDate = date;
-    selectedTime = null;
+    selectedTimeSlot = null;
     fetchAvailableSlots();
   }
 
-  void selectTime(String time) {
-    selectedTime = time;
+  void selectTimeSlot(Map<String, dynamic> slot) {
+    selectedTimeSlot = slot;
     notifyListeners();
   }
 
   Future<void> fetchAvailableSlots() async {
-    if (selectedDoctor == null || selectedDate == null) return;
+    if (selectedDate == null) return;
+    final targetDoctorId = selectedDoctor?.id ?? 0; // 0 if service booking or any doctor
     
     isLoading = true;
     error = null;
     notifyListeners();
 
     try {
-      // TODO: Connect to real API to get available slots
-      // final response = await _dioClient.dio.get('/appointments/available-slots', queryParameters: {
-      //   'doctorId': selectedDoctor!['staffId'],
-      //   'date': selectedDate,
-      // });
-      // availableSlots = List<String>.from(response.data['data']);
-
-      // Mock for now to allow UI development
-      await Future.delayed(const Duration(milliseconds: 500));
-      availableSlots = ['09:00', '09:30', '10:00', '13:00', '14:30', '16:00'];
-    } on DioException catch (e) {
-      error = e.message;
+      final data = await _bookingService.getAvailableSlots(targetDoctorId, selectedDate!);
+      
+      availableSlots = data.map((e) {
+        if (e is String) return {'timeStart': e, 'timeEnd': ''};
+        return {
+          'timeStart': e['timeStart'] ?? e['time'] ?? e['startTime'].toString(),
+          'timeEnd': e['timeEnd'] ?? '',
+        };
+      }).toList();
     } catch (e) {
-      error = e.toString();
+      error = e.toString().replaceAll('Exception: ', '');
     } finally {
       isLoading = false;
       notifyListeners();
@@ -82,23 +121,24 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   Future<bool> confirmBooking() async {
-    if (selectedDoctor == null || selectedDate == null || selectedTime == null) return false;
+    if (selectedDate == null || selectedTimeSlot == null) return false;
     
     isLoading = true;
     notifyListeners();
 
     try {
-      // final response = await _dioClient.dio.post('/appointments', data: {
-      //   'mainDoctorId': selectedDoctor!['staffId'],
-      //   'appointmentDate': selectedDate,
-      //   'timeStart': selectedTime,
-      //   'appointmentType': 'ONLINE' // Or 'WALK_IN'
-      // });
-      
-      await Future.delayed(const Duration(milliseconds: 1000));
+      await _bookingService.confirmBooking(
+        doctorId: selectedDoctor?.id, 
+        serviceId: selectedService?.serviceId,
+        expertiseId: selectedExpertiseId,
+        date: selectedDate!, 
+        timeStart: selectedTimeSlot!['timeStart'],
+        timeEnd: selectedTimeSlot!['timeEnd'],
+        note: note,
+      );
       return true;
     } catch (e) {
-      error = e.toString();
+      error = e.toString().replaceAll('Exception: ', '');
       return false;
     } finally {
       isLoading = false;

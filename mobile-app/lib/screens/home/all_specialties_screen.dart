@@ -2,6 +2,9 @@ import 'package:clinic_management_system/app_exports.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/home_provider.dart';
 
+import 'package:clinic_management_system/providers/appointment_provider.dart';
+import 'package:clinic_management_system/screens/appointment/select_time_screen.dart';
+
 class AllSpecialtiesScreen extends StatelessWidget {
   const AllSpecialtiesScreen({super.key});
 
@@ -27,48 +30,54 @@ class AllSpecialtiesScreen extends StatelessWidget {
           return GridView.builder(
             padding: const EdgeInsets.all(24),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
+              crossAxisCount: 4,
               mainAxisSpacing: 24,
-              crossAxisSpacing: 24,
-              childAspectRatio: 0.75,
+              crossAxisSpacing: 16,
+              childAspectRatio: 0.65,
             ),
             itemCount: specialties.length,
             itemBuilder: (context, index) {
               final specialty = specialties[index];
-              return Column(
-                children: [
-                  Expanded(
-                    child: AspectRatio(
-                      aspectRatio: 1,
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(color: AppColors.primary.withOpacity(0.08), blurRadius: 15, offset: const Offset(0, 5)),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            provider.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl']),
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) => const Icon(Icons.medical_services, color: AppColors.primary, size: 36),
+              return GestureDetector(
+                onTap: () {
+                  context.read<AppointmentProvider>().selectSpecialty(specialty);
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const SelectTimeScreen()));
+                },
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(color: AppColors.primary.withOpacity(0.08), blurRadius: 15, offset: const Offset(0, 5)),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Image.network(
+                              provider.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl']),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => const Icon(Icons.medical_services, color: AppColors.primary, size: 36),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    specialty['expertiseName'] ?? '',
-                    style: AppStyles.bodyMedium.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold, fontSize: 12),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    Text(
+                      specialty['expertiseName'] ?? '',
+                      style: AppStyles.bodyMedium.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold, fontSize: 12),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               );
             },
           );

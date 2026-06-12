@@ -1,7 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from 'react';
-import { Mail, MapPin, Phone, User, ShieldCheck, Loader2 } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Mail, MapPin, Phone, User, ShieldCheck, Loader2, Camera, CalendarHeart } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SectionContainer } from '@/components/common';
 import { ProfileInfoForm } from '../components/ProfileInfoForm';
@@ -34,13 +33,11 @@ export const MyProfile: React.FC = () => {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-background-light py-10">
-        <SectionContainer className="max-w-6xl">
-          <div className="h-8 bg-slate-200 rounded animate-pulse w-48 mb-6"></div>
+      <main className="min-h-screen bg-slate-50 py-10">
+        <SectionContainer className="max-w-5xl">
+          <div className="h-8 bg-slate-200 rounded animate-pulse w-48 mb-8"></div>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            <div className="lg:col-span-4">
-              <div className="h-80 bg-slate-200 rounded-3xl animate-pulse w-full"></div>
-            </div>
+            <div className="lg:col-span-4 h-96 bg-slate-200 rounded-3xl animate-pulse"></div>
             <div className="lg:col-span-8 flex flex-col gap-6">
               <div className="h-14 bg-slate-200 rounded-2xl animate-pulse w-full md:w-64"></div>
               <div className="h-96 bg-slate-200 rounded-3xl animate-pulse w-full"></div>
@@ -54,117 +51,153 @@ export const MyProfile: React.FC = () => {
   if (error || !profile) {
     const isForbidden = error === 'Forbidden' || error?.includes('403');
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background-light">
-        <Card className="p-8 text-center max-w-sm rounded-3xl shadow-sm border-0">
-          <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <User className="w-8 h-8" />
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="p-10 text-center max-w-md bg-white rounded-3xl shadow-sm border border-slate-100">
+          <div className="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-5">
+            <User className="w-10 h-10" />
           </div>
-          <h2 className="text-lg font-bold text-brand-dark mb-2">
+          <h2 className="text-2xl font-black text-slate-800 mb-3">
             {isForbidden ? 'Không có quyền truy cập' : 'Chưa có dữ liệu hồ sơ'}
           </h2>
-          <p className="text-slate-500 font-medium mb-6 text-sm">
-            {isForbidden 
-              ? 'Phiên đăng nhập đã hết hạn hoặc bạn không có quyền truy cập trang này.' 
+          <p className="text-slate-500 font-medium mb-8 text-[15px]">
+            {isForbidden
+              ? 'Phiên đăng nhập đã hết hạn hoặc bạn không có quyền truy cập trang này.'
               : 'Chúng tôi không tìm thấy thông tin hồ sơ của bạn. Vui lòng thử lại.'}
           </p>
-          <button onClick={() => window.location.href = isForbidden ? '/auth/login' : '/'} className="px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl w-full cursor-pointer transition-colors shadow-sm">
+          <button onClick={() => window.location.href = isForbidden ? '/auth/login' : '/'} className="px-8 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white font-bold rounded-xl w-full cursor-pointer transition-colors shadow-sm">
             {isForbidden ? 'Đăng nhập lại' : 'Quay về trang chủ'}
           </button>
-        </Card>
+        </div>
       </div>
     );
   }
 
-  const fullName = profile.full_name || '';
+  const joinDate = new Date().toLocaleDateString('vi-VN'); // Thay bằng ngày tham gia thật nếu có
+
   return (
-    <main className="min-h-screen bg-background-light py-10">
-      <SectionContainer className="max-w-6xl">
-        <Tabs defaultValue="personal" className="w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            {/* Sidebar trái: Tiêu đề + Thông tin */}
-            <div className="lg:col-span-4 flex flex-col gap-6 lg:sticky top-24">
-              <div className="bg-slate-100 p-1.5 rounded-2xl flex items-center w-full">
-                <TabsList className="bg-transparent h-11 w-full p-0 flex gap-1 rounded-none">
-                  <TabsTrigger 
-                    value="personal" 
-                    className="rounded-xl flex-1 px-2 h-full text-[14px] font-bold text-slate-500 transition-all gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm cursor-pointer"
-                  >
-                    <User className="w-4 h-4" /> Thông tin
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="security" 
-                    className="rounded-xl flex-1 px-2 h-full text-[14px] font-bold text-slate-500 transition-all gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm cursor-pointer"
-                  >
-                    <ShieldCheck className="w-4 h-4" /> Bảo mật
-                  </TabsTrigger>
-                </TabsList>
+    <main className="min-h-screen bg-slate-50">
+      <Tabs defaultValue="personal" className="block w-full">
+        {/* Page Header */}
+        <div className="bg-white border-b border-slate-100 shadow-sm">
+          <SectionContainer className="max-w-5xl py-5">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 text-[12px] font-semibold text-slate-400 mb-1">
+                  <span>Trang chủ</span>
+                  <span>/</span>
+                  <span className="text-primary-600">Hồ sơ cá nhân</span>
+                </div>
+                <h1 className="text-xl font-black text-slate-800 flex items-center gap-2">
+                  <User className="w-5 h-5 text-primary-600" />
+                  Hồ Sơ Cá Nhân
+                </h1>
               </div>
               
-              <Card className="rounded-3xl border-slate-200 shadow-sm overflow-hidden bg-white">
-                <CardContent className="p-8 flex flex-col items-center text-center">
-                  <div className="w-24 h-24 bg-primary-50 border-[6px] border-white outline outline-1 outline-slate-100 rounded-full flex items-center justify-center shadow-sm mb-4">
-                    <span className="text-3xl font-black text-primary-500">
-                      {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U'}
+              <TabsList className="bg-slate-100/50 p-1.5 rounded-xl flex gap-1.5 h-12 w-full md:w-auto">
+                <TabsTrigger
+                  value="personal"
+                  className="rounded-lg px-5 h-full text-[13.5px] font-bold text-slate-500 transition-all gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm cursor-pointer"
+                >
+                  <User className="w-4 h-4" /> Thông tin
+                </TabsTrigger>
+                <TabsTrigger
+                  value="security"
+                  className="rounded-lg px-5 h-full text-[13.5px] font-bold text-slate-500 transition-all gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm cursor-pointer"
+                >
+                  <ShieldCheck className="w-4 h-4" /> Bảo mật
+                </TabsTrigger>
+              </TabsList>
+            </div>
+          </SectionContainer>
+        </div>
+
+        <SectionContainer className="max-w-5xl py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* Sidebar trái: Profile Card */}
+            <div className="lg:col-span-4 flex flex-col gap-6 lg:sticky top-24">
+              <div className="rounded-2xl border border-slate-100 shadow-sm bg-white overflow-hidden relative">
+                {/* Background Banner */}
+                <div className="h-28 bg-gradient-to-r from-primary-500 to-primary-600 w-full absolute top-0 left-0" />
+
+                <div className="pt-16 px-6 pb-6 flex flex-col items-center text-center relative z-10">
+                  <div className="w-24 h-24 bg-white p-1.5 rounded-full shadow-lg mb-3 relative group cursor-pointer">
+                    <div className="w-full h-full rounded-full bg-indigo-50 flex items-center justify-center overflow-hidden border-2 border-indigo-100">
+                      <span className="text-3xl font-black text-indigo-500">
+                        {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U'}
+                      </span>
+                    </div>
+                    <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Camera className="w-8 h-8 text-white" />
+                    </div>
+                  </div>
+                  
+                  <h2 className="text-[17px] font-black text-slate-800">{profile?.full_name}</h2>
+                  <div className="flex items-center justify-center gap-2 mt-1.5 mb-5">
+                    <span className="text-primary-600 font-bold text-[12px] bg-primary-50 px-2.5 py-1 rounded-full">Bệnh nhân</span>
+                    <span className="flex items-center gap-1 text-slate-500 font-medium text-[12px] bg-slate-50 px-2.5 py-1 rounded-full border border-slate-100">
+                      <CalendarHeart className="w-3 h-3" /> Thành viên
                     </span>
                   </div>
-                  <h2 className="text-xl font-bold text-brand-dark">{profile?.full_name}</h2>
-                  <p className="text-primary-600 font-medium text-[14px] bg-primary-50 px-3 py-1 rounded-full mt-2">Bệnh nhân</p>
 
-                  <div className="w-full border-t border-slate-100 my-6"></div>
+                  <div className="w-full border-t border-slate-100 mb-6"></div>
 
-                  <div className="w-full flex flex-col gap-4 text-left">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-primary-500 shrink-0">
-                        <Phone className="w-4 h-4" />
+                  <div className="w-full flex flex-col gap-5 text-left">
+                    <div className="flex items-center gap-4 group">
+                      <div className="w-11 h-11 rounded-2xl bg-slate-50 group-hover:bg-primary-50 group-hover:text-primary-600 flex items-center justify-center text-slate-400 transition-colors shrink-0">
+                        <Phone className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-[12px] font-semibold text-slate-400 uppercase tracking-wider">Điện thoại</p>
-                        <p className="font-medium text-slate-700 text-[14.5px]">{profile?.phone || 'Chưa cập nhật'}</p>
+                        <p className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">Điện thoại</p>
+                        <p className="font-semibold text-slate-700 text-[14.5px] mt-0.5">{profile?.phone || 'Chưa cập nhật'}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-primary-500 shrink-0">
-                        <Mail className="w-4 h-4" />
+                    
+                    <div className="flex items-center gap-4 group">
+                      <div className="w-11 h-11 rounded-2xl bg-slate-50 group-hover:bg-primary-50 group-hover:text-primary-600 flex items-center justify-center text-slate-400 transition-colors shrink-0">
+                        <Mail className="w-5 h-5" />
                       </div>
-                      <div>
-                        <p className="text-[12px] font-semibold text-slate-400 uppercase tracking-wider">Email</p>
-                        <p className="font-medium text-slate-700 text-[14.5px] break-all">{profile?.email}</p>
+                      <div className="overflow-hidden">
+                        <p className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">Email</p>
+                        <p className="font-semibold text-slate-700 text-[14.5px] mt-0.5 truncate">{profile?.email}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-primary-500 shrink-0">
-                        <MapPin className="w-4 h-4" />
+                    
+                    <div className="flex items-center gap-4 group">
+                      <div className="w-11 h-11 rounded-2xl bg-slate-50 group-hover:bg-primary-50 group-hover:text-primary-600 flex items-center justify-center text-slate-400 transition-colors shrink-0">
+                        <MapPin className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-[12px] font-semibold text-slate-400 uppercase tracking-wider">Địa chỉ</p>
-                        <p className="font-medium text-slate-700 text-[14.5px] leading-tight">{profile?.address || 'Chưa cập nhật'}</p>
+                        <p className="text-[12px] font-bold text-slate-400 uppercase tracking-wider">Địa chỉ</p>
+                        <p className="font-semibold text-slate-700 text-[14.5px] mt-0.5 leading-tight">{profile?.address || 'Chưa cập nhật'}</p>
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
 
             {/* Phần bên phải: Nội dung Form */}
-            <div className="lg:col-span-8 flex flex-col">
-              <Card className="rounded-3xl border-slate-200 shadow-sm bg-white overflow-hidden">
+            <div className="lg:col-span-8 flex flex-col gap-6">
+              <div className="rounded-2xl border border-slate-100 shadow-sm bg-white overflow-hidden">
                 <TabsContent value="personal" className="outline-none mt-0">
-                  <div className="p-8">
-                    <h3 className="text-[18px] font-black text-brand-dark mb-6">Cập nhật hồ sơ bệnh nhân</h3>
+                  <div className="p-6 md:p-7">
+                    <h3 className="text-[17px] font-black text-slate-800 mb-5">Cập nhật hồ sơ bệnh nhân</h3>
                     <ProfileInfoForm initialData={profile} onSuccess={fetchProfile} />
                   </div>
                 </TabsContent>
                 <TabsContent value="security" className="outline-none mt-0">
-                  <div className="p-8">
-                    <h3 className="text-[18px] font-black text-brand-dark mb-6">Thiết lập bảo mật</h3>
+                  <div className="p-6 md:p-7">
+                    <h3 className="text-[17px] font-black text-slate-800 mb-5">Thiết lập bảo mật</h3>
                     <PasswordChangeForm />
                   </div>
                 </TabsContent>
-              </Card>
+              </div>
             </div>
+            
           </div>
-        </Tabs>
-      </SectionContainer>
+        </SectionContainer>
+      </Tabs>
     </main>
   );
 };

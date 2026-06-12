@@ -1,7 +1,10 @@
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:clinic_management_system/widgets/common/custom_search_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/home_provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
+import 'package:clinic_management_system/models/doctor_model.dart';
+import 'package:clinic_management_system/utils/currency_formatter.dart';
 
 class SelectDoctorScreen extends StatefulWidget {
   const SelectDoctorScreen({super.key});
@@ -31,44 +34,12 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
               // 1. Search Bar
               Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 48,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [BoxShadow(color: AppColors.textSubLight.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))],
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.search_rounded, color: AppColors.textSubLight.withOpacity(0.7)),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'Tìm kiếm bác sĩ, chuyên khoa...',
-                                  hintStyle: AppStyles.bodyMedium.copyWith(color: AppColors.textSubLight.withOpacity(0.7)),
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Container(
-                      height: 48, width: 48,
-                      decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 4))]),
-                      child: IconButton(
-                        icon: const Icon(Icons.tune_rounded, color: Colors.white, size: 24),
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
+                child: CustomSearchBar(
+                  hintText: 'Tìm kiếm bác sĩ, chuyên khoa...',
+                  onChanged: (val) {
+                    // Search filtering
+                  },
+                  onFilterTap: () {},
                 ),
               ),
 
@@ -122,7 +93,7 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
                     // Basic filtering logic based on specialty
                     if (_selectedSpecialtyIndex != 0) {
                       final selectedSpecialty = homeProvider.specialties[_selectedSpecialtyIndex - 1]['expertiseName'];
-                      if (doctor['expertiseName'] != selectedSpecialty) {
+                      if (doctor.specialty != selectedSpecialty) {
                         return const SizedBox.shrink();
                       }
                     }
@@ -138,7 +109,7 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
     );
   }
 
-  Widget _buildDoctorCard(BuildContext context, Map<String, dynamic> doctor, AppointmentProvider appointmentProvider, HomeProvider homeProvider) {
+  Widget _buildDoctorCard(BuildContext context, DoctorModel doctor, AppointmentProvider appointmentProvider, HomeProvider homeProvider) {
     return GestureDetector(
       onTap: () {
         appointmentProvider.selectDoctor(doctor);
@@ -165,11 +136,11 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
         child: Row(
           children: [
             Hero(
-              tag: 'doctor_img_${doctor['staffId']}',
+              tag: 'doctor_img_${doctor.id}',
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: Image.network(
-                  homeProvider.fixImageUrl(doctor['imageUrl']),
+                  homeProvider.fixImageUrl(doctor.imageUrl),
                   height: 80,
                   width: 80,
                   fit: BoxFit.cover,
@@ -183,14 +154,14 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    doctor['fullName'] ?? 'Unknown',
+                    doctor.name ?? 'Unknown',
                     style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${doctor['expertiseName']} • ClinicCare',
+                    '${doctor.specialty} • ClinicCare',
                     style: AppStyles.caption.copyWith(color: AppColors.textSubLight),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -204,13 +175,13 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
                           const Icon(Icons.star_rounded, color: AppColors.warning, size: 18),
                           const SizedBox(width: 4),
                           Text(
-                            '5.0 (120)',
+                            '${doctor.rating.toStringAsFixed(1)} (${doctor.viewCount})',
                             style: AppStyles.caption.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
                       Text(
-                        '\$50', // Would get from API /doctor_service_price if available
+                        CurrencyFormatter.formatVND(doctor.consultationFee),
                         style: AppStyles.bodyLarge.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
                       ),
                     ],

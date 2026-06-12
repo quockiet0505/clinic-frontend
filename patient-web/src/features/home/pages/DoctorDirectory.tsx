@@ -14,7 +14,7 @@ export const DoctorDirectory: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [specialtyFilter, setSpecialtyFilter] = useState('ALL');
   const [priceFilter, setPriceFilter] = useState('ALL');
-  
+
   const [isSpecialtyOpen, setIsSpecialtyOpen] = useState(false);
   const specialtyTimeout = useRef<NodeJS.Timeout>();
   const [isPriceOpen, setIsPriceOpen] = useState(false);
@@ -35,7 +35,7 @@ export const DoctorDirectory: React.FC = () => {
   const filteredDoctors = doctors.filter((doc) => {
     const matchesSearch = doc.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || doc.expertiseName?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesSpecialty = specialtyFilter === 'ALL' || doc.expertiseName === specialtyFilter;
-    
+
     let matchesPrice = true;
     const fee = doc.consultationFee || 300000;
     if (priceFilter === 'LOW') matchesPrice = fee < 300000;
@@ -61,15 +61,15 @@ export const DoctorDirectory: React.FC = () => {
 
   return (
     <main className="w-full min-h-screen bg-[#f4f8fb] pb-16">
-      <div className="relative w-full min-h-[380px] flex items-center justify-center bg-[#154679] pt-10 pb-20">
+      <div className="relative w-full min-h-[380px] flex items-center justify-center pt-10 pb-20">
         <div className="absolute inset-0 z-0">
-          <img src={`${staticUrl}/images/banners/doctor.webp`} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop'; }} alt="Doctor Banner" className="w-full h-full object-cover opacity-30 mix-blend-overlay" />
+          <img src={`${staticUrl}/images/banners/doctor.webp`} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop'; }} alt="Doctor Banner" className="w-full h-full object-cover opacity-150 mix-blend-overlay" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#154679]/95 via-[#154679]/80 to-transparent"></div>
         </div>
         <SectionContainer className="max-w-6xl relative z-10 w-full text-white">
           <div className="max-w-2xl">
             <h1 className="text-[32px] md:text-[36px] leading-tight font-black uppercase tracking-wide mb-5 text-white drop-shadow-sm">
-              GỌI VIDEO VỚI<br/><span className="text-[#38bdf8]">BÁC SĨ CHUYÊN KHOA</span>
+              KHÁM VỚI<br /><span className="text-[#38bdf8]">BÁC SĨ CHUYÊN KHOA</span>
             </h1>
             <div className="flex flex-col gap-3 font-medium text-[15px] mb-7 text-slate-100">
               <p className="flex items-start gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-[#38bdf8] shrink-0 mt-0.5" />Khám và tư vấn sức khỏe từ xa tiện lợi</p>
@@ -86,15 +86,15 @@ export const DoctorDirectory: React.FC = () => {
             </div>
           </div>
         </SectionContainer>
-        
+
         {/* Floating Search Bar (Gọn hơn) */}
         <div className="absolute left-0 right-0 -bottom-7 flex justify-center z-20 px-4">
           <div className="w-full max-w-2xl bg-white rounded-2xl shadow-[0_12px_40px_-10px_rgba(0,0,0,0.15)] overflow-hidden">
-            <SearchInput 
-              value={searchTerm} 
-              onSearch={(val) => { setSearchTerm(val); setCurrentPage(1); }} 
-              placeholder="Tìm theo tên bác sĩ, chuyên khoa..." 
-              className="h-[56px] w-full shadow-none border-0 px-2" 
+            <SearchInput
+              value={searchTerm}
+              onSearch={(val) => { setSearchTerm(val); setCurrentPage(1); }}
+              placeholder="Tìm theo tên bác sĩ, chuyên khoa..."
+              className="h-[56px] w-full shadow-none border-0 px-2"
             />
           </div>
         </div>
@@ -104,12 +104,12 @@ export const DoctorDirectory: React.FC = () => {
         {/* Khu vực Lọc riêng biệt */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-16 mb-6">
           <h2 className="text-[22px] font-bold text-brand-dark">Danh sách Bác sĩ</h2>
-          
+
           <div className="flex flex-wrap items-center gap-3">
             {/* Chuyên khoa Filter */}
-            <div 
+            <div
               className="w-[200px] shrink-0 relative z-50"
-              onMouseEnter={() => { if(specialtyTimeout.current) clearTimeout(specialtyTimeout.current); setIsSpecialtyOpen(true); }}
+              onMouseEnter={() => { if (specialtyTimeout.current) clearTimeout(specialtyTimeout.current); setIsSpecialtyOpen(true); }}
               onMouseLeave={() => { specialtyTimeout.current = setTimeout(() => setIsSpecialtyOpen(false), 150); }}
             >
               <button className={`w-full h-11 flex items-center justify-between px-4 rounded-xl bg-white border shadow-sm transition-colors cursor-pointer ${isSpecialtyOpen ? 'border-primary-500 text-primary-600' : 'border-slate-200 text-slate-700'}`}>
@@ -131,9 +131,9 @@ export const DoctorDirectory: React.FC = () => {
             </div>
 
             {/* Mức giá Filter */}
-            <div 
+            <div
               className="w-[180px] shrink-0 relative z-40"
-              onMouseEnter={() => { if(priceTimeout.current) clearTimeout(priceTimeout.current); setIsPriceOpen(true); }}
+              onMouseEnter={() => { if (priceTimeout.current) clearTimeout(priceTimeout.current); setIsPriceOpen(true); }}
               onMouseLeave={() => { priceTimeout.current = setTimeout(() => setIsPriceOpen(false), 150); }}
             >
               <button className={`w-full h-11 flex items-center justify-between px-4 rounded-xl bg-white border shadow-sm transition-colors cursor-pointer ${isPriceOpen ? 'border-primary-500 text-primary-600' : 'border-slate-200 text-slate-700'}`}>
@@ -164,7 +164,7 @@ export const DoctorDirectory: React.FC = () => {
           {currentItems.length > 0 ? (
             currentItems.map((doctor, idx) => (
               <div key={doctor.staffId} className="bg-white rounded-[28px] p-6 border border-slate-100 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_40px_-10px_rgba(0,181,241,0.15)] hover:border-primary-200 transition-all duration-300 flex gap-6 hover:-translate-y-1 group">
-                
+
                 {/* Left Side: Avatar & Rating */}
                 <div className="w-[140px] shrink-0 flex flex-col items-center">
                   <div className="w-[140px] h-[150px] bg-[#eef5fa] rounded-2xl overflow-hidden relative border border-slate-50 group-hover:border-primary-100 transition-colors">
@@ -187,7 +187,7 @@ export const DoctorDirectory: React.FC = () => {
                     <strong className="font-black text-primary-500">{doctor.fullName}</strong>
                   </h3>
                   <div className="w-full h-px bg-slate-100 mb-4"></div>
-                  
+
                   <div className="flex flex-col gap-3 text-[14.5px] flex-1 text-slate-700">
                     <div className="flex items-start gap-3">
                       <Stethoscope className="w-4.5 h-4.5 text-slate-400 shrink-0 mt-0.5" />
@@ -227,7 +227,7 @@ export const DoctorDirectory: React.FC = () => {
             </div>
           )}
         </div>
-        
+
         {totalPages > 1 && (
           <div className="pt-4 border-t border-slate-100">
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />

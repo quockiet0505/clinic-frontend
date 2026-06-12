@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:clinic_management_system/providers/home_provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
+import 'package:clinic_management_system/providers/auth_provider.dart';
+import 'package:clinic_management_system/providers/record_provider.dart';
+import 'package:clinic_management_system/providers/chat_provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 void main() async {
@@ -22,6 +25,8 @@ void main() async {
           ChangeNotifierProvider(create: (_) => HomeProvider()),
           ChangeNotifierProvider(create: (_) => AppointmentProvider()),
           ChangeNotifierProvider(create: (_) => AuthProvider()),
+          ChangeNotifierProvider(create: (_) => RecordProvider()),
+          ChangeNotifierProvider(create: (_) => ChatProvider()),
         ],
         child: const ClinicApp(),
       ),
@@ -92,4 +97,4 @@ class _AuthWrapperState extends State<AuthWrapper> {
       return const LoginScreen();
     }
   }
-}
+}

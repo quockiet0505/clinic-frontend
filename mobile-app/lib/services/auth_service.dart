@@ -43,6 +43,22 @@ class AuthService {
     }
   }
 
+  Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> data) async {
+    try {
+      final response = await _dioClient.dio.put('/patients/profile', data: data);
+      if (response.statusCode == 200) {
+        return response.data['data'];
+      } else {
+        throw Exception(response.data['message'] ?? 'Failed to update profile');
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(e.response?.data['message'] ?? 'Failed to update profile');
+      }
+      throw Exception('Network error');
+    }
+  }
+
   Future<Map<String, dynamic>> register(String fullName, String phone, String email, String password) async {
     try {
       final response = await _dioClient.dio.post(
@@ -63,6 +79,26 @@ class AuthService {
     } on DioException catch (e) {
       if (e.response != null) {
         throw Exception(e.response?.data['message'] ?? 'Register failed');
+      }
+      throw Exception('Network error');
+    }
+  }
+
+  Future<void> changePassword(String currentPassword, String newPassword) async {
+    try {
+      final response = await _dioClient.dio.put(
+        '/auth/change-password',
+        data: {
+          'currentPassword': currentPassword,
+          'newPassword': newPassword,
+        },
+      );
+      if (response.statusCode != 200) {
+        throw Exception(response.data['message'] ?? 'Failed to change password');
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(e.response?.data['message'] ?? 'Failed to change password');
       }
       throw Exception('Network error');
     }

@@ -8,6 +8,8 @@ import 'package:clinic_management_system/screens/home/all_doctors_screen.dart';
 import 'package:clinic_management_system/screens/home/all_services_screen.dart';
 import 'package:clinic_management_system/screens/home/all_specialties_screen.dart';
 import 'package:clinic_management_system/screens/notifications/notification_screen.dart';
+import 'package:clinic_management_system/screens/notifications/notification_screen.dart';
+import 'package:clinic_management_system/utils/currency_formatter.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -189,38 +191,49 @@ class _HomeScreenState extends State<HomeScreen> {
           // Kích thước để hiển thị 4 mục trên màn hình
           final itemWidth = (MediaQuery.of(context).size.width - 40) / 4;
           
-          return SizedBox(
-            width: itemWidth,
-            child: Column(
-              children: [
-                Container(
-                  height: 55, width: 55,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
-                  ),
-                  child: Image.network(
-                    provider.fixImageUrl(action['iconUrl']),
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.category, color: AppColors.primary),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                  child: SizedBox(
-                    height: 28, // Đảm bảo luôn chiếm khoảng trống 2 dòng chữ để các icon thẳng hàng
-                    child: Text(
-                      action['title'] ?? '',
-                      style: AppStyles.caption.copyWith(color: AppColors.textMainLight, fontSize: 11, fontWeight: FontWeight.w600, height: 1.2),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+          return GestureDetector(
+            onTap: () {
+              if (action['id'] == 2) {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const AllSpecialtiesScreen()));
+              } else if (action['id'] == 3) {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const AllServicesScreen()));
+              } else if (action['id'] == 5 || action['id'] == 1 || action['id'] == 4) {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const AllDoctorsScreen()));
+              }
+            },
+            child: SizedBox(
+              width: itemWidth,
+              child: Column(
+                children: [
+                  Container(
+                    height: 55, width: 55,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
+                    ),
+                    child: Image.network(
+                      provider.fixImageUrl(action['iconUrl']),
+                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.category, color: AppColors.primary),
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                    child: SizedBox(
+                      height: 28, // Đảm bảo luôn chiếm khoảng trống 2 dòng chữ để các icon thẳng hàng
+                      child: Text(
+                        action['title'] ?? '',
+                        style: AppStyles.caption.copyWith(color: AppColors.textMainLight, fontSize: 11, fontWeight: FontWeight.w600, height: 1.2),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },
@@ -321,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildDoctorCard(BuildContext context, Map<String, dynamic> doctor, HomeProvider provider) {
+  Widget _buildDoctorCard(BuildContext context, DoctorModel doctor, HomeProvider provider) {
     return GestureDetector(
       onTap: () {
         context.read<AppointmentProvider>().selectDoctor(doctor);
@@ -345,20 +358,20 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Hero(
-              tag: 'doctor_img_home_${doctor['staffId']}',
+              tag: 'doctor_img_home_${doctor.id}',
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  provider.fixImageUrl(doctor['imageUrl']), 
+                  provider.fixImageUrl(doctor.imageUrl), 
                   height: 90, width: double.infinity, fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200], height: 90, child: const Icon(Icons.person, color: Colors.grey)),
                 ),
               ),
             ),
             const Spacer(),
-            Text(doctor['fullName'] ?? 'Bác sĩ', style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontSize: 13, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+            Text(doctor.name ?? 'Bác sĩ', style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontSize: 13, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
             const SizedBox(height: 2),
-            Text(doctor['expertiseName'] ?? 'Chuyên khoa', style: AppStyles.caption.copyWith(color: AppColors.textSubLight, fontSize: 10)),
+            Text(doctor.specialty ?? 'Chuyên khoa', style: AppStyles.caption.copyWith(color: AppColors.textSubLight, fontSize: 10)),
             const SizedBox(height: 4),
             Row(
               children: [
@@ -420,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(16),
                                 child: Image.network(
-                                  provider.fixImageUrl(service['imageUrl']),
+                                  provider.fixImageUrl(service.imageUrl),
                                   height: 50, width: 50, fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) => Container(
                                     height: 50, width: 50,
@@ -434,8 +447,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(service['serviceName'] ?? 'Dịch vụ', style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontSize: 13, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
-                                    Text('${service['price'] ?? 0} VND', style: AppStyles.bodyMedium.copyWith(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold)),
+                                    Text(service.serviceName, style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontSize: 13, fontWeight: FontWeight.bold), maxLines: 1, overflow: TextOverflow.ellipsis),
+                                    const SizedBox(height: 2),
+                                    if (service.discountPrice != null && service.discountPrice! < service.originalPrice) ...[
+                                      Text(
+                                        CurrencyFormatter.formatVND(service.originalPrice.toDouble()), 
+                                        style: AppStyles.caption.copyWith(decoration: TextDecoration.lineThrough, color: Colors.grey, fontSize: 10)
+                                      ),
+                                      Text(
+                                        CurrencyFormatter.formatVND(service.discountPrice!.toDouble()), 
+                                        style: AppStyles.bodyMedium.copyWith(color: AppColors.error, fontSize: 13, fontWeight: FontWeight.bold)
+                                      ),
+                                    ] else ...[
+                                      Text(
+                                        CurrencyFormatter.formatVND(service.originalPrice.toDouble()), 
+                                        style: AppStyles.bodyMedium.copyWith(color: AppColors.primary, fontSize: 13, fontWeight: FontWeight.bold)
+                                      ),
+                                    ]
                                   ],
                                 ),
                               ),
@@ -443,7 +471,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           const Spacer(),
                           Text(
-                            service['description'] ?? 'Mô tả dịch vụ đang cập nhật...',
+                            service.description ?? 'Mô tả dịch vụ đang cập nhật...',
                             style: AppStyles.caption.copyWith(color: AppColors.textSubLight, fontSize: 11),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -452,13 +480,29 @@ class _HomeScreenState extends State<HomeScreen> {
                           SizedBox(
                             width: double.infinity,
                             height: 36,
-                            child: OutlinedButton(
-                              onPressed: () {},
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(color: AppColors.primary),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFF2563EB), Color(0xFF60A5FA)],
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 4))],
                               ),
-                              child: Text('Chi tiết', style: AppStyles.caption.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(12),
+                                  onTap: () {
+                                    context.read<AppointmentProvider>().selectService(service);
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => const SelectTimeScreen()));
+                                  },
+                                  child: Center(
+                                    child: Text('Đặt lịch ngay', style: AppStyles.caption.copyWith(color: Colors.white, fontWeight: FontWeight.bold)),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -510,39 +554,45 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (context, index) {
                     final specialty = provider.specialties[index];
                     final itemWidth = (MediaQuery.of(context).size.width - 40) / 4;
-                    return SizedBox(
-                      width: itemWidth,
-                      child: Column(
-                        children: [
-                          Container(
-                            height: 55, width: 55,
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white, 
-                              borderRadius: BorderRadius.circular(16), 
-                              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))]
-                            ),
-                            child: Image.network(
-                              provider.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl']),
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => const Icon(Icons.medical_services, color: AppColors.primary, size: 24),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                            child: SizedBox(
-                              height: 28, // Đảm bảo luôn chiếm khoảng trống 2 dòng chữ
-                              child: Text(
-                                specialty['expertiseName'] ?? '', 
-                                style: AppStyles.bodyMedium.copyWith(color: AppColors.textMainLight, fontSize: 11, fontWeight: FontWeight.w600, height: 1.2),
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                    return GestureDetector(
+                      onTap: () {
+                        context.read<AppointmentProvider>().selectSpecialty(specialty);
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const SelectTimeScreen()));
+                      },
+                      child: SizedBox(
+                        width: itemWidth,
+                        child: Column(
+                          children: [
+                            Container(
+                              height: 55, width: 55,
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white, 
+                                borderRadius: BorderRadius.circular(16), 
+                                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))]
+                              ),
+                              child: Image.network(
+                                provider.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl']),
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) => const Icon(Icons.medical_services, color: AppColors.primary, size: 24),
                               ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 8),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                              child: SizedBox(
+                                height: 28, // Đảm bảo luôn chiếm khoảng trống 2 dòng chữ
+                                child: Text(
+                                  specialty['expertiseName'] ?? '', 
+                                  style: AppStyles.bodyMedium.copyWith(color: AppColors.textMainLight, fontSize: 11, fontWeight: FontWeight.w600, height: 1.2),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

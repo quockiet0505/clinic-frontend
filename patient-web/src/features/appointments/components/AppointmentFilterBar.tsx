@@ -7,6 +7,8 @@ interface AppointmentFilterBarProps {
   onSearchChange: (value: string) => void;
   status: AppointmentStatus | 'ALL';
   onStatusChange: (value: AppointmentStatus | 'ALL') => void;
+  serviceType: 'ALL' | 'CONSULTATION' | 'TEST';
+  onServiceTypeChange: (value: 'ALL' | 'CONSULTATION' | 'TEST') => void;
 }
 
 export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
@@ -14,29 +16,34 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
   onSearchChange,
   status,
   onStatusChange,
+  serviceType,
+  onServiceTypeChange,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const statusTimeoutRef = useRef<NodeJS.Timeout>();
 
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setIsOpen(true);
+  const [isServiceOpen, setIsServiceOpen] = useState(false);
+  const serviceTimeoutRef = useRef<NodeJS.Timeout>();
+
+  const handleStatusEnter = () => {
+    if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
+    setIsStatusOpen(true);
+  };
+  const handleStatusLeave = () => {
+    statusTimeoutRef.current = setTimeout(() => setIsStatusOpen(false), 150);
   };
 
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setIsOpen(false);
-    }, 150);
+  const handleServiceEnter = () => {
+    if (serviceTimeoutRef.current) clearTimeout(serviceTimeoutRef.current);
+    setIsServiceOpen(true);
   };
-
-  const handleSelect = (val: AppointmentStatus | 'ALL') => {
-    onStatusChange(val);
-    setIsOpen(false);
+  const handleServiceLeave = () => {
+    serviceTimeoutRef.current = setTimeout(() => setIsServiceOpen(false), 150);
   };
 
   return (
     <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto items-center">
-      <div className="w-full md:w-80">
+      <div className="w-full md:w-64">
         <SearchInput
           value={search}
           onSearch={onSearchChange}
@@ -44,14 +51,51 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
           className="h-11"
         />
       </div>
+      
+      {/* Lọc theo Loại Dịch Vụ */}
       <div 
         className="w-full sm:w-44 shrink-0 relative z-50"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onMouseEnter={handleServiceEnter}
+        onMouseLeave={handleServiceLeave}
       >
-        <button className={`w-full h-11 flex items-center justify-between px-4 rounded-full bg-white border shadow-sm font-medium text-slate-700 cursor-pointer transition-colors ${isOpen ? 'border-primary-500 text-primary-600' : 'border-slate-200'}`}>
+        <button className={`w-full h-11 flex items-center justify-between px-4 rounded-full bg-white border shadow-sm font-medium text-slate-700 cursor-pointer transition-colors ${isServiceOpen ? 'border-primary-500 text-primary-600' : 'border-slate-200'}`}>
           <span className="text-[14px]">
-            {status === 'ALL' && 'Tất cả trạng thái'}
+            {serviceType === 'ALL' && 'Loại dịch vụ'}
+            {serviceType === 'CONSULTATION' && 'Khám bệnh'}
+            {serviceType === 'TEST' && 'Xét nghiệm'}
+          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${isServiceOpen ? 'rotate-180 text-primary-500' : 'text-slate-400'}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <div className={`absolute left-0 right-0 top-full pt-2 transition-all duration-200 ${isServiceOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
+          <div className="rounded-2xl bg-white border border-slate-100 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] p-1.5 flex flex-col gap-0.5">
+            {[
+              { value: 'ALL', label: 'Tất cả dịch vụ' },
+              { value: 'CONSULTATION', label: 'Khám bệnh' },
+              { value: 'TEST', label: 'Xét nghiệm' },
+            ].map(item => (
+              <button
+                key={item.value}
+                onClick={() => { onServiceTypeChange(item.value as any); setIsServiceOpen(false); }}
+                className={`w-full text-left cursor-pointer py-2 px-3 text-[13.5px] font-medium rounded-xl transition-all ${
+                  serviceType === item.value ? 'bg-primary-50 text-primary-600' : 'text-slate-700 hover:bg-primary-50 hover:text-primary-600'
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Lọc theo Trạng Thái */}
+      <div 
+        className="w-full sm:w-44 shrink-0 relative z-40"
+        onMouseEnter={handleStatusEnter}
+        onMouseLeave={handleStatusLeave}
+      >
+        <button className={`w-full h-11 flex items-center justify-between px-4 rounded-full bg-white border shadow-sm font-medium text-slate-700 cursor-pointer transition-colors ${isStatusOpen ? 'border-primary-500 text-primary-600' : 'border-slate-200'}`}>
+          <span className="text-[14px]">
+            {status === 'ALL' && 'Trạng thái'}
             {status === 'PENDING' && 'Chờ xác nhận'}
             {status === 'CONFIRMED' && 'Đã xác nhận'}
             {status === 'CHECKED_IN' && 'Đã đến viện'}
@@ -60,9 +104,9 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
             {status === 'COMPLETED' && 'Hoàn thành'}
             {status === 'CANCELLED' && 'Đã hủy'}
           </span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${isOpen ? 'rotate-180 text-primary-500' : 'text-slate-400'}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${isStatusOpen ? 'rotate-180 text-primary-500' : 'text-slate-400'}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
-        <div className={`absolute left-0 right-0 top-full pt-2 transition-all duration-200 ${isOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
+        <div className={`absolute left-0 right-0 top-full pt-2 transition-all duration-200 ${isStatusOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
           <div className="rounded-2xl bg-white border border-slate-100 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] p-1.5 flex flex-col gap-0.5 max-h-64 overflow-y-auto">
             {[
               { value: 'ALL', label: 'Tất cả trạng thái' },
@@ -76,7 +120,7 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
             ].map(item => (
               <button
                 key={item.value}
-                onClick={() => handleSelect(item.value as any)}
+                onClick={() => { onStatusChange(item.value as any); setIsStatusOpen(false); }}
                 className={`w-full text-left cursor-pointer py-2 px-3 text-[13.5px] font-medium rounded-xl transition-all ${
                   status === item.value ? 'bg-primary-50 text-primary-600' : 'text-slate-700 hover:bg-primary-50 hover:text-primary-600'
                 }`}

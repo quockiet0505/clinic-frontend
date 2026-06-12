@@ -7,11 +7,10 @@ export interface Expertise {
 export interface Doctor {
   staffId: number;
   fullName: string;
-
   expertiseId?: number;
   expertiseName?: string;
-
   description?: string;
+  imageUrl?: string;
 }
 
 export interface Service {
@@ -53,14 +52,20 @@ export interface BookingFormState {
 export type AppointmentStatus = 'PENDING' | 'CONFIRMED' | 'CHECKED_IN' | 'IN_PROGRESS' | 'WAITING_RESULT' | 'COMPLETED' | 'CANCELLED';
 
 export interface AppointmentHistoryItem {
-  id: string;
+  id: string; // appointmentId
   appointmentDate: string;
   timeStart: string;
   timeEnd: string;
   status: AppointmentStatus;
+  mainDoctorId?: number; // to map image
   doctorName: string;
-  specialty: string;
+  doctorImageUrl?: string; // mapped from getDoctors API
+  specialty: string; // expertiseName
+  serviceName: string; // newly added to distinguish consultation/test
+  servicePrice?: number;
+  doctorFee?: number;
   facility: string;
-  symptoms: string;
+  symptoms: string; // note
+  queueNumber?: number;
   createdAt: string;
 }

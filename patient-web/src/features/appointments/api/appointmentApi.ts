@@ -103,8 +103,22 @@ export const appointmentApi = {
   },
 
   getMyAppointments: async (): Promise<AppointmentHistoryItem[]> => {
-    const res = await axiosInstance.get<ApiResponse<AppointmentHistoryItem[]>>('/appointments/my');
-    return res.data.data;
+    const res = await axiosInstance.get<ApiResponse<any[]>>('/appointments/my');
+    return res.data.data.map(item => ({
+      id: item.appointmentId?.toString() || item.id,
+      appointmentDate: item.appointmentDate,
+      timeStart: item.timeStart,
+      timeEnd: item.timeEnd,
+      status: item.status,
+      mainDoctorId: item.mainDoctorId,
+      doctorName: item.doctorName || 'Chưa xếp bác sĩ',
+      specialty: item.expertiseName || item.specialty || 'Chưa xác định',
+      serviceName: item.serviceName || 'Khám chuyên khoa',
+      facility: 'Phòng khám Đa khoa',
+      symptoms: item.note || item.symptoms || 'Không có triệu chứng',
+      queueNumber: item.queueNumber,
+      createdAt: item.createdAt || item.appointmentDate,
+    }));
   },
 
   cancelAppointment: async (id: string, reason: string): Promise<{ success: boolean; message: string }> => {

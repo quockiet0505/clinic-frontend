@@ -58,7 +58,7 @@ export const HeaderMenuDropdown: React.FC<HeaderMenuDropdownProps> = ({
       <button
         className={`
           relative flex items-center gap-1 px-4 py-2
-          font-semibold text-sm
+          font-bold text-[13.5px] uppercase tracking-wide
           transition-all cursor-pointer
           focus:outline-none
         

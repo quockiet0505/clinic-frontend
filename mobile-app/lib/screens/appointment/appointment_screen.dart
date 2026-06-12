@@ -1,9 +1,12 @@
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:clinic_management_system/utils/image_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
+import 'package:clinic_management_system/providers/home_provider.dart';
 import 'package:clinic_management_system/screens/appointment/select_doctor_screen.dart';
+import 'package:clinic_management_system/models/appointment_model.dart';
+import 'package:clinic_management_system/screens/appointment/appointment_detail_screen.dart';
 import 'package:intl/intl.dart';
-
 import 'package:easy_localization/easy_localization.dart';
 
 class AppointmentScreen extends StatefulWidget {
@@ -14,6 +17,9 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
+  String _searchQuery = '';
+  int _selectedTabIndex = 0;
+  final List<String> _tabs = ['Tất cả', 'Sắp tới', 'Hoàn thành', 'Đã hủy'];
 
   @override
   void initState() {
@@ -26,271 +32,361 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgLight,
-      appBar: GradientAppBar(
-        title: 'schedule_title'.tr(),
-        automaticallyImplyLeading: false,
-      ),
-      body: Consumer<AppointmentProvider>(
-        builder: (context, provider, child) {
-          if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator(color: AppColors.primary));
-          }
-
-          final appointments = provider.myAppointments;
-
-          return Column(
-            children: [
-              // Search and Filter Bar
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        height: 48,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [BoxShadow(color: AppColors.textSubLight.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))],
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.search_rounded, color: AppColors.textSubLight.withOpacity(0.7)),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: TextField(
-                                decoration: InputDecoration(
-                                  hintText: 'schedule_search'.tr(),
-                                  hintStyle: AppStyles.bodyMedium.copyWith(color: AppColors.textSubLight.withOpacity(0.7)),
-                                  border: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Container(
-                      height: 48, width: 48,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary, 
-                        borderRadius: BorderRadius.circular(16), 
-                        boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 12, offset: const Offset(0, 4))]
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.tune_rounded, color: Colors.white, size: 24),
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: _buildAppointmentList(appointments),
-              ),
-            ],
-          );
-        },
-      ),
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withOpacity(0.3), 
-              blurRadius: 15, 
-              offset: const Offset(0, 5)
-            ),
-          ],
-        ),
-        child: GradientButton(
-          text: 'home_book_now'.tr(),
-          icon: Icons.add_rounded,
-          height: 50,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectDoctorScreen()));
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAppointmentList(List<Map<String, dynamic>> appointments) {
-    if (appointments.isEmpty) {
-      return Center(
+      backgroundColor: const Color(0xFFF8FAFF),
+      body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.event_busy_rounded, size: 80, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            Text('schedule_empty'.tr(), style: AppStyles.bodyLarge.copyWith(color: AppColors.textSubLight)),
-          ],
-        ),
-      );
-    }
-
-    // Sort by date (newest first for simplicity, or nearest first)
-    appointments.sort((a, b) {
-      final dateA = a['appointmentDate'] ?? '';
-      final dateB = b['appointmentDate'] ?? '';
-      return dateB.compareTo(dateA); // descending
-    });
-
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 24).copyWith(bottom: 100),
-      itemCount: appointments.length, 
-      itemBuilder: (context, index) {
-        final apt = appointments[index];
-        final doctorName = apt['doctorName'] ?? 'Bác sĩ';
-        final expertise = apt['expertiseName'] ?? 'Chuyên khoa';
-        final dateStr = apt['appointmentDate'] ?? '';
-        final timeStr = apt['timeStart'] ?? '';
-        final status = apt['status'] ?? '';
-        
-        String formattedDate = '';
-        if (dateStr.isNotEmpty) {
-          try {
-            final d = DateTime.parse(dateStr);
-            formattedDate = DateFormat('dd MMM, yyyy').format(d);
-          } catch (e) {
-            formattedDate = dateStr;
-          }
-        }
-
-        String formattedTime = timeStr;
-        if (timeStr.length >= 5) {
-          formattedTime = timeStr.substring(0, 5); // 09:00:00 -> 09:00
-        }
-
-        Color statusColor = Colors.green;
-        String statusText = status;
-        bool isUpcoming = false;
-        
-        if (status == 'SCHEDULED' || status == 'CONFIRMED') {
-          statusColor = Colors.green;
-          statusText = 'schedule_confirmed'.tr();
-          isUpcoming = true;
-        } else if (status == 'CANCELLED') {
-          statusColor = Colors.red;
-          statusText = 'schedule_cancelled'.tr();
-        } else if (status == 'COMPLETED') {
-          statusColor = AppColors.primary;
-          statusText = 'schedule_completed'.tr();
-        }
-
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 15, offset: const Offset(0, 5)),
-            ],
-            border: Border.all(color: Colors.grey.withOpacity(0.1)),
-          ),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // ─── Header ───
+            Container(
+              color: const Color(0xFFF8FAFF),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Icon(Icons.calendar_month_rounded, color: AppColors.primary, size: 20),
                       ),
-                      const SizedBox(width: 12),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(formattedDate, style: AppStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold)),
-                          Text(formattedTime, style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
-                        ],
+                      const SizedBox(width: 10),
+                      const Text(
+                        'Lịch hẹn',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1F2937),
+                        ),
+                      ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () => Navigator.push(context,
+                            MaterialPageRoute(builder: (_) => const SelectDoctorScreen())),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF2DD4BF), Color(0xFF0EA5E9)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(color: const Color(0xFF0EA5E9).withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 3)),
+                            ],
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.add_rounded, color: Colors.white, size: 18),
+                              SizedBox(width: 4),
+                              Text('Đặt lịch', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
+                  const SizedBox(height: 14),
+                  // Search bar
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: statusColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                    child: Text(statusText, style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: 12)),
+                    child: TextField(
+                      onChanged: (v) => setState(() => _searchQuery = v),
+                      decoration: InputDecoration(
+                        hintText: 'Tìm bác sĩ, chuyên khoa...',
+                        hintStyle: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
+                        prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF9CA3AF), size: 20),
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 13),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Tab bar
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: List.generate(_tabs.length, (index) {
+                          final tab = _tabs[index];
+                          final isSelected = _selectedTabIndex == index;
+                          return GestureDetector(
+                            onTap: () => setState(() => _selectedTabIndex = index),
+                            child: Container(
+                              margin: const EdgeInsets.only(right: 8),
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                tab,
+                                style: TextStyle(
+                                  color: isSelected ? AppColors.primary : const Color(0xFF9CA3AF),
+                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
                   ),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Divider(color: Colors.grey[100]),
+            ),
+
+            // ─── Body ───
+            Expanded(
+              child: Consumer<AppointmentProvider>(
+                builder: (context, provider, child) {
+                  if (provider.isLoading) {
+                    return const Center(child: CircularProgressIndicator(color: AppColors.primary));
+                  }
+
+                  final allAppointments = provider.myAppointments;
+
+                  List<AppointmentModel> _filter(List<AppointmentModel> source, int tabIndex) {
+                    List<AppointmentModel> result;
+                    if (tabIndex == 0) {
+                      result = source;
+                    } else if (tabIndex == 1) {
+                      result = source.where((a) => a.status == 'SCHEDULED' || a.status == 'CONFIRMED' || a.status == 'PENDING').toList();
+                    } else if (tabIndex == 2) {
+                      result = source.where((a) => a.status == 'COMPLETED').toList();
+                    } else {
+                      result = source.where((a) => a.status == 'CANCELLED').toList();
+                    }
+                    if (_searchQuery.isNotEmpty) {
+                      final q = _searchQuery.toLowerCase();
+                      result = result.where((a) =>
+                        (a.doctorName ?? '').toLowerCase().contains(q) ||
+                        (a.specialty ?? '').toLowerCase().contains(q)
+                      ).toList();
+                    }
+                    return result;
+                  }
+
+                  final filtered = _filter(allAppointments, _selectedTabIndex);
+                  return _buildList(filtered, allAppointments.isNotEmpty, context.read<HomeProvider>());
+                },
               ),
-              Row(
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildList(List<AppointmentModel> appointments, bool hasAny, HomeProvider homeProvider) {
+    if (appointments.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.08),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                hasAny ? Icons.search_off_rounded : Icons.calendar_today_rounded,
+                size: 48, color: AppColors.primary.withValues(alpha: 0.5)
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              hasAny ? 'Không tìm thấy lịch hẹn' : 'Bạn chưa có lịch hẹn nào',
+              style: const TextStyle(color: Color(0xFF6B7280), fontSize: 15, fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              hasAny ? 'Thử tìm kiếm khác' : 'Hãy đặt lịch khám ngay hôm nay!',
+              style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 13),
+            ),
+          ],
+        ),
+      );
+    }
+
+    appointments.sort((a, b) => b.appointmentDate.compareTo(a.appointmentDate));
+
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+      itemCount: appointments.length,
+      itemBuilder: (context, index) => _buildCard(appointments[index], homeProvider),
+    );
+  }
+
+  Widget _buildCard(AppointmentModel apt, HomeProvider homeProvider) {
+    final doctor = homeProvider.doctors.where((d) => d.id == apt.mainDoctorId).firstOrNull;
+    final avatarUrl = ImageUtils.fixImageUrl(apt.doctorAvatar ?? doctor?.imageUrl);
+    final doctorName = apt.doctorName ?? 'Bác sĩ';
+    final expertise = apt.specialty ?? 'Chuyên khoa';
+
+    String formattedDate = '';
+    try {
+      final d = DateTime.parse(apt.appointmentDate);
+      formattedDate = DateFormat('EEE, dd/MM/yyyy').format(d);
+    } catch (_) {
+      formattedDate = apt.appointmentDate;
+    }
+    final formattedTime = (apt.timeStart?.length ?? 0) >= 5 ? apt.timeStart!.substring(0, 5) : (apt.timeStart ?? '--:--');
+
+    Color statusColor;
+    String statusText;
+    IconData statusIcon;
+    switch (apt.status) {
+      case 'SCHEDULED':
+      case 'CONFIRMED':
+      case 'PENDING':
+        statusColor = const Color(0xFF10B981);
+        statusText = 'Sắp tới';
+        statusIcon = Icons.event_available_rounded;
+        break;
+      case 'CANCELLED':
+        statusColor = const Color(0xFFEF4444);
+        statusText = 'Đã hủy';
+        statusIcon = Icons.cancel_rounded;
+        break;
+      case 'COMPLETED':
+        statusColor = const Color(0xFF6366F1);
+        statusText = 'Hoàn thành';
+        statusIcon = Icons.check_circle_rounded;
+        break;
+      default:
+        statusColor = const Color(0xFF9CA3AF);
+        statusText = apt.status;
+        statusIcon = Icons.info_rounded;
+    }
+
+    final isOnline = apt.appointmentType == 'ONLINE';
+
+    return GestureDetector(
+      onTap: () => Navigator.push(context, MaterialPageRoute(
+        builder: (_) => AppointmentDetailScreen(appointment: apt)
+      )),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 6)),
+          ],
+        ),
+        child: Column(
+          children: [
+            // Top strip
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: statusColor.withValues(alpha: 0.08),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Row(
                 children: [
+                  Icon(statusIcon, color: statusColor, size: 16),
+                  const SizedBox(width: 6),
+                  Text(statusText, style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: 13)),
+                  const Spacer(),
                   Container(
-                    width: 50,
-                    height: 50,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: const DecorationImage(image: NetworkImage('https://i.pravatar.cc/150?img=5'), fit: BoxFit.cover),
-                      border: Border.all(color: AppColors.primary.withOpacity(0.2), width: 2),
+                      color: (isOnline ? const Color(0xFF3B82F6) : const Color(0xFFF59E0B)).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isOnline ? Icons.smartphone_rounded : Icons.directions_walk_rounded,
+                          size: 12,
+                          color: isOnline ? const Color(0xFF3B82F6) : const Color(0xFFF59E0B),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          isOnline ? 'Đặt online' : 'Walk-in',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: isOnline ? const Color(0xFF3B82F6) : const Color(0xFFF59E0B),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 16),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [statusColor.withValues(alpha: 0.6), statusColor],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      radius: 26,
+                      backgroundColor: Colors.grey[200],
+                      backgroundImage: NetworkImage(avatarUrl),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(doctorName, style: AppStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold)),
+                        Text(doctorName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF1F2937))),
                         const SizedBox(height: 2),
-                        Text(expertise, style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
+                        Text(expertise, style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(Icons.schedule_rounded, size: 14, color: Color(0xFF9CA3AF)),
+                            const SizedBox(width: 4),
+                            Text(formattedTime, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF374151))),
+                            const SizedBox(width: 12),
+                            const Icon(Icons.calendar_month_rounded, size: 14, color: Color(0xFF9CA3AF)),
+                            const SizedBox(width: 4),
+                            Text(formattedDate, style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.more_vert_rounded, color: AppColors.textSubLight),
-                  )
+                  const Icon(Icons.chevron_right_rounded, color: Color(0xFFD1D5DB), size: 22),
                 ],
               ),
-              if (isUpcoming) ...[
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          side: BorderSide(color: AppColors.error.withOpacity(0.5)),
-                        ),
-                        child: Text('schedule_cancel_btn'.tr(), style: const TextStyle(color: AppColors.error)),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: GradientButton(
-                        text: 'schedule_reschedule_btn'.tr(),
-                        height: 48,
-                        padding: EdgeInsets.zero,
-                        onPressed: () {},
-                      ),
-                    ),
-                  ],
-                )
-              ]
-            ],
-          ),
-        );
-      },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

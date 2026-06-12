@@ -127,7 +127,7 @@ export const Header: React.FC = () => {
             {/* Trang chủ */}
             <Link
               to="/"
-              className={`relative px-4 py-2 rounded-full font-semibold text-sm transition-all duration-200 ${
+              className={`relative px-4 py-2 rounded-full font-bold text-[13.5px] uppercase tracking-wide transition-all duration-200 ${
                 isActive('/')
                   ? 'text-primary-500'
                   : 'text-slate-700 hover:text-primary-500'
@@ -166,7 +166,7 @@ export const Header: React.FC = () => {
             {/* Liên hệ */}
             <Link
               to="/contact"
-              className={`relative px-4 py-2 rounded-full font-semibold text-sm transition-all duration-200 ${
+              className={`relative px-4 py-2 rounded-full font-bold text-[13.5px] uppercase tracking-wide transition-all duration-200 ${
                 isActive('/contact')
                   ? 'text-primary-500'
                   : 'text-slate-700 hover:text-primary-500'

@@ -1,6 +1,10 @@
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:clinic_management_system/utils/image_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
+import 'package:clinic_management_system/models/doctor_model.dart';
+import 'package:clinic_management_system/models/service_model.dart';
+import 'package:clinic_management_system/utils/currency_formatter.dart';
 
 class ConfirmBookingScreen extends StatefulWidget {
   const ConfirmBookingScreen({super.key});
@@ -12,6 +16,12 @@ class ConfirmBookingScreen extends StatefulWidget {
 class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
 
   void _handleConfirm(AppointmentProvider provider) async {
+    if (provider.note.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng nhập Lý do khám')),
+      );
+      return;
+    }
     final success = await provider.confirmBooking();
     
     if (!mounted) return;
@@ -82,7 +92,10 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
       body: Consumer<AppointmentProvider>(
         builder: (context, provider, child) {
           final doctor = provider.selectedDoctor;
-          if (doctor == null) return const Center(child: Text("Missing Data"));
+          final service = provider.selectedService;
+          final specialty = provider.selectedSpecialty;
+          
+          if (doctor == null && service == null && specialty == null) return const Center(child: Text("Missing Data"));
 
           return Column(
             children: [
@@ -92,22 +105,45 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // 1. Doctor Information Card
-                      _buildSectionTitle('Doctor Info'),
+                      // 1. Info Card
+                      _buildSectionTitle('Thông tin người khám'),
                       const SizedBox(height: 12),
-                      _buildDoctorCard(doctor),
+                      if (doctor != null) _buildDoctorCard(doctor)
+                      else if (service != null) _buildServiceCard(service)
+                      else if (specialty != null) _buildSpecialtyCard(specialty),
                       const SizedBox(height: 32),
 
                       // 2. Appointment Schedule Card
-                      _buildSectionTitle('Schedule Details'),
+                      _buildSectionTitle('Chi tiết lịch hẹn'),
+                      const SizedBox(height: 16),
+                      _buildScheduleCard(
+                        provider.selectedDate ?? '', 
+                        provider.selectedTimeSlot?['timeStart'] ?? ''
+                      ),
+                      const SizedBox(height: 32),
+                      
+                      // 3. Reason Note
+                      _buildSectionTitle('Triệu chứng / Lý do khám'),
                       const SizedBox(height: 12),
-                      _buildScheduleCard(provider.selectedDate ?? '', provider.selectedTime ?? ''),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: AppColors.textSubLight.withValues(alpha: 0.1)),
+                        ),
+                        child: Text(
+                          provider.note.isNotEmpty ? provider.note : 'Không có',
+                          style: AppStyles.bodyMedium.copyWith(color: AppColors.textMainLight),
+                        ),
+                      ),
                       const SizedBox(height: 32),
 
-                      // 3. Payment Summary Card
-                      _buildSectionTitle('Payment Summary'),
+                      // 4. Payment Summary Card
+                      _buildSectionTitle('Thanh toán'),
                       const SizedBox(height: 12),
-                      _buildPaymentSummaryCard(),
+                      _buildPaymentSummaryCard(doctor, service, specialty),
                     ],
                   ),
                 ),
@@ -126,7 +162,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
     return Text(title, style: AppStyles.heading3.copyWith(color: AppColors.textMainLight));
   }
 
-  Widget _buildDoctorCard(Map<String, dynamic> doctor) {
+  Widget _buildDoctorCard(DoctorModel doctor) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -137,11 +173,11 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
       child: Row(
         children: [
           Hero(
-            tag: 'doctor_img_${doctor['staffId']}',
+            tag: 'doctor_img_${doctor.id}',
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.network(
-                doctor['imageUrl'] ?? 'https://via.placeholder.com/150',
+                doctor.imageUrl != null ? ImageUtils.fixImageUrl(doctor.imageUrl) : 'https://via.placeholder.com/150',
                 height: 70, width: 70, fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200], height: 70, width: 70, child: const Icon(Icons.person, color: Colors.grey)),
               ),
@@ -152,9 +188,83 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Dr. ${doctor['fullName']}', style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold)),
+                Text('BS. ${doctor.name}', style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                Text(doctor['expertiseName'] ?? 'Specialist', style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
+                Text(doctor.specialty ?? 'Chuyên khoa', style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildServiceCard(ServiceModel service) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.textSubLight.withValues(alpha: 0.1)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            height: 70, width: 70,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(Icons.medical_services_outlined, color: AppColors.primary, size: 36),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(service.serviceName, style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                Text(service.serviceType, style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSpecialtyCard(Map<String, dynamic> specialty) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.textSubLight.withValues(alpha: 0.1)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            height: 70, width: 70,
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.textSubLight.withValues(alpha: 0.1)),
+            ),
+            child: Image.network(
+              ImageUtils.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl']),
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => const Icon(Icons.medical_services, color: AppColors.primary, size: 36),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Khám chuyên khoa', style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
+                const SizedBox(height: 4),
+                Text(specialty['expertiseName'] ?? '', style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold)),
               ],
             ),
           ),
@@ -173,12 +283,12 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
       ),
       child: Column(
         children: [
-          _buildInfoRow(Icons.calendar_month_rounded, 'Date', date),
+          _buildInfoRow(Icons.calendar_month_rounded, 'Ngày', date),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 12),
             child: Divider(color: Color(0xFFF1F1F1), thickness: 1),
           ),
-          _buildInfoRow(Icons.access_time_rounded, 'Time', time),
+          _buildInfoRow(Icons.access_time_rounded, 'Giờ', time),
         ],
       ),
     );
@@ -196,19 +306,24 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
     );
   }
 
-  Widget _buildPaymentSummaryCard() {
+  Widget _buildPaymentSummaryCard(DoctorModel? doctor, ServiceModel? service, Map<String, dynamic>? specialty) {
+    double fee = 0;
+    if (doctor != null) fee = doctor.consultationFee;
+    else if (service != null) fee = service.discountPrice ?? service.originalPrice;
+    else if (specialty != null) fee = 150000; // Default consultation fee if no doctor selected
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.textSubLight.withOpacity(0.1)),
+        border: Border.all(color: AppColors.textSubLight.withValues(alpha: 0.1)),
       ),
       child: Column(
         children: [
-          _buildPriceRow('Consultation Fee', '\$50.00'),
+          _buildPriceRow('Phí dịch vụ/khám', CurrencyFormatter.formatVND(fee)),
           const SizedBox(height: 12),
-          _buildPriceRow('Admin Fee', '\$2.00'),
+          _buildPriceRow('Phí nền tảng', 'Miễn phí'),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 16),
             child: Divider(color: Color(0xFFF1F1F1), thickness: 1),
@@ -216,8 +331,8 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Total', style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold)),
-              Text('\$52.00', style: AppStyles.heading2.copyWith(color: AppColors.primary)),
+              Text('Tổng cộng', style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold)),
+              Text(CurrencyFormatter.formatVND(fee), style: AppStyles.heading2.copyWith(color: AppColors.primary)),
             ],
           ),
         ],
@@ -246,7 +361,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
         ],
       ),
       child: CustomButton(
-        text: 'Confirm & Book',
+        text: 'Xác nhận đặt lịch',
         isLoading: provider.isLoading,
         onPressed: () => _handleConfirm(provider),
       ),

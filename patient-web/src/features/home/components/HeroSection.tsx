@@ -18,36 +18,36 @@ export const HeroSection: React.FC = () => {
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(true);
   const [quickActions, setQuickActions] = useState<QuickAction[]>([]);
-  const [bannerUrl, setBannerUrl] = useState('/images/banners/hero-banner.webp');
+  const [bannerUrl, setBannerUrl] = useState('/images/banners/hero-banner.jpg');
   const [searchKeyword, setSearchKeyword] = useState('');
   const staticUrl = getStaticUrl();
 
   // const
   const handleQuickActionClick = (title: string) => {
     const value = title.toLowerCase();
-  
+
     if (value.includes('bác sĩ')) {
       navigate('/appointments/book?source=doctor');
     }
-  
+
     else if (
       value.includes('chuyên khoa') ||
       value.includes('khám chuyên khoa')
     ) {
       navigate('/appointments/book?source=specialty');
     }
-  
+
     else if (
       value.includes('dịch vụ') ||
       value.includes('xét nghiệm')
     ) {
       navigate('/appointments/book?source=service');
     }
-  
+
     else {
       navigate('/appointments/book');
     }
-  
+
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
@@ -56,7 +56,7 @@ export const HeroSection: React.FC = () => {
 
   useEffect(() => {
     homeApi.getQuickActions().then(setQuickActions).catch(console.error);
-    homeApi.getBanner().then(url => setBannerUrl(url)).catch(console.error);
+    // homeApi.getBanner().then(url => setBannerUrl(url)).catch(console.error);
   }, []);
 
   const handleSearch = (keyword: string) => {

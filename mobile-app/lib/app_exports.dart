@@ -15,8 +15,7 @@ export 'package:clinic_management_system/routes/app_routes.dart';
 export 'package:clinic_management_system/models/user_model.dart';
 export 'package:clinic_management_system/models/doctor_model.dart';
 
-// Utils & Mock Data
-export 'package:clinic_management_system/utils/mock_data.dart';
+// Utils
 
 // Providers
 export 'package:clinic_management_system/providers/auth_provider.dart';
