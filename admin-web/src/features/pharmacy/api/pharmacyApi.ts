@@ -1,10 +1,20 @@
 import axiosInstance from '@/config/axios';
-import { Medicine } from '../types/pharmacy';
+import { Medicine, PrescriptionUI } from '../types/pharmacy';
 
 export const pharmacyApi = {
   getMedicines: async (): Promise<Medicine[]> => {
     try {
       const res = await axiosInstance.get('/medicines');
+      return res.data.data;
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  },
+
+  getPrescriptions: async (): Promise<PrescriptionUI[]> => {
+    try {
+      const res = await axiosInstance.get('/prescriptions');
       return res.data.data;
     } catch (e) {
       console.error(e);

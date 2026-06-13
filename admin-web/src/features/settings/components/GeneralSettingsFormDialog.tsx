@@ -15,33 +15,33 @@ export default function GeneralSettingsForm({ formData, onChange, onSave }: Gene
       <div className="max-w-3xl space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Building2 size={14}/> Clinic Name</label>
-            <Input name="clinicName" value={formData.clinicName} onChange={onChange} className="h-11 rounded-xl bg-slate-50 font-medium border-slate-200" />
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Building2 size={14}/> Tên phòng khám</label>
+            <Input name="clinicName" value={formData.clinicName} onChange={onChange} className="h-12 rounded-[16px] bg-slate-50 font-bold border-slate-200 focus-visible:ring-4 focus-visible:ring-primary-100" />
           </div>
           <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><MapPin size={14}/> Full Address</label>
-            <Input name="address" value={formData.address} onChange={onChange} className="h-11 rounded-xl bg-slate-50 font-medium border-slate-200" />
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><MapPin size={14}/> Địa chỉ</label>
+            <Input name="address" value={formData.address} onChange={onChange} className="h-12 rounded-[16px] bg-slate-50 font-bold border-slate-200 focus-visible:ring-4 focus-visible:ring-primary-100" />
           </div>
           <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Phone size={14}/> Phone Number</label>
-            <Input name="phone" value={formData.phone} onChange={onChange} className="h-11 rounded-xl bg-slate-50 font-medium border-slate-200" />
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Phone size={14}/> Số điện thoại</label>
+            <Input name="phone" value={formData.phone} onChange={onChange} className="h-12 rounded-[16px] bg-slate-50 font-bold border-slate-200 focus-visible:ring-4 focus-visible:ring-primary-100" />
           </div>
           <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Mail size={14}/> Email Address</label>
-            <Input name="email" value={formData.email} onChange={onChange} className="h-11 rounded-xl bg-slate-50 font-medium border-slate-200" />
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Mail size={14}/> Email</label>
+            <Input name="email" value={formData.email} onChange={onChange} className="h-12 rounded-[16px] bg-slate-50 font-bold border-slate-200 focus-visible:ring-4 focus-visible:ring-primary-100" />
           </div>
           <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Globe size={14}/> Website Domain</label>
-            <Input name="website" value={formData.website} onChange={onChange} className="h-11 rounded-xl bg-slate-50 font-medium border-slate-200" />
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Globe size={14}/> Website</label>
+            <Input name="website" value={formData.website} onChange={onChange} className="h-12 rounded-[16px] bg-slate-50 font-bold border-slate-200 focus-visible:ring-4 focus-visible:ring-primary-100" />
           </div>
           <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Clock size={14}/> Operating Hours</label>
-            <Input name="operatingHours" value={formData.operatingHours} onChange={onChange} className="h-11 rounded-xl bg-slate-50 font-medium border-slate-200" />
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Clock size={14}/> Giờ hoạt động</label>
+            <Input name="operatingHours" value={formData.operatingHours} onChange={onChange} className="h-12 rounded-[16px] bg-slate-50 font-bold border-slate-200 focus-visible:ring-4 focus-visible:ring-primary-100" />
           </div>
         </div>
 
-        <Button onClick={onSave} className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 h-11 shadow-sm cursor-pointer">
-          <Save size={18} className="mr-2" /> Save Configuration
+        <Button onClick={onSave} className="rounded-[14px] bg-primary hover:bg-primary-600 shadow-sm text-white font-bold px-8 h-12 cursor-pointer transition-all">
+          <Save size={18} className="mr-2" /> Lưu Cấu hình
         </Button>
       </div>
     </div>

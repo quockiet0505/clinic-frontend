@@ -61,7 +61,7 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 rounded-[24px] bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-200 ease-out outline-none sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
         {...props}
@@ -70,12 +70,11 @@ function DialogContent({
         {showCloseButton && (
           <DialogPrimitive.Close data-slot="dialog-close" asChild>
             <Button
-              variant="ghost"
-              className="absolute top-2 right-2 cursor-pointer"
+              variant="outline"
+              className="absolute top-4 right-4 cursor-pointer rounded-full bg-white border border-slate-200 text-slate-500 hover:bg-red-50 hover:text-red-500 hover:border-red-200 focus:ring-2 focus:ring-primary-100 transition-all duration-200"
               size="icon-sm"
             >
-              <XIcon
-              />
+              <XIcon className="w-4 h-4" />
               <span className="sr-only">Đóng</span>
             </Button>
           </DialogPrimitive.Close>
@@ -89,7 +88,7 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="dialog-header"
-      className={cn("flex flex-col gap-2", className)}
+      className={cn("flex flex-col gap-2 -mx-4 -mt-4 p-4 bg-primary-50 border-b border-primary-100 rounded-t-[24px]", className)}
       {...props}
     />
   )
@@ -107,7 +106,7 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        "-mx-4 -mb-4 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 p-4 sm:flex-row sm:justify-end",
+        "-mx-4 -mb-4 flex flex-col-reverse gap-3 rounded-b-[24px] border-t bg-slate-50 p-4 sm:flex-row sm:justify-end",
         className
       )}
       {...props}
@@ -115,7 +114,7 @@ function DialogFooter({
       {children}
       {showCloseButton && (
         <DialogPrimitive.Close asChild>
-          <Button variant="outline">Đóng</Button>
+          <Button variant="outline" className="h-11 px-6 rounded-[14px] font-bold border-slate-300 text-slate-700 hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-all duration-200">Đóng</Button>
         </DialogPrimitive.Close>
       )}
     </div>

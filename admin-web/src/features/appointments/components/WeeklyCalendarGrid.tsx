@@ -63,7 +63,7 @@ export default function WeeklyCalendarGrid({ currentWeekStart, appointments, onA
           return (
             <div key={idx} className={`p-3 text-center border-r border-slate-200 last:border-0 ${isToday ? 'bg-blue-50/50' : ''}`}>
               <p className={`text-[10px] font-bold uppercase tracking-widest ${isToday ? 'text-blue-600' : 'text-slate-500'}`}>
-                {date.toLocaleDateString('en-US', { weekday: 'short' })}
+                {date.toLocaleDateString('vi-VN', { weekday: 'short' })}
               </p>
               <p className={`text-xl font-black mt-0.5 ${isToday ? 'text-blue-600' : 'text-slate-900'}`}>
                 {date.getDate()}
@@ -103,11 +103,11 @@ export default function WeeklyCalendarGrid({ currentWeekStart, appointments, onA
                           <span className="font-medium opacity-80">{app.timeStart.substring(0,5)}</span>
                           {/* Indicate if it's Online or Walk-in */}
                           {app.appointmentType === 'ONLINE' ? (
-                            <span title="Online Booking">
+                            <span title="Khám trực tuyến">
                               <Globe size={12} className="opacity-70" />
                             </span>
                           ) : (
-                            <span title="Walk-In">
+                            <span title="Khách vãng lai">
                               <UserRound size={12} className="opacity-70" />
                             </span>
                           )}

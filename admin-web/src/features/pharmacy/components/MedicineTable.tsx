@@ -34,7 +34,7 @@ export default function MedicineTable({ data, onEdit, onDelete }: Props) {
             <TableRow key={med.medicineId} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><Pill size={18}/></div>
+                  <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><Pill size={18} /></div>
                   <div>
                     <p className="font-bold text-slate-900">{med.name}</p>
                     <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">{med.activeElement} • {med.productionUnit}</p>
@@ -49,10 +49,10 @@ export default function MedicineTable({ data, onEdit, onDelete }: Props) {
               <TableCell className="text-right pr-8">
                 <div className="flex justify-end gap-1.5">
                   <Button onClick={() => onEdit(med)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-blue-600 border-blue-100 bg-blue-50/50 hover:bg-blue-50">
-                    <Edit2 size={14}/><span>Sửa</span>
+                    <Edit2 size={14} /><span>Sửa</span>
                   </Button>
                   <Button onClick={() => onDelete(med)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-rose-600 border-rose-100 bg-rose-50/50 hover:bg-rose-50">
-                    <Trash2 size={14}/><span>Xoá</span>
+                    <Trash2 size={14} /><span>Xoá</span>
                   </Button>
                 </div>
               </TableCell>

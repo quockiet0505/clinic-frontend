@@ -5,35 +5,50 @@ import ConfirmDialog from '@/components/common/ConfirmDialog';
 import PricingTable from '../components/PricingTable';
 import PricingFormDialog from '../components/PricingFormDialog';
 import type { DoctorPricing } from '../types/settings';
+import { settingsApi } from '../api/settingsApi';
 
 export default function DoctorPricing() {
   const [search, setSearch] = useState('');
-  const [prices, setPrices] = useState<DoctorPricing[]>([
-    { id: 1, staffId: 101, name: 'Dr. Sarah Smith', specialty: 'Cardiology', fee: 85.00 },
-    { id: 2, staffId: 102, name: 'Dr. Robert Davis', specialty: 'Pediatrics', fee: 60.00 },
-  ]);
+  const [prices, setPrices] = useState<DoctorPricing[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const [editingPrice, setEditingPrice] = useState<DoctorPricing | null>(null);
   const [deletingPrice, setDeletingPrice] = useState<DoctorPricing | null>(null);
 
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const data = await settingsApi.getDoctorPrices();
+      setPrices(data || []);
+    } catch (e) {
+      console.error(e);
+      setPrices([]);
+    }
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
   const filteredData = prices.filter(p => 
-    p.name.toLowerCase().includes(search.toLowerCase())
+    (p.doctorName || '').toLowerCase().includes(search.toLowerCase())
   );
 
   return (
     <div className="space-y-6 flex flex-col h-full animate-in fade-in duration-500">
       <PageHeader 
-        title="Doctor Consultation Fees" 
-        description="Override default service prices for specific medical practitioners." 
-        actionText="Assign New Fee"
-        onAction={() => setEditingPrice({ id: 0, staffId: 0, name: '', specialty: '', fee: 0 })}
+        title="Phí khám bệnh" 
+        description="Ghi đè giá dịch vụ mặc định cho từng bác sĩ cụ thể." 
+        actionText="Thêm Phí khám mới"
+        onAction={() => setEditingPrice({ id: 0, staffId: 0, doctorName: '', serviceId: 0, serviceName: '', price: 0 })}
       />
 
       <div className="bg-white p-3 rounded-2xl border border-slate-200 flex shadow-sm shrink-0">
         <SearchInput 
           value={search} 
           onChange={setSearch} 
-          placeholder="Tìm kiếm by doctor name..." 
+          placeholder="Tìm kiếm theo tên bác sĩ..." 
         />
       </div>
 
@@ -47,8 +62,9 @@ export default function DoctorPricing() {
       <PricingFormDialog 
         doctor={editingPrice} 
         onClose={() => setEditingPrice(null)} 
-        onSave={(id: number, data: any) => {
-          console.log("Saving Price Data:", id, data);
+        onSave={async (id: number, data: any) => {
+          await settingsApi.createOrUpdateDoctorPrice(data);
+          await fetchData();
           setEditingPrice(null);
         }} 
       />
@@ -56,12 +72,15 @@ export default function DoctorPricing() {
       {/* Dialog Xóa chuẩn Rose-600 từ Common */}
       <ConfirmDialog 
         isOpen={!!deletingPrice}
-        title="Remove Price Override"
-        description={`Are you sure you want to delete the specific fee for ${deletingPrice?.name}? The system will revert to the default service price.`}
-        confirmText="Yes, Remove Fee"
+        title="Xóa Phí khám"
+        description={`Bạn có chắc chắn muốn xóa mức phí riêng của bác sĩ ${deletingPrice?.doctorName}? Hệ thống sẽ hoàn về giá dịch vụ mặc định.`}
+        confirmText="Xác nhận xóa"
         onClose={() => setDeletingPrice(null)}
-        onConfirm={() => {
-          setPrices(prices.filter(p => p.id !== deletingPrice?.id));
+        onConfirm={async () => {
+          if (deletingPrice) {
+            await settingsApi.deleteDoctorPrice(deletingPrice.id);
+            await fetchData();
+          }
           setDeletingPrice(null);
         }}
       />

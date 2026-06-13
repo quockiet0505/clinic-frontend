@@ -33,6 +33,7 @@ export const authApi = {
       email: data.email,
       fullName: data.email.split('@')[0], 
       role: role,
+      roles: data.roles,
     };
     return { user, token: data.token };
   },

@@ -35,10 +35,10 @@ export default function MedicalRecordsList() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
-      <PageHeader title="Visit Archive" description="Search and review past medical records (DONE/CANCELLED)." />
+      <PageHeader title="Lưu trữ bệnh án" description="Tìm kiếm và xem lại các hồ sơ bệnh án cũ (Hoàn thành / Đã hủy)." />
       <MedicalRecordFilterBar search={search} setSearch={setSearch} fromDate={fromDate} toDate={toDate} setFromDate={setFromDate} setToDate={setToDate} />
       {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Loading records...</div>
+        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải hồ sơ...</div>
       ) : (
         <MedicalRecordTable data={filteredData} onViewDetail={(id) => navigate(`/medical/records/${id}`)} />
       )}

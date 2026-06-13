@@ -13,7 +13,7 @@ interface Props {
 
 export default function AppointmentTable({ data, onCheckIn, onCancel }: Props) {
   return (
-    <div className="bg-white rounded-[32px] shadow-sm border border-slate-200 flex-1 overflow-hidden">
+    <div className="bg-white rounded-[20px] shadow-sm border border-slate-200 flex-1 overflow-hidden">
       <Table>
         <TableHeader className="bg-slate-50">
           <TableRow className="h-14">
@@ -28,7 +28,7 @@ export default function AppointmentTable({ data, onCheckIn, onCancel }: Props) {
           {data.map(apt => (
             <TableRow key={apt.appointmentId} className="hover:bg-slate-50/50 border-slate-100">
               <TableCell className="px-8 py-4">
-                {apt.appointmentType === 'ONLINE' ? <Globe size={20} className="text-indigo-600"/> : <UserRound size={20} className="text-slate-400"/>}
+                {apt.appointmentType === 'ONLINE' ? <Globe size={20} className="text-indigo-600" /> : <UserRound size={20} className="text-slate-400" />}
               </TableCell>
               <TableCell>
                 <p className="font-bold text-slate-900">{apt.patientName}</p>
@@ -36,7 +36,7 @@ export default function AppointmentTable({ data, onCheckIn, onCancel }: Props) {
               </TableCell>
               <TableCell>
                 <p className="font-bold text-slate-800 flex items-center gap-1.5">
-                  <Clock size={14} className="text-blue-500"/> {apt.appointmentDate} • {apt.timeStart.substring(0,5)}
+                  <Clock size={14} className="text-blue-500" /> {apt.appointmentDate} • {apt.timeStart.substring(0, 5)}
                 </p>
                 <p className="text-xs text-slate-500 mt-1 font-medium">{apt.doctorName}</p>
               </TableCell>
@@ -49,13 +49,13 @@ export default function AppointmentTable({ data, onCheckIn, onCancel }: Props) {
               <TableCell className="text-right pr-8">
                 <div className="flex justify-end gap-1.5">
                   {['PENDING', 'CONFIRMED'].includes(apt.status) && (
-                    <Button onClick={() => onCheckIn(apt.appointmentId)} variant="outline" size="sm" className="flex items-center gap-1.5 text-blue-600 font-semibold rounded-xl border-blue-100 bg-blue-50/50 hover:bg-blue-50 px-3 h-8">
-                      <LogIn size={14}/><span>Check-in</span>
+                    <Button onClick={() => onCheckIn(apt.appointmentId)} variant="outline" size="sm" className="flex items-center gap-1.5 text-blue-600 font-semibold rounded-[10px] border-blue-200 hover:bg-blue-50 transition-all cursor-pointer px-3 h-8">
+                      <LogIn size={14} /><span>Check-in</span>
                     </Button>
                   )}
                   {!['COMPLETED', 'CANCELLED', 'NO_SHOW'].includes(apt.status) && (
-                    <Button onClick={() => onCancel(apt)} variant="outline" size="sm" className="flex items-center gap-1.5 text-rose-600 border-rose-100 bg-rose-50/50 hover:bg-rose-50 font-semibold rounded-xl px-3 h-8">
-                      <XCircle size={14}/><span>Huỷ</span>
+                    <Button onClick={() => onCancel(apt)} variant="outline" size="sm" className="flex items-center gap-1.5 text-rose-600 border-rose-200 hover:bg-rose-50 transition-all cursor-pointer font-semibold rounded-[10px] px-3 h-8">
+                      <XCircle size={14} /><span>Huỷ</span>
                     </Button>
                   )}
                 </div>

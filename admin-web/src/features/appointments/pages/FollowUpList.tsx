@@ -55,9 +55,9 @@ export default function FollowUpList() {
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
         <PageHeader title="Nhắc nhở Tái khám" description="Bệnh nhân cần tái khám hoặc chăm sóc sau điều trị." />
-        <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-200 flex items-center gap-3">
+        <div className="bg-white px-4 py-2 rounded-[20px] shadow-sm border border-slate-200 flex items-center gap-3">
            <div className="w-8 h-8 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center font-bold"><AlertCircle size={16}/></div>
-           <div><p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Cuộc gọi chờ</p><p className="text-sm font-black text-slate-900 leading-none mt-0.5">{data.filter(d => d.status === 'PENDING').length} Due</p></div>
+           <div><p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Cần xử lý</p><p className="text-sm font-black text-slate-900 leading-none mt-0.5">{data.filter(d => d.status === 'PENDING').length} Khách hàng</p></div>
         </div>
       </div>
 

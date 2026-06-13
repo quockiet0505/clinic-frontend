@@ -11,14 +11,14 @@ export default function ProfileSecurityForm({ passwordData, onChange, onSave }: 
   return (
     <div className="p-8 space-y-6 overflow-y-auto custom-scrollbar flex-1 bg-white">
       <div>
-        <h3 className="text-lg font-black text-slate-900">Security & Password</h3>
-        <p className="text-sm font-medium text-slate-500 mt-1">Ensure your account uses a strong, secure password.</p>
+        <h3 className="text-lg font-black text-slate-900">Bảo mật & Mật khẩu</h3>
+        <p className="text-sm font-medium text-slate-500 mt-1">Đảm bảo tài khoản của bạn sử dụng mật khẩu mạnh và an toàn.</p>
       </div>
 
       <div className="max-w-md space-y-5">
         {/* Mật khẩu hiện tại */}
         <div className="space-y-2">
-          <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Current Password</label>
+          <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Mật khẩu hiện tại</label>
           <div className="relative">
             <Input 
               type={showCurrent ? "text" : "password"} 
@@ -42,7 +42,7 @@ export default function ProfileSecurityForm({ passwordData, onChange, onSave }: 
 
         {/* Mật khẩu mới  */}
         <div className="space-y-2">
-          <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">New Password</label>
+          <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Mật khẩu mới</label>
           <div className="relative">
             <Input 
               type={showNew ? "text" : "password"} 
@@ -63,7 +63,7 @@ export default function ProfileSecurityForm({ passwordData, onChange, onSave }: 
         </div>
 
         <div className="space-y-2">
-          <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Confirm New Password</label>
+          <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Xác nhận mật khẩu mới</label>
           <div className="relative">
             <Input 
               type={showConfirm ? "text" : "password"} 
@@ -86,9 +86,9 @@ export default function ProfileSecurityForm({ passwordData, onChange, onSave }: 
         <div className="pt-4 flex justify-end">
           <Button 
             onClick={onSave} 
-            className="h-11 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 shadow-sm transition-all cursor-pointer"
+            className="h-11 rounded-xl bg-primary-600 hover:bg-primary-700 shadow-md hover:shadow-lg text-white font-bold px-8 shadow-sm transition-all cursor-pointer"
           >
-            Update Password
+            Cập Nhật Mật Khẩu
           </Button>
         </div>
 

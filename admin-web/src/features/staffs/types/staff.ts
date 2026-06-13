@@ -5,10 +5,11 @@ export type LeaveStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 export interface Staff {
   staffId: number;
   fullName: string;
-  email: string; // Joined from account table
+  email: string;
   phone: string;
   staffType: StaffType;
-  expertiseName?: string; // Joined from expertise table
+  expertiseName?: string;
+  imageUrl?: string;
   isActive: boolean;
 }
 

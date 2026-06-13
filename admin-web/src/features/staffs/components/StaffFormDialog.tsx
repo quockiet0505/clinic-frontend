@@ -1,44 +1,47 @@
-import React, { useState, useEffect } from 'react';
+// components/staff/StaffFormDialog.tsx
+import React from 'react';
 import { Users } from 'lucide-react';
-import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
+
+const staffFields: FieldConfig[] = [
+  { name: 'fullName', label: 'Họ và Tên', type: 'text', required: true, placeholder: 'Ví dụ: Nguyễn Văn An' },
+  { name: 'email', label: 'Địa chỉ Email', type: 'text', required: true, placeholder: 'Ví dụ: email@domain.com' },
+  { name: 'phone', label: 'Số điện thoại', type: 'text', required: true, placeholder: 'Ví dụ: 0901234567' },
+  { name: 'staffType', label: 'Vai trò', type: 'select', required: true, options: [
+    { value: 'DOCTOR', label: 'Bác sĩ' },
+    { value: 'NURSE', label: 'Điều dưỡng' },
+    { value: 'STAFF', label: 'Nhân viên' },
+    { value: 'LAB_TECH', label: 'Kỹ thuật viên' },
+    { value: 'PHARMACIST', label: 'Dược sĩ' }
+  ]},
+  { name: 'isActive', label: 'Trạng thái', type: 'select', required: true, options: [
+    { value: 'true', label: 'Hoạt động' },
+    { value: 'false', label: 'Ngừng hoạt động' }
+  ]}
+];
 
 export default function StaffFormDialog({ isOpen, onClose, onSubmit, initialData }: any) {
-  const [formData, setFormData] = useState({ fullName: '', email: '', phone: '', staffType: 'STAFF', isActive: true });
+  const mappedInitial = initialData ? {
+    ...initialData,
+    isActive: initialData.isActive === true ? 'true' : 'false'
+  } : undefined;
 
-  useEffect(() => {
-    if (initialData) setFormData(initialData);
-    else setFormData({ fullName: '', email: '', phone: '', staffType: 'STAFF', isActive: true });
-  }, [initialData, isOpen]);
+  const handleSubmit = (data: any, isEdit: boolean) => {
+    const processed = { ...data, isActive: data.isActive === 'true' };
+    onSubmit(processed, isEdit);
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden border-0 rounded-2xl shadow-2xl">
-        <div className="bg-blue-600 p-6 text-white">
-          <div className="flex items-center gap-2 mb-2 opacity-80">
-            <Users size={16} /> <span className="text-xs font-bold uppercase tracking-widest">Dữ liệu nhân sự</span>
-          </div>
-          <DialogTitle className="text-xl font-black">{initialData ? 'Chỉnh sửa Nhân viên' : 'Thêm Nhân viên Mới'}</DialogTitle>
-          <DialogDescription className="text-blue-100">Quản lý thông tin chi tiết và quyền truy cập.</DialogDescription>
-        </div>
-        <div className="p-6 bg-slate-50 space-y-4">
-          <div className="space-y-2"><label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Họ và Tên</label><Input value={formData.fullName} onChange={(e) => setFormData({...formData, fullName: e.target.value})} className="h-11 rounded-xl" /></div>
-          <div className="space-y-2"><label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Địa chỉ Email</label><Input value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="h-11 rounded-xl" /></div>
-          <div className="space-y-2"><label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Vai trò</label>
-            <select value={formData.staffType} onChange={(e) => setFormData({...formData, staffType: e.target.value})} className="flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-bold cursor-pointer">
-              <option value="DOCTOR">Bác sĩ</option>
-              <option value="STAFF">Nhân viên</option>
-              <option value="LAB_TECH">Kỹ thuật viên</option>
-              <option value="ADMIN">Quản trị viên</option>
-            </select>
-          </div>
-        </div>
-        <DialogFooter className="p-6 pb-8 bg-white border-t border-slate-100 flex gap-3">
-          <Button variant="outline" onClick={onClose} className="border-[#DCE3EC] bg-white text-rose-500 hover:text-rose-600 hover:bg-rose-50 rounded-xl font-bold cursor-pointer transition-all">Hủy</Button>
-          <Button onClick={() => onSubmit(formData, !!initialData)} className="rounded-xl bg-blue-600 text-white font-bold px-6 cursor-pointer">Lưu Nhân viên</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <FormDialog
+      open={isOpen}
+      onClose={onClose}
+      title={initialData ? 'Chỉnh sửa Nhân viên' : 'Thêm Nhân viên Mới'}
+      description="Quản lý thông tin chi tiết và quyền truy cập."
+      icon={<Users size={16} />}
+      fields={staffFields}
+      initialData={mappedInitial}
+      onSubmit={handleSubmit}
+      submitLabel="Lưu Nhân viên"
+    />
   );
 }

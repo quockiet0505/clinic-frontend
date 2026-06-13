@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle } from 'lucide-react';
 
@@ -12,21 +12,28 @@ interface Props {
   confirmText?: string;
 }
 
-export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, description, confirmText = "Confirm" }: Props) {
+export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, description, confirmText = "Xác nhận" }: Props) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[400px] rounded-[32px] p-8 text-center flex flex-col items-center">
-        <div className="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mb-4">
-          <AlertTriangle size={32} />
+      <DialogContent className="sm:max-w-[400px] p-0 overflow-hidden border-0 rounded-[24px] shadow-2xl">
+        <div className="bg-amber-50 p-6 border-b border-amber-200 rounded-t-[24px]">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle size={16} className="text-amber-700" />
+            <span className="text-xs font-bold uppercase tracking-widest text-amber-800">Xác nhận</span>
+          </div>
+          <DialogTitle className="text-2xl font-semibold text-slate-800">{title}</DialogTitle>
+          <DialogDescription className="text-sm text-slate-700 font-medium mt-1">
+            {description}
+          </DialogDescription>
         </div>
-        <DialogTitle className="text-2xl font-black text-slate-900 mb-2">{title}</DialogTitle>
-        <DialogDescription className="text-slate-500 font-medium mb-6">{description}</DialogDescription>
-        <div className="flex w-full gap-3">
-          <Button variant="outline" onClick={onClose} className="flex-1 h-12 rounded-2xl font-bold border-slate-200 hover:bg-slate-50 cursor-pointer">Hủy</Button>
-          <Button onClick={() => { onConfirm(); onClose(); }} className="flex-1 h-12 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-lg shadow-rose-100">
+        <DialogFooter className="p-6 pb-8 bg-slate-50 border-t border-slate-100 flex gap-3 justify-end rounded-b-[24px]">
+          <Button variant="outline" onClick={onClose} className="h-11 px-6 rounded-[14px] font-bold border-slate-300 text-slate-700 hover:text-red-600 hover:bg-red-50 hover:border-red-300 transition-all duration-200 cursor-pointer">
+            Hủy
+          </Button>
+          <Button onClick={() => { onConfirm(); onClose(); }} className="h-11 px-6 rounded-[14px] bg-red-600 hover:bg-red-700 shadow-sm text-white font-bold transition-all duration-200 cursor-pointer">
             {confirmText}
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

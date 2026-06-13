@@ -18,13 +18,13 @@ export default function ConsultationWorkspace() {
         
         {/* HEADER */}
         <div className="flex justify-between items-center bg-white p-2 rounded-[32px] border border-slate-200 shadow-sm shrink-0">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="font-bold text-slate-500 rounded-2xl h-11 hover:bg-slate-50">
-            <ChevronLeft size={20} className="mr-1"/> Exit Workspace
+          <Button variant="ghost" onClick={() => navigate(-1)} className="font-bold text-slate-500 rounded-2xl h-11 hover:bg-slate-50 cursor-pointer">
+            <ChevronLeft size={20} className="mr-1"/> Thoát phiên làm việc
           </Button>
           <div className="flex gap-3 pr-2">
-            <Button variant="outline" className="font-bold border-slate-200 rounded-2xl h-11 px-6 cursor-pointer">Save Draft</Button>
+            <Button variant="outline" className="font-bold border-slate-200 rounded-2xl h-11 px-6 cursor-pointer">Lưu nháp</Button>
             <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-black px-8 rounded-2xl h-11 shadow-lg shadow-blue-100 cursor-pointer">
-              <Save size={18} className="mr-2"/> Complete Record
+              <Save size={18} className="mr-2"/> Hoàn tất khám
             </Button>
           </div>
         </div>
@@ -37,14 +37,14 @@ export default function ConsultationWorkspace() {
             <div className="bg-white rounded-[32px] border border-slate-200 overflow-hidden shadow-sm shrink-0">
               <div className="p-4 bg-slate-50/50 border-b border-slate-100 flex items-center gap-2">
                 <UserCircle size={18} className="text-blue-600" />
-                <h2 className="font-black text-slate-800 uppercase text-[11px] tracking-widest">Patient Identity</h2>
+                <h2 className="font-black text-slate-800 uppercase text-[11px] tracking-widest">Thông tin bệnh nhân</h2>
               </div>
               <div className="p-6 flex flex-col items-center text-center">
                  <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-black text-2xl mb-3">L</div>
                  <h3 className="font-black text-lg">Liam Anderson</h3>
-                 <p className="text-sm font-bold text-slate-500">Record #{id}</p>
+                 <p className="text-sm font-bold text-slate-500">Hồ sơ #{id}</p>
                  <div className="flex gap-2 mt-3 text-xs font-bold text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-                   <span>Male, 41</span> | <span className="text-rose-500">Blood: O+</span>
+                   <span>Nam, 41</span> | <span className="text-rose-500">Nhóm máu: O+</span>
                  </div>
               </div>
             </div>
@@ -52,7 +52,7 @@ export default function ConsultationWorkspace() {
             <div className="bg-white rounded-[32px] border border-slate-200 overflow-hidden shadow-sm shrink-0">
               <div className="p-4 bg-slate-50/50 border-b border-slate-100 flex items-center gap-2">
                 <Activity size={18} className="text-rose-600" />
-                <h2 className="font-black text-slate-800 uppercase text-[11px] tracking-widest">Vitals Profiling</h2>
+                <h2 className="font-black text-slate-800 uppercase text-[11px] tracking-widest">Chỉ số sinh tồn</h2>
               </div>
               <div className="p-6"><VitalSignsForm /></div>
             </div>
@@ -61,11 +61,11 @@ export default function ConsultationWorkspace() {
           {/* RIGHT: CLINICAL INPUTS */}
           <div className="lg:col-span-8 flex flex-col bg-white rounded-[32px] border border-slate-200 overflow-hidden shadow-sm">
             <div className="flex border-b border-slate-100 px-6 pt-2 bg-slate-50/50 shrink-0">
-              <button onClick={() => setActiveTab('notes')} className={`flex items-center gap-2 px-6 py-4 font-black text-sm transition-all border-b-2 ${activeTab === 'notes' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>
-                <ClipboardList size={16} /> Clinical Notes
+              <button onClick={() => setActiveTab('notes')} className={`cursor-pointer flex items-center gap-2 px-6 py-4 font-black text-sm transition-all border-b-2 ${activeTab === 'notes' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>
+                <ClipboardList size={16} /> Phiếu Khám Bệnh
               </button>
-              <button onClick={() => setActiveTab('prescriptions')} className={`flex items-center gap-2 px-6 py-4 font-black text-sm transition-all border-b-2 ${activeTab === 'prescriptions' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>
-                <Pill size={16} /> E-Prescription
+              <button onClick={() => setActiveTab('prescriptions')} className={`cursor-pointer flex items-center gap-2 px-6 py-4 font-black text-sm transition-all border-b-2 ${activeTab === 'prescriptions' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-slate-500 hover:text-slate-700'}`}>
+                <Pill size={16} /> Kê Đơn Thuốc
               </button>
             </div>
 

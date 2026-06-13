@@ -3,22 +3,32 @@ import PageHeader from '@/components/common/PageHeader';
 import ActionReasonDialog from '@/components/common/ActionReasonDialog';
 import ServiceOrdersFilterBar from '../components/ServiceOrdersFilterBar';
 import ServiceOrdersTable from '../components/ServiceOrdersTable';
-import LabResultInputForm from '../components/LabResultInputForm';
+import LabResultInputForm from '../components/LabResultInputFormDialog';
 import ServiceOrderFormDialog from '../components/ServiceOrderFormDialog'; // Import Component Mới
 import { ServiceOrder } from '../types/laboratory';
+import { laboratoryApi } from '../api/laboratoryApi';
 
 const TODAY = new Date().toISOString().split('T')[0];
 
 export default function ServiceOrders() {
-  const [orders, setOrders] = useState<ServiceOrder[]>([
-    { orderId: 1, recordId: 101, serviceId: 1, serviceName: 'Complete Blood Count', patientName: 'Liam Anderson', orderedBy: 1, doctorName: 'Sarah Smith', status: 'ORDERED', createdAt: TODAY },
-    { orderId: 2, recordId: 102, serviceId: 2, serviceName: 'Lipid Panel', patientName: 'William Garcia', orderedBy: 1, doctorName: 'Sarah Smith', status: 'DONE', createdAt: TODAY }
-  ]);
+  const [orders, setOrders] = useState<ServiceOrder[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchOrders = async () => {
+    setLoading(true);
+    const data = await laboratoryApi.getServiceOrders();
+    setOrders(data);
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    fetchOrders();
+  }, []);
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
-  const [fromDate, setFromDate] = useState(TODAY);
-  const [toDate, setToDate] = useState(TODAY);
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   
   const [isAddOpen, setIsAddOpen] = useState(false); // State mở form thêm mới
   const [inputOrder, setInputOrder] = useState<ServiceOrder | null>(null);
@@ -26,23 +36,27 @@ export default function ServiceOrders() {
 
   const filtered = orders.filter(o => 
     (statusFilter === 'ALL' || o.status === statusFilter) &&
-    o.patientName.toLowerCase().includes(search.toLowerCase()) &&
-    o.createdAt >= fromDate && o.createdAt <= toDate
+    (o.patientName || '').toLowerCase().includes(search.toLowerCase()) &&
+    (!fromDate || o.createdAt >= fromDate) && (!toDate || o.createdAt <= toDate)
   );
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       {/* Sửa lại PageHeader có thêm nút Action */}
       <PageHeader 
-        title="Laboratory Orders" 
-        description="Manage pending lab tests and input results." 
-        actionText="New Lab Order"
+        title="Chỉ định Xét nghiệm" 
+        description="Quản lý các chỉ định xét nghiệm chờ xử lý và nhập kết quả." 
+        actionText="Tạo chỉ định mới"
         onAction={() => setIsAddOpen(true)}
       />
 
       <ServiceOrdersFilterBar search={search} setSearch={setSearch} statusFilter={statusFilter} setStatusFilter={setStatusFilter} fromDate={fromDate} toDate={toDate} setFromDate={setFromDate} setToDate={setToDate} />
 
-      <ServiceOrdersTable data={filtered} onInputResult={setInputOrder} onReject={setRejectOrder} />
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải danh sách...</div>
+      ) : (
+        <ServiceOrdersTable data={filtered} onInputResult={setInputOrder} onReject={setRejectOrder} />
+      )}
 
       {/* FORM THÊM MỚI */}
       <ServiceOrderFormDialog 
@@ -57,8 +71,9 @@ export default function ServiceOrders() {
       <LabResultInputForm 
         order={inputOrder} 
         onClose={() => setInputOrder(null)} 
-        onSubmit={(id: number, data: any) => { 
-          setOrders(orders.map(o => o.orderId === id ? { ...o, status: 'DONE' } : o)); 
+        onSubmit={async (id: number, data: any) => { 
+          await laboratoryApi.submitResult({ orderId: id, resultData: data.resultData, conclusion: data.conclusion, enteredById: 1 });
+          await fetchOrders();
           setInputOrder(null); 
         }} 
       />
@@ -66,14 +81,15 @@ export default function ServiceOrders() {
       <ActionReasonDialog 
         isOpen={!!rejectOrder} 
         onClose={() => setRejectOrder(null)} 
-        onConfirm={(action, reason) => { 
-          setOrders(orders.map(o => o.orderId === rejectOrder?.orderId ? { ...o, status: 'REJECTED' } : o)); 
+        onConfirm={async (action, reason) => { 
+          await laboratoryApi.updateOrderStatus(rejectOrder!.orderId, 'REJECTED', reason);
+          await fetchOrders();
           setRejectOrder(null); 
         }}
-        title="Reject Lab Sample"
-        description={`Reason for rejecting the sample for ${rejectOrder?.patientName}'s test?`}
-        reasonLabel="Rejection Reason (e.g. Hemolyzed)"
-        confirmText="Reject Sample"
+        title="Từ chối mẫu xét nghiệm"
+        description={`Lý do từ chối mẫu xét nghiệm của bệnh nhân ${rejectOrder?.patientName}?`}
+        reasonLabel="Lý do từ chối (vd: Mẫu bị hỏng)"
+        confirmText="Từ chối mẫu"
         confirmColor="rose"
       />
     </div>

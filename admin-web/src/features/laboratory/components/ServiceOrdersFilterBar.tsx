@@ -17,18 +17,18 @@ export default function ServiceOrdersFilterBar({ search, setSearch, statusFilter
           <button
             key={tab}
             onClick={() => setStatusFilter(tab)}
-            className={`flex-1 xl:flex-none px-6 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${
+            className={`cursor-pointer flex-1 xl:flex-none px-6 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${
               statusFilter === tab ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'
             }`}
           >
-            {tab === 'ALL' ? 'All Orders' : tab}
+            {tab === 'ALL' ? 'Tất cả' : tab === 'ORDERED' ? 'Chờ lấy mẫu' : tab === 'DONE' ? 'Đã có kết quả' : 'Từ chối mẫu'}
           </button>
         ))}
       </div>
 
       <div className="flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto">
         <div className="w-full sm:w-64">
-          <SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm patient or test..." />
+          <SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm bệnh nhân hoặc xét nghiệm..." />
         </div>
         <DateRangeFilter from={fromDate} to={toDate} onChangeFrom={setFromDate} onChangeTo={setToDate} />
       </div>

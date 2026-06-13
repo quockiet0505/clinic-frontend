@@ -13,12 +13,12 @@ interface Props {
 
 export default function FollowUpTable({ data, onLogCall, onSendReminder }: Props) {
   return (
-    <div className="bg-white rounded-[32px] shadow-sm border border-slate-200 flex-1 overflow-hidden">
+    <div className="bg-white rounded-[20px] shadow-sm border border-slate-200 flex-1 overflow-hidden">
       <Table>
         <TableHeader className="bg-slate-50">
           <TableRow className="h-14">
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Thông tin Bệnh nhân</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Follow-up Detail</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Chi tiết nhắc nhở</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
           </TableRow>
@@ -37,7 +37,7 @@ export default function FollowUpTable({ data, onLogCall, onSendReminder }: Props
               </TableCell>
               <TableCell>
                 <p className="text-sm font-bold text-slate-700">{item.note.split('|')[0]}</p>
-                <span className="text-xs font-bold text-slate-400 flex items-center gap-1 mt-1.5"><History size={12}/> Due: {item.scheduledDatetime}</span>
+                <span className="text-xs font-medium text-slate-500 flex items-center gap-1 mt-1.5"><History size={12} /> Đến hạn: {item.scheduledDatetime}</span>
               </TableCell>
               <TableCell className="text-center">
                 <StatusBadge status={item.status} />
@@ -47,12 +47,12 @@ export default function FollowUpTable({ data, onLogCall, onSendReminder }: Props
                 {item.status === 'PENDING' && (
                   <div className="flex justify-end gap-2">
                     {/* NÚT GỬI THÔNG BÁO */}
-                    <Button onClick={() => onSendReminder(item)} variant="outline" size="sm" className="h-9 font-bold rounded-xl px-3 border-amber-200 text-amber-600 hover:bg-amber-50 shadow-sm" title="Send System Notification">
-                      <BellRing size={16}/>
+                    <Button onClick={() => onSendReminder(item)} variant="outline" size="sm" className="h-9 font-semibold rounded-[10px] px-3 border-amber-200 text-amber-600 hover:bg-amber-50 shadow-sm transition-all cursor-pointer" title="Gửi thông báo hệ thống">
+                      <BellRing size={16} />
                     </Button>
                     {/* NÚT GHI NHẬN CUỘC GỌI */}
-                    <Button onClick={() => onLogCall(item)} size="sm" className="h-9 font-bold rounded-xl px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white shadow-sm">
-                      <Phone size={14} className="mr-1.5"/> Log Call
+                    <Button onClick={() => onLogCall(item)} size="sm" className="h-9 font-semibold rounded-[10px] px-4 bg-primary hover:bg-primary/90 text-white shadow-sm transition-all cursor-pointer">
+                      <Phone size={14} className="mr-1.5" /> Ghi nhận cuộc gọi
                     </Button>
                   </div>
                 )}

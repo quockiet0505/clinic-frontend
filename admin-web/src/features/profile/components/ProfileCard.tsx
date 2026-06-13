@@ -23,27 +23,27 @@ export default function ProfileCard({ user }: { user: UserProfile }) {
           <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 shrink-0"><Mail size={14}/></div>
           <div className="overflow-hidden">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email</p>
-            <p className="text-sm font-bold text-slate-700 truncate">{user.email || 'Not provided'}</p>
+            <p className="text-sm font-bold text-slate-700 truncate">{user.email || 'Chưa cập nhật'}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 shrink-0"><Phone size={14}/></div>
           <div className="overflow-hidden">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Số điện thoại</p>
-            <p className="text-sm font-bold text-slate-700 truncate">{user.phone || 'Not provided'}</p>
+            <p className="text-sm font-bold text-slate-700 truncate">{user.phone || 'Chưa cập nhật'}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 shrink-0"><MapPin size={14}/></div>
           <div className="overflow-hidden">
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Địa chỉ</p>
-            <p className="text-sm font-bold text-slate-700 truncate">{user.address || 'Not provided'}</p>
+            <p className="text-sm font-bold text-slate-700 truncate">{user.address || 'Chưa cập nhật'}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 shrink-0"><CalendarDays size={14}/></div>
           <div className="overflow-hidden">
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Joined Date</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ngày tham gia</p>
             <p className="text-sm font-bold text-slate-700 truncate">{user.createdAt.split('T')[0]}</p>
           </div>
         </div>

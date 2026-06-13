@@ -11,7 +11,7 @@ interface Props {
 export default function LabResultsFilterBar({ search, setSearch, fromDate, toDate, setFromDate, setToDate }: Props) {
   return (
     <div className="flex flex-col sm:flex-row gap-4 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm shrink-0 items-center justify-between">
-      <div className="w-full sm:w-80"><SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm patient, test, or ID..." /></div>
+      <div className="w-full sm:w-80"><SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm bệnh nhân, xét nghiệm hoặc mã..." /></div>
       <DateRangeFilter from={fromDate} to={toDate} onChangeFrom={setFromDate} onChangeTo={setToDate} />
     </div>
   );

@@ -7,7 +7,7 @@ import { appointmentApi } from '../api/appointmentApi';
 const TODAY = new Date().toISOString().split('T')[0];
 
 export default function AppointmentCalendar() {
-  const [selectedDate, setSelectedDate] = useState(TODAY);
+  const [selectedDate, setSelectedDate] = useState('');
   const [doctorFilter, setDoctorFilter] = useState('ALL');
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [providers, setProviders] = useState<{id: string, name: string}[]>([]);
@@ -57,7 +57,7 @@ export default function AppointmentCalendar() {
       {/* HEADER */}
       <div className="shrink-0">
         <h1 className="text-2xl font-black text-slate-900 tracking-tight">Lịch theo tháng</h1>
-        <p className="text-sm text-slate-500 mt-1">Manage weekly schedules and visual appointment blocks.</p>
+        <p className="text-sm text-slate-500 mt-1">Quản lý lịch làm việc hàng tuần và các khối lịch hẹn.</p>
       </div>
 
       {/* FILTER BAR */}

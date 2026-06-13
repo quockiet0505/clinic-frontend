@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AlertCircle } from 'lucide-react';
+import CustomSelect from '@/components/common/CustomSelect';
 
 interface Option { label: string; value: string; }
 
@@ -33,34 +34,34 @@ export default function ActionReasonDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[400px] rounded-[32px] p-8">
-        <div className="flex flex-col space-y-4">
-          <div className={`flex items-center gap-3 text-${confirmColor}-600 mb-2`}>
-            <div className={`w-12 h-12 bg-${confirmColor}-100 rounded-full flex items-center justify-center`}><AlertCircle size={24} /></div>
-            <DialogTitle className="text-2xl font-black text-slate-900">{title}</DialogTitle>
+      <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden border-0 rounded-[24px] shadow-2xl">
+        <div className="bg-primary-50 p-6 border-b border-primary-100 text-primary-900 rounded-t-[24px]">
+          <div className="flex items-center gap-2 mb-2 text-primary-600">
+            <AlertCircle size={16} /> <span className="text-xs font-bold uppercase tracking-widest">Xác nhận</span>
           </div>
-          <DialogDescription className="text-slate-500 font-medium">{description}</DialogDescription>
-          <div className="space-y-4 mt-2">
+          <DialogTitle className="text-2xl font-semibold">{title}</DialogTitle>
+          <DialogDescription className="text-sm text-primary-600/80 font-medium">{description}</DialogDescription>
+        </div>
+        <div className="p-6 bg-white space-y-4">
             {actorOptions && actorOptions.length > 0 && (
               <div className="space-y-2">
-                <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">{actorLabel}</label>
-                <select value={actorValue} onChange={(e) => setActorValue(e.target.value)} className={`flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-bold  focus:ring-${confirmColor}-500 `}>
+                <label className="block mb-2 text-sm font-medium text-slate-700">{actorLabel}</label>
+                <CustomSelect value={actorValue} onChange={(e: any) => setActorValue(e.target.value)} className="h-11 w-full">
                   {actorOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                </select>
+                </CustomSelect>
               </div>
             )}
             <div className="space-y-2">
-              <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">{reasonLabel}</label>
-              <Input placeholder="Type details here..." value={reason} onChange={(e) => setReason(e.target.value)} className="rounded-xl h-11" />
+              <label className="block mb-2 text-sm font-medium text-slate-700">{reasonLabel}</label>
+              <Input placeholder="Nhập chi tiết..." value={reason} onChange={(e) => setReason(e.target.value)} className="h-11 rounded-[16px] font-medium border-slate-200" />
             </div>
-          </div>
-          <div className="flex w-full gap-3 mt-6">
-            <Button variant="outline" onClick={onClose} className="flex-1 h-12 rounded-2xl font-bold border-slate-200 cursor-pointer">Hủy</Button>
-            <Button onClick={handleConfirm} className={`flex-1 h-12 rounded-2xl bg-${confirmColor}-600 hover:bg-${confirmColor}-700 text-white font-bold shadow-lg shadow-${confirmColor}-100`}>
+        </div>
+        <DialogFooter className="p-6 pb-8 bg-slate-50 border-t border-slate-100 flex gap-3 justify-end rounded-b-[24px]">
+            <Button variant="outline" onClick={onClose} className="h-11 px-6 rounded-[14px] font-bold border-slate-300 text-slate-700 hover:text-red-600 hover:bg-red-50 hover:border-red-300 transition-all duration-200 cursor-pointer">Hủy</Button>
+            <Button onClick={handleConfirm} className={`h-11 px-6 rounded-[14px] ${confirmColor === 'rose' ? 'bg-red-600 hover:bg-red-700' : 'bg-primary hover:bg-primary-600'} shadow-sm text-white font-bold transition-all duration-200 cursor-pointer`}>
               {confirmText}
             </Button>
-          </div>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

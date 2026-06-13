@@ -49,7 +49,7 @@ export default function PatientList() {
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <PageHeader 
         title="Danh sách Bệnh nhân" 
-        description="Manage patient profiles, demographics, and contact information." 
+        description="Quản lý hồ sơ bệnh nhân và thông tin liên lạc." 
         actionText="Thêm Bệnh nhân" 
         onAction={() => { setSelectedPatient(null); setIsFormOpen(true); }} 
       />
@@ -85,8 +85,8 @@ export default function PatientList() {
           setDeletingPatient(null); 
         }} 
         title="Xóa Bệnh Nhân" 
-        description={`Are you sure you want to permanently delete the records for ${deletingPatient?.fullName}?`} 
-        confirmText="Yes, Delete"
+        description={`Bạn có chắc chắn muốn xóa hồ sơ của ${deletingPatient?.fullName} không?`} 
+        confirmText="Xác nhận xóa"
       />
     </div>
   );

@@ -14,11 +14,11 @@ export default function FeedbackTable({ data }: { data: Feedback[] }) {
     <div className="bg-white rounded-[32px] shadow-sm border border-slate-200 flex-1 overflow-hidden">
       <Table>
         <TableHeader className="bg-slate-50">
-          <TableRow className="h-14">
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Date & Record</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Patient & Provider</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Rating</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Comments</TableHead>
+          <TableRow className="h-14 border-b border-slate-200 hover:bg-transparent">
+            <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] px-8 w-[20%]">Ngày & Hồ sơ</TableHead>
+            <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[25%]">Bệnh nhân & Bác sĩ</TableHead>
+            <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[20%]">Đánh giá</TableHead>
+            <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[35%]">Bình luận</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -30,7 +30,7 @@ export default function FeedbackTable({ data }: { data: Feedback[] }) {
               </TableCell>
               <TableCell>
                 <p className="font-bold text-slate-800">{fb.patientName}</p>
-                <p className="text-xs font-medium text-slate-500 mt-1">Dr. {fb.doctorName}</p>
+                <p className="text-xs font-medium text-slate-500 mt-1">BS. {fb.doctorName}</p>
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-1">{renderStars(fb.rating)}</div>

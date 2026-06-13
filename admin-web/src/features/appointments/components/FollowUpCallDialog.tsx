@@ -1,71 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PhoneCall } from 'lucide-react';
-import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
 
-export default function FollowUpCallDialog({ patient, onClose, onSubmit }: any) {
-  const [result, setResult] = useState('');
-  const [status, setStatus] = useState('COMPLETED');
+const fields: FieldConfig[] = [
+  { name: 'status', label: 'Trạng thái mới', type: 'select', required: true, options: [
+    { value: 'COMPLETED', label: 'Hoàn thành' },
+    { value: 'CONFIRMED', label: 'Đã xác nhận' },
+    { value: 'CANCELLED', label: 'Đã hủy' },
+  ]},
+  { name: 'result', label: 'Kết quả / Ghi chú', type: 'textarea', required: true, placeholder: 'Ví dụ: Bệnh nhân đã hẹn tái khám...', rows: 3 },
+];
 
+interface Props {
+  patient: any; // { patientName, ... }
+  onClose: () => void;
+  onSubmit: (status: string, result: string) => void;
+}
+
+export default function FollowUpCallDialog({ patient, onClose, onSubmit }: Props) {
+  const isOpen = !!patient;
+  const [key, setKey] = useState(0);
+
+  // Force reset when patient changes
   useEffect(() => {
-    if (patient) {
-      setResult('');
-      setStatus('COMPLETED'); // Default action
-    }
+    setKey(prev => prev + 1);
   }, [patient]);
 
-  if (!patient) return null;
+  const handleSubmit = (data: any, isEdit: boolean) => {
+    onSubmit(data.status, data.result);
+  };
+
+  if (!isOpen) return null;
 
   return (
-    <Dialog open={!!patient} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[450px] p-0 overflow-hidden border-0 rounded-[32px] shadow-2xl">
-        
-        {/* Consistent Blue Header */}
-        <div className="bg-blue-600 p-6 text-white">
-          <div className="flex items-center gap-2 mb-2 opacity-80">
-            <PhoneCall size={16} /> <span className="text-xs font-bold uppercase tracking-widest">Call Log</span>
-          </div>
-          <DialogTitle className="text-xl font-black">Update Follow-up Status</DialogTitle>
-          <DialogDescription className="text-blue-100">
-            Record the outcome of the call with {patient.patientName}.
-          </DialogDescription>
-        </div>
-        
-        <div className="p-6 bg-slate-50 space-y-4">
-          <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">New Status</label>
-            <select 
-              value={status} 
-              onChange={(e) => setStatus(e.target.value)} 
-              className="flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-bold outline-none cursor-pointer"
-            >
-              <option value="COMPLETED">Hoàn thành</option>
-              <option value="CONFIRMED">Đã xác nhận</option>
-              <option value="CANCELLED">Đã hủy</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Result / Medical Note</label>
-            <textarea 
-              value={result} 
-              onChange={(e) => setResult(e.target.value)} 
-              className="flex w-full rounded-xl border border-slate-200 bg-white p-3 font-medium outline-none resize-none h-24"
-              placeholder="Type the outcome of the call..."
-            />
-          </div>
-        </div>
-        
-        <DialogFooter className="p-6 pb-8 bg-white border-t border-slate-100 flex gap-3">
-          <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500 cursor-pointer">Hủy</Button>
-          <Button 
-            onClick={() => onSubmit(status, result)} 
-            disabled={!result.trim()}
-            className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-6 shadow-sm"
-          >
-            Save Update
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <FormDialog
+      key={key}
+      open={isOpen}
+      onClose={onClose}
+      title="Cập Nhật Trạng Thái"
+      description={`Ghi chú kết quả cuộc gọi với ${patient.patientName}.`}
+      icon={<PhoneCall size={16} />}
+      fields={fields}
+      onSubmit={handleSubmit}
+      submitLabel="Lưu Thay Đổi"
+      initialData={{ status: 'COMPLETED', result: '' }}
+    />
   );
 }

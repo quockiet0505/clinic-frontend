@@ -16,8 +16,13 @@ export default function ExpertiseSettings() {
 
   const fetchData = async () => {
     setLoading(true);
-    const res = await settingsApi.getExpertises();
-    setData(res);
+    try {
+      const res = await settingsApi.getExpertises();
+      setData(res || []);
+    } catch (e) {
+      console.error(e);
+      setData([]);
+    }
     setLoading(false);
   };
 
@@ -30,18 +35,18 @@ export default function ExpertiseSettings() {
   return (
     <div className="space-y-6 flex flex-col h-full animate-in fade-in duration-500">
       <PageHeader 
-        title="Medical Specialties" 
-        description="Manage departments and clinical expertise categories." 
-        actionText="Add Specialty"
+        title="Chuyên khoa" 
+        description="Quản lý các phòng ban và danh mục chuyên khoa của phòng khám." 
+        actionText="Thêm Chuyên khoa"
         onAction={() => setEditing({ expertiseId: 0, expertiseName: '', description: '', doctorCount: 0, status: 'Active' })}
       />
 
       <div className="bg-white p-3 rounded-2xl border border-slate-200 flex shadow-sm shrink-0">
-        <SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm specialty name..." />
+        <SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm tên chuyên khoa..." />
       </div>
 
       {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Loading specialties...</div>
+        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải chuyên khoa...</div>
       ) : (
         <ExpertiseTable 
           data={filtered} 
@@ -64,7 +69,7 @@ export default function ExpertiseSettings() {
         }} 
       />
       
-      <ConfirmDialog 
+        <ConfirmDialog 
         isOpen={!!deleting} 
         onClose={() => setDeleting(null)} 
         onConfirm={async () => {
@@ -74,8 +79,9 @@ export default function ExpertiseSettings() {
           }
           setDeleting(null);
         }} 
-        title="Delete Specialty" 
-        description={`Are you sure you want to delete "${deleting?.expertiseName}"?`} 
+        title="Xóa Chuyên khoa" 
+        description={`Bạn có chắc chắn muốn xóa chuyên khoa "${deleting?.expertiseName}"?`} 
+        confirmText="Xác nhận xóa"
       />
     </div>
   );

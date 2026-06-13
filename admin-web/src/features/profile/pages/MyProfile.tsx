@@ -47,7 +47,7 @@ export default function MyProfile() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col pb-8">
       
-      <PageHeader title="My Profile" description="Manage your personal information and account security." />
+      <PageHeader title="Hồ sơ cá nhân" description="Quản lý thông tin cá nhân và bảo mật tài khoản." />
 
       <div className="flex flex-col lg:flex-row gap-6 flex-1 overflow-hidden">
         
@@ -61,19 +61,19 @@ export default function MyProfile() {
           <div className="flex border-b border-slate-100 px-6 pt-2 bg-slate-50 shrink-0">
             <button
               onClick={() => setActiveTab('info')}
-              className={`flex items-center gap-2 px-6 py-4 font-bold text-sm transition-all border-b-2 ${
-                activeTab === 'info' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-slate-500 hover:text-slate-700'
+              className={`flex items-center gap-2 px-6 py-4 font-bold text-sm cursor-pointer transition-all border-b-2 ${
+                activeTab === 'info' ? 'border-primary-600 text-primary-600 bg-white' : 'border-transparent text-slate-500 hover:text-primary-600 hover:bg-primary-50'
               }`}
             >
               <UserIcon size={16}/> Thông tin Cá nhân
             </button>
             <button
               onClick={() => setActiveTab('security')}
-              className={`flex items-center gap-2 px-6 py-4 font-bold text-sm transition-all border-b-2 ${
-                activeTab === 'security' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-slate-500 hover:text-slate-700'
+              className={`flex items-center gap-2 px-6 py-4 font-bold text-sm cursor-pointer transition-all border-b-2 ${
+                activeTab === 'security' ? 'border-primary-600 text-primary-600 bg-white' : 'border-transparent text-slate-500 hover:text-primary-600 hover:bg-primary-50'
               }`}
             >
-              <Key size={16} /> Security & Password
+              <Key size={16} /> Bảo mật & Mật khẩu
             </button>
           </div>
 
