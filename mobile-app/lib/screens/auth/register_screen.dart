@@ -85,7 +85,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
       appBar: GradientAppBar(
-        title: 'Tạo tài khoản',
+        title: '',
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight),
           onPressed: () {
@@ -104,18 +104,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 children: [
-                  Image.network(
-                    '${dotenv.env['STATIC_BASE_URL'] ?? 'http://10.0.2.2:8080'}/images/logo.png', 
-                    height: 100, 
-                    fit: BoxFit.contain, 
-                    filterQuality: FilterQuality.high, 
-                    errorBuilder: (context, error, stackTrace) => Image.asset(
-                      'assets/images/logo.png',
-                      height: 100,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.health_and_safety, size: 80, color: AppColors.primary)
-                    ),
-                  ),  
+                  Image.asset(
+                    'assets/images/logo.png',
+                    height: 80,
+                    fit: BoxFit.contain,
+                    filterQuality: FilterQuality.high,
+                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.health_and_safety, size: 80, color: AppColors.primary),
+                  ),
                   const SizedBox(height: 16),
                   Text('Tạo tài khoản', style: AppStyles.heading1.copyWith(color: AppColors.textMainLight)),
                   const SizedBox(height: 8),

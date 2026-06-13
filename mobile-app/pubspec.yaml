@@ -24,6 +24,7 @@ dependencies:
   intl: ^0.20.2
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.4
   flutter_test:
     sdk: flutter
 
@@ -34,3 +35,9 @@ flutter:
     - assets/images/logo.png
     - assets/translations/
     - .env
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/logo_square.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/logo.png"

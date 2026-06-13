@@ -51,52 +51,47 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 60),
-              Image.network(
-                '${dotenv.env['STATIC_BASE_URL'] ?? 'http://10.0.2.2:8080'}/images/logo.png', 
-                height: 160, 
-                fit: BoxFit.contain, 
-                filterQuality: FilterQuality.high, 
-                errorBuilder: (context, error, stackTrace) => Image.asset(
-                  'assets/images/logo.png',
-                  height: 160,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.health_and_safety, size: 120, color: AppColors.primary)
-                ),
-              ),              
+              Image.asset(
+                'assets/images/logo.png',
+                height: 80,
+                fit: BoxFit.contain,
+                filterQuality: FilterQuality.high,
+                errorBuilder: (context, error, stackTrace) => const Icon(Icons.health_and_safety, size: 80, color: AppColors.primary),
+              ),
               const SizedBox(height: 8),
-              Text('Welcome Back!', style: AppStyles.heading1.copyWith(color: AppColors.textMainLight)),
+              Text('Chào mừng trở lại!', style: AppStyles.heading1.copyWith(color: AppColors.textMainLight)),
               const SizedBox(height: 8),
-              Text('Use Credentials to access your account', style: AppStyles.bodyMedium.copyWith(color: AppColors.textSubLight)),
+              Text('Đăng nhập để truy cập tài khoản của bạn', style: AppStyles.bodyMedium.copyWith(color: AppColors.textSubLight)),
               const SizedBox(height: 40),
-              CustomTextField(hintText: 'Email Address', prefixIcon: Icons.email_outlined, controller: _emailController),
+              CustomTextField(hintText: 'Địa chỉ Email', prefixIcon: Icons.email_outlined, controller: _emailController),
               const SizedBox(height: 16),
-              CustomTextField(hintText: 'Enter Password', prefixIcon: Icons.lock_outline, isPassword: true, controller: _passwordController),
+              CustomTextField(hintText: 'Mật khẩu', prefixIcon: Icons.lock_outline, isPassword: true, controller: _passwordController),
               const SizedBox(height: 12),
-              Align(alignment: Alignment.centerRight, child: TextButton(onPressed: () {}, child: Text('Forgot Password?', style: AppStyles.bodyMedium.copyWith(color: AppColors.primary)))),
+              Align(alignment: Alignment.centerRight, child: TextButton(onPressed: () {}, child: Text('Quên mật khẩu?', style: AppStyles.bodyMedium.copyWith(color: AppColors.primary)))),
               const SizedBox(height: 24),
               Consumer<AuthProvider>(
                 builder: (context, auth, child) {
-                  return CustomButton(text: 'Log in', isLoading: auth.isLoading, onPressed: _handleLogin);
+                  return CustomButton(text: 'Đăng nhập', isLoading: auth.isLoading, onPressed: _handleLogin);
                 },
               ),
               const SizedBox(height: 24),
               Row(
                 children: [
                   Expanded(child: Divider(color: AppColors.textSubLight.withOpacity(0.2))),
-                  Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Text('Or', style: AppStyles.caption.copyWith(color: AppColors.textSubLight))),
+                  Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child: Text('Hoặc', style: AppStyles.caption.copyWith(color: AppColors.textSubLight))),
                   Expanded(child: Divider(color: AppColors.textSubLight.withOpacity(0.2))),
                 ],
               ),
               const SizedBox(height: 24),
-              SocialButton(text: 'Sign in with Google', onPressed: () {}),
+              SocialButton(text: 'Đăng nhập với Google', onPressed: () {}),
               const SizedBox(height: 32),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Don't have an account? ", style: AppStyles.bodyMedium.copyWith(color: AppColors.textMainLight)),
+                  Text("Chưa có tài khoản? ", style: AppStyles.bodyMedium.copyWith(color: AppColors.textMainLight)),
                   GestureDetector(
                     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const RegisterScreen())),
-                    child: Text('Sign up', style: AppStyles.bodyMedium.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                    child: Text('Đăng ký', style: AppStyles.bodyMedium.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
