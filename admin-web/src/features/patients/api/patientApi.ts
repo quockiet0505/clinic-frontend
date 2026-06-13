@@ -12,7 +12,7 @@ export const patientApi = {
     }
   },
 
-  create: async (data: Omit<Patient, 'patient_id'>): Promise<void> => {
+  create: async (data: Omit<Patient, 'patientId'>): Promise<void> => {
     await axiosInstance.post('/patients', data);
   },
 

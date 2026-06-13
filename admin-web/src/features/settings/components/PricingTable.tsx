@@ -11,9 +11,9 @@ export default function PricingTable({ doctors, onEdit, onDelete }: any) {
         <TableHeader className="bg-slate-50">
           <TableRow className="h-14">
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Doctor Member</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Specialty</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Chuyên môn</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Current Price</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Actions</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -26,7 +26,7 @@ export default function PricingTable({ doctors, onEdit, onDelete }: any) {
                   </div>
                   <div>
                     <p className="font-bold text-slate-900">{doc.name}</p>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ID: STF-{doc.staff_id}</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ID: STF-{doc.staffId}</p>
                   </div>
                 </div>
               </TableCell>

@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function ServiceOrderFormDialog({ isOpen, onClose, onSubmit }: any) {
-  const [form, setForm] = useState({ patient_name: '', service_name: 'Complete Blood Count', doctor_name: '' });
+  const [form, setForm] = useState({ patientName: '', serviceName: 'Complete Blood Count', doctorName: '' });
 
   const handleSubmit = () => {
-    onSubmit({ ...form, service_id: Math.floor(Math.random() * 10) + 1 });
-    setForm({ patient_name: '', service_name: 'Complete Blood Count', doctor_name: '' });
+    onSubmit({ ...form, serviceId: Math.floor(Math.random() * 10) + 1 });
+    setForm({ patientName: '', serviceName: 'Complete Blood Count', doctorName: '' });
   };
 
   return (
@@ -25,17 +25,17 @@ export default function ServiceOrderFormDialog({ isOpen, onClose, onSubmit }: an
         
         <div className="p-6 bg-slate-50 space-y-4">
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Patient Name / Record ID</label>
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Patient Name / Record ID</label>
             <Input 
-              value={form.patient_name} onChange={(e) => setForm({...form, patient_name: e.target.value})} 
-              className="h-11 rounded-xl font-bold bg-white" placeholder="Search patient..." 
+              value={form.patientName} onChange={(e) => setForm({...form, patientName: e.target.value})} 
+              className="h-11 rounded-xl font-bold bg-white" placeholder="Tìm kiếm bệnh nhân..." 
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Select Lab Test</label>
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Select Lab Test</label>
             <select 
-              value={form.service_name} onChange={(e) => setForm({...form, service_name: e.target.value})} 
-              className="flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-bold focus:ring-2 focus:ring-blue-600 outline-none cursor-pointer"
+              value={form.serviceName} onChange={(e) => setForm({...form, serviceName: e.target.value})} 
+              className="flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-bold outline-none cursor-pointer"
             >
               <option value="Complete Blood Count">Complete Blood Count (CBC)</option>
               <option value="Lipid Panel">Lipid Panel</option>
@@ -44,17 +44,17 @@ export default function ServiceOrderFormDialog({ isOpen, onClose, onSubmit }: an
             </select>
           </div>
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Requested By (Doctor)</label>
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Requested By (Doctor)</label>
             <Input 
-              value={form.doctor_name} onChange={(e) => setForm({...form, doctor_name: e.target.value})} 
+              value={form.doctorName} onChange={(e) => setForm({...form, doctorName: e.target.value})} 
               className="h-11 rounded-xl font-medium bg-white" placeholder="e.g. Dr. Sarah Smith" 
             />
           </div>
         </div>
         
-        <DialogFooter className="p-6 bg-white border-t border-slate-100 flex gap-3">
-          <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500">Cancel</Button>
-          <Button onClick={handleSubmit} disabled={!form.patient_name} className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 shadow-sm">
+        <DialogFooter className="p-6 pb-8 bg-white border-t border-slate-100 flex gap-3">
+          <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500 cursor-pointer">Hủy</Button>
+          <Button onClick={handleSubmit} disabled={!form.patientName} className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 shadow-sm cursor-pointer">
             Create Order
           </Button>
         </DialogFooter>

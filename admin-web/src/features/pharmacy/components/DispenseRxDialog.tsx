@@ -14,7 +14,7 @@ export default function DispenseRxDialog({ prescription, onClose, onConfirm }: a
             <Pill size={16} /> <span className="text-xs font-bold uppercase tracking-widest">Dispensary</span>
           </div>
           <DialogTitle className="text-xl font-black">Dispense Medications</DialogTitle>
-          <DialogDescription className="text-blue-100">Review items for {prescription.patient_name}.</DialogDescription>
+          <DialogDescription className="text-blue-100">Review items for {prescription.patientName}.</DialogDescription>
         </div>
         
         <div className="p-6 bg-slate-50 space-y-3 max-h-[50vh] overflow-y-auto custom-scrollbar">
@@ -31,9 +31,9 @@ export default function DispenseRxDialog({ prescription, onClose, onConfirm }: a
           ))}
         </div>
         
-        <DialogFooter className="p-6 bg-white border-t border-slate-100 flex gap-3">
-          <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500">Cancel</Button>
-          <Button onClick={() => onConfirm(prescription.prescription_id)} className="rounded-xl bg-blue-600 text-white font-bold px-8 shadow-sm">
+        <DialogFooter className="p-6 pb-8 bg-white border-t border-slate-100 flex gap-3">
+          <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500 cursor-pointer">Hủy</Button>
+          <Button onClick={() => onConfirm(prescription.prescriptionId)} className="rounded-xl bg-blue-600 text-white font-bold px-8 shadow-sm cursor-pointer">
             <CheckCircle2 size={16} className="mr-2"/> Mark Dispensed
           </Button>
         </DialogFooter>

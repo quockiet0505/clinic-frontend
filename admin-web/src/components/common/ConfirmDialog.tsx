@@ -22,7 +22,7 @@ export default function ConfirmDialog({ isOpen, onClose, onConfirm, title, descr
         <DialogTitle className="text-2xl font-black text-slate-900 mb-2">{title}</DialogTitle>
         <DialogDescription className="text-slate-500 font-medium mb-6">{description}</DialogDescription>
         <div className="flex w-full gap-3">
-          <Button variant="outline" onClick={onClose} className="flex-1 h-12 rounded-2xl font-bold border-slate-200 hover:bg-slate-50">Cancel</Button>
+          <Button variant="outline" onClick={onClose} className="flex-1 h-12 rounded-2xl font-bold border-slate-200 hover:bg-slate-50 cursor-pointer">Hủy</Button>
           <Button onClick={() => { onConfirm(); onClose(); }} className="flex-1 h-12 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-lg shadow-rose-100">
             {confirmText}
           </Button>

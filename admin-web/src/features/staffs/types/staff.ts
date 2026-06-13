@@ -3,26 +3,26 @@ export type LeaveType = 'ANNUAL' | 'SICK' | 'UNPAID' | 'OTHER';
 export type LeaveStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export interface Staff {
-  staff_id: number;
-  full_name: string;
+  staffId: number;
+  fullName: string;
   email: string; // Joined from account table
   phone: string;
-  staff_type: StaffType;
-  expertise_name?: string; // Joined from expertise table
-  is_active: boolean;
+  staffType: StaffType;
+  expertiseName?: string; // Joined from expertise table
+  isActive: boolean;
 }
 
 export interface LeaveRequest {
-  leave_id: number;
-  staff_id: number;
-  full_name?: string; // Joined for Admin view
-  staff_type?: StaffType;
-  leave_type: LeaveType;
-  from_date: string;
-  to_date: string;
+  leaveId: number;
+  staffId: number;
+  fullName?: string; // Joined for Admin view
+  staffType?: StaffType;
+  leaveType: LeaveType;
+  fromDate: string;
+  toDate: string;
   reason: string;
   status: LeaveStatus;
-  applied_at: string;
-  approved_by?: string;
-  rejection_reason?: string;
+  appliedAt: string;
+  approvedBy?: string;
+  rejectionReason?: string;
 }

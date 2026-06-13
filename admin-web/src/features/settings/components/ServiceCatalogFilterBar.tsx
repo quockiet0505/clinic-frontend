@@ -6,7 +6,7 @@ export default function ServiceCatalogFilterBar({ search, onSearch, type, onType
   return (
     <div className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm flex flex-col sm:flex-row gap-4">
       <div className="flex-1">
-        <SearchInput value={search} onChange={onSearch} placeholder="Search services..." />
+        <SearchInput value={search} onChange={onSearch} placeholder="Tìm kiếm services..." />
       </div>
       <Select value={type} onValueChange={onTypeChange}>
         <SelectTrigger className="w-full sm:w-[200px] h-11 rounded-xl bg-slate-50 border-none font-bold text-slate-600">

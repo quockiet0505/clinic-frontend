@@ -8,9 +8,9 @@ import ExpenseCategoryFormDialog from '../components/ExpenseCategoryFormDialog';
 import { ExpenseCategory } from '../types/finance';
 
 const INITIAL_CATEGORIES: ExpenseCategory[] = [
-  { category_id: 1, category_name: 'Payroll', description: 'Staff salaries and bonuses' },
-  { category_id: 2, category_name: 'Utilities', description: 'Electricity, Water, Internet' },
-  { category_id: 3, category_name: 'Equipment', description: 'Medical tools and maintenance' },
+  { categoryId: 1, categoryName: 'Payroll', description: 'Staff salaries and bonuses' },
+  { categoryId: 2, categoryName: 'Utilities', description: 'Electricity, Water, Internet' },
+  { categoryId: 3, categoryName: 'Equipment', description: 'Medical tools and maintenance' },
 ];
 
 export default function ExpenseCategories() {
@@ -23,9 +23,9 @@ export default function ExpenseCategories() {
 
   const handleFormSubmit = (formData: any, isEdit: boolean) => {
     if (isEdit) {
-      setCategories(categories.map(c => c.category_id === selectedCat?.category_id ? { ...c, ...formData } : c));
+      setCategories(categories.map(c => c.categoryId === selectedCat?.categoryId ? { ...c, ...formData } : c));
     } else {
-      setCategories([{ ...formData, category_id: Date.now() }, ...categories]);
+      setCategories([{ ...formData, categoryId: Date.now() }, ...categories]);
     }
     setIsFormOpen(false);
   };
@@ -44,7 +44,7 @@ export default function ExpenseCategories() {
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex justify-between items-center shrink-0">
         <PageHeader title="Expense Categories" description="Manage classification tags for clinic operational costs." />
-        <Button onClick={openAddForm} className="h-10 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-5 shadow-sm">
+        <Button onClick={openAddForm} className="h-10 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-5 shadow-sm cursor-pointer">
           <Plus size={18} className="mr-2"/> Add Category
         </Button>
       </div>
@@ -54,16 +54,16 @@ export default function ExpenseCategories() {
           <TableHeader className="bg-slate-50">
             <TableRow className="h-14">
               <TableHead className="font-bold text-slate-600 text-[11px] uppercase px-8">Category Name</TableHead>
-              <TableHead className="font-bold text-slate-600 text-[11px] uppercase">Description</TableHead>
-              <TableHead className="font-bold text-slate-600 text-[11px] uppercase text-right pr-8">Actions</TableHead>
+              <TableHead className="font-bold text-slate-600 text-[11px] uppercase">Mô tả</TableHead>
+              <TableHead className="font-bold text-slate-600 text-[11px] uppercase text-right pr-8">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {categories.map((cat) => (
-              <TableRow key={cat.category_id} className="hover:bg-slate-50/50">
+              <TableRow key={cat.categoryId} className="hover:bg-slate-50/50">
                 <TableCell className="px-8 py-4">
                   <div className="flex items-center gap-2 font-bold text-slate-900">
-                    <Tag size={16} className="text-blue-500" /> {cat.category_name}
+                    <Tag size={16} className="text-blue-500" /> {cat.categoryName}
                   </div>
                 </TableCell>
                 <TableCell>
@@ -97,9 +97,9 @@ export default function ExpenseCategories() {
       <ConfirmDialog 
         isOpen={!!deletingCat} 
         onClose={() => setDeletingCat(null)} 
-        onConfirm={() => { setCategories(categories.filter(c => c.category_id !== deletingCat?.category_id)); setDeletingCat(null); }} 
+        onConfirm={() => { setCategories(categories.filter(c => c.categoryId !== deletingCat?.categoryId)); setDeletingCat(null); }} 
         title="Delete Category" 
-        description={`Are you sure you want to delete "${deletingCat?.category_name}"? This may affect associated expense records.`} 
+        description={`Are you sure you want to delete "${deletingCat?.categoryName}"? This may affect associated expense records.`} 
       />
     </div>
   );

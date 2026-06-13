@@ -29,10 +29,10 @@ export default function WeeklyCalendarGrid({ currentWeekStart, appointments, onA
   // Helper to get appointments for a specific day and time slot
   const getAppointmentsForSlot = (dateString: string, timeSlot: string) => {
     return appointments.filter(app => {
-      // time_start comes from DB usually as "HH:MM:SS" or "HH:MM"
-      const appHour = app.time_start.substring(0, 2);
+      // timeStart comes from DB usually as "HH:MM:SS" or "HH:MM"
+      const appHour = app.timeStart.substring(0, 2);
       const slotHour = timeSlot.substring(0, 2);
-      return app.appointment_date === dateString && appHour === slotHour;
+      return app.appointmentDate === dateString && appHour === slotHour;
     });
   };
 
@@ -94,15 +94,15 @@ export default function WeeklyCalendarGrid({ currentWeekStart, appointments, onA
                   <div className="flex flex-col gap-1.5">
                     {slotAppointments.map(app => (
                       <button
-                        key={app.appointment_id}
+                        key={app.appointmentId}
                         onClick={() => onAppointmentClick && onAppointmentClick(app)}
                         className={`w-full text-left p-2 rounded-xl border text-xs transition-all ${getStatusColor(app.status)}`}
                       >
-                        <div className="font-bold truncate">{app.patient_name}</div>
+                        <div className="font-bold truncate">{app.patientName}</div>
                         <div className="flex justify-between items-center mt-1">
-                          <span className="font-medium opacity-80">{app.time_start.substring(0,5)}</span>
+                          <span className="font-medium opacity-80">{app.timeStart.substring(0,5)}</span>
                           {/* Indicate if it's Online or Walk-in */}
-                          {app.appointment_type === 'ONLINE' ? (
+                          {app.appointmentType === 'ONLINE' ? (
                             <span title="Online Booking">
                               <Globe size={12} className="opacity-70" />
                             </span>

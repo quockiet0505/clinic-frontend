@@ -28,7 +28,7 @@ export default function ServiceOrdersFilterBar({ search, setSearch, statusFilter
 
       <div className="flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto">
         <div className="w-full sm:w-64">
-          <SearchInput value={search} onChange={setSearch} placeholder="Search patient or test..." />
+          <SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm patient or test..." />
         </div>
         <DateRangeFilter from={fromDate} to={toDate} onChangeFrom={setFromDate} onChangeTo={setToDate} />
       </div>

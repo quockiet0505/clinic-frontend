@@ -18,26 +18,26 @@ export default function ServiceOrdersTable({ data, onInputResult, onReject }: Pr
         <TableHeader className="bg-slate-50">
           <TableRow className="h-14">
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Order ID & Date</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Patient</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bệnh nhân</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Requested Test</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Status</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Actions</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map(order => (
-            <TableRow key={order.order_id} className="hover:bg-slate-50/50">
+            <TableRow key={order.orderId} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
-                <p className="font-bold text-slate-900">{order.created_at.split('T')[0]}</p>
-                <p className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">ORD-{order.order_id}</p>
+                <p className="font-bold text-slate-900">{order.createdAt.split('T')[0]}</p>
+                <p className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">ORD-{order.orderId}</p>
               </TableCell>
               <TableCell>
-                <p className="font-bold text-slate-900">{order.patient_name}</p>
-                <p className="text-xs font-medium text-slate-500 mt-1">Dr. {order.doctor_name}</p>
+                <p className="font-bold text-slate-900">{order.patientName}</p>
+                <p className="text-xs font-medium text-slate-500 mt-1">Dr. {order.doctorName}</p>
               </TableCell>
               <TableCell>
-                <p className="font-bold text-blue-600 flex items-center gap-1.5"><TestTube2 size={14}/> {order.service_name}</p>
-                <p className="text-xs font-medium text-slate-400 mt-1">Rec: {order.record_id}</p>
+                <p className="font-bold text-blue-600 flex items-center gap-1.5"><TestTube2 size={14}/> {order.serviceName}</p>
+                <p className="text-xs font-medium text-slate-400 mt-1">Rec: {order.recordId}</p>
               </TableCell>
               <TableCell className="text-center"><StatusBadge status={order.status} /></TableCell>
               <TableCell className="text-right pr-8">
@@ -51,7 +51,7 @@ export default function ServiceOrdersTable({ data, onInputResult, onReject }: Pr
                     </Button>
                   </div>
                 ) : order.status === 'DONE' ? (
-                  <Button variant="ghost" size="sm" className="h-9 font-bold text-slate-400 cursor-default">
+                  <Button variant="ghost" size="sm" className="h-9 font-bold text-slate-400 cursor-default cursor-pointer">
                     <FileText size={14} className="mr-1.5"/> Logged
                   </Button>
                 ) : null}

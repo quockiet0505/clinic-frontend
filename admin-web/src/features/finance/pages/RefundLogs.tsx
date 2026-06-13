@@ -7,8 +7,8 @@ import RefundLogTable from '../components/RefundLogTable';
 const TODAY = new Date().toISOString().split('T')[0];
 
 const MOCK_REFUNDS = [
-  { refund_id: 1, bill_id: 9005, refund_amount: 50.00, reason: 'Patient cancelled service before testing.', processed_by_name: 'Admin User', refunded_at: TODAY },
-  { refund_id: 2, bill_id: 9008, refund_amount: 15.00, reason: 'Overcharged for consultation fee.', processed_by_name: 'Admin User', refunded_at: '2026-04-05' },
+  { refundId: 1, billId: 9005, refundAmount: 50.00, reason: 'Patient cancelled service before testing.', processed_by_name: 'Admin User', refundedAt: TODAY },
+  { refundId: 2, billId: 9008, refundAmount: 15.00, reason: 'Overcharged for consultation fee.', processed_by_name: 'Admin User', refundedAt: '2026-04-05' },
 ];
 
 export default function RefundLogs() {
@@ -18,8 +18,8 @@ export default function RefundLogs() {
   const [toDate, setToDate] = useState(TODAY);
 
   const filteredLogs = logs.filter(log => 
-    (log.reason.toLowerCase().includes(search.toLowerCase()) || log.bill_id.toString().includes(search)) &&
-    log.refunded_at >= fromDate && log.refunded_at <= toDate
+    (log.reason.toLowerCase().includes(search.toLowerCase()) || log.billId.toString().includes(search)) &&
+    log.refundedAt >= fromDate && log.refundedAt <= toDate
   );
 
   return (
@@ -28,7 +28,7 @@ export default function RefundLogs() {
 
       <div className="bg-white p-3 rounded-2xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm shrink-0">
         <div className="w-full sm:w-80">
-          <SearchInput value={search} onChange={setSearch} placeholder="Search by Bill ID or Reason..." />
+          <SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm by Bill ID or Reason..." />
         </div>
         <DateRangeFilter from={fromDate} to={toDate} onChangeFrom={setFromDate} onChangeTo={setToDate} />
       </div>

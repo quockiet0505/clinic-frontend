@@ -1,28 +1,28 @@
 export type OrderStatus = 'ORDERED' | 'DONE' | 'CANCELLED' | 'REJECTED';
 
 export interface ServiceOrder {
-  order_id: number;
-  record_id: number;
-  service_id: number;
-  service_name: string; // Joined from service
-  patient_name: string; // Joined from patient
-  ordered_by: number;
-  doctor_name: string;  // Joined from staff
+  orderId: number;
+  recordId: number;
+  serviceId: number;
+  serviceName: string; // Joined from service
+  patientName: string; // Joined from patient
+  orderedBy: number;
+  doctorName: string;  // Joined from staff
   status: OrderStatus;
   sample_collected_at?: string;
-  created_at: string;
+  createdAt: string;
 }
 
 export interface ServiceResult {
-  result_id: number;
-  order_id: number;
-  service_name: string; // Joined
-  patient_name: string; // Joined
-  doctor_name: string;  // Joined
-  result_data: string;
+  resultId: number;
+  orderId: number;
+  serviceName: string; // Joined
+  patientName: string; // Joined
+  doctorName: string;  // Joined
+  resultData: string;
   conclusion: string;
-  attachment_url?: string;
-  entered_by: number;
-  entered_name: string; // Joined from staff
-  entered_at: string;
+  attachmentUrl?: string;
+  enteredBy: number;
+  enteredName: string; // Joined from staff
+  enteredAt: string;
 }

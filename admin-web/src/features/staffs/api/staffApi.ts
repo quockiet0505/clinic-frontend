@@ -12,7 +12,7 @@ export const staffApi = {
     }
   },
 
-  create: async (data: Omit<Staff, 'staff_id'>): Promise<void> => {
+  create: async (data: Omit<Staff, 'staffId'>): Promise<void> => {
     await axiosInstance.post('/staffs', data);
   },
 
@@ -22,5 +22,10 @@ export const staffApi = {
 
   delete: async (id: number): Promise<void> => {
     await axiosInstance.delete(`/staffs/${id}`);
+  },
+
+  getLeaveRequests: async (): Promise<any[]> => {
+    // Return empty array if not implemented on backend
+    return [];
   }
 };

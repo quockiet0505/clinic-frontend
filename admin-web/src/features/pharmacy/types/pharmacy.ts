@@ -1,57 +1,57 @@
 export interface Medicine {
-     medicine_id: number;
+     medicineId: number;
      name: string;
-     active_element: string;
+     activeElement: string;
      unit: string;
-     sell_price: number;
+     sellPrice: number;
      quantity: number;
      min_stock_level: number;
-     usage_note?: string;
-     production_unit?: string;
+     usageNote?: string;
+     productionUnit?: string;
    }
    
    export interface PurchaseOrder {
-     po_id: number;
-     supplier_id: number;
-     supplier_name: string; // Joined from supplier table
-     order_date: string;
-     total_amount: number;
+     poId: number;
+     supplierId: number;
+     supplierName: string; // Joined from supplier table
+     orderDate: string;
+     totalAmount: number;
      status: 'PENDING' | 'RECEIVED' | 'CANCELLED';
      created_by_name: string; // Joined from staff
    }
    
    export interface PrescriptionUI {
-     prescription_id: number;
-     record_id: number;
-     patient_name: string; // Joined from patient
-     doctor_name: string;  // Joined from staff
-     created_at: string;
+     prescriptionId: number;
+     recordId: number;
+     patientName: string; // Joined from patient
+     doctorName: string;  // Joined from staff
+     createdAt: string;
      status: 'PENDING' | 'DISPENSED'; // UI status derived from inventory/bill
      items: any[];
    }
 
 
 export interface Supplier {
-     supplier_id: number;
-     supplier_name: string;
-     contact_name: string;
+     supplierId: number;
+     supplierName: string;
+     contactName: string;
      phone: string;
      email: string;
      address: string;
-     is_active: boolean;
-     created_at?: string;
+     isActive: boolean;
+     createdAt?: string;
    }
    
    export type TransactionType = 'IMPORT' | 'DISPENSE' | 'EXPIRED' | 'LOST' | 'ADJUSTMENT';
    
    export interface InventoryTransaction {
-     transaction_id: number;
-     medicine_id: number;
-     medicine_name: string; // Joined from medicine
-     transaction_type: TransactionType;
+     transactionId: number;
+     medicineId: number;
+     medicineName: string; // Joined from medicine
+     transactionType: TransactionType;
      quantity: number;
-     reference_id?: string;
+     referenceId?: string;
      handled_by_name: string; // Joined from staff
      note?: string;
-     created_at: string;
+     createdAt: string;
    }

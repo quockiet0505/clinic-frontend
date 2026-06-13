@@ -15,19 +15,19 @@ export default function ServiceCatalogTable({ data, onEdit, onDelete }: any) {
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Service Name</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Category</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Base Price</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Actions</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((item: Service) => (
-            <TableRow key={item.service_id} className="hover:bg-slate-50/50 transition-colors border-slate-100">
+            <TableRow key={item.serviceId} className="hover:bg-slate-50/50 transition-colors border-slate-100">
               <TableCell className="px-8 py-5">
                 <div className="flex items-center gap-3 font-bold text-slate-900">
                   <Activity size={18} className="text-blue-500" />
-                  {item.service_name}
+                  {item.serviceName}
                 </div>
               </TableCell>
-              <TableCell><StatusBadge status={item.service_type} /></TableCell>
+              <TableCell><StatusBadge status={item.serviceType} /></TableCell>
               <TableCell className="font-black text-blue-600">${item.price.toFixed(2)}</TableCell>
               <TableCell className="text-right pr-8">
                 <div className="flex justify-end gap-2">

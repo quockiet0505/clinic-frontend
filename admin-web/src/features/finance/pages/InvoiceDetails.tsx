@@ -5,15 +5,15 @@ import { Button } from '@/components/ui/button';
 import PrintableInvoiceTemplate from '../components/PrintableInvoiceTemplate';
 
 const MOCK_INVOICE_DATA = {
-  bill_id: '9002',
-  created_at: '2026-04-08',
-  patient_name: 'Emma Watson',
-  payment_method: 'TRANSFER',
+  billId: '9002',
+  createdAt: '2026-04-08',
+  patientName: 'Emma Watson',
+  paymentMethod: 'TRANSFER',
   items: [
     { description: 'General Medical Consultation', qty: 1, unitPrice: 50.00, total: 50.00 },
     { description: 'Amoxicillin 500mg', qty: 1, unitPrice: 35.00, total: 35.00 },
   ],
-  total_price: 85.00
+  totalPrice: 85.00
 };
 
 export default function InvoiceDetails() {
@@ -28,12 +28,12 @@ export default function InvoiceDetails() {
             <ChevronLeft size={24} />
           </Button>
           <div>
-            <h1 className="text-2xl font-black text-slate-900">Invoice BILL-{id || MOCK_INVOICE_DATA.bill_id}</h1>
+            <h1 className="text-2xl font-black text-slate-900">Invoice BILL-{id || MOCK_INVOICE_DATA.billId}</h1>
             <p className="text-sm text-slate-500 font-medium">Review and generate official receipt.</p>
           </div>
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
-          <Button variant="outline" className="flex-1 sm:flex-none rounded-xl font-bold border-slate-200"><Download size={18} className="mr-2" /> PDF</Button>
+          <Button variant="outline" className="flex-1 sm:flex-none rounded-xl font-bold border-slate-200 cursor-pointer"><Download size={18} className="mr-2" /> PDF</Button>
           <Button onClick={() => window.print()} className="flex-1 sm:flex-none rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold shadow-sm">
             <Printer size={18} className="mr-2" /> Print Invoice
           </Button>

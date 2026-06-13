@@ -12,7 +12,7 @@ export default function MedicalRecordDetail() {
   const [activeTab, setActiveTab] = useState<'timeline' | 'medications'>('timeline');
 
   // Mock data giả định cho record này
-  const recordHistory = [{ record_id: Number(id), date: '2026-04-20', doctor: 'Dr. Sarah Smith', diagnosis: 'Acute Bronchitis', treatment: 'Prescribed inhaler.' }];
+  const recordHistory = [{ recordId: Number(id), date: '2026-04-20', doctor: 'Dr. Sarah Smith', diagnosis: 'Acute Bronchitis', treatment: 'Prescribed inhaler.' }];
 
   return (
     <div className="flex flex-col h-[calc(100vh-6rem)] animate-in fade-in duration-500">

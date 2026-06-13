@@ -2,7 +2,7 @@ import React from 'react';
 import { CalendarDays, Stethoscope, FileText, Activity } from 'lucide-react';
 
 interface VisitRecord {
-  record_id: number;
+  recordId: number;
   date: string;
   doctor: string;
   diagnosis: string;
@@ -30,7 +30,7 @@ export default function PatientHistoryTimeline({ visits }: Props) {
 
       <div className="space-y-6 relative">
         {visits.map((visit, index) => (
-          <div key={visit.record_id} className="flex gap-4 relative">
+          <div key={visit.recordId} className="flex gap-4 relative">
             {/* Timeline Dot / Icon */}
             <div className="w-10 h-10 rounded-full bg-blue-50 border-[3px] border-white text-blue-600 flex items-center justify-center shrink-0 z-10 shadow-sm mt-1">
               <CalendarDays size={16} />

@@ -31,16 +31,16 @@ export default function AppointmentList() {
 
   // Logic lọc kết hợp
   const filtered = appointments.filter(a => 
-    a.patient_name.toLowerCase().includes(search.toLowerCase()) &&
+    a.patientName.toLowerCase().includes(search.toLowerCase()) &&
     (statusFilter === 'ALL' || a.status === statusFilter) &&
-    (typeFilter === 'ALL' || a.appointment_type === typeFilter) &&
-    (!fromDate || a.appointment_date >= fromDate) &&
-    (!toDate || a.appointment_date <= toDate)
+    (typeFilter === 'ALL' || a.appointmentType === typeFilter) &&
+    (!fromDate || a.appointmentDate >= fromDate) &&
+    (!toDate || a.appointmentDate <= toDate)
   );
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
-      <PageHeader title="Appointments" description="Manage clinical bookings and walk-ins." actionText="Walk-in Booking" onAction={() => setIsBookOpen(true)} />
+      <PageHeader title="Lịch Hẹn" description="Manage clinical bookings and walk-ins." actionText="Walk-in Booking" onAction={() => setIsBookOpen(true)} />
 
       <AppointmentFilterBar 
         search={search} setSearch={setSearch} 
@@ -50,27 +50,27 @@ export default function AppointmentList() {
       />
 
       {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Loading appointments...</div>
+        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải lịch hẹn...</div>
       ) : (
         <AppointmentTable 
           data={filtered} 
           onCheckIn={async (id) => {
             await appointmentApi.checkIn(id);
-            setAppointments(appointments.map(a => a.appointment_id === id ? { ...a, status: 'CHECKED_IN' } : a));
+            setAppointments(appointments.map(a => a.appointmentId === id ? { ...a, status: 'CHECKED_IN' } : a));
           }} 
           onCancel={setCancelApt} 
         />
       )}
 
-      <AppointmentFormDialog isOpen={isBookOpen} onClose={() => setIsBookOpen(false)} onBook={(data: any) => { setAppointments([{...data, appointment_id: Date.now(), patient_name: 'New Patient', doctor_name: 'Assigned Doctor', appointment_type: 'WALK_IN', status: 'PENDING', created_by: 'STAFF'}, ...appointments]); setIsBookOpen(false); }} />
+      <AppointmentFormDialog isOpen={isBookOpen} onClose={() => setIsBookOpen(false)} onBook={(data: any) => { setAppointments([{...data, appointmentId: Date.now(), patientName: 'New Patient', doctorName: 'Assigned Doctor', appointmentType: 'WALK_IN', status: 'PENDING', createdBy: 'STAFF'}, ...appointments]); setIsBookOpen(false); }} />
       
       <ActionReasonDialog isOpen={!!cancelApt} onClose={() => setCancelApt(null)} onConfirm={async (actor, reason) => { 
         if (cancelApt) {
-          await appointmentApi.cancel(cancelApt.appointment_id, reason);
-          setAppointments(appointments.map(a => a.appointment_id === cancelApt.appointment_id ? { ...a, status: 'CANCELLED', cancel_reason: reason, cancelled_by: 'CLINIC' } : a)); 
+          await appointmentApi.cancel(cancelApt.appointmentId, reason);
+          setAppointments(appointments.map(a => a.appointmentId === cancelApt.appointmentId ? { ...a, status: 'CANCELLED', cancelReason: reason, cancelledBy: 'CLINIC' } : a)); 
         }
         setCancelApt(null); 
-      }} title="Cancel Appointment" description={`Reason for cancelling ${cancelApt?.patient_name}'s appointment?`} reasonLabel="Cancellation Reason" confirmText="Cancel Appointment" confirmColor="rose" />
+      }} title="Cancel Appointment" description={`Reason for cancelling ${cancelApt?.patientName}'s appointment?`} reasonLabel="Cancellation Reason" confirmText="Cancel Appointment" confirmColor="rose" />
     </div>
   );
 }

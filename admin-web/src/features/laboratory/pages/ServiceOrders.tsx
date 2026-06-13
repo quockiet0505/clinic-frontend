@@ -11,8 +11,8 @@ const TODAY = new Date().toISOString().split('T')[0];
 
 export default function ServiceOrders() {
   const [orders, setOrders] = useState<ServiceOrder[]>([
-    { order_id: 1, record_id: 101, service_id: 1, service_name: 'Complete Blood Count', patient_name: 'Liam Anderson', ordered_by: 1, doctor_name: 'Sarah Smith', status: 'ORDERED', created_at: TODAY },
-    { order_id: 2, record_id: 102, service_id: 2, service_name: 'Lipid Panel', patient_name: 'William Garcia', ordered_by: 1, doctor_name: 'Sarah Smith', status: 'DONE', created_at: TODAY }
+    { orderId: 1, recordId: 101, serviceId: 1, serviceName: 'Complete Blood Count', patientName: 'Liam Anderson', orderedBy: 1, doctorName: 'Sarah Smith', status: 'ORDERED', createdAt: TODAY },
+    { orderId: 2, recordId: 102, serviceId: 2, serviceName: 'Lipid Panel', patientName: 'William Garcia', orderedBy: 1, doctorName: 'Sarah Smith', status: 'DONE', createdAt: TODAY }
   ]);
 
   const [search, setSearch] = useState('');
@@ -26,8 +26,8 @@ export default function ServiceOrders() {
 
   const filtered = orders.filter(o => 
     (statusFilter === 'ALL' || o.status === statusFilter) &&
-    o.patient_name.toLowerCase().includes(search.toLowerCase()) &&
-    o.created_at >= fromDate && o.created_at <= toDate
+    o.patientName.toLowerCase().includes(search.toLowerCase()) &&
+    o.createdAt >= fromDate && o.createdAt <= toDate
   );
 
   return (
@@ -49,7 +49,7 @@ export default function ServiceOrders() {
         isOpen={isAddOpen} 
         onClose={() => setIsAddOpen(false)} 
         onSubmit={(data: any) => {
-          setOrders([{ ...data, order_id: Date.now(), record_id: 999, status: 'ORDERED', created_at: TODAY }, ...orders]);
+          setOrders([{ ...data, orderId: Date.now(), recordId: 999, status: 'ORDERED', createdAt: TODAY }, ...orders]);
           setIsAddOpen(false);
         }} 
       />
@@ -58,7 +58,7 @@ export default function ServiceOrders() {
         order={inputOrder} 
         onClose={() => setInputOrder(null)} 
         onSubmit={(id: number, data: any) => { 
-          setOrders(orders.map(o => o.order_id === id ? { ...o, status: 'DONE' } : o)); 
+          setOrders(orders.map(o => o.orderId === id ? { ...o, status: 'DONE' } : o)); 
           setInputOrder(null); 
         }} 
       />
@@ -67,11 +67,11 @@ export default function ServiceOrders() {
         isOpen={!!rejectOrder} 
         onClose={() => setRejectOrder(null)} 
         onConfirm={(action, reason) => { 
-          setOrders(orders.map(o => o.order_id === rejectOrder?.order_id ? { ...o, status: 'REJECTED' } : o)); 
+          setOrders(orders.map(o => o.orderId === rejectOrder?.orderId ? { ...o, status: 'REJECTED' } : o)); 
           setRejectOrder(null); 
         }}
         title="Reject Lab Sample"
-        description={`Reason for rejecting the sample for ${rejectOrder?.patient_name}'s test?`}
+        description={`Reason for rejecting the sample for ${rejectOrder?.patientName}'s test?`}
         reasonLabel="Rejection Reason (e.g. Hemolyzed)"
         confirmText="Reject Sample"
         confirmColor="rose"

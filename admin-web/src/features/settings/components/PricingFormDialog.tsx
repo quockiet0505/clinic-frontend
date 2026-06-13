@@ -5,12 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function PricingFormDialog({ doctor, onClose, onSave }: any) {
-  const [formData, setFormData] = useState({ staff_id: '', fee: '' });
+  const [formData, setFormData] = useState({ staffId: '', fee: '' });
 
   useEffect(() => {
     if (doctor) {
       setFormData({
-        staff_id: doctor.staff_id?.toString() || '',
+        staffId: doctor.staffId?.toString() || '',
         fee: doctor.fee?.toString() || ''
       });
     }
@@ -37,11 +37,11 @@ export default function PricingFormDialog({ doctor, onClose, onSave }: any) {
         <div className="p-6 bg-slate-50 space-y-4">
           {doctor.id === 0 && (
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Select Doctor</label>
+              <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Chọn Bác sĩ</label>
               <select 
-                value={formData.staff_id}
-                onChange={(e) => setFormData({...formData, staff_id: e.target.value})}
-                className="flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-bold focus:ring-2 focus:ring-blue-600 focus:outline-none"
+                value={formData.staffId}
+                onChange={(e) => setFormData({...formData, staffId: e.target.value})}
+                className="flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-bold"
               >
                 <option value="">Choose a staff member...</option>
                 {/* Dữ liệu này sẽ map từ API Staff */}
@@ -52,19 +52,19 @@ export default function PricingFormDialog({ doctor, onClose, onSave }: any) {
           )}
           
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Consultation Fee ($)</label>
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Consultation Fee ($)</label>
             <Input 
               type="number" 
               value={formData.fee} 
               onChange={(e) => setFormData({...formData, fee: e.target.value})} 
-              className="h-12 rounded-xl border-slate-200 bg-white focus:ring-blue-600 font-black text-xl text-blue-600" 
+              className="h-12 rounded-xl border-slate-200 bg-white font-black text-xl text-blue-600" 
               placeholder="0.00"
             />
           </div>
         </div>
         
-        <DialogFooter className="p-6 bg-white border-t border-slate-100 flex gap-3">
-          <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500">Cancel</Button>
+        <DialogFooter className="p-6 pb-8 bg-white border-t border-slate-100 flex gap-3">
+          <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500 cursor-pointer">Hủy</Button>
           <Button 
             onClick={() => onSave(doctor.id, formData)} 
             className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 shadow-sm"

@@ -28,21 +28,21 @@ export default function InventoryLogTable({ data }: { data: InventoryTransaction
         </TableHeader>
         <TableBody>
           {data.map(log => {
-            const ui = getTransactionUI(log.transaction_type);
+            const ui = getTransactionUI(log.transactionType);
             const isPositive = log.quantity > 0;
             return (
-              <TableRow key={log.transaction_id} className="hover:bg-slate-50/50">
+              <TableRow key={log.transactionId} className="hover:bg-slate-50/50">
                 <TableCell className="px-8 py-4">
-                  <p className="font-bold text-slate-900">{log.created_at.replace('T', ' ')}</p>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">REF: {log.reference_id || 'N/A'}</p>
+                  <p className="font-bold text-slate-900">{log.createdAt.replace('T', ' ')}</p>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">REF: {log.referenceId || 'N/A'}</p>
                 </TableCell>
                 <TableCell>
-                  <p className="font-bold text-slate-800">{log.medicine_name}</p>
+                  <p className="font-bold text-slate-800">{log.medicineName}</p>
                   <p className="text-xs font-medium text-slate-500 mt-1">Staff: {log.handled_by_name}</p>
                 </TableCell>
                 <TableCell>
                   <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${ui.color}`}>
-                    {ui.icon} {log.transaction_type}
+                    {ui.icon} {log.transactionType}
                   </span>
                   {log.note && <p className="text-xs text-slate-400 font-medium mt-1.5 truncate max-w-[250px]">{log.note}</p>}
                 </TableCell>

@@ -9,8 +9,8 @@ const TODAY = new Date().toISOString().split('T')[0];
 
 export default function Feedbacks() {
   const [feedbacks] = useState<Feedback[]>([
-    { feedback_id: 1, record_id: 101, patient_name: 'Liam Anderson', doctor_name: 'Sarah Smith', rating: 5, comment: 'Excellent service and very friendly doctor.', created_at: TODAY },
-    { feedback_id: 2, record_id: 102, patient_name: 'Emma Watson', doctor_name: 'Robert Davis', rating: 3, comment: 'Wait time was a bit long, but treatment was good.', created_at: '2026-04-10' },
+    { feedbackId: 1, recordId: 101, patientName: 'Liam Anderson', doctorName: 'Sarah Smith', rating: 5, comment: 'Excellent service and very friendly doctor.', createdAt: TODAY },
+    { feedbackId: 2, recordId: 102, patientName: 'Emma Watson', doctorName: 'Robert Davis', rating: 3, comment: 'Wait time was a bit long, but treatment was good.', createdAt: '2026-04-10' },
   ]);
   
   const [search, setSearch] = useState('');
@@ -20,8 +20,8 @@ export default function Feedbacks() {
 
   const filtered = feedbacks.filter(fb => 
     (ratingFilter === 'ALL' || fb.rating.toString() === ratingFilter) &&
-    (fb.patient_name.toLowerCase().includes(search.toLowerCase()) || fb.doctor_name.toLowerCase().includes(search.toLowerCase())) &&
-    (fb.created_at >= fromDate && fb.created_at <= toDate)
+    (fb.patientName.toLowerCase().includes(search.toLowerCase()) || fb.doctorName.toLowerCase().includes(search.toLowerCase())) &&
+    (fb.createdAt >= fromDate && fb.createdAt <= toDate)
   );
 
   return (
@@ -33,7 +33,7 @@ export default function Feedbacks() {
           <select value={ratingFilter} onChange={(e) => setRatingFilter(e.target.value)} className="h-10 rounded-xl border border-slate-200 bg-slate-50 px-3 font-bold text-slate-600 outline-none w-full sm:w-32 cursor-pointer">
             <option value="ALL">All Ratings</option><option value="5">5 Stars</option><option value="4">4 Stars</option><option value="3">3 Stars</option><option value="2">2 Stars</option><option value="1">1 Star</option>
           </select>
-          <div className="w-full sm:w-64"><SearchInput value={search} onChange={setSearch} placeholder="Search patient or doctor..." /></div>
+          <div className="w-full sm:w-64"><SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm patient or doctor..." /></div>
         </div>
         <DateRangeFilter from={fromDate} to={toDate} onChangeFrom={setFromDate} onChangeTo={setToDate} />
       </div>

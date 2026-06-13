@@ -9,8 +9,8 @@ import SupplierFormDialog from '../components/SupplierFormDialog';
 import { Supplier } from '../types/pharmacy';
 
 const INITIAL_SUPPLIERS: Supplier[] = [
-  { supplier_id: 1, supplier_name: 'PharmaCorp Global', contact_name: 'David Wilson', phone: '+1 555-0100', email: 'sales@pharmacorp.com', address: '123 Health Ave, NY', is_active: true },
-  { supplier_id: 2, supplier_name: 'MedSupply Co.', contact_name: 'Sarah Connor', phone: '+1 555-0200', email: 'orders@medsupply.com', address: '456 Care Blvd, CA', is_active: true },
+  { supplierId: 1, supplierName: 'PharmaCorp Global', contactName: 'David Wilson', phone: '+1 555-0100', email: 'sales@pharmacorp.com', address: '123 Health Ave, NY', isActive: true },
+  { supplierId: 2, supplierName: 'MedSupply Co.', contactName: 'Sarah Connor', phone: '+1 555-0200', email: 'orders@medsupply.com', address: '456 Care Blvd, CA', isActive: true },
 ];
 
 export default function Suppliers() {
@@ -20,11 +20,11 @@ export default function Suppliers() {
   const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
   const [deletingSupplier, setDeletingSupplier] = useState<Supplier | null>(null);
 
-  const filtered = suppliers.filter(s => s.supplier_name.toLowerCase().includes(search.toLowerCase()) || s.contact_name.toLowerCase().includes(search.toLowerCase()));
+  const filtered = suppliers.filter(s => s.supplierName.toLowerCase().includes(search.toLowerCase()) || s.contactName.toLowerCase().includes(search.toLowerCase()));
 
   const handleFormSubmit = (formData: any, isEdit: boolean) => {
-    if (isEdit) setSuppliers(suppliers.map(s => s.supplier_id === selectedSupplier?.supplier_id ? { ...s, ...formData } : s));
-    else setSuppliers([{ ...formData, supplier_id: Date.now() }, ...suppliers]);
+    if (isEdit) setSuppliers(suppliers.map(s => s.supplierId === selectedSupplier?.supplierId ? { ...s, ...formData } : s));
+    else setSuppliers([{ ...formData, supplierId: Date.now() }, ...suppliers]);
     setIsFormOpen(false);
   };
 
@@ -38,14 +38,14 @@ export default function Suppliers() {
       </div>
 
       <div className="bg-white p-3 rounded-2xl border border-slate-200 flex shadow-sm shrink-0 w-full sm:w-[400px]">
-        <SearchInput value={search} onChange={setSearch} placeholder="Search by company or contact name..." />
+        <SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm by company or contact name..." />
       </div>
 
       <SupplierTable data={filtered} onEdit={(sup) => { setSelectedSupplier(sup); setIsFormOpen(true); }} onDelete={setDeletingSupplier} />
 
       <SupplierFormDialog isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} onSubmit={handleFormSubmit} initialData={selectedSupplier} />
       
-      <ConfirmDialog isOpen={!!deletingSupplier} onClose={() => setDeletingSupplier(null)} onConfirm={() => { setSuppliers(suppliers.filter(s => s.supplier_id !== deletingSupplier?.supplier_id)); setDeletingSupplier(null); }} title="Delete Supplier" description={`Are you sure you want to remove ${deletingSupplier?.supplier_name}?`} />
+      <ConfirmDialog isOpen={!!deletingSupplier} onClose={() => setDeletingSupplier(null)} onConfirm={() => { setSuppliers(suppliers.filter(s => s.supplierId !== deletingSupplier?.supplierId)); setDeletingSupplier(null); }} title="Delete Supplier" description={`Are you sure you want to remove ${deletingSupplier?.supplierName}?`} />
     </div>
   );
 }

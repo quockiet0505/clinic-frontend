@@ -14,29 +14,29 @@ export default function ChatSessionTable({ data, onView }: { data: ChatSession[]
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">User</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Duration</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Messages</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Action</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map(session => (
-            <TableRow key={session.session_id} className="hover:bg-slate-50/50">
+            <TableRow key={session.sessionId} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><Bot size={18}/></div>
                   <div>
-                    <p className="font-bold text-slate-900">SESS-{session.session_id}</p>
-                    <p className="text-xs text-slate-500 font-medium mt-0.5">{session.started_at.split(' ')[0]}</p>
+                    <p className="font-bold text-slate-900">SESS-{session.sessionId}</p>
+                    <p className="text-xs text-slate-500 font-medium mt-0.5">{session.startedAt.split(' ')[0]}</p>
                   </div>
                 </div>
               </TableCell>
-              <TableCell><span className="font-bold text-slate-800">{session.patient_name || 'Anonymous Guest'}</span></TableCell>
+              <TableCell><span className="font-bold text-slate-800">{session.patientName || 'Anonymous Guest'}</span></TableCell>
               <TableCell>
-                <p className="text-xs font-bold text-slate-600">Start: {session.started_at.split(' ')[1]}</p>
-                <p className="text-xs font-medium text-slate-400 mt-1">End: {session.ended_at ? session.ended_at.split(' ')[1] : 'Ongoing'}</p>
+                <p className="text-xs font-bold text-slate-600">Start: {session.startedAt.split(' ')[1]}</p>
+                <p className="text-xs font-medium text-slate-400 mt-1">End: {session.endedAt ? session.endedAt.split(' ')[1] : 'Ongoing'}</p>
               </TableCell>
               <TableCell className="text-center">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 rounded-lg text-xs font-black text-slate-600">
-                  <MessageCircle size={14} /> {session.message_count}
+                  <MessageCircle size={14} /> {session.messageCount}
                 </span>
               </TableCell>
               <TableCell className="text-right pr-8">

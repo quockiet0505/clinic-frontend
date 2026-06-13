@@ -25,24 +25,24 @@ export default function MedicineTable({ data, onEdit, onDelete }: Props) {
           <TableRow className="h-14">
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Medicine Info</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Stock & Price</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Status</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Actions</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map(med => (
-            <TableRow key={med.medicine_id} className="hover:bg-slate-50/50">
+            <TableRow key={med.medicineId} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center"><Pill size={18}/></div>
                   <div>
                     <p className="font-bold text-slate-900">{med.name}</p>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">{med.active_element} • {med.production_unit}</p>
+                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">{med.activeElement} • {med.productionUnit}</p>
                   </div>
                 </div>
               </TableCell>
               <TableCell>
-                <p className="font-black text-blue-600">${med.sell_price.toFixed(2)} <span className="text-xs font-medium text-slate-400">/ {med.unit}</span></p>
+                <p className="font-black text-blue-600">${med.sellPrice.toFixed(2)} <span className="text-xs font-medium text-slate-400">/ {med.unit}</span></p>
                 <p className="text-xs font-bold text-slate-600 mt-1">Qty: {med.quantity} (Min: {med.min_stock_level})</p>
               </TableCell>
               <TableCell className="text-center">{getStockStatus(med.quantity, med.min_stock_level)}</TableCell>

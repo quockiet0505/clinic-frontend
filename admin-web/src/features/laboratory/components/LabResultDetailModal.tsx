@@ -16,13 +16,13 @@ export default function LabResultDetailModal({ result, onClose }: any) {
           <div className="flex items-center gap-2 mb-2 opacity-80">
             <Microscope size={16} /> <span className="text-xs font-bold uppercase tracking-widest">Laboratory Report</span>
           </div>
-          <DialogTitle className="text-2xl font-black">{result.service_name}</DialogTitle>
+          <DialogTitle className="text-2xl font-black">{result.serviceName}</DialogTitle>
           <DialogDescription className="text-blue-100 mt-1.5 font-medium text-sm flex items-center gap-2 flex-wrap">
-            <span>Patient: <strong className="text-white">{result.patient_name}</strong></span>
+            <span>Patient: <strong className="text-white">{result.patientName}</strong></span>
             <span className="opacity-50">•</span>
-            <span>Date: {result.entered_at.split('T')[0]}</span>
+            <span>Date: {result.enteredAt.split('T')[0]}</span>
             <span className="opacity-50">•</span>
-            <span>ID: RES-{result.result_id}</span>
+            <span>ID: RES-{result.resultId}</span>
           </DialogDescription>
         </div>
         
@@ -33,7 +33,7 @@ export default function LabResultDetailModal({ result, onClose }: any) {
           <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
             <div>
               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Requested By</p>
-              <p className="font-bold text-slate-900 text-sm">Dr. {result.doctor_name}</p>
+              <p className="font-bold text-slate-900 text-sm">Dr. {result.doctorName}</p>
             </div>
             <div className="bg-emerald-100 text-emerald-700 text-xs font-black uppercase px-3 py-1.5 rounded-lg flex items-center gap-1.5">
               <CheckCircle2 size={14}/> Verified
@@ -45,7 +45,7 @@ export default function LabResultDetailModal({ result, onClose }: any) {
             <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">Measurements & Data</h3>
             <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm min-h-[100px]">
               <p className="text-sm font-medium text-slate-700 whitespace-pre-wrap leading-loose font-mono">
-                {result.result_data}
+                {result.resultData}
               </p>
             </div>
           </div>
@@ -63,7 +63,7 @@ export default function LabResultDetailModal({ result, onClose }: any) {
           {/* Signature */}
           <div className="pt-2 text-right">
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Analyzed & Verified By</p>
-            <p className="font-bold text-slate-800 text-base">{result.entered_name}</p>
+            <p className="font-bold text-slate-800 text-base">{result.enteredName}</p>
           </div>
 
         </div>
@@ -71,14 +71,14 @@ export default function LabResultDetailModal({ result, onClose }: any) {
         {/* FOOTER:  */}
         <DialogFooter className="p-6 bg-white border-t border-slate-100 flex items-center justify-between">
           <div className="flex gap-2">
-            <Button variant="outline" className="rounded-xl font-bold text-slate-600 border-slate-200 hover:bg-slate-50">
+            <Button variant="outline" className="rounded-xl font-bold text-slate-600 border-slate-200 hover:bg-slate-50 cursor-pointer">
               <Printer size={16} className="mr-2" /> Print
             </Button>
-            <Button variant="outline" className="rounded-xl font-bold text-blue-600 border-blue-200 hover:bg-blue-50">
+            <Button variant="outline" className="rounded-xl font-bold text-blue-600 border-blue-200 hover:bg-blue-50 cursor-pointer">
               <Download size={16} className="mr-2" /> PDF
             </Button>
           </div>
-          <Button onClick={onClose} className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold px-8 shadow-sm">
+          <Button onClick={onClose} className="rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold px-8 shadow-sm cursor-pointer">
             Close Report
           </Button>
         </DialogFooter>

@@ -9,8 +9,8 @@ import { ClinicExpense } from '../types/finance';
 const TODAY = new Date().toISOString().split('T')[0];
 
 const MOCK_EXPENSES: ClinicExpense[] = [
-  { expense_id: 1, category_id: 2, category_name: 'Utilities', amount: 150.00, expense_date: TODAY, payment_method: 'TRANSFER', description: 'Monthly Electricity', created_by_name: 'Admin' },
-  { expense_id: 2, category_id: 1, category_name: 'Payroll', amount: 4500.00, expense_date: '2026-04-01', payment_method: 'TRANSFER', description: 'March Staff Salaries', created_by_name: 'Admin' },
+  { expenseId: 1, categoryId: 2, categoryName: 'Utilities', amount: 150.00, expenseDate: TODAY, paymentMethod: 'TRANSFER', description: 'Monthly Electricity', created_by_name: 'Admin' },
+  { expenseId: 2, categoryId: 1, categoryName: 'Payroll', amount: 4500.00, expenseDate: '2026-04-01', paymentMethod: 'TRANSFER', description: 'March Staff Salaries', created_by_name: 'Admin' },
 ];
 
 export default function Expenses() {
@@ -22,18 +22,18 @@ export default function Expenses() {
   const [editingExpense, setEditingExpense] = useState<any | null>(null);
 
   const filteredData = expenses.filter(exp => 
-    (category === 'ALL' || exp.category_name === category) &&
+    (category === 'ALL' || exp.categoryName === category) &&
     exp.description.toLowerCase().includes(search.toLowerCase()) &&
-    exp.expense_date >= fromDate && exp.expense_date <= toDate
+    exp.expenseDate >= fromDate && exp.expenseDate <= toDate
   );
 
   const totalExpenses = filteredData.reduce((sum, exp) => sum + Number(exp.amount), 0);
 
   const handleSave = (data: any) => {
-    if (data.expense_id) {
-      setExpenses(expenses.map(e => e.expense_id === data.expense_id ? { ...data, category_name: data.category_id === 1 ? 'Payroll' : 'Utilities' } : e));
+    if (data.expenseId) {
+      setExpenses(expenses.map(e => e.expenseId === data.expenseId ? { ...data, categoryName: data.categoryId === 1 ? 'Payroll' : 'Utilities' } : e));
     } else {
-      setExpenses([{ ...data, expense_id: Date.now(), category_name: data.category_id === 1 ? 'Payroll' : 'Utilities', created_by_name: 'Admin' }, ...expenses]);
+      setExpenses([{ ...data, expenseId: Date.now(), categoryName: data.categoryId === 1 ? 'Payroll' : 'Utilities', created_by_name: 'Admin' }, ...expenses]);
     }
     setEditingExpense(null);
   };

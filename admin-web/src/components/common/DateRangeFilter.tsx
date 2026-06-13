@@ -16,7 +16,7 @@ export default function DateRangeFilter({ from, to, onChangeFrom, onChangeTo }: 
         <Input 
           type="date" value={from} max={to || undefined} 
           onChange={(e) => { const val = e.target.value; if (to && val > to) onChangeTo(val); onChangeFrom(val); }} 
-          className="h-full border-0 bg-transparent px-0 w-28 text-sm font-bold text-blue-600 focus-visible:ring-0 shadow-none cursor-pointer" 
+          className="h-full border-0 bg-transparent px-0 w-28 text-sm font-bold text-blue-600 shadow-none cursor-pointer" 
         />
       </div>
       
@@ -26,7 +26,7 @@ export default function DateRangeFilter({ from, to, onChangeFrom, onChangeTo }: 
         <Input 
           type="date" value={to} min={from || undefined} 
           onChange={(e) => { const val = e.target.value; if (from && val < from) onChangeFrom(val); onChangeTo(val); }} 
-          className="h-full border-0 bg-transparent px-0 w-28 text-sm font-bold text-blue-600 focus-visible:ring-0 shadow-none cursor-pointer" 
+          className="h-full border-0 bg-transparent px-0 w-28 text-sm font-bold text-blue-600 shadow-none cursor-pointer" 
         />
       </div>
     </div>

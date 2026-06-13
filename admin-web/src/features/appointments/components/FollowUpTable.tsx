@@ -17,10 +17,10 @@ export default function FollowUpTable({ data, onLogCall, onSendReminder }: Props
       <Table>
         <TableHeader className="bg-slate-50">
           <TableRow className="h-14">
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Patient Info</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Thông tin Bệnh nhân</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Follow-up Detail</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Status</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Actions</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -28,16 +28,16 @@ export default function FollowUpTable({ data, onLogCall, onSendReminder }: Props
             <TableRow key={item.follow_up_id} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-slate-50 text-slate-600 flex items-center justify-center border border-slate-200 font-black uppercase">{item.patient_name.charAt(0)}</div>
+                  <div className="w-10 h-10 rounded-2xl bg-slate-50 text-slate-600 flex items-center justify-center border border-slate-200 font-black uppercase">{item.patientName.charAt(0)}</div>
                   <div>
-                    <p className="font-bold text-slate-900">{item.patient_name}</p>
+                    <p className="font-bold text-slate-900">{item.patientName}</p>
                     <p className="text-xs text-slate-500 font-medium flex items-center gap-1 mt-0.5"><Phone size={10} /> {item.phone}</p>
                   </div>
                 </div>
               </TableCell>
               <TableCell>
                 <p className="text-sm font-bold text-slate-700">{item.note.split('|')[0]}</p>
-                <span className="text-xs font-bold text-slate-400 flex items-center gap-1 mt-1.5"><History size={12}/> Due: {item.scheduled_datetime}</span>
+                <span className="text-xs font-bold text-slate-400 flex items-center gap-1 mt-1.5"><History size={12}/> Due: {item.scheduledDatetime}</span>
               </TableCell>
               <TableCell className="text-center">
                 <StatusBadge status={item.status} />

@@ -11,24 +11,24 @@ export default function LabResultsTable({ data, onViewResult }: { data: ServiceR
         <TableHeader className="bg-slate-50">
           <TableRow className="h-14">
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Result ID</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Patient</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bệnh nhân</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Test & Conclusion</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Action</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map(res => (
-            <TableRow key={res.result_id} className="hover:bg-slate-50/50">
+            <TableRow key={res.resultId} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
-                <p className="font-bold text-slate-900">{res.entered_at.split('T')[0]}</p>
-                <p className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">RES-{res.result_id}</p>
+                <p className="font-bold text-slate-900">{res.enteredAt.split('T')[0]}</p>
+                <p className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">RES-{res.resultId}</p>
               </TableCell>
               <TableCell>
-                <p className="font-bold text-slate-900">{res.patient_name}</p>
-                <p className="text-xs font-medium text-slate-500 mt-1">Req: Dr. {res.doctor_name}</p>
+                <p className="font-bold text-slate-900">{res.patientName}</p>
+                <p className="text-xs font-medium text-slate-500 mt-1">Req: Dr. {res.doctorName}</p>
               </TableCell>
               <TableCell>
-                <p className="font-bold text-blue-600 flex items-center gap-1.5"><FileSignature size={14}/> {res.service_name}</p>
+                <p className="font-bold text-blue-600 flex items-center gap-1.5"><FileSignature size={14}/> {res.serviceName}</p>
                 <p className="text-xs font-medium text-slate-600 mt-1 truncate max-w-[250px]">{res.conclusion}</p>
               </TableCell>
               <TableCell className="text-right pr-8">

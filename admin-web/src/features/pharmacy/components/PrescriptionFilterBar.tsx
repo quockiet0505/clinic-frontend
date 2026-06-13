@@ -13,7 +13,7 @@ export default function PrescriptionFilterBar({ search, setSearch, statusFilter,
         ))}
       </div>
       <div className="flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto">
-        <div className="w-full sm:w-56"><SearchInput value={search} onChange={setSearch} placeholder="Search patient..." /></div>
+        <div className="w-full sm:w-56"><SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm bệnh nhân..." /></div>
         <DateRangeFilter from={fromDate} to={toDate} onChangeFrom={setFromDate} onChangeTo={setToDate} />
       </div>
     </div>

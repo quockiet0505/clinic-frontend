@@ -48,10 +48,10 @@ export default function StaffFilterBar({ activeTab, setActiveTab, searchTerm, se
       <div className="relative w-full xl:w-80 px-2 xl:px-0 pr-2">
         <Search className="absolute left-5 xl:left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
         <Input 
-          placeholder="Search name or email..." 
+          placeholder="Tìm kiếm name or email..." 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 h-10 rounded-xl border-slate-200 bg-slate-50 focus:bg-white"
+          className="pl-10 h-10 rounded-xl border-slate-200 bg-slate-50"
         />
       </div>
     </div>

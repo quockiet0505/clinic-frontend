@@ -18,7 +18,7 @@ export default function ProfileSecurityForm({ passwordData, onChange, onSave }: 
       <div className="max-w-md space-y-5">
         {/* Mật khẩu hiện tại */}
         <div className="space-y-2">
-          <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Current Password</label>
+          <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Current Password</label>
           <div className="relative">
             <Input 
               type={showCurrent ? "text" : "password"} 
@@ -42,7 +42,7 @@ export default function ProfileSecurityForm({ passwordData, onChange, onSave }: 
 
         {/* Mật khẩu mới  */}
         <div className="space-y-2">
-          <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">New Password</label>
+          <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">New Password</label>
           <div className="relative">
             <Input 
               type={showNew ? "text" : "password"} 
@@ -63,7 +63,7 @@ export default function ProfileSecurityForm({ passwordData, onChange, onSave }: 
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Confirm New Password</label>
+          <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Confirm New Password</label>
           <div className="relative">
             <Input 
               type={showConfirm ? "text" : "password"} 
@@ -86,7 +86,7 @@ export default function ProfileSecurityForm({ passwordData, onChange, onSave }: 
         <div className="pt-4 flex justify-end">
           <Button 
             onClick={onSave} 
-            className="h-11 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 shadow-sm transition-all"
+            className="h-11 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 shadow-sm transition-all cursor-pointer"
           >
             Update Password
           </Button>

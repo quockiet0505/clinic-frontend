@@ -1,20 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import WeeklyCalendarGrid from '../components/WeeklyCalendarGrid';
 import CalendarFilterBar from '../components/CalendarFilterBar';
 import { Appointment } from '../types/appointment';
+import { appointmentApi } from '../api/appointmentApi';
 
 const TODAY = new Date().toISOString().split('T')[0];
 
 export default function AppointmentCalendar() {
   const [selectedDate, setSelectedDate] = useState(TODAY);
   const [doctorFilter, setDoctorFilter] = useState('ALL');
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [providers, setProviders] = useState<{id: string, name: string}[]>([]);
 
-  // MOCK DATA mapped exactly to schema3.sql Appointment table
-  const MOCK_APPOINTMENTS: Appointment[] = [
-    { appointment_id: 100, patient_id: 101, patient_name: 'Liam Anderson', main_doctor_id: 1, doctor_name: 'Dr. Sarah Smith', appointment_date: TODAY, time_start: '09:00:00', status: 'CONFIRMED', appointment_type: 'ONLINE', created_by: 'PATIENT' },
-    { appointment_id: 101, patient_id: 102, patient_name: 'Emma Watson', main_doctor_id: 2, doctor_name: 'Dr. Robert Davis', appointment_date: TODAY, time_start: '10:30:00', status: 'PENDING', appointment_type: 'WALK_IN', created_by: 'STAFF' },
-    { appointment_id: 102, patient_id: 103, patient_name: 'William Garcia', main_doctor_id: 1, doctor_name: 'Dr. Sarah Smith', appointment_date: TODAY, time_start: '14:00:00', status: 'CHECKED_IN', appointment_type: 'ONLINE', created_by: 'PATIENT' },
-  ];
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      const data = await appointmentApi.getAll();
+      setAppointments(data);
+    };
+    const fetchProviders = async () => {
+      const { staffApi } = await import('../../staffs/api/staffApi');
+      const data = await staffApi.getAll();
+      const docs = data.filter((s: any) => s.staffType === 'DOCTOR' || s.staffType === 'NURSE' || s.staffType === 'STAFF').map((s: any) => ({
+        id: s.staffId.toString(),
+        name: s.fullName
+      }));
+      setProviders(docs);
+    };
+    fetchAppointments();
+    fetchProviders();
+  }, []);
 
   // Calculate the 'Monday' of the week containing selectedDate
   const getStartOfWeek = (dateStr: string) => {
@@ -32,9 +46,9 @@ export default function AppointmentCalendar() {
     // You can implement an ActionReasonDialog or modal trigger here later
   };
 
-  // Filter logic based on the DB field doctor_name
-  const filteredAppointments = MOCK_APPOINTMENTS.filter(app => {
-    return doctorFilter === 'ALL' || app.doctor_name === doctorFilter;
+  // Filter logic based on the DB field doctorName
+  const filteredAppointments = appointments.filter(app => {
+    return doctorFilter === 'ALL' || app.doctorName === doctorFilter;
   });
 
   return (
@@ -42,7 +56,7 @@ export default function AppointmentCalendar() {
       
       {/* HEADER */}
       <div className="shrink-0">
-        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Calendar View</h1>
+        <h1 className="text-2xl font-black text-slate-900 tracking-tight">Lịch theo tháng</h1>
         <p className="text-sm text-slate-500 mt-1">Manage weekly schedules and visual appointment blocks.</p>
       </div>
 
@@ -52,6 +66,7 @@ export default function AppointmentCalendar() {
         setDoctorFilter={setDoctorFilter}
         selectedDate={selectedDate} 
         setSelectedDate={setSelectedDate}
+        providers={providers}
       />
 
       {/* CALENDAR GRID */}

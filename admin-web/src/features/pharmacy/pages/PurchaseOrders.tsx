@@ -12,8 +12,8 @@ const TODAY = new Date().toISOString().split('T')[0];
 
 export default function PurchaseOrders() {
   const [orders, setOrders] = useState<PurchaseOrder[]>([
-    { po_id: 2026001, supplier_id: 1, supplier_name: 'PharmaCorp Global', order_date: TODAY, total_amount: 4500.00, status: 'PENDING', created_by_name: 'Admin' },
-    { po_id: 2026002, supplier_id: 2, supplier_name: 'MedSupply Co.', order_date: TODAY, total_amount: 1250.50, status: 'RECEIVED', created_by_name: 'Admin' }
+    { poId: 2026001, supplierId: 1, supplierName: 'PharmaCorp Global', orderDate: TODAY, totalAmount: 4500.00, status: 'PENDING', created_by_name: 'Admin' },
+    { poId: 2026002, supplierId: 2, supplierName: 'MedSupply Co.', orderDate: TODAY, totalAmount: 1250.50, status: 'RECEIVED', created_by_name: 'Admin' }
   ]);
   
   const [search, setSearch] = useState('');
@@ -25,8 +25,8 @@ export default function PurchaseOrders() {
 
   const filtered = orders.filter(o => 
     (statusFilter === 'ALL' || o.status === statusFilter) &&
-    (o.supplier_name.toLowerCase().includes(search.toLowerCase()) || o.po_id.toString().includes(search)) &&
-    (o.order_date >= fromDate && o.order_date <= toDate)
+    (o.supplierName.toLowerCase().includes(search.toLowerCase()) || o.poId.toString().includes(search)) &&
+    (o.orderDate >= fromDate && o.orderDate <= toDate)
   );
 
   return (
@@ -43,18 +43,18 @@ export default function PurchaseOrders() {
 
       <PurchaseOrderFilterBar search={search} setSearch={setSearch} statusFilter={statusFilter} setStatusFilter={setStatusFilter} fromDate={fromDate} toDate={toDate} setFromDate={setFromDate} setToDate={setToDate} />
 
-      <PurchaseOrderTable data={filtered} onMarkReceived={(id: number) => setOrders(orders.map(o => o.po_id === id ? { ...o, status: 'RECEIVED' } : o))} onCancel={setCancelOrder} />
+      <PurchaseOrderTable data={filtered} onMarkReceived={(id: number) => setOrders(orders.map(o => o.poId === id ? { ...o, status: 'RECEIVED' } : o))} onCancel={setCancelOrder} />
 
      <PurchaseOrderFormDialog 
      isOpen={isFormOpen} 
      onClose={() => setIsFormOpen(false)} 
      onSave={(data: any) => {
      setOrders([{
-          po_id: Date.now(),
-          supplier_id: 99,
-          supplier_name: data.supplier_name,
-          order_date: TODAY,
-          total_amount: data.total_amount,
+          poId: Date.now(),
+          supplierId: 99,
+          supplierName: data.supplierName,
+          orderDate: TODAY,
+          totalAmount: data.totalAmount,
           status: 'PENDING',
           created_by_name: 'Current User'
      }, ...orders]);
@@ -62,7 +62,7 @@ export default function PurchaseOrders() {
      setIsFormOpen(false);
      }} 
      />
-      <ActionReasonDialog isOpen={!!cancelOrder} onClose={() => setCancelOrder(null)} onConfirm={(action, reason) => { setOrders(orders.map(o => o.po_id === cancelOrder?.po_id ? { ...o, status: 'CANCELLED' } : o)); setCancelOrder(null); }} title="Cancel Purchase Order" description={`Reason for cancelling PO-${cancelOrder?.po_id}?`} reasonLabel="Cancellation Reason" confirmText="Cancel Order" confirmColor="rose" />
+      <ActionReasonDialog isOpen={!!cancelOrder} onClose={() => setCancelOrder(null)} onConfirm={(action, reason) => { setOrders(orders.map(o => o.poId === cancelOrder?.poId ? { ...o, status: 'CANCELLED' } : o)); setCancelOrder(null); }} title="Cancel Purchase Order" description={`Reason for cancelling PO-${cancelOrder?.poId}?`} reasonLabel="Cancellation Reason" confirmText="Cancel Order" confirmColor="rose" />
     </div>
   );
 }

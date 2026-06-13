@@ -58,7 +58,7 @@ export default function LoginForm() {
           {...register('email')} 
           aria-invalid={!!errors.email}
           autoComplete="off"
-          className="rounded-xl h-11 bg-slate-50 focus:bg-white transition-all placeholder:text-slate-400" 
+          className="rounded-xl h-11 bg-slate-50 transition-all placeholder:text-slate-400" 
         />
         {errors.email && <FieldError className="text-xs font-bold text-red-500">{errors.email.message}</FieldError>}
       </Field>
@@ -72,12 +72,12 @@ export default function LoginForm() {
             {...register('password')} 
             aria-invalid={!!errors.password}
             autoComplete="new-password"
-            className="rounded-xl h-11 bg-slate-50 focus:bg-white transition-all placeholder:text-slate-400 pr-10 tracking-widest" 
+            className="rounded-xl h-11 bg-slate-50 transition-all placeholder:text-slate-400 pr-10 tracking-widest" 
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors focus:outline-none"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-600 transition-colors"
           >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
@@ -88,7 +88,7 @@ export default function LoginForm() {
       <Button 
         type="submit" 
         disabled={isSubmitting} 
-        className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg font-bold text-md shadow-md shadow-blue-100 mt-4 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+        className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg font-bold text-md shadow-md shadow-blue-100 mt-4 transition-all disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
       >
         {isSubmitting ? <Loader2 className="animate-spin mr-2" size={18} /> : <LogIn className="mr-2" size={18} />}
         {isSubmitting ? 'Authenticating...' : 'Sign In'}

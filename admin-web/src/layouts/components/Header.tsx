@@ -49,8 +49,8 @@ export default function Header({ onMenuClick }: HeaderProps) {
           </div>
           <button 
             onClick={logout}
-            title="Sign Out"
-            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
+            title="Đăng xuất"
+            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
           >
             <LogOut size={16} />
           </button>

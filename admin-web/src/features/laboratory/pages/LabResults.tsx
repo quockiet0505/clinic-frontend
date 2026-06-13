@@ -9,7 +9,7 @@ const TODAY = new Date().toISOString().split('T')[0];
 
 export default function LabResults() {
   const [results] = useState<ServiceResult[]>([
-    { result_id: 5003, order_id: 2, service_name: 'Lipid Panel', patient_name: 'William Garcia', doctor_name: 'Sarah Smith', result_data: 'LDL: 130 mg/dL\nHDL: 45 mg/dL', conclusion: 'Slightly elevated cholesterol.', entered_by: 3, entered_name: 'Tech John', entered_at: TODAY },
+    { resultId: 5003, orderId: 2, serviceName: 'Lipid Panel', patientName: 'William Garcia', doctorName: 'Sarah Smith', resultData: 'LDL: 130 mg/dL\nHDL: 45 mg/dL', conclusion: 'Slightly elevated cholesterol.', enteredBy: 3, enteredName: 'Tech John', enteredAt: TODAY },
   ]);
 
   const [search, setSearch] = useState('');
@@ -18,8 +18,8 @@ export default function LabResults() {
   const [selectedResult, setSelectedResult] = useState<ServiceResult | null>(null);
 
   const filtered = results.filter(r => 
-    r.patient_name.toLowerCase().includes(search.toLowerCase()) &&
-    r.entered_at >= fromDate && r.entered_at <= toDate
+    r.patientName.toLowerCase().includes(search.toLowerCase()) &&
+    r.enteredAt >= fromDate && r.enteredAt <= toDate
   );
 
   return (

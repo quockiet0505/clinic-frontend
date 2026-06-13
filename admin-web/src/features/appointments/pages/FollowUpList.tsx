@@ -36,16 +36,16 @@ export default function FollowUpList() {
   };
 
   const handleSendNotification = (type: string, content: string) => {
-    console.log(`Sending ${type} notification to ${selectedNotify?.patient_name}: ${content}`);
+    console.log(`Sending ${type} notification to ${selectedNotify?.patientName}: ${content}`);
     // Giả lập lưu vào bảng notification thành công, tự động đổi status follow up
     setData(data.map(d => d.follow_up_id === selectedNotify?.follow_up_id ? { ...d, status: 'COMPLETED', note: `${d.note} | Log: Sent ${type} notification` } : d));
     setSelectedNotify(null);
   };
 
   const filtered = data.filter(item => {
-    // Tách ngày từ scheduled_datetime (có dạng 'YYYY-MM-DD HH:mm:ss' hoặc 'YYYY-MM-DDTHH:mm:ss')
-    const scheduledDate = item.scheduled_datetime.split('T')[0].split(' ')[0];
-    return item.patient_name.toLowerCase().includes(search.toLowerCase()) && 
+    // Tách ngày từ scheduledDatetime (có dạng 'YYYY-MM-DD HH:mm:ss' hoặc 'YYYY-MM-DDTHH:mm:ss')
+    const scheduledDate = item.scheduledDatetime.split('T')[0].split(' ')[0];
+    return item.patientName.toLowerCase().includes(search.toLowerCase()) && 
            item.status === activeTab && 
            (!fromDate || scheduledDate >= fromDate) && 
            (!toDate || scheduledDate <= toDate);
@@ -54,17 +54,17 @@ export default function FollowUpList() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
-        <PageHeader title="Follow-up Reminders" description="Patients due for re-examination or post-treatment care." />
+        <PageHeader title="Nhắc nhở Tái khám" description="Bệnh nhân cần tái khám hoặc chăm sóc sau điều trị." />
         <div className="bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-200 flex items-center gap-3">
            <div className="w-8 h-8 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center font-bold"><AlertCircle size={16}/></div>
-           <div><p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Pending Calls</p><p className="text-sm font-black text-slate-900 leading-none mt-0.5">{data.filter(d => d.status === 'PENDING').length} Due</p></div>
+           <div><p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Cuộc gọi chờ</p><p className="text-sm font-black text-slate-900 leading-none mt-0.5">{data.filter(d => d.status === 'PENDING').length} Due</p></div>
         </div>
       </div>
 
       <FollowUpFilterBar tab={activeTab} setTab={setActiveTab} fromDate={fromDate} setFromDate={setFromDate} toDate={toDate} setToDate={setToDate} search={search} setSearch={setSearch} />
 
       {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Loading follow-ups...</div>
+        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải danh sách nhắc nhở...</div>
       ) : (
         <FollowUpTable data={filtered} onLogCall={setSelectedCall} onSendReminder={setSelectedNotify} />
       )}

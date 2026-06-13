@@ -8,8 +8,8 @@ import { Role } from '../types/settings';
 
 export default function RolesPermissions() {
   const [roles, setRoles] = useState<Role[]>([
-    { role_id: 1, role_code: 'ADMIN', role_name: 'System Administrator' },
-    { role_id: 2, role_code: 'DOCTOR', role_name: 'Medical Specialist' },
+    { roleId: 1, roleCode: 'ADMIN', roleName: 'System Administrator' },
+    { roleId: 2, roleCode: 'DOCTOR', roleName: 'Medical Specialist' },
   ]);
 
   const [editingRole, setEditingRole] = useState<Role | null>(null);
@@ -21,18 +21,18 @@ export default function RolesPermissions() {
         title="Roles & Permissions" 
         description="Manage system access levels and user role codes (role table)." 
         actionText="Create New Role"
-        onAction={() => setEditingRole({ role_id: 0, role_code: '', role_name: '' })}
+        onAction={() => setEditingRole({ roleId: 0, roleCode: '', roleName: '' })}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {roles.map((role) => (
-          <div key={role.role_id} className="group bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm flex items-center gap-5 hover:shadow-md transition-all relative">
+          <div key={role.roleId} className="group bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm flex items-center gap-5 hover:shadow-md transition-all relative">
             <div className="w-14 h-14 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
               <ShieldCheck size={28} />
             </div>
             <div className="flex-1">
-              <h3 className="font-black text-slate-900 tracking-tight">{role.role_name}</h3>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">CODE: {role.role_code}</p>
+              <h3 className="font-black text-slate-900 tracking-tight">{role.roleName}</h3>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">CODE: {role.roleCode}</p>
             </div>
             
             {/* Nút thao tác hiện khi hover */}
@@ -64,11 +64,11 @@ export default function RolesPermissions() {
       <ConfirmDialog 
         isOpen={!!deletingRole}
         title="Delete Access Role"
-        description={`Are you sure you want to permanently delete the "${deletingRole?.role_name}" role? Users assigned to this role may lose access.`}
+        description={`Are you sure you want to permanently delete the "${deletingRole?.roleName}" role? Users assigned to this role may lose access.`}
         confirmText="Yes, Delete Role"
         onClose={() => setDeletingRole(null)}
         onConfirm={() => {
-          setRoles(roles.filter(r => r.role_id !== deletingRole?.role_id));
+          setRoles(roles.filter(r => r.roleId !== deletingRole?.roleId));
           setDeletingRole(null);
         }}
       />

@@ -11,16 +11,16 @@ export default function MyProfile() {
   const [activeTab, setActiveTab] = useState<'info' | 'security'>('info');
 
   const [userData, setUserData] = useState<UserProfile>({
-    staff_id: 1,
-    account_id: 101,
-    full_name: 'Admin User',
+    staffId: 1,
+    accountId: 101,
+    fullName: 'Admin User',
     gender: 'MALE',
     date_of_birth: '1990-01-01',
     phone: '+84 987 654 321',
     email: 'admin@trustcare.vn',
     address: 'Lai Vung, Dong Thap, Viet Nam',
-    role_name: 'System Administrator',
-    created_at: '2025-01-15T00:00:00'
+    roleName: 'System Administrator',
+    createdAt: '2025-01-15T00:00:00'
   });
 
   const [passwordData, setPasswordData] = useState({ current: '', new: '', confirm: '' });
@@ -65,7 +65,7 @@ export default function MyProfile() {
                 activeTab === 'info' ? 'border-blue-600 text-blue-600 bg-white' : 'border-transparent text-slate-500 hover:text-slate-700'
               }`}
             >
-              <UserIcon size={16}/> Personal Information
+              <UserIcon size={16}/> Thông tin Cá nhân
             </button>
             <button
               onClick={() => setActiveTab('security')}

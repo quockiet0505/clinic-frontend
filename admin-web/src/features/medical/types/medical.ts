@@ -1,35 +1,35 @@
 export type MedicalRecordStatus = 'IN_PROGRESS' | 'WAITING_RESULT' | 'DONE' | 'CANCELLED';
 
 export interface MedicalRecord {
-  record_id: number;
-  patient_id: number;
-  appointment_id?: number;
-  patient_name: string; // Joined from patient
+  recordId: number;
+  patientId: number;
+  appointmentId?: number;
+  patientName: string; // Joined from patient
   main_doctor_id: number;
-  doctor_name: string; // Joined from staff
+  doctorName: string; // Joined from staff
   diagnosis: string;
   treatment: string;
   note: string;
   status: MedicalRecordStatus;
-  created_at: string;
+  createdAt: string;
   
   // Custom UI fields derived from appointment/vitals
-  queue_number?: number;
-  checkin_time?: string;
-  vitals_taken?: boolean;
+  queueNumber?: number;
+  checkinTime?: string;
+  vitalsTaken?: boolean;
 }
 
 export interface VitalSigns {
-  record_id: number;
+  recordId: number;
   weight: number;
-  blood_pressure: string;
+  bloodPressure: string;
   pulse: number;
 }
 
 export interface PrescriptionItem {
   id?: number; // UI only
-  medicine_id: number;
-  medication_name: string;
+  medicineId: number;
+  medicationName: string;
   dosage: string;
   quantity: number;
 }

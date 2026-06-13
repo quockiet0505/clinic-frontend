@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function ExpenseCategoryFormDialog({ isOpen, onClose, onSubmit, initialData }: any) {
-  const [form, setForm] = useState({ category_name: '', description: '' });
+  const [form, setForm] = useState({ categoryName: '', description: '' });
 
   useEffect(() => {
     if (initialData) setForm(initialData);
-    else setForm({ category_name: '', description: '' });
+    else setForm({ categoryName: '', description: '' });
   }, [initialData, isOpen]);
 
   return (
@@ -28,31 +28,31 @@ export default function ExpenseCategoryFormDialog({ isOpen, onClose, onSubmit, i
         {/* BODY */}
         <div className="p-6 bg-slate-50 space-y-4">
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Category Name</label>
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Category Name</label>
             <Input 
-              value={form.category_name} 
-              onChange={e => setForm({...form, category_name: e.target.value})} 
+              value={form.categoryName} 
+              onChange={e => setForm({...form, categoryName: e.target.value})} 
               className="h-11 rounded-xl bg-white font-bold shadow-sm" 
               placeholder="e.g. Marketing, Payroll..." 
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Description</label>
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Mô tả</label>
             <textarea 
               value={form.description} 
               onChange={e => setForm({...form, description: e.target.value})} 
-              className="w-full rounded-xl border border-slate-200 bg-white p-4 font-medium focus:ring-2 focus:ring-blue-600 outline-none resize-none h-24 shadow-sm" 
+              className="w-full rounded-xl border border-slate-200 bg-white p-4 font-medium outline-none resize-none h-24 shadow-sm" 
               placeholder="Briefly describe what this expense covers..." 
             />
           </div>
         </div>
         
         {/* FOOTER */}
-        <DialogFooter className="p-6 bg-white border-t border-slate-100 flex gap-3">
-          <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500">Cancel</Button>
+        <DialogFooter className="p-6 pb-8 bg-white border-t border-slate-100 flex gap-3">
+          <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500 cursor-pointer">Hủy</Button>
           <Button 
             onClick={() => onSubmit(form, !!initialData)} 
-            disabled={!form.category_name} 
+            disabled={!form.categoryName} 
             className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 shadow-sm"
           >
             Save Category

@@ -31,9 +31,9 @@ export default function MedicineInventory() {
 
   const handleFormSubmit = async (formData: any, isEdit: boolean) => {
     if (isEdit) {
-      await pharmacyApi.updateMedicine(selectedMedicine!.medicine_id, { ...formData, sell_price: Number(formData.sell_price), min_stock_level: Number(formData.min_stock_level) });
+      await pharmacyApi.updateMedicine(selectedMedicine!.medicineId, { ...formData, sellPrice: Number(formData.sellPrice), min_stock_level: Number(formData.min_stock_level) });
     } else {
-      await pharmacyApi.createMedicine({ ...formData, sell_price: Number(formData.sell_price), min_stock_level: Number(formData.min_stock_level) });
+      await pharmacyApi.createMedicine({ ...formData, sellPrice: Number(formData.sellPrice), min_stock_level: Number(formData.min_stock_level) });
     }
     await fetchMedicines();
     setIsFormOpen(false);
@@ -41,7 +41,7 @@ export default function MedicineInventory() {
 
   const filteredMedicines = medicines.filter(m => 
     m.name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    m.active_element?.toLowerCase().includes(searchTerm.toLowerCase())
+    m.activeElement?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -65,7 +65,7 @@ export default function MedicineInventory() {
       
       <ConfirmDialog isOpen={!!deletingMed} onClose={() => setDeletingMed(null)} onConfirm={async () => { 
         if (deletingMed) {
-          await pharmacyApi.deleteMedicine(deletingMed.medicine_id);
+          await pharmacyApi.deleteMedicine(deletingMed.medicineId);
           await fetchMedicines();
         }
         setDeletingMed(null); 

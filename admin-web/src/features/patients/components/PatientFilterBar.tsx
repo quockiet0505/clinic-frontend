@@ -12,7 +12,7 @@ export default function PatientFilterBar({ searchTerm, setSearchTerm }: Props) {
       <SearchInput 
         value={searchTerm} 
         onChange={setSearchTerm} 
-        placeholder="Search patient by name, ID, or phone..." 
+        placeholder="Tìm kiếm patient by name, ID, or phone..." 
       />
     </div>
   );

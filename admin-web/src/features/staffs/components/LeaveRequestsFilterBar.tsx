@@ -19,7 +19,7 @@ export default function LeaveRequestsFilterBar({ activeView, setActiveView, sear
       </div>
       <div className="relative w-full sm:w-72 px-2 sm:px-0 pr-2">
         <Search className="absolute left-5 sm:left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-        <Input placeholder="Search staff name..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 h-10 rounded-xl bg-slate-50" />
+        <Input placeholder="Tìm kiếm staff name..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 h-10 rounded-xl bg-slate-50" />
       </div>
     </div>
   );

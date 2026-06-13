@@ -23,14 +23,14 @@ export default function FeedbackTable({ data }: { data: Feedback[] }) {
         </TableHeader>
         <TableBody>
           {data.map(fb => (
-            <TableRow key={fb.feedback_id} className="hover:bg-slate-50/50">
+            <TableRow key={fb.feedbackId} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
-                <p className="font-bold text-slate-900">{fb.created_at.split('T')[0]}</p>
-                <p className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">REC-{fb.record_id}</p>
+                <p className="font-bold text-slate-900">{fb.createdAt.split('T')[0]}</p>
+                <p className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">REC-{fb.recordId}</p>
               </TableCell>
               <TableCell>
-                <p className="font-bold text-slate-800">{fb.patient_name}</p>
-                <p className="text-xs font-medium text-slate-500 mt-1">Dr. {fb.doctor_name}</p>
+                <p className="font-bold text-slate-800">{fb.patientName}</p>
+                <p className="text-xs font-medium text-slate-500 mt-1">Dr. {fb.doctorName}</p>
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-1">{renderStars(fb.rating)}</div>

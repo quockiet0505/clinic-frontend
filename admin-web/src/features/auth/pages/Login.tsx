@@ -19,7 +19,7 @@ export default function Login() {
             <img 
               src="http://localhost:8080/images/logo.png" 
               alt="Kiet Clinic" 
-              className="w-50  object-contain"  
+              className="w-50 object-contain"  
             />
           </div>
           <p className="text-slate-500 text-sm mt-1 font-medium">Cổng quản trị nhân viên</p>

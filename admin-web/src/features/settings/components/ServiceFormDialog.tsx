@@ -6,12 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Service } from '../types/settings';
 
 export default function ServiceFormDialog({ service, onClose, onSave }: any) {
-  const [formData, setFormData] = useState({ service_name: '', service_type: 'EXAM', price: 0 });
+  const [formData, setFormData] = useState({ serviceName: '', serviceType: 'EXAM', price: 0 });
 
   useEffect(() => {
     if (service) setFormData({ 
-      service_name: service.service_name || '', 
-      service_type: service.service_type || 'EXAM', 
+      serviceName: service.serviceName || '', 
+      serviceType: service.serviceType || 'EXAM', 
       price: service.price || 0 
     });
   }, [service]);
@@ -25,29 +25,29 @@ export default function ServiceFormDialog({ service, onClose, onSave }: any) {
           <div className="flex items-center gap-2 mb-2 opacity-80">
             <Activity size={16} /> <span className="text-xs font-bold uppercase tracking-widest">Service Catalog</span>
           </div>
-          <DialogTitle className="text-xl font-black">{service.service_id === 0 ? 'Add Service' : 'Edit Service'}</DialogTitle>
+          <DialogTitle className="text-xl font-black">{service.serviceId === 0 ? 'Add Service' : 'Edit Service'}</DialogTitle>
         </div>
         <div className="p-6 bg-slate-50 space-y-4">
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Service Name</label>
-            <Input value={formData.service_name} onChange={(e) => setFormData({...formData, service_name: e.target.value})} className="h-11 rounded-xl font-bold" />
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Service Name</label>
+            <Input value={formData.serviceName} onChange={(e) => setFormData({...formData, serviceName: e.target.value})} className="h-11 rounded-xl font-bold" />
           </div>
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Type</label>
-            <select value={formData.service_type} onChange={(e) => setFormData({...formData, service_type: e.target.value as any})} className="flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-bold">
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Loại</label>
+            <select value={formData.serviceType} onChange={(e) => setFormData({...formData, serviceType: e.target.value as any})} className="flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-bold">
               <option value="EXAM">Medical Exam</option>
               <option value="LAB_TEST">Lab Test</option>
               <option value="IMAGING">Imaging (X-Ray/Ultrasound)</option>
             </select>
           </div>
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Base Price ($)</label>
+            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Base Price ($)</label>
             <Input type="number" value={formData.price} onChange={(e) => setFormData({...formData, price: Number(e.target.value)})} className="h-11 rounded-xl font-black text-blue-600" />
           </div>
         </div>
-        <DialogFooter className="p-6 bg-white border-t border-slate-100 flex gap-3">
-          <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold">Cancel</Button>
-          <Button onClick={() => onSave(service.service_id, formData)} className="rounded-xl bg-blue-600 text-white font-bold px-6">Save Service</Button>
+        <DialogFooter className="p-6 pb-8 bg-white border-t border-slate-100 flex gap-3">
+          <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold cursor-pointer">Hủy</Button>
+          <Button onClick={() => onSave(service.serviceId, formData)} className="rounded-xl bg-blue-600 text-white font-bold px-6 cursor-pointer">Save Service</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

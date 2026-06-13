@@ -12,27 +12,27 @@ export default function MedicalRecordTable({ data, onViewDetail }: { data: Medic
         <TableHeader className="bg-slate-50">
           <TableRow className="h-14">
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Date & Record ID</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Patient</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bệnh nhân</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Diagnosis & Provider</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Status</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Action</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map(rec => (
-            <TableRow key={rec.record_id} className="hover:bg-slate-50/50">
+            <TableRow key={rec.recordId} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
-                <p className="font-bold text-slate-900">{rec.created_at}</p>
-                <p className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">REC-{rec.record_id}</p>
+                <p className="font-bold text-slate-900">{rec.createdAt}</p>
+                <p className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">REC-{rec.recordId}</p>
               </TableCell>
-              <TableCell><p className="font-bold text-slate-900">{rec.patient_name}</p></TableCell>
+              <TableCell><p className="font-bold text-slate-900">{rec.patientName}</p></TableCell>
               <TableCell>
                 <p className="font-bold text-slate-800">{rec.diagnosis}</p>
-                <p className="text-xs text-slate-500 mt-1 font-medium flex items-center gap-1"><Stethoscope size={12}/> {rec.doctor_name}</p>
+                <p className="text-xs text-slate-500 mt-1 font-medium flex items-center gap-1"><Stethoscope size={12}/> {rec.doctorName}</p>
               </TableCell>
               <TableCell className="text-center"><StatusBadge status={rec.status} /></TableCell>
               <TableCell className="text-right pr-8">
-                <Button onClick={() => onViewDetail(rec.record_id)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-blue-600 border-blue-100 bg-blue-50/50 hover:bg-blue-50">
+                <Button onClick={() => onViewDetail(rec.recordId)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-blue-600 border-blue-100 bg-blue-50/50 hover:bg-blue-50">
                   <Eye size={14}/><span>Chi tiết</span>
                 </Button>
               </TableCell>

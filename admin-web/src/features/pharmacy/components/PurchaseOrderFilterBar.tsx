@@ -20,7 +20,7 @@ export default function PurchaseOrderFilterBar({ search, setSearch, statusFilter
         ))}
       </div>
       <div className="flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto">
-        <div className="w-full sm:w-56"><SearchInput value={search} onChange={setSearch} placeholder="Search supplier or PO..." /></div>
+        <div className="w-full sm:w-56"><SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm supplier or PO..." /></div>
         <DateRangeFilter from={fromDate} to={toDate} onChangeFrom={setFromDate} onChangeTo={setToDate} />
       </div>
     </div>

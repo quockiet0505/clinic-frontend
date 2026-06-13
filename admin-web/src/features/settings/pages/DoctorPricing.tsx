@@ -9,8 +9,8 @@ import type { DoctorPricing } from '../types/settings';
 export default function DoctorPricing() {
   const [search, setSearch] = useState('');
   const [prices, setPrices] = useState<DoctorPricing[]>([
-    { id: 1, staff_id: 101, name: 'Dr. Sarah Smith', specialty: 'Cardiology', fee: 85.00 },
-    { id: 2, staff_id: 102, name: 'Dr. Robert Davis', specialty: 'Pediatrics', fee: 60.00 },
+    { id: 1, staffId: 101, name: 'Dr. Sarah Smith', specialty: 'Cardiology', fee: 85.00 },
+    { id: 2, staffId: 102, name: 'Dr. Robert Davis', specialty: 'Pediatrics', fee: 60.00 },
   ]);
 
   const [editingPrice, setEditingPrice] = useState<DoctorPricing | null>(null);
@@ -26,14 +26,14 @@ export default function DoctorPricing() {
         title="Doctor Consultation Fees" 
         description="Override default service prices for specific medical practitioners." 
         actionText="Assign New Fee"
-        onAction={() => setEditingPrice({ id: 0, staff_id: 0, name: '', specialty: '', fee: 0 })}
+        onAction={() => setEditingPrice({ id: 0, staffId: 0, name: '', specialty: '', fee: 0 })}
       />
 
       <div className="bg-white p-3 rounded-2xl border border-slate-200 flex shadow-sm shrink-0">
         <SearchInput 
           value={search} 
           onChange={setSearch} 
-          placeholder="Search by doctor name..." 
+          placeholder="Tìm kiếm by doctor name..." 
         />
       </div>
 

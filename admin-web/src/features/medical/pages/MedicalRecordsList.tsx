@@ -28,9 +28,9 @@ export default function MedicalRecordsList() {
   }, []);
 
   const filteredData = records.filter(rec => 
-    rec.patient_name.toLowerCase().includes(search.toLowerCase()) &&
-    (!fromDate || rec.created_at >= fromDate) && 
-    (!toDate || rec.created_at <= toDate)
+    rec.patientName.toLowerCase().includes(search.toLowerCase()) &&
+    (!fromDate || rec.createdAt >= fromDate) && 
+    (!toDate || rec.createdAt <= toDate)
   );
 
   return (

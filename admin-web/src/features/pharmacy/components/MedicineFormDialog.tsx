@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function MedicineFormDialog({ isOpen, onClose, onSubmit, initialData }: any) {
-  const [form, setForm] = useState({ name: '', active_element: '', unit: 'Tablet', sell_price: '', min_stock_level: '10', production_unit: '' });
+  const [form, setForm] = useState({ name: '', activeElement: '', unit: 'Tablet', sellPrice: '', min_stock_level: '10', productionUnit: '' });
 
   useEffect(() => {
-    if (initialData) setForm({ ...initialData, sell_price: initialData.sell_price.toString(), min_stock_level: initialData.min_stock_level.toString() });
-    else setForm({ name: '', active_element: '', unit: 'Tablet', sell_price: '', min_stock_level: '10', production_unit: '' });
+    if (initialData) setForm({ ...initialData, sellPrice: initialData.sellPrice.toString(), min_stock_level: initialData.min_stock_level.toString() });
+    else setForm({ name: '', activeElement: '', unit: 'Tablet', sellPrice: '', min_stock_level: '10', productionUnit: '' });
   }, [initialData, isOpen]);
 
   return (
@@ -24,20 +24,20 @@ export default function MedicineFormDialog({ isOpen, onClose, onSubmit, initialD
         </div>
         
         <div className="p-6 bg-slate-50 space-y-4 max-h-[50vh] overflow-y-auto custom-scrollbar">
-          <div className="space-y-2"><label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Medicine Name</label><Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="h-11 rounded-xl bg-white" /></div>
-          <div className="space-y-2"><label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Active Element</label><Input value={form.active_element} onChange={e => setForm({...form, active_element: e.target.value})} className="h-11 rounded-xl bg-white" placeholder="e.g. Paracetamol 500mg" /></div>
-          <div className="space-y-2"><label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Production Unit (Manufacturer)</label><Input value={form.production_unit} onChange={e => setForm({...form, production_unit: e.target.value})} className="h-11 rounded-xl bg-white" /></div>
+          <div className="space-y-2"><label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Medicine Name</label><Input value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="h-11 rounded-xl bg-white" /></div>
+          <div className="space-y-2"><label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Active Element</label><Input value={form.activeElement} onChange={e => setForm({...form, activeElement: e.target.value})} className="h-11 rounded-xl bg-white" placeholder="e.g. Paracetamol 500mg" /></div>
+          <div className="space-y-2"><label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Production Unit (Manufacturer)</label><Input value={form.productionUnit} onChange={e => setForm({...form, productionUnit: e.target.value})} className="h-11 rounded-xl bg-white" /></div>
           
           <div className="grid grid-cols-3 gap-4">
-            <div className="space-y-2"><label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Unit</label><Input value={form.unit} onChange={e => setForm({...form, unit: e.target.value})} className="h-11 rounded-xl bg-white" placeholder="Tablet, Bottle..." /></div>
-            <div className="space-y-2"><label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Sell Price ($)</label><Input type="number" value={form.sell_price} onChange={e => setForm({...form, sell_price: e.target.value})} className="h-11 rounded-xl bg-white" /></div>
-            <div className="space-y-2"><label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Min Stock</label><Input type="number" value={form.min_stock_level} onChange={e => setForm({...form, min_stock_level: e.target.value})} className="h-11 rounded-xl bg-white" /></div>
+            <div className="space-y-2"><label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Unit</label><Input value={form.unit} onChange={e => setForm({...form, unit: e.target.value})} className="h-11 rounded-xl bg-white" placeholder="Tablet, Bottle..." /></div>
+            <div className="space-y-2"><label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Sell Price ($)</label><Input type="number" value={form.sellPrice} onChange={e => setForm({...form, sellPrice: e.target.value})} className="h-11 rounded-xl bg-white" /></div>
+            <div className="space-y-2"><label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Min Stock</label><Input type="number" value={form.min_stock_level} onChange={e => setForm({...form, min_stock_level: e.target.value})} className="h-11 rounded-xl bg-white" /></div>
           </div>
         </div>
         
-        <DialogFooter className="p-6 bg-white border-t border-slate-100 flex gap-3">
-          <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500">Cancel</Button>
-          <Button onClick={() => onSubmit(form, !!initialData)} disabled={!form.name} className="rounded-xl bg-blue-600 text-white font-bold px-8">Save Medicine</Button>
+        <DialogFooter className="p-6 pb-8 bg-white border-t border-slate-100 flex gap-3">
+          <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500 cursor-pointer">Hủy</Button>
+          <Button onClick={() => onSubmit(form, !!initialData)} disabled={!form.name} className="rounded-xl bg-blue-600 text-white font-bold px-8 cursor-pointer">Save Medicine</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

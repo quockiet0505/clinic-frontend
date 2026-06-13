@@ -9,8 +9,8 @@ const TODAY = new Date().toISOString().split('T')[0];
 
 export default function Notifications() {
   const [notifications] = useState<AppNotification[]>([
-    { notification_id: 1, account_name: 'Liam Anderson', type: 'SYSTEM', content: 'Friendly reminder: You are due for a post-surgery checkup.', sent_at: `${TODAY} 09:30` },
-    { notification_id: 2, account_name: 'Emma Watson', type: 'EMAIL', content: 'Your lab results for Lipid Panel are ready.', sent_at: `${TODAY} 10:15` },
+    { notificationId: 1, accountName: 'Liam Anderson', type: 'SYSTEM', content: 'Friendly reminder: You are due for a post-surgery checkup.', sentAt: `${TODAY} 09:30` },
+    { notificationId: 2, accountName: 'Emma Watson', type: 'EMAIL', content: 'Your lab results for Lipid Panel are ready.', sentAt: `${TODAY} 10:15` },
   ]);
   
   const [search, setSearch] = useState('');
@@ -20,8 +20,8 @@ export default function Notifications() {
 
   const filtered = notifications.filter(n => 
     (typeFilter === 'ALL' || n.type === typeFilter) &&
-    (n.account_name?.toLowerCase().includes(search.toLowerCase()) || n.content.toLowerCase().includes(search.toLowerCase())) &&
-    (n.sent_at >= fromDate && n.sent_at <= `${toDate} 23:59`)
+    (n.accountName?.toLowerCase().includes(search.toLowerCase()) || n.content.toLowerCase().includes(search.toLowerCase())) &&
+    (n.sentAt >= fromDate && n.sentAt <= `${toDate} 23:59`)
   );
 
   return (
@@ -37,7 +37,7 @@ export default function Notifications() {
           ))}
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto">
-          <div className="w-full sm:w-64"><SearchInput value={search} onChange={setSearch} placeholder="Search recipient or content..." /></div>
+          <div className="w-full sm:w-64"><SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm recipient or content..." /></div>
           <DateRangeFilter from={fromDate} to={toDate} onChangeFrom={setFromDate} onChangeTo={setToDate} />
         </div>
       </div>

@@ -12,7 +12,7 @@ export default function ExpenseFilterBar({ search, setSearch, category, setCateg
           <option value="Utilities">Utilities</option>
           <option value="Equipment">Equipment</option>
         </select>
-        <div className="w-full sm:w-64"><SearchInput value={search} onChange={setSearch} placeholder="Search description..." /></div>
+        <div className="w-full sm:w-64"><SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm description..." /></div>
       </div>
       <DateRangeFilter from={fromDate} to={toDate} onChangeFrom={setFromDate} onChangeTo={setToDate} />
     </div>

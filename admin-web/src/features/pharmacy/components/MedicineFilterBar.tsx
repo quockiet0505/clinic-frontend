@@ -12,7 +12,7 @@ export default function MedicineFilterBar({ search, setSearch }: Props) {
       <SearchInput 
         value={search} 
         onChange={setSearch} 
-        placeholder="Search medicine by name or active element..." 
+        placeholder="Tìm kiếm medicine by name or active element..." 
       />
     </div>
   );

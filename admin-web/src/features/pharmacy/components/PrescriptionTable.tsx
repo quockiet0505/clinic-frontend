@@ -13,20 +13,20 @@ export default function PrescriptionTable({ data, onDispense }: { data: Prescrip
           <TableRow className="h-14">
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Prescription ID</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Patient & Provider</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Status</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Action</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map(rx => (
-            <TableRow key={rx.prescription_id} className="hover:bg-slate-50/50">
+            <TableRow key={rx.prescriptionId} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
-                <p className="font-bold text-slate-900">{rx.created_at.split('T')[0]}</p>
-                <p className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">RX-{rx.prescription_id}</p>
+                <p className="font-bold text-slate-900">{rx.createdAt.split('T')[0]}</p>
+                <p className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">RX-{rx.prescriptionId}</p>
               </TableCell>
               <TableCell>
-                <p className="font-bold text-slate-900">{rx.patient_name}</p>
-                <p className="text-xs font-medium text-slate-500 mt-1">Dr. {rx.doctor_name}</p>
+                <p className="font-bold text-slate-900">{rx.patientName}</p>
+                <p className="text-xs font-medium text-slate-500 mt-1">Dr. {rx.doctorName}</p>
               </TableCell>
               <TableCell className="text-center"><StatusBadge status={rx.status} /></TableCell>
               <TableCell className="text-right pr-8">

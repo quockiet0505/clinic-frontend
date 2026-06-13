@@ -8,8 +8,8 @@ import { Service } from '../types/settings';
 
 export default function ServiceCatalog() {
   const [data, setData] = useState<Service[]>([
-    { service_id: 1, service_name: 'Blood Test', service_type: 'LAB_TEST', price: 25.00 },
-    { service_id: 2, service_name: 'X-Ray Chest', service_type: 'IMAGING', price: 45.00 }
+    { serviceId: 1, serviceName: 'Blood Test', serviceType: 'LAB_TEST', price: 25.00 },
+    { serviceId: 2, serviceName: 'X-Ray Chest', serviceType: 'IMAGING', price: 45.00 }
   ]);
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Service | null>(null);
@@ -21,13 +21,13 @@ export default function ServiceCatalog() {
         title="Service Catalog" 
         description="Manage all clinical services and pricing." 
         actionText="Add Service"
-        onAction={() => setEditing({ service_id: 0, service_name: '', service_type: 'EXAM', price: 0 })}
+        onAction={() => setEditing({ serviceId: 0, serviceName: '', serviceType: 'EXAM', price: 0 })}
       />
       <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm shrink-0">
-        <SearchInput value={search} onChange={setSearch} placeholder="Search services..." />
+        <SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm services..." />
       </div>
       <ServiceCatalogTable 
-        data={data.filter(s => s.service_name.toLowerCase().includes(search.toLowerCase()))} 
+        data={data.filter(s => s.serviceName.toLowerCase().includes(search.toLowerCase()))} 
         onEdit={setEditing} 
         onDelete={setDeleting} 
       />
@@ -37,7 +37,7 @@ export default function ServiceCatalog() {
         onClose={() => setDeleting(null)} 
         onConfirm={() => setDeleting(null)} 
         title="Delete Service" 
-        description={`Confirm deletion of ${deleting?.service_name}?`} 
+        description={`Confirm deletion of ${deleting?.serviceName}?`} 
       />
     </div>
   );

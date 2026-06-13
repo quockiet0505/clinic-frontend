@@ -1,29 +1,29 @@
 export interface Expertise {
-     expertise_id: number;
-     expertise_name: string;
+     expertiseId: number;
+     expertiseName: string;
      description?: string;
      doctorCount: number;
      status: 'Active' | 'Inactive';
    }
    
    export interface Service {
-     service_id: number;
-     service_name: string;
-     service_type: 'EXAM' | 'LAB_TEST' | 'IMAGING';
+     serviceId: number;
+     serviceName: string;
+     serviceType: 'EXAM' | 'LAB_TEST' | 'IMAGING';
      price: number;
-     is_deleted?: number;
+     isDeleted?: number;
    }
    
    export interface DoctorPricing {
      id: number;          
-     staff_id: number;
+     staffId: number;
      name: string;        
      specialty: string;   
      fee: number;         
    }
    
    export interface Role {
-     role_id: number;
-     role_code: string;
-     role_name: string;
+     roleId: number;
+     roleCode: string;
+     roleName: string;
    }

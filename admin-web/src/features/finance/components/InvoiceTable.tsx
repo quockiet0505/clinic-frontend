@@ -22,21 +22,21 @@ export default function InvoiceTable({ data, onActionClick, onPrintClick }: { da
         <TableHeader className="bg-slate-50">
           <TableRow className="h-14">
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Invoice</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Patient</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bệnh nhân</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Total Amount</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Status</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Action</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((inv) => (
-            <TableRow key={inv.bill_id} className="hover:bg-slate-50/50">
+            <TableRow key={inv.billId} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
-                <p className="font-bold text-slate-900">BILL-{inv.bill_id}</p>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">{inv.created_at}</p>
+                <p className="font-bold text-slate-900">BILL-{inv.billId}</p>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">{inv.createdAt}</p>
               </TableCell>
-              <TableCell><span className="font-bold text-slate-700">{inv.patient_name}</span></TableCell>
-              <TableCell><span className="font-black text-slate-900">${inv.total_price.toFixed(2)}</span></TableCell>
+              <TableCell><span className="font-bold text-slate-700">{inv.patientName}</span></TableCell>
+              <TableCell><span className="font-black text-slate-900">${inv.totalPrice.toFixed(2)}</span></TableCell>
               <TableCell className="text-center">
                 <Badge variant="outline" className={`font-bold border px-2.5 py-1 rounded-lg ${getStatusBadge(inv.status)}`}>
                   {inv.status === 'UNPAID' && <Clock size={12} className="mr-1.5 inline" />}
@@ -50,7 +50,7 @@ export default function InvoiceTable({ data, onActionClick, onPrintClick }: { da
                     {inv.status === 'PAID' ? 'View Details' : 'Collect Payment'}
                   </Button>
                   {inv.status === 'PAID' && (
-                    <Button onClick={() => onPrintClick(inv.bill_id)} variant="outline" size="icon" className="h-9 w-9 text-slate-500 hover:text-slate-700 rounded-xl border-slate-200">
+                    <Button onClick={() => onPrintClick(inv.billId)} variant="outline" size="icon" className="h-9 w-9 text-slate-500 hover:text-slate-700 rounded-xl border-slate-200">
                       <Printer size={16} />
                     </Button>
                   )}

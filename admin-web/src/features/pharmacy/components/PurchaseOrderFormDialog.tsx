@@ -21,7 +21,7 @@ export default function PurchaseOrderFormDialog({ isOpen, onClose, onSave }: any
     if (medName && qty && price) {
       setItems([...items, { 
         id: Date.now(), 
-        medicine_name: medName, 
+        medicineName: medName, 
         qty: Number(qty), 
         price: Number(price) 
       }]);
@@ -31,9 +31,9 @@ export default function PurchaseOrderFormDialog({ isOpen, onClose, onSave }: any
 
   const handleSave = () => {
     onSave({
-      supplier_name: supplierId || 'Selected Supplier', // Giả lập tên từ ID
+      supplierName: supplierId || 'Selected Supplier', // Giả lập tên từ ID
       note: note,
-      total_amount: totalAmount,
+      totalAmount: totalAmount,
       items: items
     });
     // Reset form
@@ -58,10 +58,10 @@ export default function PurchaseOrderFormDialog({ isOpen, onClose, onSave }: any
           {/* THÔNG TIN CHUNG */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Select Supplier</label>
+              <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Select Supplier</label>
               <select 
                 value={supplierId} onChange={(e) => setSupplierId(e.target.value)} 
-                className="flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-bold text-slate-700 focus:ring-2 focus:ring-blue-600 outline-none cursor-pointer shadow-sm"
+                className="flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-bold text-slate-700 outline-none cursor-pointer shadow-sm"
               >
                 <option value="" disabled>Choose a vendor...</option>
                 <option value="PharmaCorp Global">PharmaCorp Global</option>
@@ -69,7 +69,7 @@ export default function PurchaseOrderFormDialog({ isOpen, onClose, onSave }: any
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Order Notes (Optional)</label>
+              <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">Order Notes (Optional)</label>
               <Input 
                 value={note} onChange={(e) => setNote(e.target.value)} 
                 className="h-11 rounded-xl bg-white shadow-sm font-medium" 
@@ -86,18 +86,18 @@ export default function PurchaseOrderFormDialog({ isOpen, onClose, onSave }: any
             
             <div className="bg-white p-4 rounded-2xl border border-slate-200 flex flex-col md:flex-row gap-3 items-end shadow-sm">
               <div className="w-full md:flex-1 space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Medicine Name</label>
-                <Input value={medName} onChange={(e) => setMedName(e.target.value)} className="h-10 rounded-xl bg-slate-50" placeholder="Search medicine..." />
+                <label className="block mb-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Medicine Name</label>
+                <Input value={medName} onChange={(e) => setMedName(e.target.value)} className="h-10 rounded-xl bg-slate-50" placeholder="Tìm kiếm medicine..." />
               </div>
               <div className="w-full md:w-24 space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Quantity</label>
+                <label className="block mb-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Số lượng</label>
                 <Input type="number" value={qty} onChange={(e) => setQty(e.target.value)} className="h-10 rounded-xl bg-slate-50" placeholder="0" />
               </div>
               <div className="w-full md:w-32 space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Unit Price ($)</label>
+                <label className="block mb-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Unit Price ($)</label>
                 <Input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="h-10 rounded-xl bg-slate-50" placeholder="0.00" />
               </div>
-              <Button onClick={handleAddItem} className="h-10 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold px-5 w-full md:w-auto">
+              <Button onClick={handleAddItem} className="h-10 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold px-5 w-full md:w-auto cursor-pointer">
                 <Plus size={16} className="mr-1.5"/> Add
               </Button>
             </div>
@@ -114,7 +114,7 @@ export default function PurchaseOrderFormDialog({ isOpen, onClose, onSave }: any
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 bg-slate-100 text-slate-500 rounded-lg flex items-center justify-center"><Pill size={14}/></div>
                       <div>
-                        <p className="font-bold text-slate-900 text-sm">{item.medicine_name}</p>
+                        <p className="font-bold text-slate-900 text-sm">{item.medicineName}</p>
                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">
                           {item.qty} units × ${item.price.toFixed(2)}
                         </p>
@@ -140,11 +140,11 @@ export default function PurchaseOrderFormDialog({ isOpen, onClose, onSave }: any
             <p className="text-2xl font-black text-blue-600">${totalAmount.toFixed(2)}</p>
           </div>
           <div className="flex gap-3">
-            <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500">Cancel</Button>
+            <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500 cursor-pointer">Hủy</Button>
             <Button 
               onClick={handleSave} 
               disabled={items.length === 0 || !supplierId} 
-              className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 shadow-sm"
+              className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 shadow-sm cursor-pointer"
             >
               Submit Order
             </Button>

@@ -25,7 +25,7 @@ export default function ExpertiseSettings() {
     fetchData();
   }, []);
 
-  const filtered = data.filter(e => e.expertise_name?.toLowerCase().includes(search.toLowerCase()));
+  const filtered = data.filter(e => e.expertiseName?.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div className="space-y-6 flex flex-col h-full animate-in fade-in duration-500">
@@ -33,11 +33,11 @@ export default function ExpertiseSettings() {
         title="Medical Specialties" 
         description="Manage departments and clinical expertise categories." 
         actionText="Add Specialty"
-        onAction={() => setEditing({ expertise_id: 0, expertise_name: '', description: '', doctorCount: 0, status: 'Active' })}
+        onAction={() => setEditing({ expertiseId: 0, expertiseName: '', description: '', doctorCount: 0, status: 'Active' })}
       />
 
       <div className="bg-white p-3 rounded-2xl border border-slate-200 flex shadow-sm shrink-0">
-        <SearchInput value={search} onChange={setSearch} placeholder="Search specialty name..." />
+        <SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm specialty name..." />
       </div>
 
       {loading ? (
@@ -46,7 +46,7 @@ export default function ExpertiseSettings() {
         <ExpertiseTable 
           data={filtered} 
           onEdit={setEditing} 
-          onDelete={(id) => setDeleting(data.find(e => e.expertise_id === id) || null)} 
+          onDelete={(id) => setDeleting(data.find(e => e.expertiseId === id) || null)} 
         />
       )}
       
@@ -69,13 +69,13 @@ export default function ExpertiseSettings() {
         onClose={() => setDeleting(null)} 
         onConfirm={async () => {
           if (deleting) {
-            await settingsApi.deleteExpertise(deleting.expertise_id);
+            await settingsApi.deleteExpertise(deleting.expertiseId);
             await fetchData();
           }
           setDeleting(null);
         }} 
         title="Delete Specialty" 
-        description={`Are you sure you want to delete "${deleting?.expertise_name}"?`} 
+        description={`Are you sure you want to delete "${deleting?.expertiseName}"?`} 
       />
     </div>
   );

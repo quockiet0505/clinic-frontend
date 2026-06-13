@@ -7,10 +7,11 @@ interface CalendarFilterBarProps {
   setDoctorFilter: (val: string) => void;
   selectedDate: string;
   setSelectedDate: (date: string) => void;
+  providers?: {id: string, name: string}[];
 }
 
 export default function CalendarFilterBar({
-  doctorFilter, setDoctorFilter, selectedDate, setSelectedDate
+  doctorFilter, setDoctorFilter, selectedDate, setSelectedDate, providers = []
 }: CalendarFilterBarProps) {
   return (
     <div className="flex flex-col xl:flex-row justify-between gap-4 items-center bg-white p-3 rounded-2xl border border-slate-200 shadow-sm shrink-0">
@@ -18,12 +19,12 @@ export default function CalendarFilterBar({
       {/* LEFT: DATE PICKER */}
       <div className="flex items-center gap-2 w-full xl:w-auto bg-slate-50 rounded-xl border border-slate-200 px-3 h-10">
         <CalendarDays size={16} className="text-slate-400" />
-        <span className="text-sm font-bold text-slate-500 whitespace-nowrap">Go to date:</span>
+        <span className="text-sm font-bold text-slate-500 whitespace-nowrap">Đi tới ngày:</span>
         <Input 
           type="date" 
           value={selectedDate} 
           onChange={(e) => setSelectedDate(e.target.value)}
-          className="h-8 border-0 bg-transparent p-0 focus-visible:ring-0 w-full sm:w-36 cursor-pointer font-bold text-blue-600"
+          className="h-8 border-0 bg-transparent p-0 w-full sm:w-36 cursor-pointer font-bold text-blue-600"
         />
       </div>
 
@@ -46,11 +47,12 @@ export default function CalendarFilterBar({
           <select 
             value={doctorFilter} 
             onChange={(e) => setDoctorFilter(e.target.value)}
-            className="h-8 w-full sm:w-48 bg-transparent text-sm font-bold text-slate-600 focus:outline-none cursor-pointer"
+            className="h-8 w-full sm:w-48 bg-transparent text-sm font-bold text-slate-600 outline-none cursor-pointer"
           >
-            <option value="ALL">All Providers</option>
-            <option value="Dr. Sarah Smith">Dr. Sarah Smith</option>
-            <option value="Dr. Robert Davis">Dr. Robert Davis</option>
+            <option value="ALL">Tất cả Bác sĩ</option>
+            {providers.map(p => (
+              <option key={p.id} value={p.name}>{p.name}</option>
+            ))}
           </select>
         </div>
       </div>

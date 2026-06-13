@@ -18,19 +18,19 @@ export default function ExpertiseTable({ data, onDelete, onEdit }: Props) {
         <TableHeader className="bg-slate-50">
           <TableRow>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-6 h-12">Specialty Name</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Description</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Mô tả</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Assigned Staff</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Status</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-6">Action</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-6">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.length > 0 ? (
             data.map((item) => (
-              <TableRow key={item.expertise_id} className="hover:bg-slate-50/50 transition-colors">
+              <TableRow key={item.expertiseId} className="hover:bg-slate-50/50 transition-colors">
                 <TableCell className="px-6 py-4">
-                  <p className="font-bold text-slate-900">{item.expertise_name}</p>
-                  <p className="text-xs text-slate-500 font-medium">EXP-{item.expertise_id}</p>
+                  <p className="font-bold text-slate-900">{item.expertiseName}</p>
+                  <p className="text-xs text-slate-500 font-medium">EXP-{item.expertiseId}</p>
                 </TableCell>
                 <TableCell><span className="text-sm text-slate-600">{item.description}</span></TableCell>
                 <TableCell className="text-center"><span className="font-bold text-slate-900">{item.doctorCount} Doctors</span></TableCell>
@@ -47,7 +47,7 @@ export default function ExpertiseTable({ data, onDelete, onEdit }: Props) {
                       <Edit size={14} />
                     </Button>
                     <Button 
-                      onClick={() => onDelete(item.expertise_id)} 
+                      onClick={() => onDelete(item.expertiseId)} 
                       disabled={item.doctorCount > 0}
                       variant="outline" size="sm" className="w-8 h-8 p-0 text-rose-600 hover:bg-blue-50 border-slate-200 disabled:opacity-50"
                     >

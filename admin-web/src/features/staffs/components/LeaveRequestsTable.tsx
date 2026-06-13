@@ -17,20 +17,20 @@ export default function LeaveRequestsTable({ data, onAction }: Props) {
           <TableRow>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-6 h-12">Staff Details</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Leave Period</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Reason</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Status</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-6">Action</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Lý do</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-6">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((req) => (
-            <TableRow key={req.leave_id} className="hover:bg-slate-50/50">
+            <TableRow key={req.leaveId} className="hover:bg-slate-50/50">
               <TableCell className="px-6 py-4">
-                <p className="font-bold text-slate-900">{req.full_name}</p>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{req.staff_type} • {req.leave_type} LEAVE</p>
+                <p className="font-bold text-slate-900">{req.fullName}</p>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{req.staffType} • {req.leaveType} LEAVE</p>
               </TableCell>
               <TableCell className="font-medium text-slate-600 text-sm">
-                {req.from_date} <br/> <span className="text-slate-400">to</span> {req.to_date}
+                {req.fromDate} <br/> <span className="text-slate-400">to</span> {req.toDate}
               </TableCell>
               <TableCell className="max-w-[200px] truncate text-slate-500 text-sm">{req.reason}</TableCell>
               <TableCell className="text-center"><StatusBadge status={req.status} /></TableCell>
@@ -38,7 +38,7 @@ export default function LeaveRequestsTable({ data, onAction }: Props) {
                 {req.status === 'PENDING' ? (
                   <Button onClick={() => onAction(req)} variant="outline" size="sm" className="h-8 font-bold rounded-lg border-slate-200 text-blue-600">Review</Button>
                 ) : (
-                  <span className="text-xs font-bold text-slate-400">Processed by {req.approved_by}</span>
+                  <span className="text-xs font-bold text-slate-400">Processed by {req.approvedBy}</span>
                 )}
               </TableCell>
             </TableRow>

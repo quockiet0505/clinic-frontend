@@ -31,7 +31,7 @@ export default function PatientList() {
 
   const handleFormSubmit = async (formData: any, isEdit: boolean) => {
     if (isEdit) {
-      await patientApi.update(selectedPatient!.patient_id, formData);
+      await patientApi.update(selectedPatient!.patientId, formData);
     } else {
       await patientApi.create(formData);
     }
@@ -40,24 +40,24 @@ export default function PatientList() {
   };
 
   const filteredPatients = patients.filter(p => 
-    p.full_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    p.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || 
     p.phone.includes(searchTerm) ||
-    p.patient_id.toString().includes(searchTerm)
+    p.patientId.toString().includes(searchTerm)
   );
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <PageHeader 
-        title="Patient Directory" 
+        title="Danh sách Bệnh nhân" 
         description="Manage patient profiles, demographics, and contact information." 
-        actionText="Add Patient" 
+        actionText="Thêm Bệnh nhân" 
         onAction={() => { setSelectedPatient(null); setIsFormOpen(true); }} 
       />
 
       <PatientFilterBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
       {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Loading patients...</div>
+        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải danh sách bệnh nhân...</div>
       ) : (
         <PatientTable 
           data={filteredPatients} 
@@ -79,13 +79,13 @@ export default function PatientList() {
         onClose={() => setDeletingPatient(null)} 
         onConfirm={async () => { 
           if (deletingPatient) {
-            await patientApi.delete(deletingPatient.patient_id);
+            await patientApi.delete(deletingPatient.patientId);
             await fetchPatients();
           }
           setDeletingPatient(null); 
         }} 
-        title="Delete Patient" 
-        description={`Are you sure you want to permanently delete the records for ${deletingPatient?.full_name}?`} 
+        title="Xóa Bệnh Nhân" 
+        description={`Are you sure you want to permanently delete the records for ${deletingPatient?.fullName}?`} 
         confirmText="Yes, Delete"
       />
     </div>

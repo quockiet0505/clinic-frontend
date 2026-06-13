@@ -29,16 +29,16 @@ export default function ActiveVisits() {
   const [search, setSearch] = useState('');
 
   const filteredData = visits.filter(visit => {
-    const matchesDate = (!fromDate || visit.created_at >= fromDate) && (!toDate || visit.created_at <= toDate);
+    const matchesDate = (!fromDate || visit.createdAt >= fromDate) && (!toDate || visit.createdAt <= toDate);
     const matchesStatus = statusFilter === 'ALL' || visit.status === statusFilter;
-    const matchesDoctor = doctorFilter === 'ALL' || visit.doctor_name === doctorFilter;
-    const matchesSearch = visit.patient_name.toLowerCase().includes(search.toLowerCase());
+    const matchesDoctor = doctorFilter === 'ALL' || visit.doctorName === doctorFilter;
+    const matchesSearch = visit.patientName.toLowerCase().includes(search.toLowerCase());
     return matchesDate && matchesStatus && matchesDoctor && matchesSearch;
   });
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
-      <PageHeader title="Active Consultations" description="Manage live patient queue and medical records." />
+      <PageHeader title="Đang khám bệnh" description="Quản lý hàng đợi bệnh nhân và hồ sơ bệnh án." />
 
       <ActiveVisitsFilterBar 
         search={search} setSearch={setSearch}
@@ -48,7 +48,7 @@ export default function ActiveVisits() {
       />
 
       {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Loading active visits...</div>
+        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải danh sách...</div>
       ) : (
         <ActiveVisitsTable data={filteredData} onConsult={(id) => navigate(`/medical/consultation/${id}`)} />
       )}

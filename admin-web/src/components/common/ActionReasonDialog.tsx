@@ -43,19 +43,19 @@ export default function ActionReasonDialog({
           <div className="space-y-4 mt-2">
             {actorOptions && actorOptions.length > 0 && (
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{actorLabel}</label>
-                <select value={actorValue} onChange={(e) => setActorValue(e.target.value)} className={`flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-bold focus:ring-2 focus:ring-${confirmColor}-500 focus:outline-none`}>
+                <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">{actorLabel}</label>
+                <select value={actorValue} onChange={(e) => setActorValue(e.target.value)} className={`flex h-11 w-full rounded-xl border border-slate-200 bg-white px-3 font-bold  focus:ring-${confirmColor}-500 `}>
                   {actorOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                 </select>
               </div>
             )}
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{reasonLabel}</label>
+              <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest">{reasonLabel}</label>
               <Input placeholder="Type details here..." value={reason} onChange={(e) => setReason(e.target.value)} className="rounded-xl h-11" />
             </div>
           </div>
           <div className="flex w-full gap-3 mt-6">
-            <Button variant="outline" onClick={onClose} className="flex-1 h-12 rounded-2xl font-bold border-slate-200">Cancel</Button>
+            <Button variant="outline" onClick={onClose} className="flex-1 h-12 rounded-2xl font-bold border-slate-200 cursor-pointer">Hủy</Button>
             <Button onClick={handleConfirm} className={`flex-1 h-12 rounded-2xl bg-${confirmColor}-600 hover:bg-${confirmColor}-700 text-white font-bold shadow-lg shadow-${confirmColor}-100`}>
               {confirmText}
             </Button>

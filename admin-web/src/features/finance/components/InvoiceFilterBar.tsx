@@ -8,7 +8,7 @@ export default function InvoiceFilterBar({ search, setSearch, statusFilter, setS
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
         <Input 
-          placeholder="Search by Patient Name or Bill ID..." 
+          placeholder="Tìm kiếm by Patient Name or Bill ID..." 
           value={search} 
           onChange={(e) => setSearch(e.target.value)} 
           className="pl-10 h-10 rounded-xl border-slate-200 bg-slate-50 font-medium" 
@@ -19,13 +19,13 @@ export default function InvoiceFilterBar({ search, setSearch, statusFilter, setS
         <select 
           value={statusFilter} 
           onChange={(e) => setStatusFilter(e.target.value)} 
-          className="h-10 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-600 focus:outline-none cursor-pointer"
+          className="h-10 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-600 cursor-pointer"
         >
-          <option value="ALL">All Statuses</option>
+          <option value="ALL">Tất cả Trạng thái</option>
           <option value="UNPAID">Unpaid</option>
           <option value="PAID">Paid</option>
           <option value="REFUNDED">Refunded</option>
-          <option value="CANCELLED">Cancelled</option>
+          <option value="CANCELLED">Đã hủy</option>
         </select>
       </div>
     </div>

@@ -22,53 +22,53 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
 
   const menuGroups = [
     { 
-      title: 'OVERVIEW', 
+      title: 'TỔNG QUAN', 
       allowedRoles: ['ADMIN', 'MANAGER'], 
       items: [
-        { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' }
+        { name: 'Bảng điều khiển', icon: LayoutDashboard, path: '/dashboard' }
       ] 
     },
     { 
-      title: 'MY PORTAL', 
+      title: 'CÁ NHÂN', 
       allowedRoles: ['ADMIN', 'DOCTOR', 'STAFF', 'LAB_TECH'], 
       items: [
-        { name: 'My Schedule', icon: CalendarClock, path: '/my-schedule' } 
+        { name: 'Lịch làm việc', icon: CalendarClock, path: '/my-schedule' } 
       ] 
     },
     { 
-      title: 'FRONT DESK', 
+      title: 'TIẾP TÂN', 
       allowedRoles: ['ADMIN', 'STAFF'], 
       items: [
-        { name: 'Appointments', icon: CalendarDays, path: '/appointments', exact: true },
-        { name: 'Calendar View', icon: Calendar, path: '/appointments/calendar' },
-        { name: 'Follow-ups', icon: PhoneCall, path: '/appointments/follow-ups' },
-        { name: 'Patients', icon: Users, path: '/patients' }
+        { name: 'Lịch hẹn', icon: CalendarDays, path: '/appointments', exact: true },
+        { name: 'Lịch theo tháng', icon: Calendar, path: '/appointments/calendar' },
+        { name: 'Nhắc nhở tái khám', icon: PhoneCall, path: '/appointments/follow-ups' },
+        { name: 'Bệnh nhân', icon: Users, path: '/patients' }
       ]
     },
     { 
-      title: 'CLINICAL', 
+      title: 'KHÁM BỆNH', 
       allowedRoles: ['ADMIN', 'DOCTOR'], 
       items: [
-        { name: 'Active Visits', icon: Stethoscope, path: '/medical/active-visits' },
-        { name: 'Medical Records', icon: History, path: '/medical/records' }
+        { name: 'Đang khám', icon: Stethoscope, path: '/medical/active-visits' },
+        { name: 'Hồ sơ bệnh án', icon: History, path: '/medical/records' }
       ]
     },
     { 
-      title: 'LABORATORY', 
+      title: 'XÉT NGHIỆM', 
       allowedRoles: ['ADMIN', 'DOCTOR', 'LAB_TECH', 'STAFF'], 
       items: [
-        { name: 'Lab Orders', icon: TestTube, path: '/laboratory/orders' },
-        { name: 'Lab Results', icon: Archive, path: '/laboratory/results' },
+        { name: 'Chỉ định XN', icon: TestTube, path: '/laboratory/orders' },
+        { name: 'Kết quả XN', icon: Archive, path: '/laboratory/results' },
       ]
     },
     { 
-      title: 'PHARMACY', 
+      title: 'NHÀ THUỐC', 
       allowedRoles: ['ADMIN', 'DOCTOR', 'STAFF'], 
       items: [
-        { name: 'Medicine Inventory', icon: Pill, path: '/pharmacy/inventory' }, 
+        { name: 'Kho thuốc', icon: Pill, path: '/pharmacy/inventory' }, 
         // { name: 'Purchase Orders', icon: ClipboardPlus, path: '/pharmacy/purchase-orders' },
         // { name: 'Suppliers', icon: Truck, path: '/pharmacy/suppliers' }, 
-        { name: 'Dispense Rx', icon: ClipboardPlus, path: '/pharmacy/prescriptions' }
+        { name: 'Phát thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions' }
       ]
     },
     /*
@@ -84,31 +84,31 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
     },
     */
     { 
-      title: 'ADMINISTRATION', 
+      title: 'QUẢN TRỊ', 
       allowedRoles: ['ADMIN'], 
       items: [
-        { name: 'Staff List', icon: BriefcaseMedical, path: '/staffs', exact: true },
+        { name: 'Nhân viên', icon: BriefcaseMedical, path: '/staffs', exact: true },
         // { name: 'Leave Requests', icon: CalendarOff, path: '/staffs/leave-requests' }
       ]
     },
     { 
-      title: 'COMMUNICATIONS', 
+      title: 'GIAO TIẾP', 
       allowedRoles: ['ADMIN', 'MANAGER'], 
       items: [
-        { name: 'Notifications', icon: Bell, path: '/system/notifications' },
-        { name: 'Patient Feedback', icon: MessageSquareHeart, path: '/system/feedback' },
+        { name: 'Thông báo', icon: Bell, path: '/system/notifications' },
+        { name: 'Phản hồi', icon: MessageSquareHeart, path: '/system/feedback' },
         // { name: 'AI Chat Logs', icon: Bot, path: '/system/ai-chat' } 
       ]
     },
     { 
-      title: 'SETTINGS', 
+      title: 'CÀI ĐẶT', 
       allowedRoles: ['ADMIN'], 
       items: [
-        { name: 'General Settings', icon: Settings, path: '/settings/general' },
-        { name: 'Roles & Permissions', icon: ShieldCheck, path: '/settings/roles' }, 
-        { name: 'Service Lab Catalog', icon: Layers, path: '/settings/services' }, 
-        { name: 'Consultation Fees', icon: CircleDollarSign, path: '/settings/doctor_pricing' },
-        { name: 'Medical Specialties', icon: Award, path: '/settings/expertise' }
+        { name: 'Cài đặt chung', icon: Settings, path: '/settings/general' },
+        { name: 'Phân quyền', icon: ShieldCheck, path: '/settings/roles' }, 
+        { name: 'Danh mục Dịch vụ', icon: Layers, path: '/settings/services' }, 
+        { name: 'Phí khám bệnh', icon: CircleDollarSign, path: '/settings/doctor_pricing' },
+        { name: 'Chuyên khoa', icon: Award, path: '/settings/expertise' }
       ]
     },
   ];
@@ -130,8 +130,8 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
           />
           {!isCollapsed && (
             <div className="min-w-0">
-              <p className="text-[13px] font-black text-slate-900 leading-tight truncate">Health Clinic</p>
-              <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-0.5">Admin Portal</p>
+              <p className="text-[13px] font-black text-slate-900 leading-tight truncate">Phòng Khám</p>
+              <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-0.5">Trang Quản Trị</p>
             </div>
           )}
         </div>
@@ -198,8 +198,8 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
           <UserCircle size={isCollapsed ? 26 : 24} className="text-slate-400 shrink-0" />
           {!isCollapsed && (
             <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-bold truncate">Admin User</p>
-              <p className="text-xs text-slate-500 truncate">My Profile & Settings</p>
+              <p className="text-sm font-bold truncate">Quản trị viên</p>
+              <p className="text-xs text-slate-500 truncate">Hồ sơ & Cài đặt</p>
             </div>
           )}
         </Link>

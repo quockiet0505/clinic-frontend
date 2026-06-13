@@ -44,17 +44,17 @@ export default function AppointmentFilterBar({ search, setSearch, statusFilter, 
           onChange={(e) => setStatusFilter(e.target.value)} 
           className="h-10 rounded-xl border border-slate-200 bg-slate-50 px-3 font-bold text-slate-600 outline-none w-full sm:w-auto cursor-pointer"
         >
-          <option value="ALL">All Statuses</option>
-          <option value="PENDING">Pending</option>
-          <option value="CONFIRMED">Confirmed</option>
-          <option value="CHECKED_IN">Checked In</option>
-          <option value="IN_PROGRESS">In Progress</option>
-          <option value="COMPLETED">Completed</option>
-          <option value="CANCELLED">Cancelled</option>
+          <option value="ALL">Tất cả Trạng thái</option>
+          <option value="PENDING">Chờ khám</option>
+          <option value="CONFIRMED">Đã xác nhận</option>
+          <option value="CHECKED_IN">Đã đến</option>
+          <option value="IN_PROGRESS">Đang khám</option>
+          <option value="COMPLETED">Hoàn thành</option>
+          <option value="CANCELLED">Đã hủy</option>
         </select>
         
         <div className="w-full sm:w-56">
-          <SearchInput value={search} onChange={setSearch} placeholder="Search patient..." />
+          <SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm bệnh nhân..." />
         </div>
         
         <DateRangeFilter from={fromDate} to={toDate} onChangeFrom={setFromDate} onChangeTo={setToDate} />
