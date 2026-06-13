@@ -35,7 +35,7 @@ export default function PurchaseOrders() {
         <PageHeader title="Purchase Orders" description="Manage supplier orders and restock pharmacy inventory." />
         <Button 
           onClick={() => setIsFormOpen(true)}
-          className="h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 shadow-sm"
+          className="h-10 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-5 shadow-sm"
           >
           <Plus size={18} className="mr-2"/> Create Order
           </Button>

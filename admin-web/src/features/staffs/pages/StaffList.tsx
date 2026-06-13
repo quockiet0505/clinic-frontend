@@ -5,14 +5,11 @@ import StaffFilterBar from '../components/StaffFilterBar';
 import StaffTable from '../components/StaffTable';
 import StaffFormDialog from '../components/StaffFormDialog';
 import { Staff } from '../types/staff';
-
-const INITIAL_STAFF: Staff[] = [
-  { staff_id: 1, full_name: 'Dr. Sarah Smith', email: 'sarah@clinic.vn', phone: '+1 555-1111', staff_type: 'DOCTOR', expertise_name: 'Cardiology', is_active: true },
-  { staff_id: 2, full_name: 'Michael Chen', email: 'm.chen@clinic.vn', phone: '+1 555-2222', staff_type: 'ADMIN', is_active: true },
-];
+import { staffApi } from '../api/staffApi';
 
 export default function StaffList() {
-  const [staffList, setStaffList] = useState<Staff[]>(INITIAL_STAFF);
+  const [staffList, setStaffList] = useState<Staff[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('ALL');
   
@@ -20,9 +17,21 @@ export default function StaffList() {
   const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
   const [deletingStaff, setDeletingStaff] = useState<Staff | null>(null);
 
-  const handleFormSubmit = (formData: any, isEdit: boolean) => {
-    if (isEdit) setStaffList(staffList.map(s => s.staff_id === selectedStaff?.staff_id ? { ...s, ...formData } : s));
-    else setStaffList([{ ...formData, staff_id: Date.now() }, ...staffList]);
+  const fetchStaff = async () => {
+    setLoading(true);
+    const data = await staffApi.getAll();
+    setStaffList(data);
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    fetchStaff();
+  }, []);
+
+  const handleFormSubmit = async (formData: any, isEdit: boolean) => {
+    if (isEdit) await staffApi.update(selectedStaff!.staff_id, formData);
+    else await staffApi.create(formData);
+    await fetchStaff();
     setIsFormOpen(false);
   };
 
@@ -36,9 +45,19 @@ export default function StaffList() {
     <div className="space-y-6 animate-in fade-in duration-500 h-full flex flex-col">
       <PageHeader title="Staff Directory" description="Manage clinic personnel across all departments." actionText="Add Member" onAction={() => { setSelectedStaff(null); setIsFormOpen(true); }} />
       <StaffFilterBar activeTab={activeTab} setActiveTab={setActiveTab} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <StaffTable data={filteredStaff} onEdit={(s) => { setSelectedStaff(s); setIsFormOpen(true); }} onDelete={setDeletingStaff} />
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center text-slate-400">Loading staff...</div>
+      ) : (
+        <StaffTable data={filteredStaff} onEdit={(s) => { setSelectedStaff(s); setIsFormOpen(true); }} onDelete={setDeletingStaff} />
+      )}
       <StaffFormDialog isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} onSubmit={handleFormSubmit} initialData={selectedStaff} />
-      <ConfirmDialog isOpen={!!deletingStaff} onClose={() => setDeletingStaff(null)} onConfirm={() => { setStaffList(staffList.filter(s => s.staff_id !== deletingStaff?.staff_id)); setDeletingStaff(null); }} title="Delete Staff Member" description={`Are you sure you want to remove ${deletingStaff?.full_name}?`} />
+      <ConfirmDialog isOpen={!!deletingStaff} onClose={() => setDeletingStaff(null)} onConfirm={async () => { 
+        if (deletingStaff) {
+          await staffApi.delete(deletingStaff.staff_id);
+          await fetchStaff();
+        }
+        setDeletingStaff(null); 
+      }} title="Delete Staff Member" description={`Are you sure you want to remove ${deletingStaff?.full_name}?`} />
     </div>
   );
 }

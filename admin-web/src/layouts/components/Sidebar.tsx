@@ -66,11 +66,12 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
       allowedRoles: ['ADMIN', 'DOCTOR', 'STAFF'], 
       items: [
         { name: 'Medicine Inventory', icon: Pill, path: '/pharmacy/inventory' }, 
-        { name: 'Purchase Orders', icon: ClipboardPlus, path: '/pharmacy/purchase-orders' },
-        { name: 'Suppliers', icon: Truck, path: '/pharmacy/suppliers' }, 
+        // { name: 'Purchase Orders', icon: ClipboardPlus, path: '/pharmacy/purchase-orders' },
+        // { name: 'Suppliers', icon: Truck, path: '/pharmacy/suppliers' }, 
         { name: 'Dispense Rx', icon: ClipboardPlus, path: '/pharmacy/prescriptions' }
       ]
     },
+    /*
     { 
       title: 'INVOICE & FINANCE', 
       allowedRoles: ['ADMIN', 'STAFF'], 
@@ -81,12 +82,13 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
         { name: 'Refunds', icon: Undo2, path: '/finance/refunds' }
       ] 
     },
+    */
     { 
       title: 'ADMINISTRATION', 
       allowedRoles: ['ADMIN'], 
       items: [
         { name: 'Staff List', icon: BriefcaseMedical, path: '/staffs', exact: true },
-        { name: 'Leave Requests', icon: CalendarOff, path: '/staffs/leave-requests' }
+        // { name: 'Leave Requests', icon: CalendarOff, path: '/staffs/leave-requests' }
       ]
     },
     { 
@@ -95,7 +97,7 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
       items: [
         { name: 'Notifications', icon: Bell, path: '/system/notifications' },
         { name: 'Patient Feedback', icon: MessageSquareHeart, path: '/system/feedback' },
-        { name: 'AI Chat Logs', icon: Bot, path: '/system/ai-chat' } 
+        // { name: 'AI Chat Logs', icon: Bot, path: '/system/ai-chat' } 
       ]
     },
     { 
@@ -119,38 +121,29 @@ export default function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
     >
       
       {/* Brand Header */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 shrink-0">
-        <div className={`flex items-center gap-2 text-blue-600 font-bold text-xl tracking-tight transition-all ${isCollapsed ? 'justify-center w-full' : ''}`}>
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black shadow-md shadow-blue-200 shrink-0">
-            P
-          </div>
-          {/* Ẩn text khi thu gọn */}
-          {!isCollapsed && <span className="whitespace-nowrap">Preclinic</span>}
+      <div className={`flex items-center border-b border-slate-100 shrink-0 transition-all duration-300 ${isCollapsed ? 'h-16 justify-center px-2' : 'h-20 justify-between px-4'}`}>
+        <div className={`flex items-center gap-3 min-w-0 ${isCollapsed ? 'justify-center' : ''}`}>
+          <img 
+            src="http://localhost:8080/images/logo.png" 
+            alt="Logo" 
+            className={`object-contain shrink-0 transition-all duration-300 ${isCollapsed ? 'w-11 h-11' : 'w-14 h-14'}`} 
+          />
+          {!isCollapsed && (
+            <div className="min-w-0">
+              <p className="text-[13px] font-black text-slate-900 leading-tight truncate">Health Clinic</p>
+              <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mt-0.5">Admin Portal</p>
+            </div>
+          )}
         </div>
-        
-        <button 
-          onClick={onToggle} 
-          className={`p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors shrink-0 ${isCollapsed ? 'hidden' : 'block'}`}
-        >
-          {/* {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />} */}
-          <ChevronLeft size={20} />
-        </button>
+        {!isCollapsed && (
+          <button 
+            onClick={onToggle} 
+            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors shrink-0"
+          >
+            <ChevronLeft size={18} />
+          </button>
+        )}
       </div>
-
-      {/* Clinic Info (Ẩn hoàn toàn khi thu gọn) */}
-      {!isCollapsed && (
-        <div className="p-4 shrink-0 transition-opacity">
-          <div className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-100 rounded-xl shadow-sm">
-            <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center shrink-0">
-              <Building2 size={20} />
-            </div>
-            <div className="flex-1 overflow-hidden">
-              <h3 className="text-sm font-bold text-slate-800 truncate">Trustcare Clinic</h3>
-              <p className="text-xs text-slate-500 truncate">Dong Thap, VN</p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Navigation Links */}
       <div className={`flex-1 overflow-y-auto pb-4 space-y-6 custom-scrollbar ${isCollapsed ? 'px-3 mt-4' : 'px-4 mt-0'}`}>

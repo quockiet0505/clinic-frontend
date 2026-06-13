@@ -9,15 +9,23 @@ import { FollowUp } from '../types/appointment';
 
 const TODAY = new Date().toISOString().split('T')[0];
 
+import { followUpApi } from '../api/followUpApi';
+
 export default function FollowUpList() {
-  const [data, setData] = useState<FollowUp[]>([
-    { follow_up_id: 1, record_id: 99, patient_id: 101, patient_name: 'Olivia Davis', phone: '+1 555-4444', doctor_id: 1, doctor_name: 'Dr. Sarah', scheduled_datetime: `${TODAY} 09:00:00`, note: 'Post-Surgery Checkup', status: 'PENDING' },
-  ]);
+  const [data, setData] = useState<FollowUp[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    followUpApi.getAll().then(res => {
+      setData(res);
+      setLoading(false);
+    });
+  }, []);
   
   const [search, setSearch] = useState('');
   const [activeTab, setActiveTab] = useState('PENDING');
-  const [fromDate, setFromDate] = useState(TODAY);
-  const [toDate, setToDate] = useState(TODAY);
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   
   const [selectedCall, setSelectedCall] = useState<FollowUp | null>(null);
   const [selectedNotify, setSelectedNotify] = useState<FollowUp | null>(null);
@@ -34,7 +42,14 @@ export default function FollowUpList() {
     setSelectedNotify(null);
   };
 
-  const filtered = data.filter(item => item.patient_name.toLowerCase().includes(search.toLowerCase()) && item.status === activeTab && item.scheduled_datetime >= fromDate);
+  const filtered = data.filter(item => {
+    // Tách ngày từ scheduled_datetime (có dạng 'YYYY-MM-DD HH:mm:ss' hoặc 'YYYY-MM-DDTHH:mm:ss')
+    const scheduledDate = item.scheduled_datetime.split('T')[0].split(' ')[0];
+    return item.patient_name.toLowerCase().includes(search.toLowerCase()) && 
+           item.status === activeTab && 
+           (!fromDate || scheduledDate >= fromDate) && 
+           (!toDate || scheduledDate <= toDate);
+  });
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
@@ -48,7 +63,11 @@ export default function FollowUpList() {
 
       <FollowUpFilterBar tab={activeTab} setTab={setActiveTab} fromDate={fromDate} setFromDate={setFromDate} toDate={toDate} setToDate={setToDate} search={search} setSearch={setSearch} />
 
-      <FollowUpTable data={filtered} onLogCall={setSelectedCall} onSendReminder={setSelectedNotify} />
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center text-slate-400">Loading follow-ups...</div>
+      ) : (
+        <FollowUpTable data={filtered} onLogCall={setSelectedCall} onSendReminder={setSelectedNotify} />
+      )}
 
       {/* DIALOG GHI NHẬN CUỘC GỌI */}
       <FollowUpCallDialog patient={selectedCall} onClose={() => setSelectedCall(null)} onSubmit={handleLogCall} />

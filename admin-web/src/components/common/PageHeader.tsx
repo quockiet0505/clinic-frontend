@@ -15,7 +15,7 @@ export default function PageHeader({ title, description, actionText, onAction }:
         <p className="text-sm text-slate-500 mt-1">{description}</p>
       </div>
       {actionText && onAction && (
-        <Button onClick={onAction} className="h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 shadow-sm w-full sm:w-auto">
+        <Button onClick={onAction} className="h-10 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-5 shadow-sm w-full sm:w-auto">
           <Plus size={18} className="mr-2" /> {actionText}
         </Button>
       )}

@@ -21,8 +21,8 @@ export default function PrescriptionDispense() {
 
   const filtered = prescriptions.filter(rx => 
     (statusFilter === 'ALL' || rx.status === statusFilter) &&
-    rx.patient_name.toLowerCase().includes(search.toLowerCase()) &&
-    rx.created_at >= fromDate && rx.created_at <= toDate
+    (rx.patient_name || '').toLowerCase().includes(search.toLowerCase()) &&
+    (!fromDate || rx.created_at >= fromDate) && rx.created_at <= toDate
   );
 
   return (

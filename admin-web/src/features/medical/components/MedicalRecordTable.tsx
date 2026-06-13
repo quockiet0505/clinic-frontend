@@ -32,8 +32,8 @@ export default function MedicalRecordTable({ data, onViewDetail }: { data: Medic
               </TableCell>
               <TableCell className="text-center"><StatusBadge status={rec.status} /></TableCell>
               <TableCell className="text-right pr-8">
-                <Button onClick={() => onViewDetail(rec.record_id)} variant="outline" size="sm" className="h-9 w-9 p-0 rounded-xl text-blue-600 border-slate-200 hover:bg-blue-50">
-                  <Eye size={16}/>
+                <Button onClick={() => onViewDetail(rec.record_id)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-blue-600 border-blue-100 bg-blue-50/50 hover:bg-blue-50">
+                  <Eye size={14}/><span>Chi tiết</span>
                 </Button>
               </TableCell>
             </TableRow>

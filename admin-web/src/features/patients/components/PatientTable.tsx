@@ -1,5 +1,5 @@
 import React from 'react';
-import { Eye, Edit, Trash2 } from 'lucide-react';
+import { Eye, Edit2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Patient } from '../types/patient';
@@ -45,10 +45,16 @@ export default function PatientTable({ data, onViewDetails, onEdit, onDelete }: 
               </TableCell>
               <TableCell className="text-sm font-medium text-slate-600">{patient.date_of_birth}</TableCell>
               <TableCell className="text-right pr-8">
-                <div className="flex justify-end gap-2">
-                  <Button onClick={() => onViewDetails(patient.patient_id)} variant="outline" size="sm" className="w-9 h-9 p-0 rounded-xl text-emerald-600 border-slate-200 hover:bg-emerald-50"><Eye size={16}/></Button>
-                  <Button onClick={() => onEdit(patient)} variant="outline" size="sm" className="w-9 h-9 p-0 rounded-xl text-blue-600 border-slate-200 hover:bg-blue-50"><Edit size={16}/></Button>
-                  <Button onClick={() => onDelete(patient)} variant="outline" size="sm" className="w-9 h-9 p-0 rounded-xl text-rose-600 border-slate-200 hover:bg-rose-50"><Trash2 size={16}/></Button>
+                <div className="flex justify-end gap-1.5">
+                  <Button onClick={() => onViewDetails(patient.patient_id)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-emerald-600 border-emerald-100 bg-emerald-50/50 hover:bg-emerald-50">
+                    <Eye size={14}/><span>Chi tiết</span>
+                  </Button>
+                  <Button onClick={() => onEdit(patient)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-blue-600 border-blue-100 bg-blue-50/50 hover:bg-blue-50">
+                    <Edit2 size={14}/><span>Sửa</span>
+                  </Button>
+                  <Button onClick={() => onDelete(patient)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-rose-600 border-rose-100 bg-rose-50/50 hover:bg-rose-50">
+                    <Trash2 size={14}/><span>Xoá</span>
+                  </Button>
                 </div>
               </TableCell>
             </TableRow>

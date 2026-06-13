@@ -6,27 +6,36 @@ import PatientFilterBar from '../components/PatientFilterBar';
 import PatientTable from '../components/PatientTable';
 import PatientFormDialog from '../components/PatientFormDialog';
 import { Patient } from '../types/patient';
-
-const INITIAL_PATIENTS: Patient[] = [
-  { patient_id: 1001, full_name: 'Liam Anderson', gender: 'Male', date_of_birth: '1985-06-15', phone: '+1 (555) 123-4567', address: '123 Main St, NY' },
-  { patient_id: 1002, full_name: 'Emma Watson', gender: 'Female', date_of_birth: '1992-11-03', phone: '+1 (555) 987-6543', address: '456 Oak Ave, CA' },
-];
+import { patientApi } from '../api/patientApi';
 
 export default function PatientList() {
   const navigate = useNavigate();
-  const [patients, setPatients] = useState<Patient[]>(INITIAL_PATIENTS);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [deletingPatient, setDeletingPatient] = useState<Patient | null>(null);
 
-  const handleFormSubmit = (formData: any, isEdit: boolean) => {
+  const fetchPatients = async () => {
+    setLoading(true);
+    const data = await patientApi.getAll();
+    setPatients(data);
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    fetchPatients();
+  }, []);
+
+  const handleFormSubmit = async (formData: any, isEdit: boolean) => {
     if (isEdit) {
-      setPatients(patients.map(p => p.patient_id === selectedPatient?.patient_id ? { ...p, ...formData } : p));
+      await patientApi.update(selectedPatient!.patient_id, formData);
     } else {
-      setPatients([{ ...formData, patient_id: Date.now() }, ...patients]);
+      await patientApi.create(formData);
     }
+    await fetchPatients();
     setIsFormOpen(false);
   };
 
@@ -47,12 +56,16 @@ export default function PatientList() {
 
       <PatientFilterBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-      <PatientTable 
-        data={filteredPatients} 
-        onViewDetails={(id) => navigate(`/patients/${id}`)}
-        onEdit={(patient) => { setSelectedPatient(patient); setIsFormOpen(true); }} 
-        onDelete={(patient) => setDeletingPatient(patient)}
-      />
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center text-slate-400">Loading patients...</div>
+      ) : (
+        <PatientTable 
+          data={filteredPatients} 
+          onViewDetails={(id) => navigate(`/patients/${id}`)}
+          onEdit={(patient) => { setSelectedPatient(patient); setIsFormOpen(true); }} 
+          onDelete={(patient) => setDeletingPatient(patient)}
+        />
+      )}
 
       <PatientFormDialog 
         isOpen={isFormOpen} 
@@ -64,7 +77,13 @@ export default function PatientList() {
       <ConfirmDialog 
         isOpen={!!deletingPatient} 
         onClose={() => setDeletingPatient(null)} 
-        onConfirm={() => { setPatients(patients.filter(p => p.patient_id !== deletingPatient?.patient_id)); setDeletingPatient(null); }} 
+        onConfirm={async () => { 
+          if (deletingPatient) {
+            await patientApi.delete(deletingPatient.patient_id);
+            await fetchPatients();
+          }
+          setDeletingPatient(null); 
+        }} 
         title="Delete Patient" 
         description={`Are you sure you want to permanently delete the records for ${deletingPatient?.full_name}?`} 
         confirmText="Yes, Delete"

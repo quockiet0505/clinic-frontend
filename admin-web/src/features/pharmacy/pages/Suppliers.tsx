@@ -32,7 +32,7 @@ export default function Suppliers() {
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex justify-between items-center shrink-0">
         <PageHeader title="Vendors & Suppliers" description="Manage pharmaceutical partners and distributors." />
-        <Button onClick={() => { setSelectedSupplier(null); setIsFormOpen(true); }} className="h-10 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 shadow-sm">
+        <Button onClick={() => { setSelectedSupplier(null); setIsFormOpen(true); }} className="h-10 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-5 shadow-sm">
           <Plus size={18} className="mr-2"/> Add Supplier
         </Button>
       </div>

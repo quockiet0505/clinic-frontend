@@ -5,27 +5,43 @@ import MedicalRecordFilterBar from '../components/MedicalRecordFilterBar';
 import MedicalRecordTable from '../components/MedicalRecordTable';
 import { MedicalRecord } from '../types/medical';
 
+import { medicalApi } from '../api/medicalApi';
+
 export default function MedicalRecordsList() {
   const navigate = useNavigate();
-  const [fromDate, setFromDate] = useState('2026-04-01');
-  const [toDate, setToDate] = useState('2026-04-30');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [search, setSearch] = useState('');
 
-  const [records] = useState<MedicalRecord[]>([
-    { record_id: 901, patient_id: 101, patient_name: 'Olivia Davis', main_doctor_id: 1, doctor_name: 'Dr. Sarah Smith', diagnosis: 'Acute Bronchitis', treatment: '', note: '', status: 'DONE', created_at: '2026-04-20' },
-    { record_id: 902, patient_id: 102, patient_name: 'Liam Anderson', main_doctor_id: 2, doctor_name: 'Dr. Robert Davis', diagnosis: 'Essential Hypertension', treatment: '', note: '', status: 'DONE', created_at: '2026-04-25' },
-  ]);
+  const [records, setRecords] = useState<MedicalRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    medicalApi.getRecords().then(data => {
+      // Filter out only DONE/CANCELLED records if needed, or let the backend do it.
+      // Usually "MedicalRecordsList" is for past records (DONE, CANCELLED).
+      // ActiveVisits handles IN_PROGRESS, WAITING_RESULT.
+      const pastRecords = data.filter(r => ['DONE', 'CANCELLED'].includes(r.status));
+      setRecords(pastRecords);
+      setLoading(false);
+    });
+  }, []);
 
   const filteredData = records.filter(rec => 
     rec.patient_name.toLowerCase().includes(search.toLowerCase()) &&
-    rec.created_at >= fromDate && rec.created_at <= toDate
+    (!fromDate || rec.created_at >= fromDate) && 
+    (!toDate || rec.created_at <= toDate)
   );
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <PageHeader title="Visit Archive" description="Search and review past medical records (DONE/CANCELLED)." />
       <MedicalRecordFilterBar search={search} setSearch={setSearch} fromDate={fromDate} toDate={toDate} setFromDate={setFromDate} setToDate={setToDate} />
-      <MedicalRecordTable data={filteredData} onViewDetail={(id) => navigate(`/medical/records/${id}`)} />
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center text-slate-400">Loading records...</div>
+      ) : (
+        <MedicalRecordTable data={filteredData} onViewDetail={(id) => navigate(`/medical/records/${id}`)} />
+      )}
     </div>
   );
 }

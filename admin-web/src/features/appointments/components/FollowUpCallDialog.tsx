@@ -60,7 +60,7 @@ export default function FollowUpCallDialog({ patient, onClose, onSubmit }: any) 
           <Button 
             onClick={() => onSubmit(status, result)} 
             disabled={!result.trim()}
-            className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 shadow-sm"
+            className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-6 shadow-sm"
           >
             Save Update
           </Button>

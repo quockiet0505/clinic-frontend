@@ -60,7 +60,7 @@ export default function RoleFormDialog({ role, onClose, onSave }: any) {
           <Button variant="ghost" onClick={onClose} className="rounded-xl font-bold text-slate-500">Cancel</Button>
           <Button 
             onClick={() => onSave(role.role_id, formData)} 
-            className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 shadow-sm"
+            className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-6 shadow-sm"
           >
             Save Role
           </Button>

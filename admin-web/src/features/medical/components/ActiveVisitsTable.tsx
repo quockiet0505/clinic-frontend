@@ -49,7 +49,7 @@ export default function ActiveVisitsTable({ data, onConsult }: Props) {
               </TableCell>
               <TableCell className="text-center"><StatusBadge status={visit.status} /></TableCell>
               <TableCell className="text-right pr-8">
-                <Button onClick={() => onConsult(visit.record_id)} size="sm" className="h-9 font-bold rounded-xl px-4 bg-blue-600 hover:bg-blue-700 text-white shadow-sm">
+                <Button onClick={() => onConsult(visit.record_id)} size="sm" className="h-9 font-bold rounded-xl px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white shadow-sm">
                   Consult <ArrowRight size={14} className="ml-1.5"/>
                 </Button>
               </TableCell>

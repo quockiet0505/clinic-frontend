@@ -34,7 +34,7 @@ export default function InvoiceDetails() {
         </div>
         <div className="flex gap-2 w-full sm:w-auto">
           <Button variant="outline" className="flex-1 sm:flex-none rounded-xl font-bold border-slate-200"><Download size={18} className="mr-2" /> PDF</Button>
-          <Button onClick={() => window.print()} className="flex-1 sm:flex-none rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-sm">
+          <Button onClick={() => window.print()} className="flex-1 sm:flex-none rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold shadow-sm">
             <Printer size={18} className="mr-2" /> Print Invoice
           </Button>
         </div>

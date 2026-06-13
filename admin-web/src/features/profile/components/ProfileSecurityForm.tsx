@@ -86,7 +86,7 @@ export default function ProfileSecurityForm({ passwordData, onChange, onSave }: 
         <div className="pt-4 flex justify-end">
           <Button 
             onClick={onSave} 
-            className="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 shadow-sm transition-all"
+            className="h-11 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 shadow-sm transition-all"
           >
             Update Password
           </Button>

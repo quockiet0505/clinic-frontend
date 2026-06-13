@@ -144,7 +144,7 @@ export default function PurchaseOrderFormDialog({ isOpen, onClose, onSave }: any
             <Button 
               onClick={handleSave} 
               disabled={items.length === 0 || !supplierId} 
-              className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 shadow-sm"
+              className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 shadow-sm"
             >
               Submit Order
             </Button>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Globe, UserRound, XCircle, CheckCircle2 } from 'lucide-react';
+import { Clock, Globe, UserRound, CheckCircle2, XCircle, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import StatusBadge from '@/components/common/StatusBadge';
@@ -47,15 +47,15 @@ export default function AppointmentTable({ data, onCheckIn, onCancel }: Props) {
                 )}
               </TableCell>
               <TableCell className="text-right pr-8">
-                <div className="flex justify-end gap-2">
+                <div className="flex justify-end gap-1.5">
                   {['PENDING', 'CONFIRMED'].includes(apt.status) && (
-                    <Button onClick={() => onCheckIn(apt.appointment_id)} variant="outline" size="sm" className="text-blue-600 font-bold rounded-xl border-slate-200 hover:bg-blue-50">
-                      <CheckCircle2 size={16} className="mr-1.5"/> Check In
+                    <Button onClick={() => onCheckIn(apt.appointment_id)} variant="outline" size="sm" className="flex items-center gap-1.5 text-blue-600 font-semibold rounded-xl border-blue-100 bg-blue-50/50 hover:bg-blue-50 px-3 h-8">
+                      <LogIn size={14}/><span>Check-in</span>
                     </Button>
                   )}
                   {!['COMPLETED', 'CANCELLED', 'NO_SHOW'].includes(apt.status) && (
-                    <Button onClick={() => onCancel(apt)} variant="outline" size="icon" className="text-rose-600 border-slate-200 hover:bg-rose-50 rounded-xl w-9 h-9">
-                      <XCircle size={16} />
+                    <Button onClick={() => onCancel(apt)} variant="outline" size="sm" className="flex items-center gap-1.5 text-rose-600 border-rose-100 bg-rose-50/50 hover:bg-rose-50 font-semibold rounded-xl px-3 h-8">
+                      <XCircle size={14}/><span>Huỷ</span>
                     </Button>
                   )}
                 </div>

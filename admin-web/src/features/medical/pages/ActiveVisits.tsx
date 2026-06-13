@@ -7,22 +7,29 @@ import { MedicalRecord } from '../types/medical';
 
 const TODAY = new Date().toISOString().split('T')[0];
 
+import { medicalApi } from '../api/medicalApi';
+
 export default function ActiveVisits() {
   const navigate = useNavigate();
 
-  const [visits] = useState<MedicalRecord[]>([
-    { record_id: 1, patient_id: 101, appointment_id: 50, patient_name: 'Liam Anderson', main_doctor_id: 1, doctor_name: 'Dr. Sarah Smith', diagnosis: '', treatment: '', note: '', status: 'IN_PROGRESS', created_at: TODAY, queue_number: 1, checkin_time: '08:15 AM', vitals_taken: true },
-    { record_id: 2, patient_id: 102, appointment_id: 51, patient_name: 'Emma Watson', main_doctor_id: 2, doctor_name: 'Dr. Robert Davis', diagnosis: '', treatment: '', note: '', status: 'WAITING_RESULT', created_at: TODAY, queue_number: 2, checkin_time: '08:45 AM', vitals_taken: false },
-  ]);
+  const [visits, setVisits] = useState<MedicalRecord[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [fromDate, setFromDate] = useState(TODAY);
-  const [toDate, setToDate] = useState(TODAY);
+  React.useEffect(() => {
+    medicalApi.getActiveVisits().then(data => {
+      setVisits(data);
+      setLoading(false);
+    });
+  }, []);
+
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [doctorFilter, setDoctorFilter] = useState('ALL');
   const [search, setSearch] = useState('');
 
   const filteredData = visits.filter(visit => {
-    const matchesDate = visit.created_at >= fromDate && visit.created_at <= toDate;
+    const matchesDate = (!fromDate || visit.created_at >= fromDate) && (!toDate || visit.created_at <= toDate);
     const matchesStatus = statusFilter === 'ALL' || visit.status === statusFilter;
     const matchesDoctor = doctorFilter === 'ALL' || visit.doctor_name === doctorFilter;
     const matchesSearch = visit.patient_name.toLowerCase().includes(search.toLowerCase());
@@ -40,7 +47,11 @@ export default function ActiveVisits() {
         fromDate={fromDate} toDate={toDate} setFromDate={setFromDate} setToDate={setToDate}
       />
 
-      <ActiveVisitsTable data={filteredData} onConsult={(id) => navigate(`/medical/consultation/${id}`)} />
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center text-slate-400">Loading active visits...</div>
+      ) : (
+        <ActiveVisitsTable data={filteredData} onConsult={(id) => navigate(`/medical/consultation/${id}`)} />
+      )}
     </div>
   );
 }

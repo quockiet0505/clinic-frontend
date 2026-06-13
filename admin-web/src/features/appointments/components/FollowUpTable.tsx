@@ -51,7 +51,7 @@ export default function FollowUpTable({ data, onLogCall, onSendReminder }: Props
                       <BellRing size={16}/>
                     </Button>
                     {/* NÚT GHI NHẬN CUỘC GỌI */}
-                    <Button onClick={() => onLogCall(item)} size="sm" className="h-9 font-bold rounded-xl px-4 bg-blue-600 hover:bg-blue-700 text-white shadow-sm">
+                    <Button onClick={() => onLogCall(item)} size="sm" className="h-9 font-bold rounded-xl px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white shadow-sm">
                       <Phone size={14} className="mr-1.5"/> Log Call
                     </Button>
                   </div>

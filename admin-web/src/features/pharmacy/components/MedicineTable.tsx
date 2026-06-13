@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit, Trash2, Pill } from 'lucide-react';
+import { Edit2, Trash2, Pill } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -47,9 +47,13 @@ export default function MedicineTable({ data, onEdit, onDelete }: Props) {
               </TableCell>
               <TableCell className="text-center">{getStockStatus(med.quantity, med.min_stock_level)}</TableCell>
               <TableCell className="text-right pr-8">
-                <div className="flex justify-end gap-2">
-                  <Button onClick={() => onEdit(med)} variant="outline" size="sm" className="w-9 h-9 p-0 rounded-xl text-blue-600 border-slate-200 hover:bg-blue-50"><Edit size={16}/></Button>
-                  <Button onClick={() => onDelete(med)} variant="outline" size="sm" className="w-9 h-9 p-0 rounded-xl text-rose-600 border-slate-200 hover:bg-rose-50"><Trash2 size={16}/></Button>
+                <div className="flex justify-end gap-1.5">
+                  <Button onClick={() => onEdit(med)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-blue-600 border-blue-100 bg-blue-50/50 hover:bg-blue-50">
+                    <Edit2 size={14}/><span>Sửa</span>
+                  </Button>
+                  <Button onClick={() => onDelete(med)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-rose-600 border-rose-100 bg-rose-50/50 hover:bg-rose-50">
+                    <Trash2 size={14}/><span>Xoá</span>
+                  </Button>
                 </div>
               </TableCell>
             </TableRow>

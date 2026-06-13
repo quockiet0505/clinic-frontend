@@ -23,7 +23,7 @@ export default function ConsultationWorkspace() {
           </Button>
           <div className="flex gap-3 pr-2">
             <Button variant="outline" className="font-bold border-slate-200 rounded-2xl h-11 px-6">Save Draft</Button>
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white font-black px-8 rounded-2xl h-11 shadow-lg shadow-blue-100">
+            <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-black px-8 rounded-2xl h-11 shadow-lg shadow-blue-100">
               <Save size={18} className="mr-2"/> Complete Record
             </Button>
           </div>

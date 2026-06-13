@@ -53,7 +53,7 @@ export default function Expenses() {
               <p className="text-lg font-black leading-none mt-0.5">${totalExpenses.toFixed(2)}</p>
             </div>
           </div>
-          <Button onClick={() => setEditingExpense({})} className="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 shadow-sm">
+          <Button onClick={() => setEditingExpense({})} className="h-11 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-5 shadow-sm">
             <Plus size={18} className="mr-2"/> Add Expense
           </Button>
         </div>

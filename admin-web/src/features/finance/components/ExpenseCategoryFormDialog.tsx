@@ -53,7 +53,7 @@ export default function ExpenseCategoryFormDialog({ isOpen, onClose, onSubmit, i
           <Button 
             onClick={() => onSubmit(form, !!initialData)} 
             disabled={!form.category_name} 
-            className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 shadow-sm"
+            className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 shadow-sm"
           >
             Save Category
           </Button>

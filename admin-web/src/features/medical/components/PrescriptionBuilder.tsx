@@ -32,7 +32,7 @@ export default function PrescriptionBuilder() {
           <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Qty</label>
           <Input type="number" value={qty} onChange={(e) => setQty(e.target.value)} className="h-11 rounded-xl bg-white" placeholder="0" />
         </div>
-        <Button onClick={handleAdd} className="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 w-full xl:w-auto">
+        <Button onClick={handleAdd} className="h-11 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-6 w-full xl:w-auto">
           <Plus size={18} className="mr-2"/> Add
         </Button>
       </div>

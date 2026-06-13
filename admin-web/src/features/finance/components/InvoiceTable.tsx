@@ -46,7 +46,7 @@ export default function InvoiceTable({ data, onActionClick, onPrintClick }: { da
               </TableCell>
               <TableCell className="text-right pr-8">
                 <div className="flex items-center justify-end gap-2">
-                  <Button onClick={() => onActionClick(inv)} variant={inv.status === 'PAID' ? 'outline' : 'default'} size="sm" className={`h-9 font-bold rounded-xl px-4 ${inv.status === 'UNPAID' ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
+                  <Button onClick={() => onActionClick(inv)} variant={inv.status === 'PAID' ? 'outline' : 'default'} size="sm" className={`h-9 font-bold rounded-xl px-4 ${inv.status === 'UNPAID' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white shadow-sm' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
                     {inv.status === 'PAID' ? 'View Details' : 'Collect Payment'}
                   </Button>
                   {inv.status === 'PAID' && (

@@ -40,7 +40,7 @@ export default function GeneralSettingsForm({ formData, onChange, onSave }: Gene
           </div>
         </div>
 
-        <Button onClick={onSave} className="rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 h-11 shadow-sm">
+        <Button onClick={onSave} className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white font-bold px-8 h-11 shadow-sm">
           <Save size={18} className="mr-2" /> Save Configuration
         </Button>
       </div>

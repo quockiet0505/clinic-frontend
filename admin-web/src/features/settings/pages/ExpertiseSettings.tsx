@@ -5,32 +5,27 @@ import ConfirmDialog from '@/components/common/ConfirmDialog';
 import ExpertiseTable from '../components/ExpertiseTable';
 import ExpertiseFormDialog from '../components/ExpertiseFormDialog';
 import { Expertise } from '../types/settings';
-
-// FIX: Explicitly type the initial data to match Expertise interface
-const INITIAL_DATA: Expertise[] = [
-  { 
-    expertise_id: 1, 
-    expertise_name: 'General Practice', 
-    description: 'Primary care.', 
-    doctorCount: 4, 
-    status: 'Active' // Valid literal
-  },
-  { 
-    expertise_id: 2, 
-    expertise_name: 'Cardiology', 
-    description: 'Heart care.', 
-    doctorCount: 2, 
-    status: 'Active' 
-  }
-];
+import { settingsApi } from '../api/settingsApi';
 
 export default function ExpertiseSettings() {
-  const [data, setData] = useState<Expertise[]>(INITIAL_DATA);
+  const [data, setData] = useState<Expertise[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [editing, setEditing] = useState<Expertise | null>(null);
   const [deleting, setDeleting] = useState<Expertise | null>(null);
 
-  const filtered = data.filter(e => e.expertise_name.toLowerCase().includes(search.toLowerCase()));
+  const fetchData = async () => {
+    setLoading(true);
+    const res = await settingsApi.getExpertises();
+    setData(res);
+    setLoading(false);
+  };
+
+  React.useEffect(() => {
+    fetchData();
+  }, []);
+
+  const filtered = data.filter(e => e.expertise_name?.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <div className="space-y-6 flex flex-col h-full animate-in fade-in duration-500">
@@ -45,17 +40,26 @@ export default function ExpertiseSettings() {
         <SearchInput value={search} onChange={setSearch} placeholder="Search specialty name..." />
       </div>
 
-      <ExpertiseTable 
-        data={filtered} 
-        onEdit={setEditing} 
-        onDelete={(id) => setDeleting(data.find(e => e.expertise_id === id) || null)} 
-      />
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center text-slate-400">Loading specialties...</div>
+      ) : (
+        <ExpertiseTable 
+          data={filtered} 
+          onEdit={setEditing} 
+          onDelete={(id) => setDeleting(data.find(e => e.expertise_id === id) || null)} 
+        />
+      )}
       
       <ExpertiseFormDialog 
         expertise={editing} 
         onClose={() => setEditing(null)} 
-        onSave={(id: number, updated: any) => {
-          // Logic to update state
+        onSave={async (id: number, updated: any) => {
+          if (id === 0) {
+            await settingsApi.createExpertise(updated);
+          } else {
+            await settingsApi.updateExpertise(id, updated);
+          }
+          await fetchData();
           setEditing(null);
         }} 
       />
@@ -63,8 +67,11 @@ export default function ExpertiseSettings() {
       <ConfirmDialog 
         isOpen={!!deleting} 
         onClose={() => setDeleting(null)} 
-        onConfirm={() => {
-          setData(data.filter(e => e.expertise_id !== deleting?.expertise_id));
+        onConfirm={async () => {
+          if (deleting) {
+            await settingsApi.deleteExpertise(deleting.expertise_id);
+            await fetchData();
+          }
           setDeleting(null);
         }} 
         title="Delete Specialty" 

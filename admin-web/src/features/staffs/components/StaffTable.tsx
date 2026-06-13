@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit, Trash2, Mail, Phone } from 'lucide-react';
+import { Edit2, Trash2, Mail, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -60,9 +60,13 @@ export default function StaffTable({ data, onEdit, onDelete }: Props) {
                 </Badge>
               </TableCell>
               <TableCell className="text-right pr-6">
-                <div className="flex justify-end gap-2">
-                  <Button onClick={() => onEdit(staff)} variant="outline" size="sm" className="w-8 h-8 p-0 text-blue-600 hover:bg-blue-50 border-slate-200"><Edit size={14} /></Button>
-                  <Button onClick={() => onDelete(staff)} variant="outline" size="sm" className="w-8 h-8 p-0 text-rose-600 hover:bg-rose-50 border-slate-200"><Trash2 size={14} /></Button>
+                <div className="flex justify-end gap-1.5">
+                  <Button onClick={() => onEdit(staff)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-blue-600 border-blue-100 bg-blue-50/50 hover:bg-blue-50">
+                    <Edit2 size={14} /><span>Sửa</span>
+                  </Button>
+                  <Button onClick={() => onDelete(staff)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-rose-600 border-rose-100 bg-rose-50/50 hover:bg-rose-50">
+                    <Trash2 size={14} /><span>Xoá</span>
+                  </Button>
                 </div>
               </TableCell>
             </TableRow>

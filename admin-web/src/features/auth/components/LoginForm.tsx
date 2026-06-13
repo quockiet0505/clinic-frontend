@@ -88,7 +88,7 @@ export default function LoginForm() {
       <Button 
         type="submit" 
         disabled={isSubmitting} 
-        className="w-full h-12 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-md shadow-md shadow-blue-100 mt-4 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+        className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg font-bold text-md shadow-md shadow-blue-100 mt-4 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
       >
         {isSubmitting ? <Loader2 className="animate-spin mr-2" size={18} /> : <LogIn className="mr-2" size={18} />}
         {isSubmitting ? 'Authenticating...' : 'Sign In'}
