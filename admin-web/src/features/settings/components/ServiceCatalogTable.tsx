@@ -49,7 +49,7 @@ export default function ServiceCatalogTable({
               Giá gốc
             </TableHead>
 
-            <TableHead className="w-[220px] text-right pr-8 font-bold text-slate-500 uppercase tracking-widest text-[10px]">
+            <TableHead className="w-[220px] text-center font-bold text-slate-500 uppercase tracking-widest text-[10px]">
               Thao tác
             </TableHead>
           </TableRow>
@@ -103,8 +103,8 @@ export default function ServiceCatalogTable({
                 </span>
               </TableCell>
 
-              <TableCell className="w-[220px] text-right pr-8">
-                <div className="flex justify-end gap-2">
+              <TableCell className="w-[220px] text-center align-middle">
+                <div className="flex justify-center items-center gap-2">
                   <Button
                     onClick={() => onEdit(item)}
                     variant="outline"

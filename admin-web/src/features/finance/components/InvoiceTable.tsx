@@ -25,7 +25,7 @@ export default function InvoiceTable({ data, onActionClick, onPrintClick }: { da
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bệnh nhân</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Total Amount</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -44,8 +44,8 @@ export default function InvoiceTable({ data, onActionClick, onPrintClick }: { da
                   {inv.status}
                 </Badge>
               </TableCell>
-              <TableCell className="text-right pr-8">
-                <div className="flex items-center justify-end gap-2">
+              <TableCell className="">
+                <div className="flex items-center justify-center gap-2">
                   <Button onClick={() => onActionClick(inv)} variant={inv.status === 'PAID' ? 'outline' : 'default'} size="sm" className={`h-9 font-bold rounded-xl px-4 ${inv.status === 'UNPAID' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white shadow-sm' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
                     {inv.status === 'PAID' ? 'View Details' : 'Collect Payment'}
                   </Button>

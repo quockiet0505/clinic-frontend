@@ -14,7 +14,7 @@ export default function SupplierTable({ data, onEdit, onDelete }: { data: Suppli
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Supplier Info</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Contact Person</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -41,8 +41,8 @@ export default function SupplierTable({ data, onEdit, onDelete }: { data: Suppli
                   {sup.isActive ? 'Active' : 'Inactive'}
                 </Badge>
               </TableCell>
-              <TableCell className="text-right pr-8">
-                <div className="flex justify-end gap-2">
+              <TableCell className="">
+                <div className="flex justify-center gap-2">
                   <Button onClick={() => onEdit(sup)} variant="outline" size="sm" className="w-9 h-9 p-0 rounded-xl text-blue-600 border-slate-200 hover:bg-blue-50"><Edit size={16} /></Button>
                   <Button onClick={() => onDelete(sup)} variant="outline" size="sm" className="w-9 h-9 p-0 rounded-xl text-rose-600 border-slate-200 hover:bg-rose-50"><Trash2 size={16} /></Button>
                 </div>

@@ -19,7 +19,7 @@ export default function LeaveRequestsTable({ data, onAction }: Props) {
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Thời gian nghỉ</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Lý do</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-6">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -34,7 +34,7 @@ export default function LeaveRequestsTable({ data, onAction }: Props) {
               </TableCell>
               <TableCell className="max-w-[200px] truncate text-slate-500 text-sm">{req.reason}</TableCell>
               <TableCell className="text-center"><StatusBadge status={req.status} /></TableCell>
-              <TableCell className="text-right pr-6">
+              <TableCell className="">
                 {req.status === 'PENDING' ? (
                   <Button onClick={() => onAction(req)} variant="outline" size="sm" className="h-8 px-3 font-semibold rounded-[10px] text-blue-600 border-blue-200 hover:bg-blue-50 transition-all cursor-pointer">Duyệt đơn</Button>
                 ) : (

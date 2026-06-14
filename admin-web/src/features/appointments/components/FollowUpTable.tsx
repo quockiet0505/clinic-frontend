@@ -20,12 +20,12 @@ export default function FollowUpTable({ data, onLogCall, onSendReminder }: Props
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Thông tin Bệnh nhân</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Chi tiết nhắc nhở</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((item) => (
-            <TableRow key={item.follow_up_id} className="hover:bg-slate-50/50">
+            <TableRow key={item.followUpId} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-slate-50 text-slate-600 flex items-center justify-center border border-slate-200 font-black uppercase">{item.patientName.charAt(0)}</div>
@@ -43,9 +43,9 @@ export default function FollowUpTable({ data, onLogCall, onSendReminder }: Props
                 <StatusBadge status={item.status} />
                 {item.note.includes('| Log:') && <p className="text-[10px] text-slate-400 mt-1.5 font-medium truncate max-w-[150px] mx-auto">{item.note.split('| Log:')[1]}</p>}
               </TableCell>
-              <TableCell className="text-right pr-8">
+              <TableCell className="text-center align-middle">
                 {item.status === 'PENDING' && (
-                  <div className="flex justify-end gap-2">
+                  <div className="flex justify-center items-center gap-2">
                     {/* NÚT GỬI THÔNG BÁO */}
                     <Button onClick={() => onSendReminder(item)} variant="outline" size="sm" className="h-9 font-semibold rounded-[10px] px-3 border-amber-200 text-amber-600 hover:bg-amber-50 shadow-sm transition-all cursor-pointer" title="Gửi thông báo hệ thống">
                       <BellRing size={16} />

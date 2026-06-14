@@ -38,7 +38,7 @@ export default function InventoryLogTable({ data }: { data: InventoryTransaction
                 </TableCell>
                 <TableCell>
                   <p className="font-bold text-slate-800">{log.medicineName}</p>
-                  <p className="text-xs font-medium text-slate-500 mt-1">Staff: {log.handled_by_name}</p>
+                  <p className="text-xs font-medium text-slate-500 mt-1">Staff: {log.handledByName}</p>
                 </TableCell>
                 <TableCell>
                   <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${ui.color}`}>
@@ -46,7 +46,7 @@ export default function InventoryLogTable({ data }: { data: InventoryTransaction
                   </span>
                   {log.note && <p className="text-xs text-slate-400 font-medium mt-1.5 truncate max-w-[250px]">{log.note}</p>}
                 </TableCell>
-                <TableCell className="text-right pr-8">
+                <TableCell className="">
                   <span className={`text-lg font-black ${isPositive ? 'text-emerald-600' : 'text-rose-600'}`}>
                     {isPositive ? '+' : ''}{log.quantity}
                   </span>

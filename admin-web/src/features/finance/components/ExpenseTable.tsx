@@ -29,7 +29,7 @@ export default function ExpenseTable({ data, onRowClick }: { data: ClinicExpense
                   {exp.paymentMethod}
                 </span>
               </TableCell>
-              <TableCell className="text-right pr-8">
+              <TableCell className="">
                 <span className="text-lg font-black text-rose-600">-${Number(exp.amount).toFixed(2)}</span>
               </TableCell>
             </TableRow>

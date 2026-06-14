@@ -99,7 +99,7 @@ export default function FormDialog({
         return (
           <CustomSelect
             value={value}
-            onChange={(val) => handleChange(field.name, val)}
+            onChange={(e) => handleChange(field.name, e.target.value)}
             className="w-full"
           >
             {field.options?.map(opt => (

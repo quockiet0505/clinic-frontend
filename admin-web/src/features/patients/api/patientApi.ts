@@ -12,6 +12,16 @@ export const patientApi = {
     }
   },
 
+  getById: async (id: number): Promise<Patient | null> => {
+    try {
+      const res = await axiosInstance.get(`/patients/${id}`);
+      return res.data.data;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  },
+
   create: async (data: Omit<Patient, 'patientId'>): Promise<void> => {
     await axiosInstance.post('/patients', data);
   },

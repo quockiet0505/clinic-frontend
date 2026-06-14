@@ -31,14 +31,14 @@ export default function FollowUpList() {
   const [selectedNotify, setSelectedNotify] = useState<FollowUp | null>(null);
 
   const handleLogCall = (newStatus: any, callResult: string) => {
-    setData(data.map(d => d.follow_up_id === selectedCall?.follow_up_id ? { ...d, status: newStatus, note: `${d.note} | Log: ${callResult}` } : d));
+    setData(data.map(d => d.followUpId === selectedCall?.followUpId ? { ...d, status: newStatus, note: `${d.note} | Log: ${callResult}` } : d));
     setSelectedCall(null);
   };
 
   const handleSendNotification = (type: string, content: string) => {
     console.log(`Sending ${type} notification to ${selectedNotify?.patientName}: ${content}`);
     // Giả lập lưu vào bảng notification thành công, tự động đổi status follow up
-    setData(data.map(d => d.follow_up_id === selectedNotify?.follow_up_id ? { ...d, status: 'COMPLETED', note: `${d.note} | Log: Sent ${type} notification` } : d));
+    setData(data.map(d => d.followUpId === selectedNotify?.followUpId ? { ...d, status: 'COMPLETED', note: `${d.note} | Log: Sent ${type} notification` } : d));
     setSelectedNotify(null);
   };
 

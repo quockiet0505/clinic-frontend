@@ -29,7 +29,7 @@ export default function RefundLogTable({ data }: { data: any[] }) {
               </TableCell>
               <TableCell><span className="text-sm font-medium text-slate-700">{log.reason}</span></TableCell>
               <TableCell><span className="text-xs font-bold text-slate-500">Staff: {log.processed_by_name}</span></TableCell>
-              <TableCell className="text-right pr-8">
+              <TableCell className="">
                 <span className="text-lg font-black text-rose-600 flex items-center justify-end gap-1">
                   <Undo2 size={16} /> ${log.refundAmount.toFixed(2)}
                 </span>

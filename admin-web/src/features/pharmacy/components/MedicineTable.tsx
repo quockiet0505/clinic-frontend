@@ -26,7 +26,7 @@ export default function MedicineTable({ data, onEdit, onDelete }: Props) {
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Medicine Info</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Stock & Price</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -43,11 +43,11 @@ export default function MedicineTable({ data, onEdit, onDelete }: Props) {
               </TableCell>
               <TableCell>
                 <p className="font-black text-blue-600">${med.sellPrice.toFixed(2)} <span className="text-xs font-medium text-slate-400">/ {med.unit}</span></p>
-                <p className="text-xs font-bold text-slate-600 mt-1">Qty: {med.quantity} (Min: {med.min_stock_level})</p>
+                <p className="text-xs font-bold text-slate-600 mt-1">Qty: {med.quantity} (Min: {med.minStockLevel})</p>
               </TableCell>
-              <TableCell className="text-center">{getStockStatus(med.quantity, med.min_stock_level)}</TableCell>
-              <TableCell className="text-right pr-8">
-                <div className="flex justify-end gap-1.5">
+              <TableCell className="text-center">{getStockStatus(med.quantity, med.minStockLevel)}</TableCell>
+              <TableCell className="text-center align-middle">
+                <div className="flex justify-center items-center gap-1.5">
                   <Button onClick={() => onEdit(med)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-blue-600 border-blue-100 bg-blue-50/50 hover:bg-blue-50">
                     <Edit2 size={14} /><span>Sửa</span>
                   </Button>

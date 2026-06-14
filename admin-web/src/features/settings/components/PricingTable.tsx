@@ -13,8 +13,8 @@ export default function PricingTable({ doctors, onEdit, onDelete }: any) {
           <TableRow className="h-14 border-b border-slate-200">
             <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] px-8 w-[35%]">Bác sĩ</TableHead>
             <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[30%]">Dịch vụ</TableHead>
-            <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[20%] text-right">Phí khám hiện tại</TableHead>
-            <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] text-right pr-8 w-[15%]">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[20%]">Phí khám hiện tại</TableHead>
+            <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -43,13 +43,13 @@ export default function PricingTable({ doctors, onEdit, onDelete }: any) {
                   <span className="text-[14px] font-bold text-slate-700">{doc.serviceName}</span>
                 </div>
               </TableCell>
-              <TableCell className="text-right">
-                <div className="flex items-center justify-end font-black text-emerald-600 text-lg">
+              <TableCell className="">
+                <div className="flex items-center font-black text-emerald-600 text-lg">
                   {doc.price?.toLocaleString('vi-VN')} VNĐ
                 </div>
               </TableCell>
-              <TableCell className="text-right pr-8">
-                <div className="flex justify-end gap-2">
+              <TableCell className="">
+                <div className="flex gap-2">
                   <Button
                     onClick={() => onEdit(doc)}
                     variant="outline"

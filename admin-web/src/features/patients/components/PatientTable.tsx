@@ -20,7 +20,7 @@ export default function PatientTable({ data, onViewDetails, onEdit, onDelete }: 
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Bệnh nhân</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Thông tin liên hệ</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Ngày sinh</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -43,9 +43,9 @@ export default function PatientTable({ data, onViewDetails, onEdit, onDelete }: 
                 <p className="text-sm font-bold text-slate-700">{patient.phone}</p>
                 <p className="text-xs font-medium text-slate-500 max-w-[200px] truncate">{patient.address}</p>
               </TableCell>
-              <TableCell className="text-sm font-medium text-slate-600">{patient.date_of_birth}</TableCell>
-              <TableCell className="text-right pr-8">
-                <div className="flex justify-end gap-1.5">
+              <TableCell className="text-sm font-medium text-slate-600">{patient.dateOfBirth}</TableCell>
+              <TableCell className="text-center align-middle">
+                <div className="flex justify-center items-center gap-1.5">
                   <Button onClick={() => onViewDetails(patient.patientId)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-[10px] text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-all cursor-pointer">
                     <Eye size={14} /><span>Chi tiết</span>
                   </Button>

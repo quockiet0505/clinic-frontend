@@ -4,6 +4,7 @@ import { ChevronLeft, UserCircle2, Phone, MapPin, Activity, BriefcaseMedical } f
 import { Button } from '@/components/ui/button';
 
 import PatientHistoryTimeline from '../components/PatientHistoryTimeline';
+import { patientApi } from '../api/patientApi';
 
 export default function PatientDetails() {
   const { id } = useParams();
@@ -17,13 +18,15 @@ export default function PatientDetails() {
       if (id) {
         try {
           const data = await patientApi.getById(Number(id));
-          setPatient({
-            ...data,
-            bloodType: data.bloodType || 'Chưa cập nhật',
-            allergies: data.allergies || 'Chưa cập nhật',
-            chronicDiseases: data.chronicDiseases || 'Chưa cập nhật',
-            recentVisits: data.recentVisits || []
-          });
+          if (data) {
+            setPatient({
+              ...data,
+              bloodType: data.bloodType || 'Chưa cập nhật',
+              allergies: data.allergies || 'Chưa cập nhật',
+              chronicDiseases: data.chronicDiseases || 'Chưa cập nhật',
+              recentVisits: data.recentVisits || []
+            });
+          }
         } catch (error) {
           console.error("Failed to fetch patient", error);
         } finally {
@@ -75,7 +78,7 @@ export default function PatientDetails() {
               </h3>
               <div className="grid grid-cols-3 gap-3 text-sm">
                 <span className="font-medium text-slate-500">Giới tính/Tuổi:</span>
-                <span className="col-span-2 font-semibold text-slate-800">{patient.gender === 'MALE' || patient.gender === 'Male' ? 'Nam' : patient.gender === 'FEMALE' || patient.gender === 'Female' ? 'Nữ' : 'Khác'}, {patient.age || 'Chưa có'} tuổi ({patient.date_of_birth})</span>
+                <span className="col-span-2 font-semibold text-slate-800">{patient.gender === 'MALE' || patient.gender === 'Male' ? 'Nam' : patient.gender === 'FEMALE' || patient.gender === 'Female' ? 'Nữ' : 'Khác'}, {patient.age || 'Chưa có'} tuổi ({patient.dateOfBirth})</span>
                 
                 <span className="font-medium text-slate-500">SĐT:</span>
                 <span className="col-span-2 font-semibold text-slate-800 flex items-center gap-2"><Phone size={14} className="text-blue-500"/> {patient.phone}</span>

@@ -14,7 +14,7 @@ export default function PrescriptionTable({ data, onDispense }: { data: Prescrip
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Prescription ID</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Patient & Provider</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -29,7 +29,7 @@ export default function PrescriptionTable({ data, onDispense }: { data: Prescrip
                 <p className="text-xs font-medium text-slate-500 mt-1">Dr. {rx.doctorName}</p>
               </TableCell>
               <TableCell className="text-center"><StatusBadge status={rx.status} /></TableCell>
-              <TableCell className="text-right pr-8">
+              <TableCell className="">
                 {rx.status === 'PENDING' ? (
                   <Button onClick={() => onDispense(rx)} variant="outline" size="sm" className="h-9 font-bold rounded-xl px-4 text-blue-600 border-blue-200 hover:bg-blue-50">
                     <Pill size={14} className="mr-1.5"/> Dispense Items

@@ -28,16 +28,16 @@ export default function ExpertiseTable({
       <Table className="w-full table-fixed">
         <TableHeader className="bg-slate-50">
           <TableRow className="h-14 border-b border-slate-200 hover:bg-transparent">
-            <TableHead className="w-[50%] px-8 font-bold text-slate-600 uppercase tracking-widest text-[10px]">
+            <TableHead className="w-[40%] px-8 font-bold text-slate-600 uppercase tracking-widest text-[10px]">
               Tên chuyên khoa
             </TableHead>
-            <TableHead className="w-[15%] font-bold text-slate-600 uppercase tracking-widest text-[10px]">
+            <TableHead className="w-[20%] font-bold text-slate-600 uppercase tracking-widest text-[10px]">
               Biểu tượng
             </TableHead>
-            <TableHead className="w-[15%] font-bold text-slate-600 uppercase tracking-widest text-[10px]">
+            <TableHead className="w-[20%] font-bold text-slate-600 uppercase tracking-widest text-[10px]">
               Ngày tạo
             </TableHead>
-            <TableHead className="w-[20%] text-right pr-8 font-bold text-slate-600 uppercase tracking-widest text-[10px]">
+            <TableHead className="w-[20%] text-center font-bold text-slate-600 uppercase tracking-widest text-[10px]">
               Thao tác
             </TableHead>
           </TableRow>
@@ -86,8 +86,8 @@ export default function ExpertiseTable({
                   </span>
                 </TableCell>
 
-                <TableCell className="text-right pr-8 align-middle">
-                  <div className="flex justify-end gap-2">
+                <TableCell className="text-center align-middle">
+                  <div className="flex justify-center items-center gap-2">
                     <Button onClick={() => onEdit(item)} variant="outline" size="sm" className="flex items-center gap-1.5 h-9 px-4 rounded-xl border-primary-200 text-primary-600 hover:bg-primary-50">
                       <Edit size={14} /><span>Sửa</span>
                     </Button>

@@ -14,7 +14,7 @@ export default function PurchaseOrderTable({ data, onMarkReceived, onCancel }: a
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Order Detail</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Supplier</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -26,12 +26,12 @@ export default function PurchaseOrderTable({ data, onMarkReceived, onCancel }: a
               </TableCell>
               <TableCell>
                 <p className="font-bold text-slate-900">{po.supplierName}</p>
-                <p className="text-xs font-medium text-slate-500 mt-0.5">By {po.created_by_name}</p>
+                <p className="text-xs font-medium text-slate-500 mt-0.5">By {po.createdByName}</p>
               </TableCell>
               <TableCell className="text-center"><StatusBadge status={po.status} /></TableCell>
-              <TableCell className="text-right pr-8">
+              <TableCell className="">
                 {po.status === 'PENDING' ? (
-                  <div className="flex justify-end gap-2">
+                  <div className="flex justify-center gap-2">
                     <Button onClick={() => onMarkReceived(po.poId)} variant="outline" size="sm" className="h-9 font-bold rounded-xl text-emerald-600 border-emerald-200 hover:bg-emerald-50">
                       <PackageOpen size={16} className="mr-1.5"/> Mark Received
                     </Button>

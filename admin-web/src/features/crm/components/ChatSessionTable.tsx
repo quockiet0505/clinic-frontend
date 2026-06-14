@@ -14,7 +14,7 @@ export default function ChatSessionTable({ data, onView }: { data: ChatSession[]
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">User</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Duration</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Messages</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -39,7 +39,7 @@ export default function ChatSessionTable({ data, onView }: { data: ChatSession[]
                   <MessageCircle size={14} /> {session.messageCount}
                 </span>
               </TableCell>
-              <TableCell className="text-right pr-8">
+              <TableCell className="">
                 <Button onClick={() => onView(session)} variant="outline" size="sm" className="h-9 font-bold rounded-xl px-4 text-blue-600 border-blue-200 hover:bg-blue-50">
                   <Eye size={14} className="mr-1.5"/> Read Log
                 </Button>

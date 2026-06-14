@@ -14,8 +14,8 @@ export default function MedicalRecordTable({ data, onViewDetail }: { data: Medic
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Date & Record ID</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bệnh nhân</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Diagnosis & Provider</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-left w-[15%]">Trạng thái</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-left w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -30,11 +30,13 @@ export default function MedicalRecordTable({ data, onViewDetail }: { data: Medic
                 <p className="font-bold text-slate-800">{rec.diagnosis}</p>
                 <p className="text-xs text-slate-500 mt-1 font-medium flex items-center gap-1"><Stethoscope size={12}/> {rec.doctorName}</p>
               </TableCell>
-              <TableCell className="text-center"><StatusBadge status={rec.status} /></TableCell>
-              <TableCell className="text-right pr-8">
-                <Button onClick={() => onViewDetail(rec.recordId)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-blue-600 border-blue-100 bg-blue-50/50 hover:bg-blue-50">
-                  <Eye size={14}/><span>Chi tiết</span>
-                </Button>
+              <TableCell className="text-left"><StatusBadge status={rec.status} /></TableCell>
+              <TableCell className="text-left align-middle">
+                <div className="flex justify-start items-center">
+                  <Button onClick={() => onViewDetail(rec.recordId)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-xl text-blue-600 border-blue-100 bg-blue-50/50 hover:bg-blue-50">
+                    <Eye size={14}/><span>Chi tiết</span>
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}

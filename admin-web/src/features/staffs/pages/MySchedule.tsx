@@ -48,18 +48,24 @@ export default function MySchedule() {
         <Table>
           <TableHeader className="bg-slate-50">
             <TableRow className="h-14">
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Loại nghỉ & Thời gian</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Lý do</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
+              <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8 w-[20%]">Loại nghỉ</TableHead>
+              <TableHead className="font-bold text-slate-600 uppercase text-[11px] w-[20%]">Thời gian nghỉ</TableHead>
+              <TableHead className="font-bold text-slate-600 uppercase text-[11px] w-[30%]">Lý do</TableHead>
+              <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Trạng thái</TableHead>
+              <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredLeaves.map((leave) => (
               <TableRow key={leave.leaveId} className="hover:bg-slate-50/50">
                 <TableCell className="px-8 py-4">
-                  <p className="font-bold text-slate-900">{leave.leaveType === 'SICK' ? 'Nghỉ ốm' : leave.leaveType === 'ANNUAL' ? 'Nghỉ phép năm' : 'Nghỉ khác'}</p>
-                  <p className="text-xs font-medium text-slate-500">{leave.fromDate} đến {leave.toDate}</p>
+                  <span className="font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-[10px] text-[11px] uppercase tracking-wider">
+                    {leave.leaveType === 'SICK' ? 'Nghỉ ốm' : leave.leaveType === 'ANNUAL' ? 'Nghỉ phép năm' : 'Nghỉ khác'}
+                  </span>
+                </TableCell>
+                <TableCell className="align-middle">
+                  <p className="font-bold text-slate-800">{leave.fromDate}</p>
+                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Tới: {leave.toDate}</p>
                 </TableCell>
                 <TableCell className="text-sm font-medium text-slate-600 max-w-xs truncate">{leave.reason}</TableCell>
                 <TableCell className="text-center">
@@ -67,11 +73,13 @@ export default function MySchedule() {
                     {leave.status === 'APPROVED' ? 'Đã duyệt' : leave.status === 'REJECTED' ? 'Từ chối' : 'Chờ duyệt'}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-right pr-8">
+                <TableCell className="text-center align-middle">
                   {leave.status === 'PENDING' && (
-                    <Button onClick={() => setCancelId(leave.leaveId)} variant="outline" size="sm" className="h-9 px-3 rounded-xl text-rose-600 border-slate-200 hover:bg-rose-50 cursor-pointer gap-2">
-                      <Trash2 size={16}/> Hủy đơn
-                    </Button>
+                    <div className="flex justify-center items-center">
+                      <Button onClick={() => setCancelId(leave.leaveId)} variant="outline" size="sm" className="h-9 px-3 rounded-xl text-rose-600 border-slate-200 hover:bg-rose-50 cursor-pointer gap-2">
+                        <Trash2 size={16}/> Hủy đơn
+                      </Button>
+                    </div>
                   )}
                 </TableCell>
               </TableRow>

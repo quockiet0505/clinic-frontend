@@ -10,6 +10,7 @@ export interface Staff {
   staffType: StaffType;
   expertiseName?: string;
   imageUrl?: string;
+  rating?: number;
   isActive: boolean;
 }
 

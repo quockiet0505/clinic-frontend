@@ -5,7 +5,7 @@ export interface MedicalRecord {
   patientId: number;
   appointmentId?: number;
   patientName: string; // Joined from patient
-  main_doctor_id: number;
+  mainDoctorId: number;
   doctorName: string; // Joined from staff
   diagnosis: string;
   treatment: string;

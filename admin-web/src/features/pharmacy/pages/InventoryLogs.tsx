@@ -9,9 +9,9 @@ const TODAY = new Date().toISOString().split('T')[0];
 
 export default function InventoryLogs() {
   const [logs] = useState<InventoryTransaction[]>([
-    { transactionId: 1, medicineId: 101, medicineName: 'Amoxil 500mg', transactionType: 'IMPORT', quantity: 500, referenceId: 'PO-2026001', handled_by_name: 'Admin', createdAt: `${TODAY} 09:00`, note: 'Restocked from PharmaCorp' },
-    { transactionId: 2, medicineId: 102, medicineName: 'Panadol', transactionType: 'DISPENSE', quantity: -2, referenceId: 'RX-9002', handled_by_name: 'Pharmacist Jane', createdAt: `${TODAY} 10:30`, note: 'Prescription fulfilled' },
-    { transactionId: 3, medicineId: 104, medicineName: 'Lipitor 20mg', transactionType: 'EXPIRED', quantity: -10, handled_by_name: 'Pharmacist Jane', createdAt: `${TODAY} 11:00`, note: 'Batch Expired' },
+      { transactionId: 1, medicineId: 1, medicineName: 'Paracetamol 500mg', transactionType: 'IMPORT', quantity: 500, handledByName: 'Nguyễn Văn A', createdAt: '2024-03-20T08:30:00' },
+      { transactionId: 2, medicineId: 2, medicineName: 'Amoxicillin 500mg', transactionType: 'DISPENSE', quantity: 20, handledByName: 'Trần Thị B', createdAt: '2024-03-20T09:15:00', referenceId: 'PRE-1029' },
+      { transactionId: 3, medicineId: 1, medicineName: 'Paracetamol 500mg', transactionType: 'EXPIRED', quantity: 50, handledByName: 'Lê Văn C', createdAt: '2024-03-19T16:45:00', note: 'Lô thuốc hết hạn tháng 3' },
   ]);
   
   const [search, setSearch] = useState('');

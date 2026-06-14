@@ -5,7 +5,7 @@ export interface Medicine {
      unit: string;
      sellPrice: number;
      quantity: number;
-     min_stock_level: number;
+     minStockLevel: number;
      usageNote?: string;
      productionUnit?: string;
    }
@@ -17,7 +17,7 @@ export interface Medicine {
      orderDate: string;
      totalAmount: number;
      status: 'PENDING' | 'RECEIVED' | 'CANCELLED';
-     created_by_name: string; // Joined from staff
+     createdByName: string; // Joined from staff
    }
    
    export interface PrescriptionUI {
@@ -51,7 +51,7 @@ export interface Supplier {
      transactionType: TransactionType;
      quantity: number;
      referenceId?: string;
-     handled_by_name: string; // Joined from staff
+     handledByName: string; // Joined from staff
      note?: string;
      createdAt: string;
    }

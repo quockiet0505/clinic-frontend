@@ -13,14 +13,18 @@ export default function PricingFormDialog({ doctor, onClose, onSave }: any) {
     ];
     if (isNew) {
       return [
-        { name: 'staffId', label: 'Chọn Bác sĩ', type: 'select', required: true, options: [
-          { value: '1', label: 'BS. Nguyễn Văn A' },
-          { value: '2', label: 'BS. Trần Thị B' }
-        ]},
-        { name: 'serviceId', label: 'Chọn Dịch vụ', type: 'select', required: true, options: [
-          { value: '1', label: 'Khám tổng quát' },
-          { value: '2', label: 'Khám chuyên khoa' }
-        ]},
+        {
+          name: 'staffId', label: 'Chọn Bác sĩ', type: 'select', required: true, options: [
+            { value: '1', label: 'BS. Nguyễn Văn A' },
+            { value: '2', label: 'BS. Trần Thị B' }
+          ]
+        },
+        {
+          name: 'serviceId', label: 'Chọn Dịch vụ', type: 'select', required: true, options: [
+            { value: '1', label: 'Khám tổng quát' },
+            { value: '2', label: 'Khám chuyên khoa' }
+          ]
+        },
         ...baseFields
       ];
     }

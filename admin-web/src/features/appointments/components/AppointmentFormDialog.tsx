@@ -4,7 +4,7 @@ import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
 
 const fields: FieldConfig[] = [
   { name: 'patientId', label: 'Mã bệnh nhân', type: 'text', required: true, placeholder: 'Ví dụ: PAT-101' },
-  { name: 'main_doctor_id', label: 'Mã bác sĩ', type: 'text', required: true, placeholder: 'Ví dụ: STF-205' },
+  { name: 'mainDoctorId', label: 'Mã bác sĩ', type: 'text', required: true, placeholder: 'Ví dụ: STF-205' },
   { name: 'appointmentDate', label: 'Ngày khám', type: 'date', required: true },
   { name: 'timeStart', label: 'Giờ bắt đầu', type: 'time', required: true },
 ];

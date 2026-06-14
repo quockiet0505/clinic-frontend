@@ -21,7 +21,7 @@ export default function ServiceOrdersTable({ data, onInputResult, onReject }: Pr
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bệnh nhân</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Requested Test</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -40,9 +40,9 @@ export default function ServiceOrdersTable({ data, onInputResult, onReject }: Pr
                 <p className="text-xs font-medium text-slate-400 mt-1">Rec: {order.recordId}</p>
               </TableCell>
               <TableCell className="text-center"><StatusBadge status={order.status} /></TableCell>
-              <TableCell className="text-right pr-8">
+              <TableCell className="">
                 {order.status === 'ORDERED' ? (
-                  <div className="flex justify-end gap-2">
+                  <div className="flex justify-center gap-2">
                     <Button onClick={() => onInputResult(order)} variant="outline" size="sm" className="h-9 font-bold rounded-xl px-4 text-emerald-600 border-emerald-200 hover:bg-emerald-50">
                       <Edit3 size={14} className="mr-1.5"/> Input Result
                     </Button>

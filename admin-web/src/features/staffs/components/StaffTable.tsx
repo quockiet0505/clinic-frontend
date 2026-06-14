@@ -1,5 +1,5 @@
 import React from 'react';
-import { Edit2, Trash2, Mail, Phone } from 'lucide-react';
+import { Edit2, Trash2, Mail, Phone, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -20,10 +20,11 @@ export default function StaffTable({ data, onEdit, onDelete }: Props) {
         <Table className="table-fixed w-full">
           <TableHeader className="bg-slate-50/80 sticky top-0 z-10 backdrop-blur-sm">
             <TableRow className="border-b border-slate-200 hover:bg-transparent">
-              <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] px-6 h-14 w-[35%]">Nhân viên</TableHead>
-              <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[30%] pl-2">Liên hệ</TableHead>
-              <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[25%] pl-2">Vai trò & Chuyên môn</TableHead>
-              <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[10%] text-right pr-6">Thao tác</TableHead>
+              <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] px-6 h-14 w-[25%]">Nhân viên</TableHead>
+              <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[20%] pl-2">Liên hệ</TableHead>
+              <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[20%] pl-2">Vai trò & Chuyên môn</TableHead>
+              <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[10%] pl-2 text-left">Đánh giá</TableHead>
+              <TableHead className="font-bold text-slate-500 uppercase tracking-widest text-[10px] w-[25%] text-center">Thao tác</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -74,8 +75,18 @@ export default function StaffTable({ data, onEdit, onDelete }: Props) {
                     </p>
                   )}
                 </TableCell>
-                <TableCell className="text-right pr-6 align-middle">
-                  <div className="flex justify-end gap-1.5">
+                <TableCell className="pl-2 pr-4 align-middle text-left">
+                  {staff.staffType === 'DOCTOR' ? (
+                    <div className="flex items-center justify-start gap-1">
+                      <Star className="text-amber-400 fill-amber-400" size={16} />
+                      <span className="font-bold text-slate-700">{staff.rating ? staff.rating.toFixed(1) : 'Chưa có'}</span>
+                    </div>
+                  ) : (
+                    <span className="text-slate-300">-</span>
+                  )}
+                </TableCell>
+                <TableCell className="text-center align-middle">
+                  <div className="flex justify-center items-center gap-1.5">
                     <Button onClick={() => onEdit(staff)} variant="outline" size="sm" className="flex items-center gap-1.5 font-semibold px-3 h-8 rounded-[10px] text-primary-600 border-primary-200 hover:bg-primary-50 whitespace-nowrap">
                       <Edit2 size={14} /><span>Sửa</span>
                     </Button>
@@ -87,7 +98,7 @@ export default function StaffTable({ data, onEdit, onDelete }: Props) {
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={4} className="h-48 text-center text-slate-400 font-medium text-[15px]">
+                <TableCell colSpan={5} className="h-48 text-center text-slate-400 font-medium text-[15px]">
                   <div className="flex flex-col items-center justify-center gap-3">
                     <div className="w-16 h-16 rounded-full bg-slate-50 flex items-center justify-center">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-300"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>

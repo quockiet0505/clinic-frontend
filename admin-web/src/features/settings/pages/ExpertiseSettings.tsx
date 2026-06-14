@@ -38,7 +38,7 @@ export default function ExpertiseSettings() {
         title="Chuyên khoa" 
         description="Quản lý các phòng ban và danh mục chuyên khoa của phòng khám." 
         actionText="Thêm Chuyên khoa"
-        onAction={() => setEditing({ expertiseId: 0, expertiseName: '', description: '', doctorCount: 0, status: 'Active' })}
+        onAction={() => setEditing({ expertiseId: 0, expertiseName: '' })}
       />
 
       <div className="bg-white p-3 rounded-2xl border border-slate-200 flex shadow-sm shrink-0">

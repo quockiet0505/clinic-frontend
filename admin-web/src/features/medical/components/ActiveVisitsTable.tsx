@@ -21,8 +21,8 @@ export default function ActiveVisitsTable({ data, onConsult }: Props) {
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bệnh nhân</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bác sĩ</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Sinh hiệu</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-left w-[15%]">Trạng thái</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-left w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -47,11 +47,13 @@ export default function ActiveVisitsTable({ data, onConsult }: Props) {
                   <Badge className="bg-rose-100 text-rose-700 border-0 shadow-none px-2 py-0.5 animate-pulse">Pending Vitals</Badge>
                 )}
               </TableCell>
-              <TableCell className="text-center"><StatusBadge status={visit.status} /></TableCell>
-              <TableCell className="text-right pr-8">
-                <Button onClick={() => onConsult(visit.recordId)} size="sm" className="h-9 font-bold rounded-xl px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white shadow-sm">
-                  Consult <ArrowRight size={14} className="ml-1.5"/>
-                </Button>
+              <TableCell className="text-left"><StatusBadge status={visit.status} /></TableCell>
+              <TableCell className="text-left align-middle">
+                <div className="flex justify-start items-center">
+                  <Button onClick={() => onConsult(visit.recordId)} size="sm" className="h-9 font-bold rounded-xl px-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white shadow-sm">
+                    Consult <ArrowRight size={14} className="ml-1.5"/>
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           ))}

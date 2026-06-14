@@ -26,13 +26,13 @@ export default function MedicineInventory() {
         setMedicines(data);
       } else {
         setMedicines([
-          { medicineId: 1, name: 'Paracetamol 500mg', activeElement: 'Paracetamol', packingStandard: 'Hộp 10 vỉ x 10 viên', baseUnit: 'Viên', quantity: 1500, min_stock_level: 500, sellPrice: 1500, usageNote: 'Uống sau ăn' },
-          { medicineId: 2, name: 'Amoxicillin 500mg', activeElement: 'Amoxicillin', packingStandard: 'Hộp 5 vỉ x 10 viên', baseUnit: 'Viên', quantity: 800, min_stock_level: 300, sellPrice: 3500, usageNote: 'Dùng theo đơn' }
+          { medicineId: 1, name: 'Paracetamol 500mg', activeElement: 'Paracetamol', unit: 'Viên', quantity: 1500, minStockLevel: 500, sellPrice: 1500, usageNote: 'Uống sau ăn' },
+          { medicineId: 2, name: 'Amoxicillin 500mg', activeElement: 'Amoxicillin', unit: 'Viên', quantity: 800, minStockLevel: 300, sellPrice: 3500, usageNote: 'Dùng theo đơn' }
         ]);
       }
     } catch (e) {
       setMedicines([
-        { medicineId: 1, name: 'Paracetamol 500mg', activeElement: 'Paracetamol', packingStandard: 'Hộp 10 vỉ x 10 viên', baseUnit: 'Viên', quantity: 1500, min_stock_level: 500, sellPrice: 1500, usageNote: 'Uống sau ăn' }
+        { medicineId: 1, name: 'Paracetamol 500mg', activeElement: 'Paracetamol', unit: 'Viên', quantity: 1500, minStockLevel: 500, sellPrice: 1500, usageNote: 'Uống sau ăn' }
       ]);
     }
     setLoading(false);
@@ -44,9 +44,9 @@ export default function MedicineInventory() {
 
   const handleFormSubmit = async (formData: any, isEdit: boolean) => {
     if (isEdit) {
-      await pharmacyApi.updateMedicine(selectedMedicine!.medicineId, { ...formData, sellPrice: Number(formData.sellPrice), min_stock_level: Number(formData.min_stock_level) });
+      await pharmacyApi.updateMedicine(selectedMedicine!.medicineId, { ...formData, sellPrice: Number(formData.sellPrice), minStockLevel: Number(formData.minStockLevel) });
     } else {
-      await pharmacyApi.createMedicine({ ...formData, sellPrice: Number(formData.sellPrice), min_stock_level: Number(formData.min_stock_level) });
+      await pharmacyApi.createMedicine({ ...formData, sellPrice: Number(formData.sellPrice), minStockLevel: Number(formData.minStockLevel) });
     }
     await fetchMedicines();
     setIsFormOpen(false);

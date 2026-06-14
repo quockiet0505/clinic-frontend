@@ -12,8 +12,8 @@ const TODAY = new Date().toISOString().split('T')[0];
 
 export default function PurchaseOrders() {
   const [orders, setOrders] = useState<PurchaseOrder[]>([
-    { poId: 2026001, supplierId: 1, supplierName: 'PharmaCorp Global', orderDate: TODAY, totalAmount: 4500.00, status: 'PENDING', created_by_name: 'Admin' },
-    { poId: 2026002, supplierId: 2, supplierName: 'MedSupply Co.', orderDate: TODAY, totalAmount: 1250.50, status: 'RECEIVED', created_by_name: 'Admin' }
+    { poId: 101, supplierId: 1, supplierName: 'Công ty Dược phẩm TW1', orderDate: '2024-03-20', totalAmount: 15000000, status: 'PENDING', createdByName: 'Nguyễn Văn A' },
+    { poId: 100, supplierId: 2, supplierName: 'Công ty Cổ phần Traphaco', orderDate: '2024-03-18', totalAmount: 8500000, status: 'RECEIVED', createdByName: 'Trần Thị B' }
   ]);
   
   const [search, setSearch] = useState('');
@@ -56,7 +56,7 @@ export default function PurchaseOrders() {
           orderDate: TODAY,
           totalAmount: data.totalAmount,
           status: 'PENDING',
-          created_by_name: 'Current User'
+          createdByName: 'Current User'
      }, ...orders]);
 
      setIsFormOpen(false);

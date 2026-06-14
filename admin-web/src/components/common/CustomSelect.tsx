@@ -5,7 +5,7 @@ interface Props {
   className?: string;
   children?: React.ReactNode;
   value?: string;
-  onChange?: (e: { target: { value: string } }) => void;
+  onChange?: (e: { target: { value: string; name?: string } }) => void;
   [key: string]: any;
 }
 

@@ -5,7 +5,7 @@ export interface Appointment {
   appointmentId: number;
   patientId: number;
   patientName: string;
-  main_doctor_id: number;
+  mainDoctorId: number;
   doctorName: string;
   appointmentDate: string;
   timeStart: string;
@@ -18,7 +18,7 @@ export interface Appointment {
 }
 
 export interface FollowUp {
-  follow_up_id: number;
+  followUpId: number;
   recordId: number;
   patientId: number;
   accountId?: number; 

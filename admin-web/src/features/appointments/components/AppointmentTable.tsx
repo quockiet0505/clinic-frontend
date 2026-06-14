@@ -21,7 +21,7 @@ export default function AppointmentTable({ data, onCheckIn, onCancel }: Props) {
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bệnh nhân</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Lịch khám & Bác sĩ</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -46,7 +46,7 @@ export default function AppointmentTable({ data, onCheckIn, onCancel }: Props) {
                   <p className="text-[10px] text-rose-500 mt-1 truncate max-w-[120px] mx-auto" title={apt.cancelReason}>{apt.cancelReason}</p>
                 )}
               </TableCell>
-              <TableCell className="text-right pr-8">
+              <TableCell className="">
                 <div className="flex justify-end gap-1.5">
                   {['PENDING', 'CONFIRMED'].includes(apt.status) && (
                     <Button onClick={() => onCheckIn(apt.appointmentId)} variant="outline" size="sm" className="flex items-center gap-1.5 text-blue-600 font-semibold rounded-[10px] border-blue-200 hover:bg-blue-50 transition-all cursor-pointer px-3 h-8">
