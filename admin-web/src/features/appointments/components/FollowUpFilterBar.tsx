@@ -18,7 +18,7 @@ export default function FollowUpFilterBar({ tab, setTab, search, setSearch, from
           { label: 'Đã xác nhận', value: 'CONFIRMED' },
           { label: 'Hoàn thành', value: 'COMPLETED' }
         ].map(v => (
-          <button key={v.value} onClick={() => setTab(v.value)} className={`flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ease-out cursor-pointer ${tab === v.value ? 'bg-white text-primary-600 shadow-sm border border-slate-100/50' : 'text-slate-500 hover:text-primary-600 hover:bg-slate-100/50'}`}>{v.label}</button>
+          <button key={v.value} onClick={() => setTab(v.value)} className={`flex-1 sm:flex-none px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ease-out cursor-pointer ${tab === v.value ? 'bg-white text-primary-600 shadow-sm border border-slate-100/50' : 'text-slate-500 hover:text-primary-600 hover:bg-slate-100/50 border border-transparent'}`}>{v.label}</button>
         ))}
       </div>
       <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">

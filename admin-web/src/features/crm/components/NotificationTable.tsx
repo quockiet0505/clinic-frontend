@@ -1,7 +1,8 @@
 import React from 'react';
-import { Mail, SmartphoneNfc } from 'lucide-react';
+import { Mail, SmartphoneNfc, Calendar } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AppNotification } from '../types/crm';
+import { formatDateTime } from '@/utils/formatters';
 
 export default function NotificationTable({ data }: { data: AppNotification[] }) {
   return (
@@ -19,8 +20,8 @@ export default function NotificationTable({ data }: { data: AppNotification[] })
           {data.map(notif => (
             <TableRow key={notif.notificationId} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
-                <p className="font-bold text-slate-900">{notif.sentAt.split(' ')[0]}</p>
-                <p className="text-[10px] text-slate-500 font-bold mt-0.5">{notif.sentAt.split(' ')[1]}</p>
+                <p className="text-xs font-medium text-slate-700 flex items-center gap-1.5"><Calendar size={13} className="text-slate-400" /> {formatDateTime(notif.sentAt)}</p>
+                <p className="text-[10px] text-slate-400 font-medium tracking-widest mt-0.5">#NOTIF-{notif.notificationId}</p>
               </TableCell>
               <TableCell>
                 {notif.type === 'EMAIL' ? (
@@ -29,7 +30,7 @@ export default function NotificationTable({ data }: { data: AppNotification[] })
                   <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-50 text-indigo-600 font-black text-[10px] uppercase rounded-lg border border-indigo-200"><SmartphoneNfc size={12} /> System</span>
                 )}
               </TableCell>
-              <TableCell><span className="font-bold text-slate-800">{notif.accountName || 'Unknown'}</span></TableCell>
+              <TableCell><span className="font-bold text-slate-900 text-[14px]">{notif.accountName || 'Unknown'}</span></TableCell>
               <TableCell>
                 <span className="text-sm font-medium text-slate-600 max-w-[400px] truncate block">{notif.content}</span>
               </TableCell>

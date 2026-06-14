@@ -33,8 +33,8 @@ export const homeApi = {
   },
 
   getLogo: async () => {
-    const res = await axiosInstance.get('/static/logo');
-    return res.data.data.logoUrl;
+    const res = await axiosInstance.get('/public/logos/main');
+    return res.data.data.imageUrl;
   },
 
   getBanner: async () => {

@@ -6,68 +6,84 @@ import { Microscope, Printer, Download, CheckCircle2 } from 'lucide-react';
 export default function LabResultDetailModal({ result, onClose }: any) {
   if (!result) return null;
 
+  const doctorName = result.doctorName?.startsWith('BS.') ? result.doctorName : `BS. ${result.doctorName}`;
+
   return (
     <Dialog open={!!result} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-0 rounded-[24px] shadow-2xl">
-        {/* HEADER đồng bộ */}
-        <div className="bg-primary-50 p-6 border-b border-primary-100 rounded-t-[24px]">
+      <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-0 rounded-2xl shadow-2xl">
+        {/* Header giữ nguyên */}
+        <div className="bg-primary-50 p-5 border-b border-primary-100">
           <div className="flex items-center gap-2 mb-2 text-primary-600">
             <Microscope size={16} />
-            <span className="text-xs font-bold uppercase tracking-widest">Báo cáo xét nghiệm</span>
+            <span className="text-xs font-semibold uppercase tracking-wider">Báo cáo xét nghiệm</span>
           </div>
-          <DialogTitle className="text-2xl font-semibold">{result.serviceName}</DialogTitle>
-          <DialogDescription className="text-sm text-primary-600/80 font-medium mt-1 flex items-center gap-2 flex-wrap">
-            <span>Bệnh nhân: <strong className="text-primary-800">{result.patientName}</strong></span>
-            <span className="opacity-50">•</span>
+          <DialogTitle className="text-xl font-bold text-slate-800">{result.serviceName}</DialogTitle>
+          <DialogDescription className="text-sm text-slate-600 mt-1 flex items-center gap-2 flex-wrap">
+            <span>Bệnh nhân: <span className="font-medium text-slate-800">{result.patientName}</span></span>
+            <span className="opacity-40">•</span>
             <span>Ngày: {result.enteredAt?.split('T')[0]}</span>
-            <span className="opacity-50">•</span>
+            <span className="opacity-40">•</span>
             <span>Mã: RES-{result.resultId}</span>
           </DialogDescription>
         </div>
 
-        {/* BODY giữ nguyên */}
-        <div className="p-6 bg-white space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar">
-          <div className="flex justify-between items-center bg-slate-50 p-4 rounded-2xl border border-slate-100 shadow-sm">
-            <div>
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Bác sĩ chỉ định</p>
-              <p className="font-bold text-slate-900 text-sm">BS. {result.doctorName}</p>
-            </div>
-            <div className="bg-emerald-100 text-emerald-700 text-xs font-black uppercase px-3 py-1.5 rounded-lg flex items-center gap-1.5">
-              <CheckCircle2 size={14}/> Đã xác nhận
-            </div>
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest">Chỉ số xét nghiệm</h3>
-            <div className="bg-slate-50 rounded-[16px] border border-slate-100 p-5 min-h-[100px]">
-              <p className="text-sm font-medium text-slate-700 whitespace-pre-wrap leading-loose font-mono">{result.resultData}</p>
+        {/* Body - đồng bộ style cho tất cả các section */}
+        <div className="p-5 bg-white space-y-5 max-h-[60vh] overflow-y-auto">
+          {/* Bác sĩ chỉ định - cũng có khung đồng bộ */}
+          <div className="bg-slate-50 rounded-xl border border-slate-100 p-4">
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm font-semibold text-slate-700">Bác sĩ chỉ định</p>
+                <p className="text-sm text-slate-800 mt-1">{doctorName}</p>
+              </div>
+              <div className="bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                <CheckCircle2 size={14} /> Đã xác nhận
+              </div>
             </div>
           </div>
-          <div className="space-y-2">
-            <h3 className="text-xs font-black text-primary uppercase tracking-widest">Kết luận lâm sàng</h3>
-            <div className="bg-primary-50/50 rounded-[16px] border border-primary-100 p-5">
-              <p className="text-sm font-bold text-slate-800 whitespace-pre-wrap leading-relaxed">{result.conclusion}</p>
-            </div>
+
+          {/* Chỉ số xét nghiệm */}
+          <div className="bg-slate-50 rounded-xl border border-slate-100 p-4">
+            <h3 className="text-sm font-semibold text-slate-700 mb-2">Chỉ số xét nghiệm</h3>
+            <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed">{result.resultData}</p>
           </div>
-          <div className="pt-2 text-right">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Người nhập kết quả</p>
-            <p className="font-bold text-slate-800 text-base">{result.enteredName}</p>
+
+          {/* Kết luận lâm sàng */}
+          <div className="bg-slate-50 rounded-xl border border-slate-100 p-4">
+            <h3 className="text-sm font-semibold text-slate-700 mb-2">Kết luận lâm sàng</h3>
+            <p className="text-sm font-medium text-slate-800 whitespace-pre-wrap">{result.conclusion}</p>
+          </div>
+
+          {/* Người nhập kết quả - không khung, chỉ text */}
+          <div className="text-right pt-2">
+            <p className="text-xs font-semibold text-slate-500">Người nhập kết quả</p>
+            <p className="text-sm font-medium text-slate-800">{result.enteredName}</p>
           </div>
         </div>
 
-        {/* FOOTER đồng bộ */}
-        <DialogFooter className="p-6 pb-8 bg-slate-50 border-t border-slate-100 flex items-center justify-between rounded-b-[24px]">
-          <div className="flex gap-2">
-            <Button variant="outline" className="h-11 px-4 rounded-[14px] font-bold border-slate-300 text-slate-700 hover:bg-slate-100">
-              <Printer size={16} className="mr-2" /> In
+        {/* Footer - nút bấm đồng bộ, không màu đỏ */}
+        <div className="p-5 bg-slate-50 border-t border-slate-100 flex items-center justify-between rounded-b-2xl">
+          <div className="flex gap-3">
+            <Button
+              
+              className="h-9 px-4 rounded-lg font-medium border-blue-300 text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-all"
+            >
+              <Printer size={15} className="mr-1.5" /> In
             </Button>
-            <Button variant="outline" className="h-11 px-4 rounded-[14px] font-bold border-primary-200 text-primary hover:bg-primary-50">
-              <Download size={16} className="mr-2" /> Tải PDF
+            <Button
+             
+              className="h-9 px-4 rounded-lg font-medium border-emerald-300 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 transition-all"
+            >
+              <Download size={15} className="mr-1.5" /> Tải PDF
             </Button>
           </div>
-          <Button onClick={onClose} className="h-11 px-6 rounded-[14px] bg-slate-800 hover:bg-slate-900 shadow-sm text-white font-bold">
+          <Button
+            onClick={onClose}
+            className="h-9 px-5 rounded-lg bg-primary text-white font-medium hover:bg-primary-600 transition-all"
+          >
             Đóng
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

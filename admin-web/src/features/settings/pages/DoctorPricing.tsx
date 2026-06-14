@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PageHeader from '@/components/common/PageHeader';
 import SearchInput from '@/components/common/SearchInput';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
@@ -11,7 +11,6 @@ export default function DoctorPricing() {
   const [search, setSearch] = useState('');
   const [prices, setPrices] = useState<DoctorPricing[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [editingPrice, setEditingPrice] = useState<DoctorPricing | null>(null);
   const [deletingPrice, setDeletingPrice] = useState<DoctorPricing | null>(null);
 
@@ -19,7 +18,7 @@ export default function DoctorPricing() {
     setLoading(true);
     try {
       const data = await settingsApi.getDoctorPrices();
-      setPrices(data || []);
+      setPrices(Array.isArray(data) ? data : []);
     } catch (e) {
       console.error(e);
       setPrices([]);
@@ -27,7 +26,7 @@ export default function DoctorPricing() {
     setLoading(false);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -41,24 +40,32 @@ export default function DoctorPricing() {
         title="Phí khám bệnh"
         description="Ghi đè giá dịch vụ mặc định cho từng bác sĩ cụ thể."
         actionText="Thêm Phí khám mới"
-        onAction={() => setEditingPrice({ id: 0, staffId: 0, doctorName: '', serviceId: 0, serviceName: '', price: 0 })}
+        onAction={() =>
+          setEditingPrice({
+            id: 0,
+            staffId: 0,
+            doctorName: '',
+            serviceId: 0,
+            serviceName: '',
+            price: 0,
+            originalPrice: 0,
+            discountPrice: 0,
+          })
+        }
       />
 
       <div className="bg-white p-3 rounded-2xl border border-slate-200 flex shadow-sm shrink-0">
-        <SearchInput
-          value={search}
-          onChange={setSearch}
-          placeholder="Tìm kiếm theo tên bác sĩ..."
-        />
+        <SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm theo tên bác sĩ..." />
       </div>
 
-      <PricingTable
-        doctors={filteredData}
-        onEdit={setEditingPrice}
-        onDelete={setDeletingPrice}
-      />
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải...</div>
+      ) : (
+        <div className="flex-1 min-h-0">
+          <PricingTable doctors={filteredData} onEdit={setEditingPrice} onDelete={setDeletingPrice} />
+        </div>
+      )}
 
-      {/* Form Thêm/Sửa chuẩn Blue-600 */}
       <PricingFormDialog
         doctor={editingPrice}
         onClose={() => setEditingPrice(null)}
@@ -69,7 +76,6 @@ export default function DoctorPricing() {
         }}
       />
 
-      {/* Dialog Xóa chuẩn Rose-600 từ Common */}
       <ConfirmDialog
         isOpen={!!deletingPrice}
         title="Xóa Phí khám"

@@ -3,29 +3,21 @@ import PageHeader from '@/components/common/PageHeader';
 import DateRangeFilter from '@/components/common/DateRangeFilter';
 import CustomSelect from '@/components/common/CustomSelect';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Trash2 } from 'lucide-react';
-import { LeaveRequest } from '../types/staff';
+import MyScheduleTable from '../components/MyScheduleTable';
 import LeaveApplicationDialog from '../components/LeaveApplicationDialog';
 import { staffApi } from '../api/staffApi';
 
-const TODAY = new Date().toISOString().split('T')[0];
-
 export default function MySchedule() {
-  const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
-  
-  useEffect(() => {
-    staffApi.getLeaveRequests().then(data => setLeaves(data));
-  }, []);
-  
+  const [leaves, setLeaves] = useState<any[]>([]);
   const [isApplyOpen, setIsApplyOpen] = useState(false);
   const [cancelId, setCancelId] = useState<number | null>(null);
-  
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
+
+  useEffect(() => {
+    staffApi.getLeaveRequests().then(data => setLeaves(data));
+  }, []);
 
   const filteredLeaves = leaves.filter(l => 
     (statusFilter === 'ALL' || l.status === statusFilter) &&
@@ -33,63 +25,62 @@ export default function MySchedule() {
     (!toDate || l.toDate <= toDate)
   );
 
+  const handleCancel = () => {
+    if (cancelId) {
+      setLeaves(leaves.filter(l => l.leaveId !== cancelId));
+      // Gọi API hủy (nếu có)
+      // staffApi.cancelLeaveRequest(cancelId);
+      setCancelId(null);
+    }
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
-      <PageHeader title="Nghỉ Phép Của Tôi" description="Quản lý đơn xin nghỉ phép và lịch sử nghỉ phép." actionText="Nộp Đơn Xin Nghỉ" onAction={() => setIsApplyOpen(true)} />
-      
-      <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-[20px] border border-slate-200 shadow-sm shrink-0">
-        <DateRangeFilter from={fromDate} to={toDate} onChangeFrom={setFromDate} onChangeTo={setToDate} />
-        <CustomSelect value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="h-11 sm:w-40">
-          <option value="ALL">Tất cả</option><option value="PENDING">Chờ duyệt</option><option value="APPROVED">Đã duyệt</option><option value="REJECTED">Từ chối</option>
+      <PageHeader 
+        title="Nghỉ Phép Của Tôi" 
+        description="Quản lý đơn xin nghỉ phép và lịch sử nghỉ phép." 
+        actionText="Nộp Đơn Xin Nghỉ" 
+        onAction={() => setIsApplyOpen(true)} 
+      />
+
+      <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm shrink-0">
+        <DateRangeFilter 
+          from={fromDate} 
+          to={toDate} 
+          onChangeFrom={setFromDate} 
+          onChangeTo={setToDate} 
+        />
+        <CustomSelect 
+          value={statusFilter} 
+          onChange={(e) => setStatusFilter(e.target.value)} 
+          className="h-11 sm:w-40 rounded-xl border-slate-200"
+        >
+          <option value="ALL">Tất cả</option>
+          <option value="PENDING">Chờ duyệt</option>
+          <option value="APPROVED">Đã duyệt</option>
+          <option value="REJECTED">Từ chối</option>
         </CustomSelect>
       </div>
 
-      <div className="bg-white rounded-[32px] shadow-sm border border-slate-200 flex-1 overflow-hidden">
-        <Table>
-          <TableHeader className="bg-slate-50">
-            <TableRow className="h-14">
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8 w-[20%]">Loại nghỉ</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px] w-[20%]">Thời gian nghỉ</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px] w-[30%]">Lý do</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Trạng thái</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredLeaves.map((leave) => (
-              <TableRow key={leave.leaveId} className="hover:bg-slate-50/50">
-                <TableCell className="px-8 py-4">
-                  <span className="font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-[10px] text-[11px] uppercase tracking-wider">
-                    {leave.leaveType === 'SICK' ? 'Nghỉ ốm' : leave.leaveType === 'ANNUAL' ? 'Nghỉ phép năm' : 'Nghỉ khác'}
-                  </span>
-                </TableCell>
-                <TableCell className="align-middle">
-                  <p className="font-bold text-slate-800">{leave.fromDate}</p>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Tới: {leave.toDate}</p>
-                </TableCell>
-                <TableCell className="text-sm font-medium text-slate-600 max-w-xs truncate">{leave.reason}</TableCell>
-                <TableCell className="text-center">
-                  <Badge variant="outline" className={`font-medium px-2.5 py-1 border-0 ${leave.status === 'APPROVED' ? 'bg-emerald-100 text-emerald-700' : leave.status === 'REJECTED' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}`}>
-                    {leave.status === 'APPROVED' ? 'Đã duyệt' : leave.status === 'REJECTED' ? 'Từ chối' : 'Chờ duyệt'}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-center align-middle">
-                  {leave.status === 'PENDING' && (
-                    <div className="flex justify-center items-center">
-                      <Button onClick={() => setCancelId(leave.leaveId)} variant="outline" size="sm" className="h-9 px-3 rounded-xl text-rose-600 border-slate-200 hover:bg-rose-50 cursor-pointer gap-2">
-                        <Trash2 size={16}/> Hủy đơn
-                      </Button>
-                    </div>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      <MyScheduleTable 
+        data={filteredLeaves} 
+        onCancelRequest={(id) => setCancelId(id)} 
+      />
 
-      <LeaveApplicationDialog isOpen={isApplyOpen} onClose={() => setIsApplyOpen(false)} onSubmit={() => setIsApplyOpen(false)} />
-      <ConfirmDialog isOpen={!!cancelId} onClose={() => setCancelId(null)} onConfirm={() => { setLeaves(leaves.filter(l => l.leaveId !== cancelId)); setCancelId(null); }} title="Hủy Đơn Xin Nghỉ" description="Bạn có chắc chắn muốn hủy đơn xin nghỉ này không?" confirmText="Xác nhận hủy" />
+      <LeaveApplicationDialog 
+        isOpen={isApplyOpen} 
+        onClose={() => setIsApplyOpen(false)} 
+        onSubmit={() => setIsApplyOpen(false)} 
+      />
+
+      <ConfirmDialog 
+        isOpen={!!cancelId} 
+        onClose={() => setCancelId(null)} 
+        onConfirm={handleCancel} 
+        title="Hủy Đơn Xin Nghỉ" 
+        description="Bạn có chắc chắn muốn hủy đơn xin nghỉ này không?" 
+        confirmText="Xác nhận hủy" 
+      />
     </div>
   );
 }

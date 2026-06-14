@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Building2 } from 'lucide-react';
 import LoginForm from '../components/LoginForm';
+import { logoApi } from '@/features/settings/api/logoApi';
+import { getImageUrl } from '@/utils/image';
 
 export default function Login() {
+  const [logoUrl, setLogoUrl] = useState<string>('http://localhost:8080/images/logo.png');
+
+  useEffect(() => {
+    logoApi.getLogo('login').then(data => {
+      if (data && data.imageUrl) {
+        setLogoUrl(getImageUrl(data.imageUrl));
+      }
+    });
+  }, []);
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-50 flex items-center justify-center p-4 font-sans">
       {/* Background decoration */}
@@ -17,7 +28,7 @@ export default function Login() {
         <div className="flex flex-col items-center mb-8">
           <div className="mb-5">
             <img 
-              src="http://localhost:8080/images/logo.png" 
+              src={logoUrl} 
               alt="Kiet Clinic" 
               className="w-50 object-contain"  
             />

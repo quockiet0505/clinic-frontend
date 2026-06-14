@@ -1,34 +1,83 @@
 import React, { useState } from 'react';
-import { Edit, Trash2, ShieldCheck, Lock } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import PageHeader from '@/components/common/PageHeader';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
 import RoleFormDialog from '../components/RoleFormDialog';
-import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { EditButton, DeleteButton } from '@/components/common/ActionButtons';
 import { Role } from '../types/settings';
 import { settingsApi } from '../api/settingsApi';
+
+const roleColorMap: Record<string, { iconBg: string; iconColor: string; codeBg: string; codeText: string }> = {
+  ADMIN: {
+    iconBg: 'bg-rose-50',
+    iconColor: 'text-rose-600',
+    codeBg: 'bg-rose-50',
+    codeText: 'text-rose-700 border-rose-200',
+  },
+  DOCTOR: {
+    iconBg: 'bg-blue-50',
+    iconColor: 'text-blue-600',
+    codeBg: 'bg-blue-50',
+    codeText: 'text-blue-700 border-blue-200',
+  },
+  STAFF: {
+    iconBg: 'bg-slate-100',
+    iconColor: 'text-slate-600',
+    codeBg: 'bg-slate-100',
+    codeText: 'text-slate-700 border-slate-200',
+  },
+  LAB_TECH: {
+    iconBg: 'bg-purple-50',
+    iconColor: 'text-purple-600',
+    codeBg: 'bg-purple-50',
+    codeText: 'text-purple-700 border-purple-200',
+  },
+  PATIENT: {
+    iconBg: 'bg-emerald-50',
+    iconColor: 'text-emerald-600',
+    codeBg: 'bg-emerald-50',
+    codeText: 'text-emerald-700 border-emerald-200',
+  },
+};
+
+// Map tên hiển thị tiếng Việt
+const roleNameMap: Record<string, string> = {
+  ADMIN: 'Quản trị viên',
+  DOCTOR: 'Bác sĩ',
+  STAFF: 'Nhân viên',
+  LAB_TECH: 'Kỹ thuật viên xét nghiệm',
+  PATIENT: 'Bệnh nhân',
+};
 
 export default function RolesPermissions() {
   const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [editingRole, setEditingRole] = useState<Role | null>(null);
   const [deletingRole, setDeletingRole] = useState<Role | null>(null);
+
   const fetchData = async () => {
     setLoading(true);
     try {
       const data = await settingsApi.getRoles();
-      if (data && data.length > 0) {
+      if (Array.isArray(data) && data.length > 0) {
         setRoles(data);
       } else {
         setRoles([
-          { roleId: 1, roleCode: 'ADMIN', roleName: 'Quản trị hệ thống' },
-          { roleId: 2, roleCode: 'DOCTOR', roleName: 'Bác sĩ chuyên khoa' },
+          { roleId: 1, roleCode: 'ADMIN', roleName: 'Quản trị viên' },
+          { roleId: 2, roleCode: 'DOCTOR', roleName: 'Bác sĩ' },
+          { roleId: 3, roleCode: 'STAFF', roleName: 'Nhân viên' },
+          { roleId: 4, roleCode: 'LAB_TECH', roleName: 'Kỹ thuật viên xét nghiệm' },
+          { roleId: 5, roleCode: 'PATIENT', roleName: 'Bệnh nhân' },
         ]);
       }
     } catch (e) {
       setRoles([
-        { roleId: 1, roleCode: 'ADMIN', roleName: 'Quản trị hệ thống' },
-        { roleId: 2, roleCode: 'DOCTOR', roleName: 'Bác sĩ chuyên khoa' },
+        { roleId: 1, roleCode: 'ADMIN', roleName: 'Quản trị viên' },
+        { roleId: 2, roleCode: 'DOCTOR', roleName: 'Bác sĩ' },
+        { roleId: 3, roleCode: 'STAFF', roleName: 'Nhân viên' },
+        { roleId: 4, roleCode: 'LAB_TECH', roleName: 'Kỹ thuật viên xét nghiệm' },
+        { roleId: 5, roleCode: 'PATIENT', roleName: 'Bệnh nhân' },
       ]);
     }
     setLoading(false);
@@ -38,46 +87,76 @@ export default function RolesPermissions() {
     fetchData();
   }, []);
 
+  // Hàm lấy tên hiển thị: ưu tiên roleName gốc nếu đã là tiếng Việt, không thì dùng map
+  const getDisplayName = (role: Role) => {
+    if (role.roleName && (role.roleName === 'Quản trị viên' || role.roleName === 'Bác sĩ' || role.roleName === 'Nhân viên' || role.roleName === 'Kỹ thuật viên xét nghiệm' || role.roleName === 'Bệnh nhân')) {
+      return role.roleName;
+    }
+    return roleNameMap[role.roleCode] || role.roleName || role.roleCode;
+  };
+
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 flex flex-col h-full">
+    <div className="space-y-6 flex flex-col h-full animate-in fade-in duration-500">
       <PageHeader
         title="Phân quyền"
         description="Quản lý mức độ truy cập và mã vai trò của người dùng trên hệ thống."
-        actionText="Tạo Vai trò mới"
+        actionText="Tạo vai trò mới"
         onAction={() => setEditingRole({ roleId: 0, roleCode: '', roleName: '' })}
       />
 
       {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải dữ liệu phân quyền...</div>
+        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải...</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {roles.map((role) => (
-            <div key={role.roleId} className="group bg-white p-6 rounded-[24px] border border-slate-200 shadow-sm flex items-center gap-5 hover:shadow-md transition-all relative">
-              <div className="w-14 h-14 rounded-[16px] bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
-                <ShieldCheck size={28} />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-black text-slate-900 tracking-tight">{role.roleName}</h3>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">MÃ: {role.roleCode}</p>
-              </div>
-
-              {/* Nút thao tác hiện khi hover */}
-              <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button onClick={() => setEditingRole(role)} variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-[10px] text-blue-600 hover:bg-blue-50 transition-colors cursor-pointer">
-                    <Edit size={14} />
-                  </Button>
-                  <Button onClick={() => setDeletingRole(role)} variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-[10px] text-red-600 border border-transparent hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all cursor-pointer">
-                    <Trash2 size={14} />
-                  </Button>
-              </div>
-
-              <Lock size={14} className="absolute top-4 right-4 text-slate-200 group-hover:hidden" />
-            </div>
-          ))}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 h-full overflow-auto">
+          <Table className="min-w-[650px]">
+            <TableHeader className="bg-slate-100 sticky top-0 z-10">
+              <TableRow>
+                <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[35%]">Tên vai trò</TableHead>
+                <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[25%]">Mã vai trò</TableHead>
+                <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[20%]">Số người dùng</TableHead>
+                <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[20%]">Thao tác</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {roles.map((role) => {
+                const colors = roleColorMap[role.roleCode] || roleColorMap.STAFF;
+                return (
+                  <TableRow key={role.roleId} className="hover:bg-slate-50 border-b border-slate-100">
+                    <TableCell className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-lg ${colors.iconBg} ${colors.iconColor} flex items-center justify-center`}>
+                          <ShieldCheck size={16} />
+                        </div>
+                        <span className="font-medium text-slate-800">{getDisplayName(role)}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <code className={`text-xs px-2 py-1 rounded-md border ${colors.codeBg} ${colors.codeText}`}>
+                        {role.roleCode}
+                      </code>
+                    </TableCell>
+                    <TableCell className="px-6 py-4 text-slate-500">—</TableCell>
+                    <TableCell className="px-6 py-4">
+                      <div className="flex gap-2">
+                        <EditButton onClick={() => setEditingRole(role)} />
+                        <DeleteButton onClick={() => setDeletingRole(role)} />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+              {roles.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={4} className="h-32 text-center text-slate-400">
+                    Không có vai trò nào.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
       )}
 
-      {/* Dialog Thêm/Sửa */}
       <RoleFormDialog
         role={editingRole}
         onClose={() => setEditingRole(null)}
@@ -92,11 +171,10 @@ export default function RolesPermissions() {
         }}
       />
 
-      {/* Dialog Xóa từ Common */}
       <ConfirmDialog
         isOpen={!!deletingRole}
-        title="Xóa Vai trò"
-        description={`Bạn có chắc chắn muốn xóa vĩnh viễn vai trò "${deletingRole?.roleName}"? Người dùng thuộc vai trò này có thể sẽ bị mất quyền truy cập.`}
+        title="Xóa vai trò"
+        description={`Bạn có chắc chắn muốn xóa vai trò "${deletingRole?.roleName}"? Người dùng thuộc vai trò này sẽ mất quyền truy cập.`}
         confirmText="Xác nhận xóa"
         onClose={() => setDeletingRole(null)}
         onConfirm={async () => {

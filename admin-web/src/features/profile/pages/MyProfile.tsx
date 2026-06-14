@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Key, User as UserIcon } from 'lucide-react';
 import PageHeader from '@/components/common/PageHeader';
-
 import ProfileCard from '../components/ProfileCard';
 import ProfileInfoForm from '../components/ProfileInfoForm';
 import ProfileSecurityForm from '../components/ProfileSecurityForm';
@@ -35,12 +34,10 @@ export default function MyProfile() {
 
   const handleSaveInfo = () => {
     console.log('Saved Profile Info:', userData);
-    // Call API to update staff table
   };
 
   const handleUpdatePassword = () => {
     console.log('Password Updated successfully.');
-    // Call API to update account table
     setPasswordData({ current: '', new: '', confirm: '' });
   };
 
@@ -55,25 +52,29 @@ export default function MyProfile() {
         <ProfileCard user={userData} />
 
         {/* CỘT PHẢI: TABS & FORMS */}
-        <div className="flex-1 bg-white rounded-[32px] shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+        <div className="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
           
-          {/* TABS */}
-          <div className="flex border-b border-slate-100 px-6 pt-2 bg-slate-50 shrink-0">
+          {/* TABS - bỏ nền xanh hover, chỉ giữ text và border */}
+          <div className="flex border-b border-slate-100 px-6 pt-2 shrink-0">
             <button
               onClick={() => setActiveTab('info')}
               className={`flex items-center gap-2 px-6 py-4 font-bold text-sm cursor-pointer transition-all border-b-2 ${
-                activeTab === 'info' ? 'border-primary-600 text-primary-600 bg-white' : 'border-transparent text-slate-500 hover:text-primary-600 hover:bg-primary-50'
+                activeTab === 'info' 
+                  ? 'border-blue-600 text-blue-600' 
+                  : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'
               }`}
             >
-              <UserIcon size={16}/> Thông tin Cá nhân
+              <UserIcon size={16} /> Thông tin cá nhân
             </button>
             <button
               onClick={() => setActiveTab('security')}
               className={`flex items-center gap-2 px-6 py-4 font-bold text-sm cursor-pointer transition-all border-b-2 ${
-                activeTab === 'security' ? 'border-primary-600 text-primary-600 bg-white' : 'border-transparent text-slate-500 hover:text-primary-600 hover:bg-primary-50'
+                activeTab === 'security' 
+                  ? 'border-blue-600 text-blue-600' 
+                  : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300'
               }`}
             >
-              <Key size={16} /> Bảo mật & Mật khẩu
+              <Key size={16} /> Bảo mật & mật khẩu
             </button>
           </div>
 

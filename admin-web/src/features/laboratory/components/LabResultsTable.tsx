@@ -1,40 +1,71 @@
 import React from 'react';
-import { Eye, FileSignature } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Calendar, FileText } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ServiceResult } from '../types/laboratory';
+import { formatDateTime } from '@/utils/formatters';
+import { ViewResultButton } from '@/components/common/ActionButtons';
 
-export default function LabResultsTable({ data, onViewResult }: { data: ServiceResult[], onViewResult: (r: ServiceResult) => void }) {
+interface Props {
+  data: ServiceResult[];
+  onViewResult: (result: ServiceResult) => void;
+}
+
+export default function LabResultsTable({ data, onViewResult }: Props) {
+  if (!data.length) {
+    return (
+      <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
+        <p className="text-slate-500">Không có kết quả xét nghiệm nào.</p>
+      </div>
+    );
+  }
+
+  // Helper để hiển thị tên bác sĩ không bị trùng "BS."
+  const formatDoctorName = (name: string) => {
+    if (!name) return '';
+    return name.startsWith('BS.') ? name : `${name}`;
+  };
+
   return (
-    <div className="bg-white rounded-[32px] shadow-sm border border-slate-200 flex-1 overflow-hidden">
-      <Table>
-        <TableHeader className="bg-slate-50">
-          <TableRow className="h-14">
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Result ID</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bệnh nhân</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Test & Conclusion</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 h-full overflow-auto">
+      <Table className="min-w-[800px]">
+        <TableHeader className="bg-slate-100 sticky top-0 z-10">
+          <TableRow>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[18%]">Kết quả ID & Ngày</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[22%]">Bệnh nhân / Bác sĩ</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[45%]">Xét nghiệm & Kết luận</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(res => (
-            <TableRow key={res.resultId} className="hover:bg-slate-50/50">
-              <TableCell className="px-8 py-4">
-                <p className="font-bold text-slate-900">{res.enteredAt.split('T')[0]}</p>
-                <p className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">RES-{res.resultId}</p>
+          {data.map((res) => (
+            <TableRow key={res.resultId} className="hover:bg-slate-50 border-b border-slate-100">
+              <TableCell className="px-6 py-4">
+                <p className="text-sm font-medium text-slate-700 flex items-center gap-1">
+                  <Calendar size={14} className="text-slate-400" />
+                  {formatDateTime(res.enteredAt)}
+                </p>
+                <p className="text-xs text-slate-400 mt-0.5">#RES-{res.resultId}</p>
               </TableCell>
-              <TableCell>
-                <p className="font-bold text-slate-900">{res.patientName}</p>
-                <p className="text-xs font-medium text-slate-500 mt-1">Req: Dr. {res.doctorName}</p>
+              <TableCell className="px-6 py-4">
+                <p className="font-medium text-slate-800">{res.patientName}</p>
+                <p className="text-xs text-slate-500">{formatDoctorName(res.doctorName)}</p>
               </TableCell>
-              <TableCell>
-                <p className="font-bold text-blue-600 flex items-center gap-1.5"><FileSignature size={14}/> {res.serviceName}</p>
-                <p className="text-xs font-medium text-slate-600 mt-1 truncate max-w-[250px]">{res.conclusion}</p>
+              <TableCell className="px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <FileText size={14} className="text-slate-400 shrink-0" />
+                  <span className="text-slate-700 truncate" title={res.serviceName}>{res.serviceName}</span>
+                </div>
+                <div className="mt-2">
+                  <Badge variant="outline" className={`border-0 px-2 py-0.5 text-xs font-semibold ${
+                    res.conclusion.toLowerCase().includes('bất thường') ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'
+                  }`}>
+                    {res.conclusion}
+                  </Badge>
+                </div>
               </TableCell>
-              <TableCell className="">
-                <Button onClick={() => onViewResult(res)} variant="outline" size="sm" className="h-9 font-bold rounded-xl px-4 text-blue-600 border-blue-200 hover:bg-blue-50">
-                  <Eye size={14} className="mr-1.5"/> View Report
-                </Button>
+              <TableCell className="px-6 py-4">
+                <ViewResultButton onClick={() => onViewResult(res)} />
               </TableCell>
             </TableRow>
           ))}

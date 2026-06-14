@@ -37,7 +37,7 @@ export default function StaffFilterBar({ activeTab, setActiveTab, searchTerm, se
             key={tab.value}
             onClick={() => setActiveTab(tab.value)}
             className={`flex-1 xl:flex-none px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ease-out whitespace-nowrap flex items-center justify-center gap-2 cursor-pointer ${
-              activeTab === tab.value ? 'bg-white text-primary-600 shadow-sm border border-slate-100/50' : 'text-slate-500 hover:text-primary-600 hover:bg-slate-100/50'
+              activeTab === tab.value ? 'bg-white text-primary-600 shadow-sm border border-slate-100/50' : 'text-slate-500 hover:text-primary-600 hover:bg-slate-100/50 border border-transparent'
             }`}
           >
             {tab.value === 'ALL' ? <Users size={16} /> : getRoleIcon(tab.value)}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, History, CalendarClock, BellRing } from 'lucide-react';
+import { Phone, History, BellRing, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import StatusBadge from '@/components/common/StatusBadge';
@@ -8,50 +8,75 @@ import { FollowUp } from '../types/appointment';
 interface Props {
   data: FollowUp[];
   onLogCall: (fu: FollowUp) => void;
-  onSendReminder: (fu: FollowUp) => void; // Prop mới
+  onSendReminder: (fu: FollowUp) => void;
 }
 
 export default function FollowUpTable({ data, onLogCall, onSendReminder }: Props) {
+  if (!data.length) {
+    return (
+      <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
+        <p className="text-slate-500">Không có lịch tái khám nào.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-white rounded-[20px] shadow-sm border border-slate-200 flex-1 overflow-hidden">
-      <Table>
-        <TableHeader className="bg-slate-50">
-          <TableRow className="h-14">
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Thông tin Bệnh nhân</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Chi tiết nhắc nhở</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 h-full overflow-auto">
+      <Table className="min-w-[800px]">
+        <TableHeader className="bg-slate-100 sticky top-0 z-10">
+          <TableRow>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[25%]">Thông tin bệnh nhân</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[35%]">Chi tiết nhắc nhở</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[15%]">Trạng thái</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[25%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((item) => (
-            <TableRow key={item.followUpId} className="hover:bg-slate-50/50">
-              <TableCell className="px-8 py-4">
+            <TableRow key={item.followUpId} className="hover:bg-slate-50 border-b border-slate-100">
+              <TableCell className="px-6 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-slate-50 text-slate-600 flex items-center justify-center border border-slate-200 font-black uppercase">{item.patientName.charAt(0)}</div>
+                  <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm uppercase">
+                    {item.patientName.charAt(0)}
+                  </div>
                   <div>
-                    <p className="font-bold text-slate-900">{item.patientName}</p>
-                    <p className="text-xs text-slate-500 font-medium flex items-center gap-1 mt-0.5"><Phone size={10} /> {item.phone}</p>
+                    <p className="font-medium text-slate-800">{item.patientName}</p>
+                    <div className="flex items-center gap-1 text-xs text-slate-500 mt-0.5">
+                      <Phone size={12} className='text-blue-500' />
+                      <span>{item.phone}</span>
+                    </div>
                   </div>
                 </div>
               </TableCell>
-              <TableCell>
-                <p className="text-sm font-bold text-slate-700">{item.note.split('|')[0]}</p>
-                <span className="text-xs font-medium text-slate-500 flex items-center gap-1 mt-1.5"><History size={12} /> Đến hạn: {item.scheduledDatetime}</span>
+              <TableCell className="px-6 py-4">
+                <p className="text-sm font-medium text-slate-700">{item.note.split('|')[0]}</p>
+                <div className="flex items-center gap-1 text-xs text-slate-500 mt-1.5">
+                  <History size={12} />
+                  <span>Đến hạn: {item.scheduledDatetime}</span>
+                </div>
               </TableCell>
-              <TableCell className="text-center">
+              <TableCell className="px-6 py-4">
                 <StatusBadge status={item.status} />
-                {item.note.includes('| Log:') && <p className="text-[10px] text-slate-400 mt-1.5 font-medium truncate max-w-[150px] mx-auto">{item.note.split('| Log:')[1]}</p>}
+                {item.note.includes('| Log:') && (
+                  <p className="text-xs text-slate-500 mt-1 truncate max-w-[180px]" title={item.note.split('| Log:')[1]}>
+                    {item.note.split('| Log:')[1]}
+                  </p>
+                )}
               </TableCell>
-              <TableCell className="text-center align-middle">
+              <TableCell className="px-6 py-4">
                 {item.status === 'PENDING' && (
-                  <div className="flex justify-center items-center gap-2">
-                    {/* NÚT GỬI THÔNG BÁO */}
-                    <Button onClick={() => onSendReminder(item)} variant="outline" size="sm" className="h-9 font-semibold rounded-[10px] px-3 border-amber-200 text-amber-600 hover:bg-amber-50 shadow-sm transition-all cursor-pointer" title="Gửi thông báo hệ thống">
-                      <BellRing size={16} />
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={() => onSendReminder(item)}
+                      variant="outline"
+                      className="h-8 px-3 rounded-lg text-xs font-medium border-amber-200 text-amber-600 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-300 transition-all"
+                    >
+                      <BellRing size={14} className="mr-1.5" /> 
                     </Button>
-                    {/* NÚT GHI NHẬN CUỘC GỌI */}
-                    <Button onClick={() => onLogCall(item)} size="sm" className="h-9 font-semibold rounded-[10px] px-4 bg-primary hover:bg-primary/90 text-white shadow-sm transition-all cursor-pointer">
+                    <Button
+                      onClick={() => onLogCall(item)}
+                      className="h-8 px-3 rounded-lg text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-all"
+                    >
                       <Phone size={14} className="mr-1.5" /> Ghi nhận cuộc gọi
                     </Button>
                   </div>

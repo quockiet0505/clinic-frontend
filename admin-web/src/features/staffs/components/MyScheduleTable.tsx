@@ -4,40 +4,71 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import StatusBadge from '@/components/common/StatusBadge';
 
-export default function MyScheduleTable({ data, onCancelRequest }: { data: any[], onCancelRequest: (id: number) => void }) {
+interface MyScheduleTableProps {
+  data: any[];
+  onCancelRequest: (id: number) => void;
+}
+
+export default function MyScheduleTable({ data, onCancelRequest }: MyScheduleTableProps) {
+  const getLeaveTypeLabel = (type: string) => {
+    if (type === 'SICK') return 'Nghỉ ốm';
+    if (type === 'ANNUAL') return 'Nghỉ phép năm';
+    return 'Nghỉ khác';
+  };
+
   return (
-    <div className="bg-white rounded-[32px] shadow-sm border border-slate-200 flex-1 overflow-hidden">
-      <Table>
-        <TableHeader className="bg-slate-50">
-          <TableRow className="h-14">
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8 w-[20%]">Loại nghỉ</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] w-[20%]">Thời gian nghỉ</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] w-[25%]">Lý do</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-left w-[20%]">Thao tác</TableHead>
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 h-full overflow-auto">
+      <Table className="min-w-[800px]">
+        <TableHeader className="bg-slate-100 sticky top-0 z-10">
+          <TableRow>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[18%]">Loại nghỉ</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[20%]">Thời gian nghỉ</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[32%]">Lý do</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[15%]">Trạng thái</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((leave) => (
-            <TableRow key={leave.leaveId} className="hover:bg-slate-50/50">
-              <TableCell className="px-8 py-4">
-                <span className="font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-[10px] text-[11px] uppercase tracking-wider">{leave.leaveType}</span>
-              </TableCell>
-              <TableCell className="align-middle">
-                <p className="font-bold text-slate-800">{leave.fromDate}</p>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">Tới: {leave.toDate}</p>
-              </TableCell>
-              <TableCell className="max-w-xs"><p className="text-sm text-slate-600 truncate">{leave.reason}</p></TableCell>
-              <TableCell className="text-center"><StatusBadge status={leave.status} /></TableCell>
-              <TableCell className="text-left align-middle">
-                {leave.status === 'PENDING' && (
-                  <div className="flex justify-start items-center">
-                    <Button onClick={() => onCancelRequest(leave.leaveId)} variant="outline" size="sm" className="w-9 h-9 p-0 rounded-xl text-rose-600 border-slate-200 hover:bg-rose-50"><Trash2 size={16} /></Button>
-                  </div>
-                )}
+          {data.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={5} className="px-6 py-12 text-center text-slate-400">
+                Không có đơn xin nghỉ nào.
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            data.map((leave) => (
+              <TableRow key={leave.leaveId} className="hover:bg-slate-50 border-b border-slate-100">
+                <TableCell className="px-6 py-4">
+                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">
+                    {getLeaveTypeLabel(leave.leaveType)}
+                  </span>
+                </TableCell>
+                <TableCell className="px-6 py-4">
+                  <p className="text-sm font-medium text-slate-800">{leave.fromDate}</p>
+                  <p className="text-xs text-slate-400 mt-0.5">Đến: {leave.toDate}</p>
+                </TableCell>
+                <TableCell className="px-6 py-4">
+                  <p className="text-sm text-slate-600 truncate max-w-[280px]" title={leave.reason}>
+                    {leave.reason || '—'}
+                  </p>
+                </TableCell>
+                <TableCell className="px-6 py-4">
+                  <StatusBadge status={leave.status} />
+                </TableCell>
+                <TableCell className="px-6 py-4">
+                  {leave.status === 'PENDING' && (
+                    <Button
+                      onClick={() => onCancelRequest(leave.leaveId)}
+                      variant="outline"
+                      className="h-8 px-3 rounded-lg text-xs font-medium border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 transition-all"
+                    >
+                      <Trash2 size={14} className="mr-1.5" /> Hủy đơn
+                    </Button>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>

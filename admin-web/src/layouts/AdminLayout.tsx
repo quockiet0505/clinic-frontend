@@ -1,19 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import Sidebar from '@/layouts/components/Sidebar';
 import Header from '@/layouts/components/Header';
 import { useAuth } from '@/context/AuthContext';
+import { logoApi } from '@/features/settings/api/logoApi';
+import { getImageUrl } from '@/utils/image';
 
 export default function AdminLayout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const { isAuthenticated, loading } = useAuth();
+  const [logoUrl, setLogoUrl] = useState<string>('http://localhost:8080/images/logo.png');
+
+  useEffect(() => {
+    logoApi.getLogo('main').then(data => {
+      if (data && data.imageUrl) {
+        setLogoUrl(getImageUrl(data.imageUrl));
+      }
+    });
+  }, []);
 
   // Chờ AuthContext khởi tạo xong (đọc localStorage)
   if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-4">
-          <img src="http://localhost:8080/images/logo.png" alt="Logo" className="w-20 h-20 object-contain animate-pulse" />
+          <img src={logoUrl} alt="Logo" className="w-20 h-20 object-contain animate-pulse" />
           <p className="text-slate-500 font-semibold text-sm">Đang tải hệ thống...</p>
         </div>
       </div>
@@ -30,6 +41,7 @@ export default function AdminLayout() {
       <Sidebar 
         isCollapsed={isSidebarCollapsed} 
         onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
+        logoUrl={logoUrl}
       />
       
       <div className="flex flex-col flex-1 overflow-hidden">

@@ -21,6 +21,8 @@ export interface DoctorPricing {
   serviceId: number;
   serviceName: string;
   price: number;
+  originalPrice?: number;
+  discountPrice?: number;
   imageUrl?: string;
 }
 

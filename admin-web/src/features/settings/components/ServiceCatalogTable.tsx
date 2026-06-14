@@ -1,16 +1,8 @@
 import React from 'react';
-import { Edit, Trash2, Activity } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import StatusBadge from '@/components/common/StatusBadge';
+import { Activity } from 'lucide-react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Service } from '../types/settings';
+import { EditButton, DeleteButton } from '@/components/common/ActionButtons';
 
 interface Props {
   data: Service[];
@@ -18,116 +10,84 @@ interface Props {
   onDelete: (service: Service) => void;
 }
 
-export default function ServiceCatalogTable({
-  data,
-  onEdit,
-  onDelete,
-}: Props) {
-  const formatPrice = (price?: number) => {
-    if (!price) return '0đ';
-    return `${Number(price).toLocaleString('vi-VN')}đ`;
-  };
+const formatCurrency = (value?: number) => {
+  if (!value) return '0₫';
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+};
+
+// Màu sắc dịch vụ (không dùng tím)
+const serviceTypeMap: Record<string, { label: string; color: string }> = {
+  EXAM: { label: 'Khám bệnh', color: 'bg-blue-100 text-blue-700' },
+  LAB_TEST: { label: 'Xét nghiệm', color: 'bg-emerald-100 text-emerald-700' },
+  IMAGING: { label: 'Chẩn đoán hình ảnh', color: 'bg-orange-100 text-orange-700' },
+};
+
+export default function ServiceCatalogTable({ data = [], onEdit, onDelete }: Props) {
+  if (data.length === 0) {
+    return (
+      <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
+        <p className="text-slate-500">Không có dịch vụ nào.</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-white rounded-[32px] shadow-sm border border-slate-200 flex-1 overflow-hidden">
-      <Table className="table-fixed w-full">
-        <TableHeader className="bg-slate-50">
-          <TableRow className="h-14 border-b border-slate-200 hover:bg-transparent">
-            <TableHead className="px-8 font-bold text-slate-500 uppercase tracking-widest text-[10px]">
-              Tên dịch vụ
-            </TableHead>
-
-            <TableHead className="w-[180px] font-bold text-slate-500 uppercase tracking-widest text-[10px]">
-              Danh mục
-            </TableHead>
-
-            <TableHead className="w-[180px] text-right pr-8 font-bold text-slate-500 uppercase tracking-widest text-[10px]">
-              Giá ưu đãi
-            </TableHead>
-
-            <TableHead className="w-[180px] text-right pr-8 font-bold text-slate-500 uppercase tracking-widest text-[10px]">
-              Giá gốc
-            </TableHead>
-
-            <TableHead className="w-[220px] text-center font-bold text-slate-500 uppercase tracking-widest text-[10px]">
-              Thao tác
-            </TableHead>
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 h-full overflow-auto">
+      <Table className="min-w-[800px]">
+        <TableHeader className="bg-slate-100 sticky top-0 z-10">
+          <TableRow>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[40%]">Tên dịch vụ</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[20%]">Danh mục</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[15%]">Giá gốc</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[15%]">Giá giảm</TableHead>
+            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[10%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
-
         <TableBody>
-          {data.map((item) => (
-            <TableRow
-              key={item.serviceId}
-              className="hover:bg-slate-50/50 transition-colors border-slate-100"
-            >
-              <TableCell className="px-8 py-5">
-                <div className="flex items-center gap-3">
-                  <Activity
-                    size={18}
-                    className="text-blue-500 shrink-0"
-                  />
-
-                  <span
-                    className="font-bold text-slate-900 truncate block"
-                    title={item.serviceName}
-                  >
-                    {item.serviceName}
+          {data.map((item) => {
+            const hasDiscount = item.discountPrice && item.discountPrice > 0;
+            const typeInfo = serviceTypeMap[item.serviceType] || { label: item.serviceType, color: 'bg-gray-100 text-gray-700' };
+            return (
+              <TableRow key={item.serviceId} className="hover:bg-slate-50 border-b border-slate-100">
+                <TableCell className="px-6 py-4">
+                  <div className="flex items-center gap-3">
+                    <Activity size={18} className="text-blue-500 shrink-0" />
+                    <span 
+                      className="font-medium text-slate-800 truncate block max-w-[300px]" 
+                      title={item.serviceName}
+                    >
+                      {item.serviceName}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell className="px-6 py-4">
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${typeInfo.color}`}>
+                    {typeInfo.label}
                   </span>
-                </div>
-              </TableCell>
-
-              <TableCell className="w-[180px]">
-                <StatusBadge status={item.serviceType} />
-              </TableCell>
-
-              <TableCell className="w-[180px] text-right pr-8">
-                {item.discountPrice ? (
-                  <span className="font-black text-emerald-600 text-[15px]">
-                    {formatPrice(item.discountPrice)}
-                  </span>
-                ) : (
-                  <span className="text-slate-400 font-medium">—</span>
-                )}
-              </TableCell>
-
-              <TableCell className="w-[180px] text-right pr-8">
-                <span
-                  className={
-                    item.discountPrice
-                      ? 'line-through text-slate-400 font-bold text-[15px]'
-                      : 'font-black text-blue-600 text-[15px]'
-                  }
-                >
-                  {formatPrice(item.originalPrice)}
-                </span>
-              </TableCell>
-
-              <TableCell className="w-[220px] text-center align-middle">
-                <div className="flex justify-center items-center gap-2">
-                  <Button
-                    onClick={() => onEdit(item)}
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-1.5 h-9 px-4 rounded-xl border-primary-200 text-primary-600 hover:bg-primary-50"
-                  >
-                    <Edit size={14} />
-                    <span>Sửa</span>
-                  </Button>
-
-                  <Button
-                    onClick={() => onDelete(item)}
-                    variant="outline"
-                    size="sm"
-                    className="flex items-center gap-1.5 h-9 px-4 rounded-xl border-red-200 text-red-600 hover:bg-red-50"
-                  >
-                    <Trash2 size={14} />
-                    <span>Xóa</span>
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+                </TableCell>
+                <TableCell className="px-6 py-4 text-slate-500">
+                  {hasDiscount ? (
+                    <span className="line-through text-slate-400">{formatCurrency(item.originalPrice)}</span>
+                  ) : (
+                    <span className="font-medium">{formatCurrency(item.originalPrice)}</span>
+                  )}
+                </TableCell>
+                <TableCell className="px-6 py-4">
+                  {hasDiscount ? (
+                    <span className="text-emerald-600 font-medium">{formatCurrency(item.discountPrice)}</span>
+                  ) : (
+                    <span className="text-slate-300">—</span>
+                  )}
+                </TableCell>
+                <TableCell className="px-6 py-4">
+                  <div className="flex gap-2">
+                    <EditButton onClick={() => onEdit(item)} />
+                    <DeleteButton onClick={() => onDelete(item)} />
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>

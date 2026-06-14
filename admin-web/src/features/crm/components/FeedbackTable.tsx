@@ -1,7 +1,8 @@
 import React from 'react';
-import { Star, MessageSquareQuote } from 'lucide-react';
+import { Star, MessageSquareQuote, Calendar } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Feedback } from '../types/crm';
+import { formatDateTime } from '@/utils/formatters';
 
 export default function FeedbackTable({ data }: { data: Feedback[] }) {
   const renderStars = (rating: number) => {
@@ -25,11 +26,11 @@ export default function FeedbackTable({ data }: { data: Feedback[] }) {
           {data.map(fb => (
             <TableRow key={fb.feedbackId} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
-                <p className="font-bold text-slate-900">{fb.createdAt.split('T')[0]}</p>
-                <p className="text-[10px] text-slate-500 font-bold tracking-widest mt-0.5">REC-{fb.recordId}</p>
+                <p className="text-xs font-medium text-slate-700 flex items-center gap-1.5"><Calendar size={13} className="text-slate-400" /> {formatDateTime(fb.createdAt)}</p>
+                <p className="text-[10px] text-slate-400 font-medium tracking-widest mt-0.5">#REC-{fb.recordId}</p>
               </TableCell>
               <TableCell>
-                <p className="font-bold text-slate-800">{fb.patientName}</p>
+                <p className="font-bold text-slate-900 text-[14px]">{fb.patientName}</p>
                 <p className="text-xs font-medium text-slate-500 mt-1">BS. {fb.doctorName}</p>
               </TableCell>
               <TableCell>
