@@ -1,53 +1,80 @@
+// features/appointments/components/AppointmentFilterBar.tsx
 import React from 'react';
-import { Globe, UserRound, LayoutList } from 'lucide-react';
-import SearchInput from '@/components/common/SearchInput';
-import DateRangeFilter from '@/components/common/DateRangeFilter';
+import { FilterBar } from '@/components/common/FilterBar';
+import type { AppointmentStatus } from '../types/appointment';
 
-interface Props {
-  search: string; setSearch: (v: string) => void;
-  typeFilter: string; setTypeFilter: (v: string) => void;
-  fromDate: string; setFromDate: (v: string) => void;
-  toDate: string; setToDate: (v: string) => void;
+interface AppointmentFilterBarProps {
+  search: string;
+  onSearchChange: (value: string) => void;
+  status: AppointmentStatus | 'ALL';
+  onStatusChange: (value: AppointmentStatus | 'ALL') => void;
+  serviceType: 'ALL' | 'CONSULTATION' | 'TEST';
+  onServiceTypeChange: (value: 'ALL' | 'CONSULTATION' | 'TEST') => void;
+  activeTab: string;
+  onTabChange: (value: string) => void;
 }
 
-const SOURCE_TABS = [
-  { label: 'Tất cả', value: 'ALL', icon: <Globe size={14} /> },
-  { label: 'Trực tuyến', value: 'ONLINE', icon: <Globe size={14} /> },
-  { label: 'Khách vãng lai', value: 'WALK_IN', icon: <UserRound size={14} /> }
-];
+export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
+  search,
+  onSearchChange,
+  status,
+  onStatusChange,
+  serviceType,
+  onServiceTypeChange,
+  activeTab,
+  onTabChange,
+}) => {
+  const statusOptions = [
+    { value: 'ALL', label: 'Tất cả' },
+    { value: 'PENDING', label: 'Chờ xác nhận' },
+    { value: 'CONFIRMED', label: 'Đã xác nhận' },
+    { value: 'CHECKED_IN', label: 'Đã đến viện' },
+    { value: 'IN_PROGRESS', label: 'Đang khám' },
+    { value: 'WAITING_RESULT', label: 'Chờ kết quả' },
+    { value: 'COMPLETED', label: 'Hoàn thành' },
+    { value: 'CANCELLED', label: 'Đã hủy' },
+  ];
 
-export default function AppointmentFilterBar({ search, setSearch, typeFilter, setTypeFilter, fromDate, toDate, setFromDate, setToDate }: Props) {
+  const serviceOptions = [
+    { value: 'ALL', label: 'Tất cả dịch vụ' },
+    { value: 'CONSULTATION', label: 'Khám bệnh' },
+    { value: 'TEST', label: 'Xét nghiệm' },
+  ];
+
+  const tabOptions = [
+    { value: 'all', label: 'Tất cả' },
+    { value: 'today', label: 'Hôm nay' },
+    { value: 'upcoming', label: 'Sắp tới' },
+  ];
+
   return (
-    <div className="flex flex-col xl:flex-row gap-4 bg-white p-4 rounded-[20px] border border-slate-200 shadow-sm shrink-0 items-center justify-between">
-      
-      {/* TABS LỌC NGUỒN */}
-      <div className="flex flex-wrap bg-slate-50 p-1 rounded-2xl w-full xl:w-auto overflow-x-auto border border-slate-100">
-        {SOURCE_TABS.map((tab) => (
-          <button
-            key={tab.value}
-            onClick={() => setTypeFilter(tab.value)}
-            className={`flex-1 xl:flex-none px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 ease-out whitespace-nowrap flex items-center justify-center gap-2 cursor-pointer ${
-              typeFilter === tab.value 
-                ? 'bg-white text-primary-600 shadow-sm border border-slate-100/50' 
-                : 'text-slate-500 hover:text-primary-600 hover:bg-slate-100/50 border border-transparent'
-            }`}
-          >
-            {tab.icon}
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* TÌM KIẾM & NGÀY THÁNG */}
-      <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
-
-        
-        <div className="w-full sm:w-56">
-          <SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm bệnh nhân..." />
-        </div>
-        
-        <DateRangeFilter from={fromDate} to={toDate} onChangeFrom={setFromDate} onChangeTo={setToDate} />
-      </div>
-    </div>
+    <FilterBar
+      searchValue={search}
+      onSearchChange={onSearchChange}
+      searchPlaceholder="Tìm theo tên bác sĩ..."
+      tabs={{
+        options: tabOptions,
+        value: activeTab,
+        onChange: onTabChange,
+      }}
+      filters={[
+        {
+          key: 'serviceType',
+          label: 'Loại dịch vụ',
+          options: serviceOptions,
+          value: serviceType,
+          onChange: (val) => onServiceTypeChange(val as any),
+          placeholder: 'Loại dịch vụ',
+        },
+        {
+          key: 'status',
+          label: 'Trạng thái',
+          options: statusOptions,
+          value: status,
+          onChange: (val) => onStatusChange(val as any),
+          placeholder: 'Trạng thái',
+        },
+      ]}
+    />
   );
-}
+};

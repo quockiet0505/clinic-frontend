@@ -66,9 +66,7 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = "http://local
       title: 'NHÀ THUỐC',
       allowedRoles: ['ADMIN', 'DOCTOR', 'STAFF'],
       items: [
-        { name: 'Kho thuốc', icon: Pill, path: '/pharmacy/inventory' },
-        // { name: 'Purchase Orders', icon: ClipboardPlus, path: '/pharmacy/purchase-orders' },
-        // { name: 'Suppliers', icon: Truck, path: '/pharmacy/suppliers' }, 
+        { name: 'Danh mục thuốc', icon: Pill, path: '/pharmacy/inventory' },
         { name: 'Phát thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions' }
       ]
     },

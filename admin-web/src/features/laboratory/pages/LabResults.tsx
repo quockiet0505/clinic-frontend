@@ -2,15 +2,19 @@ import React, { useState } from 'react';
 import PageHeader from '@/components/common/PageHeader';
 import LabResultsFilterBar from '../components/LabResultsFilterBar';
 import LabResultsTable from '../components/LabResultsTable';
-import LabResultDetailModal from '../components/LabResultDetailDialog';
+import LabResultDetail from './LabResultDetail'; 
 import { ServiceResult } from '../types/laboratory';
 import { laboratoryApi } from '../api/laboratoryApi';
-
-const TODAY = new Date().toISOString().split('T')[0];
 
 export default function LabResults() {
   const [results, setResults] = useState<ServiceResult[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  
+  // Công tắc điều hướng hiển thị tại chỗ
+  const [selectedResult, setSelectedResult] = useState<ServiceResult | null>(null);
 
   React.useEffect(() => {
     laboratoryApi.getLabResults().then(data => {
@@ -19,10 +23,15 @@ export default function LabResults() {
     });
   }, []);
 
-  const [search, setSearch] = useState('');
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
-  const [selectedResult, setSelectedResult] = useState<ServiceResult | null>(null);
+  // Nếu đang chọn một kết quả, ẩn bảng và hiển thị giao diện chi tiết phẳng
+  if (selectedResult !== null) {
+    return (
+      <LabResultDetail 
+        result={selectedResult} 
+        onBack={() => setSelectedResult(null)} 
+      />
+    );
+  }
 
   const filtered = results.filter(r => 
     (r.patientName || '').toLowerCase().includes(search.toLowerCase()) &&
@@ -38,7 +47,6 @@ export default function LabResults() {
       ) : (
         <LabResultsTable data={filtered} onViewResult={setSelectedResult} />
       )}
-      <LabResultDetailModal result={selectedResult} onClose={() => setSelectedResult(null)} />
     </div>
   );
 }

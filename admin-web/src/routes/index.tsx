@@ -36,9 +36,6 @@ import LabResults from '@/features/laboratory/pages/LabResults';
 // --- 5. PHARMACY & INVENTORY ---
 import MedicineInventory from '@/features/pharmacy/pages/MedicineInventory';
 import PrescriptionDispense from '@/features/pharmacy/pages/PrescriptionDispense';
-import PurchaseOrders from '@/features/pharmacy/pages/PurchaseOrders';
-import Suppliers from '@/features/pharmacy/pages/Suppliers';
-import InventoryLogs from '@/features/pharmacy/pages/InventoryLogs';
 
 
 // --- 6. FINANCE & BILLING ---
@@ -67,6 +64,7 @@ import ExpertiseSettings from '@/features/settings/pages/ExpertiseSettings';
 import ServiceCatalog from '@/features/settings/pages/ServiceCatalog';
 import DoctorPricing from '@/features/settings/pages/DoctorPricing';
 import RolesPermissions from '@/features/settings/pages/RolesPermissions';
+import PrescriptionDetail from '@/features/pharmacy/pages/PrescriptionDetail';
 
 // Placeholder Component for pending routes
 const DummyPage = ({ title }: { title: string }) => (
@@ -201,7 +199,9 @@ export const router = createBrowserRouter([
         ) 
       },
 
-      // 4. LABORATORY
+      // =================================================================
+      // 4. LABORATORY (PHÒNG XÉT NGHIỆM)
+      // =================================================================
       { 
         path: 'laboratory/orders', 
         element: (
@@ -219,7 +219,9 @@ export const router = createBrowserRouter([
         ) 
       },
 
-      // 5. PHARMACY
+      // =================================================================
+      // 5. PHARMACY (NHÀ THUỐC)
+      // =================================================================
       { 
         path: 'pharmacy/inventory', 
         element: (
@@ -236,31 +238,8 @@ export const router = createBrowserRouter([
           </RoleGuard>
         ) 
       },
-      { 
-        path: 'pharmacy/purchase-orders', 
-        element: (
-          <RoleGuard allowedRoles={['ADMIN', 'STAFF', 'DOCTOR']}>
-            <PurchaseOrders />
-          </RoleGuard>
-        ) 
-      },
-      { 
-        path: 'pharmacy/suppliers', 
-        element: (
-          <RoleGuard allowedRoles={['ADMIN']}>
-            <Suppliers />
-          </RoleGuard>
-        ) 
-      },
-      { 
-        path: 'pharmacy/inventory-logs', 
-        element: (
-          <RoleGuard allowedRoles={['ADMIN']}>
-            <InventoryLogs />
-          </RoleGuard>
-        ) 
-      },
-
+      
+     
       // 6. FINANCE & BILLING
       { 
         path: 'billing/invoices', 

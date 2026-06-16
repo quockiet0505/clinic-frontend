@@ -10,7 +10,6 @@ export default function MedicineInventory() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   
-  // State quản lý việc mở Modal Thêm/Sửa
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
 
@@ -44,7 +43,7 @@ export default function MedicineInventory() {
     if (window.confirm(`Bạn có chắc chắn muốn xóa thuốc ${medicine.name}?`)) {
       try {
         await pharmacyApi.deleteMedicine(medicine.medicineId);
-        fetchMedicines(); // Refresh lại danh sách sau khi xóa
+        fetchMedicines();
       } catch (error) {
         console.error("Lỗi xóa thuốc:", error);
       }
@@ -54,20 +53,17 @@ export default function MedicineInventory() {
   const handleSave = async (data: any) => {
     try {
       if (selectedMedicine) {
-        // Cập nhật thuốc đã có
         await pharmacyApi.updateMedicine(selectedMedicine.medicineId, data);
       } else {
-        // Thêm thuốc mới
         await pharmacyApi.createMedicine(data);
       }
       setIsDialogOpen(false);
-      fetchMedicines(); // Refresh lại danh sách
+      fetchMedicines();
     } catch (error) {
-      console.error("Lỗi lưu thông tin thuốc:", error);
+      console.error("Lỗi lưu thuốc:", error);
     }
   };
 
-  // Lọc dữ liệu hiển thị theo ô tìm kiếm
   const filteredData = medicines.filter(med => 
     med.name.toLowerCase().includes(search.toLowerCase()) || 
     (med.activeElement && med.activeElement.toLowerCase().includes(search.toLowerCase()))
@@ -82,29 +78,18 @@ export default function MedicineInventory() {
         </div>
       </div>
 
-      {/* Thanh công cụ Tìm kiếm và Nút Thêm mới */}
-      <MedicineFilterBar 
-        search={search} 
-        setSearch={setSearch} 
-        onAdd={handleAdd} 
-      />
+      <MedicineFilterBar search={search} setSearch={setSearch} onAdd={handleAdd} />
 
-      {/* Khu vực Bảng hiển thị Thuốc */}
       <div className="flex-1 min-h-0">
         {loading ? (
           <div className="flex justify-center items-center h-full bg-white rounded-2xl border border-slate-200">
             <span className="text-slate-400 font-medium">Đang tải dữ liệu kho thuốc...</span>
           </div>
         ) : (
-          <MedicineTable 
-            data={filteredData} 
-            onEdit={handleEdit} 
-            onDelete={handleDelete} 
-          />
+          <MedicineTable data={filteredData} onEdit={handleEdit} onDelete={handleDelete} />
         )}
       </div>
 
-      {/* Form Modal (Dùng chung cho cả Thêm và Sửa) */}
       <MedicineFormDialog
         isOpen={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
