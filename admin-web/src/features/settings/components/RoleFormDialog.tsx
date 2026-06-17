@@ -1,3 +1,4 @@
+// components/settings/RoleFormDialog.tsx
 import React from 'react';
 import { Shield } from 'lucide-react';
 import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
@@ -16,7 +17,6 @@ const getFields = (isEditing: boolean): FieldConfig[] => [
     type: 'text',
     required: true,
     placeholder: 'VD: SR_DOCTOR',
-   
   },
 ];
 
@@ -59,6 +59,8 @@ export default function RoleFormDialog({ role, onClose, onSave }: RoleFormDialog
       initialData={initialData}
       onSubmit={handleSubmit}
       submitLabel="Lưu Vai trò"
+      compact={true}
+      columns={2}
     />
   );
 }

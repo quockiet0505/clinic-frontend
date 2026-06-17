@@ -3,12 +3,28 @@ import { Microscope } from 'lucide-react';
 import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
 
 const fields: FieldConfig[] = [
-  { name: 'resultData', label: 'Chỉ số xét nghiệm', type: 'textarea', required: true, placeholder: 'e.g., WBC: 6.5, RBC: 4.8, HGB: 14.2...', rows: 4 },
-  { name: 'conclusion', label: 'Kết luận lâm sàng', type: 'textarea', required: true, placeholder: 'e.g., All parameters within normal limits.', rows: 3 },
+  { 
+    name: 'resultData', 
+    label: 'Chỉ số xét nghiệm', 
+    type: 'textarea', 
+    required: true, 
+    placeholder: 'e.g., WBC: 6.5, RBC: 4.8, HGB: 14.2...', 
+    rows: 4,
+    colSpan: 2,
+  },
+  { 
+    name: 'conclusion', 
+    label: 'Kết luận lâm sàng', 
+    type: 'textarea', 
+    required: true, 
+    placeholder: 'e.g., All parameters within normal limits.', 
+    rows: 3,
+    colSpan: 2,
+  },
 ];
 
 interface Props {
-  order: any; // { orderId, patientName, serviceName }
+  order: any;
   onClose: () => void;
   onSubmit: (orderId: number, data: { resultData: string; conclusion: string }) => void;
 }
@@ -32,6 +48,8 @@ export default function LabResultInputForm({ order, onClose, onSubmit }: Props) 
       onSubmit={handleSubmit}
       submitLabel="Lưu kết quả"
       initialData={{ resultData: '', conclusion: '' }}
+      compact={true}
+      columns={2}
     />
   );
 }

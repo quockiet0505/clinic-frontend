@@ -1,44 +1,109 @@
 import React from 'react';
+import { Clock, CheckCircle, XCircle, AlertCircle, User } from 'lucide-react';
+import { RecentAppointment } from '../types/dashboard';
 
-const recentAppointments = [
-  { id: 1, patientName: 'Nguyễn Văn An', service: 'Khám tổng quát', status: 'CONFIRMED', statusLabel: 'Đã xác nhận' },
-  { id: 2, patientName: 'Trần Thị Bích', service: 'Xét nghiệm máu', status: 'COMPLETED', statusLabel: 'Hoàn thành' },
-  { id: 3, patientName: 'Lê Văn Cường', service: 'Siêu âm', status: 'PENDING', statusLabel: 'Chờ xác nhận' },
-  { id: 4, patientName: 'Phạm Thị Dung', service: 'Tái khám', status: 'CONFIRMED', statusLabel: 'Đã xác nhận' },
-  { id: 5, patientName: 'Hoàng Văn Em', service: 'Đặt lịch xét nghiệm', status: 'CANCELLED', statusLabel: 'Đã hủy' },
-];
+interface Props {
+  appointments: RecentAppointment[];
+}
 
-const statusColorMap: Record<string, string> = {
-  CONFIRMED: 'bg-blue-100 text-blue-700',
-  COMPLETED: 'bg-emerald-100 text-emerald-700',
-  PENDING: 'bg-amber-100 text-amber-700',
-  CANCELLED: 'bg-rose-100 text-rose-700',
+const statusConfig: Record<
+  string,
+  { label: string; bg: string; text: string; icon: React.ReactNode }
+> = {
+  PENDING: {
+    label: 'Chờ xác nhận',
+    bg: 'bg-amber-50',
+    text: 'text-amber-700',
+    icon: <Clock size={12} className="text-amber-500" />,
+  },
+  CONFIRMED: {
+    label: 'Đã xác nhận',
+    bg: 'bg-blue-50',
+    text: 'text-blue-700',
+    icon: <CheckCircle size={12} className="text-blue-500" />,
+  },
+  CHECKED_IN: {
+    label: 'Đã đến',
+    bg: 'bg-indigo-50',
+    text: 'text-indigo-700',
+    icon: <User size={12} className="text-indigo-500" />,
+  },
+  IN_PROGRESS: {
+    label: 'Đang khám',
+    bg: 'bg-purple-50',
+    text: 'text-purple-700',
+    icon: <Clock size={12} className="text-purple-500" />,
+  },
+  COMPLETED: {
+    label: 'Hoàn thành',
+    bg: 'bg-emerald-50',
+    text: 'text-emerald-700',
+    icon: <CheckCircle size={12} className="text-emerald-500" />,
+  },
+  CANCELLED: {
+    label: 'Đã hủy',
+    bg: 'bg-rose-50',
+    text: 'text-rose-700',
+    icon: <XCircle size={12} className="text-rose-500" />,
+  },
+  NO_SHOW: {
+    label: 'Không đến',
+    bg: 'bg-slate-100',
+    text: 'text-slate-600',
+    icon: <AlertCircle size={12} className="text-slate-500" />,
+  },
 };
 
-export default function RecentAppointmentsList() {
+export default function RecentAppointmentsList({ appointments }: Props) {
+  if (!appointments || appointments.length === 0) {
+    return (
+      <div className="text-center py-6 text-sm text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+        Không có lịch hẹn nào
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-4">
-      {recentAppointments.map((apt) => (
-        <div key={apt.id} className="flex items-center gap-4">
-          {/* Avatar chữ có màu nền xanh dương nhạt, chữ xanh dương đậm */}
-          <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm shrink-0">
-            {apt.patientName.charAt(0).toUpperCase()}
-          </div>
-          <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-bold text-slate-800 truncate" title={apt.patientName}>
-              {apt.patientName}
-            </h4>
-            <p className="text-xs text-slate-500 truncate" title={apt.service}>
-              {apt.service}
-            </p>
-          </div>
+    <div className="space-y-3">
+      {appointments.slice(0, 6).map((apt) => {
+        const status = statusConfig[apt.status] || statusConfig.PENDING;
+        const timeDisplay = new Date(apt.time).toLocaleDateString('vi-VN', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        });
+
+        return (
           <div
-            className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full ${statusColorMap[apt.status]}`}
+            key={apt.id}
+            className="flex items-center gap-3 p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all duration-200"
           >
-            {apt.statusLabel}
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 text-blue-700 flex items-center justify-center font-bold text-sm shrink-0">
+              {apt.patientName.charAt(0).toUpperCase()}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-slate-800 truncate">
+                {apt.patientName}
+              </p>
+              <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5">
+                <Clock size={12} />
+                {timeDisplay}
+              </p>
+            </div>
+            <div
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.bg} ${status.text} shrink-0`}
+            >
+              {status.icon}
+              {status.label}
+            </div>
           </div>
+        );
+      })}
+      {appointments.length > 6 && (
+        <div className="text-center text-xs text-blue-600 font-medium mt-2">
+          +{appointments.length - 6} lịch hẹn khác
         </div>
-      ))}
+      )}
     </div>
   );
 }

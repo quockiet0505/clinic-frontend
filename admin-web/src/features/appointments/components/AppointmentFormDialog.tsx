@@ -27,7 +27,9 @@ export default function AppointmentFormDialog({ isOpen, onClose, onBook, initial
       fields={fields}
       initialData={initialData}
       onSubmit={(data, isEdit) => onBook(data)}
-      submitLabel="Xác Nhận Đặt Lịch"
+      submitLabel="OK"
+      compact={true}
+      columns={2}
     />
   );
 }

@@ -1,3 +1,4 @@
+// components/common/ActionButtons.tsx
 import React from 'react';
 import { Edit2, Trash2, Eye, LogIn, XCircle, Edit3, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';

@@ -2,6 +2,7 @@ export interface Expertise {
   expertiseId: number;
   expertiseName: string;
   iconUrl?: string;
+   doctorCount?: number;
   createdAt?: string;
 }
 

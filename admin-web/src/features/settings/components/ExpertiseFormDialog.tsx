@@ -5,7 +5,7 @@ import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
 
 const expertiseFields: FieldConfig[] = [
   { name: 'name', label: 'Tên Chuyên khoa', type: 'text', required: true, placeholder: 'Ví dụ: Tim mạch' },
-  { name: 'description', label: 'Mô tả', type: 'textarea', required: false, placeholder: 'Mô tả ngắn gọn...', rows: 2 },
+  { name: 'description', label: 'Mô tả', type: 'textarea', required: false, placeholder: 'Mô tả ngắn gọn...', rows: 2, colSpan: 2 },
   { name: 'status', label: 'Trạng thái', type: 'select', required: true, options: [
     { value: 'Active', label: 'Hoạt động' },
     { value: 'Inactive', label: 'Ngưng hoạt động' }
@@ -37,6 +37,8 @@ export default function ExpertiseFormDialog({ expertise, onClose, onSave }: any)
       initialData={mappedInitial}
       onSubmit={handleSubmit}
       submitLabel="Lưu thay đổi"
+      compact={true}
+      columns={2}
     />
   );
 }

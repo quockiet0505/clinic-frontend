@@ -1,15 +1,15 @@
+// features/follow-ups/pages/FollowUpList.tsx
 import React, { useState } from 'react';
 import { AlertCircle } from 'lucide-react';
-import PageHeader from '@/components/common/PageHeader';
-import FollowUpFilterBar from '../components/FollowUpFilterBar';
+import { FollowUpFilterBar } from '../components/FollowUpFilterBar';
 import FollowUpTable from '../components/FollowUpTable';
 import FollowUpCallDialog from '../components/FollowUpCallDialog';
 import NotificationDialog from '../components/NotificationDialog';
 import { FollowUp } from '../types/appointment';
+import { followUpApi } from '../api/followUpApi';
+import PageHeader from '@/components/common/PageHeader';
 
 const TODAY = new Date().toISOString().split('T')[0];
-
-import { followUpApi } from '../api/followUpApi';
 
 export default function FollowUpList() {
   const [data, setData] = useState<FollowUp[]>([]);
@@ -36,14 +36,11 @@ export default function FollowUpList() {
   };
 
   const handleSendNotification = (type: string, content: string) => {
-    console.log(`Sending ${type} notification to ${selectedNotify?.patientName}: ${content}`);
-    // Giả lập lưu vào bảng notification thành công, tự động đổi status follow up
     setData(data.map(d => d.followUpId === selectedNotify?.followUpId ? { ...d, status: 'COMPLETED', note: `${d.note} | Log: Sent ${type} notification` } : d));
     setSelectedNotify(null);
   };
 
   const filtered = data.filter(item => {
-    // Tách ngày từ scheduledDatetime (có dạng 'YYYY-MM-DD HH:mm:ss' hoặc 'YYYY-MM-DDTHH:mm:ss')
     const scheduledDate = item.scheduledDatetime.split('T')[0].split(' ')[0];
     return item.patientName.toLowerCase().includes(search.toLowerCase()) && 
            item.status === activeTab && 
@@ -54,26 +51,54 @@ export default function FollowUpList() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
-        <PageHeader title="Nhắc nhở Tái khám" description="Bệnh nhân cần tái khám hoặc chăm sóc sau điều trị." />
+        
+        <PageHeader title="Nhắc nhỏ tái khám" description="Bệnh nhân cần tái khám hoặc chăm sóc sau điều trị."></PageHeader>
+              
         <div className="bg-white px-4 py-2 rounded-[20px] shadow-sm border border-slate-200 flex items-center gap-3">
-           <div className="w-8 h-8 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center font-bold"><AlertCircle size={16}/></div>
-           <div><p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Cần xử lý</p><p className="text-sm font-black text-slate-900 leading-none mt-0.5">{data.filter(d => d.status === 'PENDING').length} Khách hàng</p></div>
+          <div className="w-8 h-8 bg-rose-50 text-rose-600 rounded-lg flex items-center justify-center font-bold">
+            <AlertCircle size={16} />
+          </div>
+          <div>
+            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Cần xử lý</p>
+            <p className="text-sm font-black text-slate-900 leading-none mt-0.5">
+              {data.filter(d => d.status === 'PENDING').length} Khách hàng
+            </p>
+          </div>
         </div>
       </div>
 
-      <FollowUpFilterBar tab={activeTab} setTab={setActiveTab} fromDate={fromDate} setFromDate={setFromDate} toDate={toDate} setToDate={setToDate} search={search} setSearch={setSearch} />
+      <FollowUpFilterBar
+        search={search}
+        onSearchChange={setSearch}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        fromDate={fromDate}
+        toDate={toDate}
+        onFromDateChange={setFromDate}
+        onToDateChange={setToDate}
+      />
 
       {loading ? (
         <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải danh sách nhắc nhở...</div>
       ) : (
-        <FollowUpTable data={filtered} onLogCall={setSelectedCall} onSendReminder={setSelectedNotify} />
+        <FollowUpTable 
+          data={filtered} 
+          onLogCall={setSelectedCall} 
+          onSendReminder={setSelectedNotify} 
+        />
       )}
 
-      {/* DIALOG GHI NHẬN CUỘC GỌI */}
-      <FollowUpCallDialog patient={selectedCall} onClose={() => setSelectedCall(null)} onSubmit={handleLogCall} />
+      <FollowUpCallDialog 
+        patient={selectedCall} 
+        onClose={() => setSelectedCall(null)} 
+        onSubmit={handleLogCall} 
+      />
       
-      {/* DIALOG GỬI THÔNG BÁO MỚI */}
-      <NotificationDialog patient={selectedNotify} onClose={() => setSelectedNotify(null)} onSend={handleSendNotification} />
+      <NotificationDialog 
+        patient={selectedNotify} 
+        onClose={() => setSelectedNotify(null)} 
+        onSend={handleSendNotification} 
+      />
     </div>
   );
 }

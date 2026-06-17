@@ -1,15 +1,16 @@
+// features/pharmacy/pages/PrescriptionDispense.tsx
 import React, { useState, useEffect } from 'react';
+import { FileText, Clock, CheckCircle } from 'lucide-react';
 import { pharmacyApi } from '../api/pharmacyApi';
 import { PrescriptionUI } from '../types/pharmacy';
-import PrescriptionFilterBar from '../components/PrescriptionFilterBar';
+import { PrescriptionFilterBar } from '../components/PrescriptionFilterBar';
 import PrescriptionTable from '../components/PrescriptionTable';
-import PrescriptionDetail from './PrescriptionDetail'; // Import component chi tiết lồng nhau
+import PrescriptionDetail from './PrescriptionDetail';
+import PageHeader from '@/components/common/PageHeader';
 
 export default function PrescriptionDispense() {
   const [prescriptions, setPrescriptions] = useState<PrescriptionUI[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  // CÔNG TẮC CHÍNH: Quản lý ID đơn thuốc đang được chọn xem chi tiết
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
   const [search, setSearch] = useState('');
@@ -33,38 +34,74 @@ export default function PrescriptionDispense() {
     fetchPrescriptions();
   }, []);
 
-  // LUỒNG XỬ LÝ 1: Nếu selectedId KHÁC NULL -> Ẩn bảng, hiển thị ngay vùng Chi tiết tổng hợp
   if (selectedId !== null) {
     return (
       <PrescriptionDetail 
         prescriptionId={selectedId} 
-        onBack={() => setSelectedId(null)} // Bấm quay lại thì reset state về null để hiện lại bảng
-        onDispensed={fetchPrescriptions}   // Phát thuốc thành công thì gọi trang cha load lại danh sách mới
+        onBack={() => setSelectedId(null)}
+        onDispensed={fetchPrescriptions}
       />
     );
   }
 
-  // LUỒNG XỬ LÝ 2: Nếu selectedId LÀ NULL -> Hiển thị bảng danh sách đơn thuốc như bình thường
   const filteredData = prescriptions.filter(rx => {
     const matchSearch = rx.patientName.toLowerCase().includes(search.toLowerCase()) || rx.prescriptionId.toString().includes(search);
     const matchStatus = statusFilter === 'ALL' || rx.status === statusFilter;
     return matchSearch && matchStatus;
   });
 
+  // Stats
+  const total = prescriptions.length;
+  const pending = prescriptions.filter(rx => rx.status === 'PENDING').length;
+  const dispensed = prescriptions.filter(rx => rx.status === 'DISPENSED').length;
+
   return (
     <div className="h-[calc(100vh-6rem)] flex flex-col gap-4 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center shrink-0">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">Quản lý Đơn Thuốc</h1>
-          <p className="text-sm text-slate-500 mt-1 font-medium">Kiểm tra và phát thuốc cho bệnh nhân</p>
+          <PageHeader title="Quản lý Đơn Thuốc" description="Kiểm tra và phát thuốc cho bệnh nhân"></PageHeader>
+
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="bg-white px-4 py-2 rounded-[20px] shadow-sm border border-slate-200 flex items-center gap-3">
+            <div className="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-bold">
+              <FileText size={16} />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Tổng đơn</p>
+              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{total}</p>
+            </div>
+          </div>
+          <div className="bg-white px-4 py-2 rounded-[20px] shadow-sm border border-slate-200 flex items-center gap-3">
+            <div className="w-8 h-8 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center font-bold">
+              <Clock size={16} />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Chờ phát</p>
+              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{pending}</p>
+            </div>
+          </div>
+          <div className="bg-white px-4 py-2 rounded-[20px] shadow-sm border border-slate-200 flex items-center gap-3">
+            <div className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center font-bold">
+              <CheckCircle size={16} />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Đã phát</p>
+              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{dispensed}</p>
+            </div>
+          </div>
         </div>
       </div>
 
       <PrescriptionFilterBar
-        search={search} setSearch={setSearch}
-        statusFilter={statusFilter} setStatusFilter={setStatusFilter}
-        fromDate={fromDate} toDate={toDate}
-        setFromDate={setFromDate} setToDate={setToDate}
+        search={search}
+        onSearchChange={setSearch}
+        status={statusFilter}
+        onStatusChange={setStatusFilter}
+        fromDate={fromDate}
+        toDate={toDate}
+        onFromDateChange={setFromDate}
+        onToDateChange={setToDate}
       />
 
       <div className="flex-1 min-h-0">
@@ -75,7 +112,6 @@ export default function PrescriptionDispense() {
         ) : (
           <PrescriptionTable 
             data={filteredData} 
-            // FIX TẬN GỐC: Thay vì navigate chuyển trang, mình set thẳng ID vào state để lột xác giao diện tại chỗ
             onViewDetails={(id) => setSelectedId(Number(id))} 
           />
         )}

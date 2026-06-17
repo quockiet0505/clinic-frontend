@@ -1,3 +1,4 @@
+// features/profile/components/ProfileCard.tsx
 import React from 'react';
 import { Mail, Phone, MapPin, CalendarDays, ShieldCheck } from 'lucide-react';
 import { UserProfile } from '../types/profile';
@@ -52,7 +53,7 @@ export default function ProfileCard({ user }: { user: UserProfile }) {
           <div className="overflow-hidden">
             <p className="text-[11px] font-semibold text-slate-500">Ngày tham gia</p>
             <p className="text-sm font-medium text-slate-700 truncate">
-              {user.createdAt ? user.createdAt.split('T')[0] : 'Chưa có'}
+              {user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : 'Chưa có'}
             </p>
           </div>
         </div>

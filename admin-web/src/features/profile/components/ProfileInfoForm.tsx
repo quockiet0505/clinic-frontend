@@ -1,10 +1,19 @@
+// features/profile/components/ProfileInfoForm.tsx
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import CustomSelect from '@/components/common/CustomSelect';
 import GradientButton from '@/components/common/GradientButton';
 import { User, Mail, Phone, MapPin, Calendar, Users } from 'lucide-react';
+import { UserProfile } from '../types/profile';
 
-export default function ProfileInfoForm({ formData, onChange, onSave }: any) {
+interface Props {
+  formData: UserProfile;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  onSave: () => void;
+  saving?: boolean;
+}
+
+export default function ProfileInfoForm({ formData, onChange, onSave, saving = false }: Props) {
   return (
     <div className="p-6 space-y-6 overflow-y-auto custom-scrollbar flex-1 bg-white rounded-2xl border border-slate-200">
       <div>
@@ -92,8 +101,8 @@ export default function ProfileInfoForm({ formData, onChange, onSave }: any) {
       </div>
 
       <div className="pt-4 flex justify-end">
-        <GradientButton onClick={onSave}>
-          Lưu thay đổi
+        <GradientButton onClick={onSave} disabled={saving}>
+          {saving ? 'Đang lưu...' : 'Lưu thay đổi'}
         </GradientButton>
       </div>
     </div>

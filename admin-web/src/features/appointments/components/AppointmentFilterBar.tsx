@@ -1,6 +1,6 @@
 // features/appointments/components/AppointmentFilterBar.tsx
 import React from 'react';
-import { FilterBar } from '@/components/common/FilterBar';
+import { FilterBar, FilterOption, TabOption } from '@/components/common/FilterBar';
 import type { AppointmentStatus } from '../types/appointment';
 
 interface AppointmentFilterBarProps {
@@ -8,10 +8,16 @@ interface AppointmentFilterBarProps {
   onSearchChange: (value: string) => void;
   status: AppointmentStatus | 'ALL';
   onStatusChange: (value: AppointmentStatus | 'ALL') => void;
-  serviceType: 'ALL' | 'CONSULTATION' | 'TEST';
-  onServiceTypeChange: (value: 'ALL' | 'CONSULTATION' | 'TEST') => void;
   activeTab: string;
   onTabChange: (value: string) => void;
+  fromDate: string;
+  toDate: string;
+  onFromDateChange: (value: string) => void;
+  onToDateChange: (value: string) => void;
+  source: string;
+  onSourceChange: (value: string) => void;
+  serviceAdvanced: string;
+  onServiceAdvancedChange: (value: string) => void;
 }
 
 export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
@@ -19,29 +25,40 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
   onSearchChange,
   status,
   onStatusChange,
-  serviceType,
-  onServiceTypeChange,
   activeTab,
   onTabChange,
+  fromDate,
+  toDate,
+  onFromDateChange,
+  onToDateChange,
+  source,
+  onSourceChange,
+  serviceAdvanced,
+  onServiceAdvancedChange,
 }) => {
-  const statusOptions = [
-    { value: 'ALL', label: 'Tất cả' },
+  const statusOptions: FilterOption[] = [
+    { value: 'ALL', label: 'Tất cả trạng thái' },
     { value: 'PENDING', label: 'Chờ xác nhận' },
     { value: 'CONFIRMED', label: 'Đã xác nhận' },
-    { value: 'CHECKED_IN', label: 'Đã đến viện' },
+    { value: 'CHECKED_IN', label: 'Đã check-in' },
     { value: 'IN_PROGRESS', label: 'Đang khám' },
-    { value: 'WAITING_RESULT', label: 'Chờ kết quả' },
     { value: 'COMPLETED', label: 'Hoàn thành' },
     { value: 'CANCELLED', label: 'Đã hủy' },
   ];
 
-  const serviceOptions = [
+  const serviceOptions: FilterOption[] = [
     { value: 'ALL', label: 'Tất cả dịch vụ' },
     { value: 'CONSULTATION', label: 'Khám bệnh' },
     { value: 'TEST', label: 'Xét nghiệm' },
   ];
 
-  const tabOptions = [
+  const sourceOptions: FilterOption[] = [
+    { value: 'ALL', label: 'Tất cả nguồn' },
+    { value: 'WALK_IN', label: 'Khách vãng lai' },
+    { value: 'ONLINE', label: 'Đặt online' },
+  ];
+
+  const tabs: TabOption[] = [
     { value: 'all', label: 'Tất cả' },
     { value: 'today', label: 'Hôm nay' },
     { value: 'upcoming', label: 'Sắp tới' },
@@ -51,21 +68,13 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
     <FilterBar
       searchValue={search}
       onSearchChange={onSearchChange}
-      searchPlaceholder="Tìm theo tên bác sĩ..."
+      searchPlaceholder="Tìm bệnh nhân..."
       tabs={{
-        options: tabOptions,
+        options: tabs,
         value: activeTab,
         onChange: onTabChange,
       }}
       filters={[
-        {
-          key: 'serviceType',
-          label: 'Loại dịch vụ',
-          options: serviceOptions,
-          value: serviceType,
-          onChange: (val) => onServiceTypeChange(val as any),
-          placeholder: 'Loại dịch vụ',
-        },
         {
           key: 'status',
           label: 'Trạng thái',
@@ -75,6 +84,32 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
           placeholder: 'Trạng thái',
         },
       ]}
+      advancedFilters={{
+        filters: [
+          {
+            key: 'source',
+            label: 'Nguồn',
+            options: sourceOptions,
+            value: source,
+            onChange: onSourceChange,
+            placeholder: 'Nguồn',
+          },
+          {
+            key: 'serviceAdvanced',
+            label: 'Dịch vụ',
+            options: serviceOptions,
+            value: serviceAdvanced,
+            onChange: onServiceAdvancedChange,
+            placeholder: 'Dịch vụ',
+          },
+        ],
+        dateRange: {
+          from: fromDate,
+          to: toDate,
+          onFromChange: onFromDateChange,
+          onToChange: onToDateChange,
+        },
+      }}
     />
   );
 };

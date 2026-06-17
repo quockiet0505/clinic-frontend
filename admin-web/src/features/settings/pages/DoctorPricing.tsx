@@ -1,14 +1,20 @@
+// features/settings/pages/DoctorPricing.tsx
 import React, { useState, useEffect } from 'react';
+import { DollarSign, Plus } from 'lucide-react';
 import PageHeader from '@/components/common/PageHeader';
 import SearchInput from '@/components/common/SearchInput';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
-import PricingTable from '../components/PricingTable';
-import PricingFormDialog from '../components/PricingFormDialog';
+import DoctorPricingTable from '../components/DoctorPricingTable';
+import DoctorPricingFormDialog from '../components/DoctorPricingFormDialog';
+import { StatsCard } from '@/components/common/StatsCard';
+import GradientButton from '@/components/common/GradientButton';
+import { DoctorPricingFilterBar } from '../components/DoctorPricingFilterBar';
 import type { DoctorPricing } from '../types/settings';
 import { settingsApi } from '../api/settingsApi';
 
 export default function DoctorPricing() {
   const [search, setSearch] = useState('');
+  const [sort, setSort] = useState('doctor_asc');
   const [prices, setPrices] = useState<DoctorPricing[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingPrice, setEditingPrice] = useState<DoctorPricing | null>(null);
@@ -30,43 +36,56 @@ export default function DoctorPricing() {
     fetchData();
   }, []);
 
-  const filteredData = prices.filter(p =>
-    (p.doctorName || '').toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredData = prices
+    .filter(p => (p.doctorName || '').toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      switch (sort) {
+        case 'doctor_asc': return (a.doctorName || '').localeCompare(b.doctorName || '');
+        case 'doctor_desc': return (b.doctorName || '').localeCompare(a.doctorName || '');
+        case 'price_asc': return (a.price || 0) - (b.price || 0);
+        case 'price_desc': return (b.price || 0) - (a.price || 0);
+        default: return 0;
+      }
+    });
+
+  const totalPrices = prices.length;
+  const avgPrice = prices.length > 0 ? Math.round(prices.reduce((sum, p) => sum + (p.price || 0), 0) / prices.length) : 0;
 
   return (
     <div className="space-y-6 flex flex-col h-full animate-in fade-in duration-500">
-      <PageHeader
-        title="Phí khám bệnh"
-        description="Ghi đè giá dịch vụ mặc định cho từng bác sĩ cụ thể."
-        actionText="Thêm Phí khám mới"
-        onAction={() =>
-          setEditingPrice({
-            id: 0,
-            staffId: 0,
-            doctorName: '',
-            serviceId: 0,
-            serviceName: '',
-            price: 0,
-            originalPrice: 0,
-            discountPrice: 0,
-          })
-        }
-      />
-
-      <div className="bg-white p-3 rounded-2xl border border-slate-200 flex shadow-sm shrink-0">
-        <SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm theo tên bác sĩ..." />
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
+        <PageHeader
+          title="Phí khám bệnh"
+          description="Ghi đè giá dịch vụ mặc định cho từng bác sĩ cụ thể."
+        />
+        <div className="flex flex-wrap items-center gap-3">
+          <StatsCard icon={<DollarSign size={16} />} label="Tổng cấu hình" value={totalPrices} />
+          <StatsCard icon={<DollarSign size={16} />} label="Giá trung bình" value={avgPrice} bgColor="bg-emerald-50" iconColor="text-emerald-600" />
+          <GradientButton
+            onClick={() => setEditingPrice({ id: 0, staffId: 0, doctorName: '', serviceId: 0, serviceName: '', price: 0, originalPrice: 0, discountPrice: 0 })}
+            className="w-full sm:w-auto"
+          >
+            <Plus size={18} className="mr-2" /> Thêm Phí khám mới
+          </GradientButton>
+        </div>
       </div>
+
+      <DoctorPricingFilterBar
+        search={search}
+        onSearchChange={setSearch}
+        sort={sort}
+        onSortChange={setSort}
+      />
 
       {loading ? (
         <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải...</div>
       ) : (
         <div className="flex-1 min-h-0">
-          <PricingTable doctors={filteredData} onEdit={setEditingPrice} onDelete={setDeletingPrice} />
+          <DoctorPricingTable doctors={filteredData} onEdit={setEditingPrice} onDelete={setDeletingPrice} />
         </div>
       )}
 
-      <PricingFormDialog
+      <DoctorPricingFormDialog
         doctor={editingPrice}
         onClose={() => setEditingPrice(null)}
         onSave={async (id: number, data: any) => {

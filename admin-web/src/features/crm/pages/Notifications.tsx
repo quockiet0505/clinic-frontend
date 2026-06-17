@@ -1,48 +1,101 @@
-import React, { useState } from 'react';
+// features/crm/pages/Notifications.tsx
+import React, { useState, useEffect } from 'react';
+import { Bell, Mail, Plus } from 'lucide-react';
 import PageHeader from '@/components/common/PageHeader';
-import SearchInput from '@/components/common/SearchInput';
-import DateRangeFilter from '@/components/common/DateRangeFilter';
+import { StatsCard } from '@/components/common/StatsCard';
+import { NotificationFilterBar } from '../components/NotificationFilterBar';
 import NotificationTable from '../components/NotificationTable';
+import CreateNotificationDialog from '../components/CreateNotificationDialog';
+import GradientButton from '@/components/common/GradientButton';
 import { AppNotification } from '../types/crm';
-
-const TODAY = new Date().toISOString().split('T')[0];
+import { crmApi } from '../api/crmApi';
 
 export default function Notifications() {
-  const [notifications] = useState<AppNotification[]>([
-    { notificationId: 1, accountName: 'Liam Anderson', type: 'SYSTEM', content: 'Friendly reminder: You are due for a post-surgery checkup.', sentAt: `${TODAY} 09:30` },
-    { notificationId: 2, accountName: 'Emma Watson', type: 'EMAIL', content: 'Your lab results for Lipid Panel are ready.', sentAt: `${TODAY} 10:15` },
-  ]);
-  
+  const [notifications, setNotifications] = useState<AppNotification[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState('ALL');
-  const [fromDate, setFromDate] = useState(TODAY);
-  const [toDate, setToDate] = useState(TODAY);
+  const [type, setType] = useState('ALL');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const filtered = notifications.filter(n => 
-    (typeFilter === 'ALL' || n.type === typeFilter) &&
-    (n.accountName?.toLowerCase().includes(search.toLowerCase()) || n.content.toLowerCase().includes(search.toLowerCase())) &&
-    (n.sentAt >= fromDate && n.sentAt <= `${toDate} 23:59`)
-  );
+  const fetchData = async () => {
+    setLoading(true);
+    const data = await crmApi.getNotifications({
+      search,
+      type: type === 'ALL' ? undefined : type,
+      fromDate,
+      toDate,
+    });
+    setNotifications(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [search, type, fromDate, toDate]);
+
+  const total = notifications.length;
+  const emails = notifications.filter(n => n.type === 'EMAIL').length;
+  const systems = notifications.filter(n => n.type === 'SYSTEM').length;
+
+  const handleCreate = async (data: { type: 'EMAIL' | 'SYSTEM'; content: string; accountId?: number }) => {
+    await crmApi.createNotification(data);
+    await fetchData();
+    setIsCreateOpen(false);
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
-      <PageHeader title="Notification Audit Log" description="A read-only log of all system and email alerts sent to patients." />
-      
-      <div className="flex flex-col xl:flex-row gap-4 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm shrink-0 items-center justify-between">
-        <div className="flex bg-slate-100 p-1 rounded-xl w-full xl:w-auto">
-          {['ALL', 'SYSTEM', 'EMAIL'].map(tab => (
-            <button key={tab} onClick={() => setTypeFilter(tab)} className={`flex-1 xl:flex-none px-6 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${typeFilter === tab ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>
-              {tab}
-            </button>
-          ))}
-        </div>
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto">
-          <div className="w-full sm:w-64"><SearchInput value={search} onChange={setSearch} placeholder="Tìm kiếm recipient or content..." /></div>
-          <DateRangeFilter from={fromDate} to={toDate} onChangeFrom={setFromDate} onChangeTo={setToDate} />
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
+        <PageHeader
+          title="Nhật ký thông báo"
+          description="Xem lại lịch sử thông báo đã gửi đến bệnh nhân."
+        />
+        <div className="flex flex-wrap items-center gap-3">
+          <StatsCard icon={<Bell size={16} />} label="Tổng thông báo" value={total} />
+          <StatsCard
+            icon={<Mail size={16} />}
+            label="Email"
+            value={emails}
+            bgColor="bg-amber-50"
+            iconColor="text-amber-600"
+          />
+          <StatsCard
+            icon={<Bell size={16} />}
+            label="Hệ thống"
+            value={systems}
+            bgColor="bg-indigo-50"
+            iconColor="text-indigo-600"
+          />
+          <GradientButton onClick={() => setIsCreateOpen(true)} className="w-full sm:w-auto">
+            <Plus size={18} className="mr-2" /> Tạo thông báo
+          </GradientButton>
         </div>
       </div>
 
-      <NotificationTable data={filtered} />
+      <NotificationFilterBar
+        search={search}
+        onSearchChange={setSearch}
+        type={type}
+        onTypeChange={setType}
+        fromDate={fromDate}
+        toDate={toDate}
+        onFromDateChange={setFromDate}
+        onToDateChange={setToDate}
+      />
+
+      {loading ? (
+        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải thông báo...</div>
+      ) : (
+        <NotificationTable data={notifications} />
+      )}
+
+      <CreateNotificationDialog
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        onCreate={handleCreate}
+      />
     </div>
   );
 }

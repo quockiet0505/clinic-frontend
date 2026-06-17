@@ -1,15 +1,11 @@
+// features/staff/api/staffApi.ts
 import axiosInstance from '@/config/axios';
-import { Staff } from '../types/staff';
+import { Staff, LeaveRequest } from '../types/staff';
 
 export const staffApi = {
   getAll: async (): Promise<Staff[]> => {
-    try {
-      const res = await axiosInstance.get('/staffs');
-      return res.data.data;
-    } catch (e) {
-      console.error(e);
-      return [];
-    }
+    const res = await axiosInstance.get('/staffs');
+    return res.data.data;
   },
 
   create: async (data: Omit<Staff, 'staffId'>): Promise<void> => {
@@ -24,8 +20,12 @@ export const staffApi = {
     await axiosInstance.delete(`/staffs/${id}`);
   },
 
-  getLeaveRequests: async (): Promise<any[]> => {
-    // Return empty array if not implemented on backend
-    return [];
-  }
+  getLeaveRequests: async (): Promise<LeaveRequest[]> => {
+    const res = await axiosInstance.get('/leave-requests');
+    return res.data.data;
+  },
+
+  cancelLeaveRequest: async (leaveId: number): Promise<void> => {
+    await axiosInstance.delete(`/leave-requests/${leaveId}`);
+  },
 };

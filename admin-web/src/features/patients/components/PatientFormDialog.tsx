@@ -27,6 +27,8 @@ export default function PatientFormDialog({ isOpen, onClose, onSubmit, initialDa
       initialData={initialData}
       onSubmit={onSubmit}
       submitLabel="Lưu Bệnh Nhân"
+      compact={true}
+      columns={2}
     />
   );
 }

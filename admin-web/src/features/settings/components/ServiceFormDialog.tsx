@@ -1,3 +1,4 @@
+// components/settings/ServiceFormDialog.tsx
 import React from 'react';
 import { Activity } from 'lucide-react';
 import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
@@ -16,7 +17,7 @@ const fields: FieldConfig[] = [
 ];
 
 interface Props {
-  service: any; // { serviceId, serviceName, serviceType, originalPrice, discountPrice }
+  service: any;
   onClose: () => void;
   onSave: (id: number, data: any) => void;
 }
@@ -49,6 +50,8 @@ export default function ServiceFormDialog({ service, onClose, onSave }: Props) {
       initialData={initialData}
       onSubmit={handleSubmit}
       submitLabel="Lưu Dịch vụ"
+      compact={true}
+      columns={2}
     />
   );
 }

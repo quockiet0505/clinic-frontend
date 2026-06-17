@@ -1,17 +1,32 @@
+// components/staff/LeaveApplicationDialog.tsx
 import React from 'react';
 import { CalendarDays } from 'lucide-react';
 import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
 
 const fields: FieldConfig[] = [
-  { name: 'leaveType', label: 'Loại nghỉ phép', type: 'select', required: true, options: [
-    { value: 'ANNUAL', label: 'Nghỉ phép năm' },
-    { value: 'SICK', label: 'Nghỉ ốm' },
-    { value: 'UNPAID', label: 'Nghỉ không lương' },
-    { value: 'OTHER', label: 'Khác' }
-  ]},
+  { 
+    name: 'leaveType', 
+    label: 'Loại nghỉ phép', 
+    type: 'select', 
+    required: true, 
+    options: [
+      { value: 'ANNUAL', label: 'Nghỉ phép năm' },
+      { value: 'SICK', label: 'Nghỉ ốm' },
+      { value: 'UNPAID', label: 'Nghỉ không lương' },
+      { value: 'OTHER', label: 'Khác' }
+    ]
+  },
   { name: 'fromDate', label: 'Từ ngày', type: 'date', required: true },
   { name: 'toDate', label: 'Đến ngày', type: 'date', required: true },
-  { name: 'reason', label: 'Lý do', type: 'textarea', required: true, placeholder: 'Ví dụ: Nghỉ ốm đi khám bệnh', rows: 3 },
+  { 
+    name: 'reason', 
+    label: 'Lý do', 
+    type: 'textarea', 
+    required: true, 
+    placeholder: 'Ví dụ: Nghỉ ốm đi khám bệnh', 
+    rows: 3,
+    colSpan: 2 
+  },
 ];
 
 interface Props {
@@ -37,6 +52,8 @@ export default function LeaveApplicationDialog({ isOpen, onClose, onSubmit }: Pr
       initialData={getInitialData()}
       onSubmit={(data) => onSubmit(data)}
       submitLabel="Gửi Đơn"
+      compact={true}
+      columns={2}
     />
   );
 }

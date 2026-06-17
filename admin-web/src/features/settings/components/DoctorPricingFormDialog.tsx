@@ -9,7 +9,7 @@ export default function PricingFormDialog({ doctor, onClose, onSave }: any) {
 
   const getFields = (): FieldConfig[] => {
     const baseFields: FieldConfig[] = [
-      { name: 'price', label: 'Phí khám (VNĐ)', type: 'number', required: true, placeholder: 'Ví dụ: 150000' }
+      { name: 'price', label: 'Phí khám (VNĐ)', type: 'number', required: true, placeholder: 'Ví dụ: 150000', colSpan: 2 }
     ];
     if (isNew) {
       return [
@@ -25,7 +25,7 @@ export default function PricingFormDialog({ doctor, onClose, onSave }: any) {
             { value: '2', label: 'Khám chuyên khoa' }
           ]
         },
-        ...baseFields
+       
       ];
     }
     return baseFields;
@@ -54,6 +54,8 @@ export default function PricingFormDialog({ doctor, onClose, onSave }: any) {
       initialData={initialData}
       onSubmit={handleSubmit}
       submitLabel="Lưu Giá"
+      compact={true}
+      columns={2}
     />
   );
 }

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import CustomSelect from './CustomSelect'; // Import CustomSelect mới (shadcn style)
+import CustomSelect from './CustomSelect';
 
 export type FieldType = 'text' | 'number' | 'date' | 'time' | 'textarea' | 'select';
 
@@ -13,8 +13,9 @@ export interface FieldConfig {
   type: FieldType;
   placeholder?: string;
   required?: boolean;
-  options?: { value: string; label: string }[]; // cho select
+  options?: { value: string; label: string }[];
   rows?: number;
+  colSpan?: 1 | 2;
 }
 
 interface FormDialogProps {
@@ -29,6 +30,9 @@ interface FormDialogProps {
   submitLabel?: string;
   cancelLabel?: string;
   validate?: (data: Record<string, any>) => boolean;
+  compact?: boolean;
+  columns?: 1 | 2;
+  renderFooter?: (formData: Record<string, any>) => React.ReactNode;
 }
 
 export default function FormDialog({
@@ -43,11 +47,13 @@ export default function FormDialog({
   submitLabel = 'Lưu',
   cancelLabel = 'Hủy',
   validate,
+  compact = false,
+  columns = 1,
+  renderFooter,
 }: FormDialogProps) {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  // Reset form khi mở dialog hoặc initialData thay đổi
   useEffect(() => {
     if (open) {
       if (initialData) {
@@ -94,6 +100,19 @@ export default function FormDialog({
     const value = formData[field.name] ?? '';
     const isInvalid = field.required && touched[field.name] && !value;
 
+    // ✅ TĂNG FONT CHO INPUT
+    const inputClassName = compact
+      ? `h-9 rounded-xl font-medium text-sm ${isInvalid ? 'border-red-500' : ''}` // text-sm = 14px
+      : `h-11 rounded-[16px] font-medium ${isInvalid ? 'border-red-500' : ''}`;
+
+    // ✅ TĂNG FONT CHO TEXTAREA
+    const textareaClassName = compact
+      ? `w-full rounded-xl border border-input bg-white p-2 text-sm font-medium outline-none resize-none hover:border-primary-300 focus-visible:border-primary-400 focus-visible:ring-4 focus-visible:ring-primary-100 transition-all duration-200 ${isInvalid ? 'border-red-500' : ''}`
+      : `flex w-full rounded-[16px] border border-input bg-white p-3 font-medium outline-none resize-none hover:border-primary-300 focus-visible:border-primary-400 focus-visible:ring-4 focus-visible:ring-primary-100 transition-all duration-200 ${isInvalid ? 'border-red-500' : ''}`;
+
+    // ✅ TĂNG FONT CHO LABEL
+    const labelClassName = compact ? 'text-sm font-semibold' : 'text-sm font-medium';
+
     switch (field.type) {
       case 'select':
         return (
@@ -101,6 +120,7 @@ export default function FormDialog({
             value={value}
             onChange={(e) => handleChange(field.name, e.target.value)}
             className="w-full"
+            compact={compact}
           >
             {field.options?.map(opt => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -112,8 +132,8 @@ export default function FormDialog({
           <textarea
             value={value}
             onChange={(e) => handleChange(field.name, e.target.value)}
-            rows={field.rows || 3}
-            className={`flex w-full rounded-[16px] border border-input bg-white p-3 font-medium outline-none resize-none hover:border-primary-300 focus-visible:border-primary-400 focus-visible:ring-4 focus-visible:ring-primary-100 transition-all duration-200 ${isInvalid ? 'border-red-500' : ''}`}
+            rows={field.rows || (compact ? 2 : 3)}
+            className={textareaClassName}
             placeholder={field.placeholder}
           />
         );
@@ -124,7 +144,7 @@ export default function FormDialog({
             type={field.type}
             value={value}
             onChange={(e) => handleChange(field.name, e.target.value)}
-            className={`h-11 rounded-[16px] font-medium cursor-pointer ${isInvalid ? 'border-red-500' : ''}`}
+            className={`${inputClassName} cursor-pointer ${compact ? 'w-full' : ''}`}
           />
         );
       case 'number':
@@ -133,7 +153,7 @@ export default function FormDialog({
             type="number"
             value={value}
             onChange={(e) => handleChange(field.name, e.target.value === '' ? '' : Number(e.target.value))}
-            className={`h-11 rounded-[16px] font-medium ${isInvalid ? 'border-red-500' : ''}`}
+            className={inputClassName}
             placeholder={field.placeholder}
           />
         );
@@ -143,56 +163,68 @@ export default function FormDialog({
             type="text"
             value={value}
             onChange={(e) => handleChange(field.name, e.target.value)}
-            className={`h-11 rounded-[16px] font-medium ${isInvalid ? 'border-red-500' : ''}`}
+            className={inputClassName}
             placeholder={field.placeholder}
           />
         );
     }
   };
 
+  const gridCols = columns === 2 ? 'grid-cols-2' : 'grid-cols-1';
+
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden border-0 rounded-[24px] shadow-2xl">
-        <div className="bg-primary-50 p-6 border-b border-primary-100 rounded-t-[24px]">
-          {icon && <div className="flex items-center gap-2 mb-2 text-primary-600">{icon}</div>}
-          <DialogTitle className="text-2xl font-semibold">{title}</DialogTitle>
-          <DialogDescription className="text-sm text-primary-600/80 font-medium mt-1">
+      <DialogContent className={`sm:max-w-[500px] p-0 overflow-hidden border-0 rounded-[24px] shadow-2xl ${compact ? 'max-w-[480px]' : ''}`}>
+        {/* ✅ TĂNG FONT CHO HEADER */}
+        <div className={`${compact ? 'p-5' : 'p-6'} bg-primary-50 border-b border-primary-100 rounded-t-[24px]`}>
+          {icon && <div className={`flex items-center gap-2 mb-2 text-primary-600 ${compact ? 'text-sm' : ''}`}>{icon}</div>}
+          <DialogTitle className={`${compact ? 'text-2xl' : 'text-2xl'} font-semibold`}>{title}</DialogTitle>
+          <DialogDescription className={`text-sm text-primary-600/80 font-medium mt-1 ${compact ? 'text-sm' : ''}`}>
             {description}
           </DialogDescription>
         </div>
 
-        <div className="p-6 bg-white max-h-[60vh] overflow-y-auto custom-scrollbar">
-          <div className="space-y-4">
-            {fields.map(field => (
-              <div key={field.name} className="space-y-2">
-                <label className="block text-sm font-medium text-slate-700 mb-2">
-                  {field.label} {field.required && <span className="text-red-500">*</span>}
-                </label>
-                {renderField(field)}
-                {field.required && touched[field.name] && !formData[field.name] && (
-                  <p className="text-xs text-red-500 mt-1">Vui lòng nhập {field.label.toLowerCase()}</p>
-                )}
-              </div>
-            ))}
+        <div className={`${compact ? 'p-5' : 'p-6'} bg-white max-h-[60vh] overflow-y-auto custom-scrollbar`}>
+          <div className={`grid ${gridCols} gap-4`}>
+            {fields.map(field => {
+              const colSpan = field.colSpan === 2 ? 'col-span-2' : 'col-span-1';
+              return (
+                <div key={field.name} className={`space-y-1.5 ${colSpan}`}>
+                  <label className={`block ${compact ? 'text-sm font-semibold' : 'text-sm font-medium'} text-slate-700`}>
+                    {field.label} {field.required && <span className="text-red-500">*</span>}
+                  </label>
+                  {renderField(field)}
+                  {field.required && touched[field.name] && !formData[field.name] && (
+                    <p className={`text-red-500 mt-1 ${compact ? 'text-xs' : 'text-xs'}`}>
+                      Vui lòng nhập {field.label.toLowerCase()}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        <DialogFooter className="p-6 pb-8 bg-slate-50 border-t border-slate-100 flex gap-3 justify-end rounded-b-[24px]">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            className="h-11 px-6 rounded-[14px] font-bold border-slate-300 text-slate-700 hover:text-red-600 hover:bg-red-50 hover:border-red-300"
-          >
-            {cancelLabel}
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={!isValid}
-            className="h-11 px-6 rounded-[14px] bg-primary hover:bg-primary-600 shadow-sm text-white font-bold"
-          >
-            {submitLabel}
-          </Button>
-        </DialogFooter>
+        {renderFooter ? (
+          renderFooter(formData)
+        ) : (
+          <DialogFooter className={`${compact ? 'p-5 pb-7' : 'p-6 pb-8'} bg-slate-50 border-t border-slate-100 flex gap-4 justify-end rounded-b-[24px]`}>
+            <Button
+              variant="outline"
+              onClick={onClose}
+              className={`${compact ? 'h-9 px-6 rounded-xl text-sm font-bold' : 'h-11 px-6 rounded-[14px] font-bold'} border-slate-300 text-slate-700 hover:text-red-600 hover:bg-red-50 hover:border-red-300`}
+            >
+              {cancelLabel}
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={!isValid}
+              className={`${compact ? 'h-9 px-6 rounded-xl text-sm font-bold' : 'h-11 px-6 rounded-[14px] font-bold'} bg-primary hover:bg-primary-600 shadow-sm text-white`}
+            >
+              {submitLabel}
+            </Button>
+          </DialogFooter>
+        )}
       </DialogContent>
     </Dialog>
   );
