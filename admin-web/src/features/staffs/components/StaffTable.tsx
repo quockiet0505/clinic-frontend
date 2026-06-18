@@ -1,9 +1,10 @@
-// features/staff/components/StaffTable.tsx
+// features/staffs/components/StaffTable.tsx
 import React from 'react';
-import { Stethoscope, ShieldCheck, TestTube, Briefcase, UserCog, Mail, Phone, Star } from 'lucide-react';
+import { Stethoscope, ShieldCheck, TestTube, Briefcase, UserCog, Mail, Phone, Star, User } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { EditButton, DeleteButton } from '@/components/common/ActionButtons';
 import { Staff } from '../types/staff';
+import { getImageUrl } from '@/utils/image';
 
 const getRoleIcon = (role: string) => {
   switch (role) {
@@ -76,62 +77,83 @@ export default function StaffTable({ data, onEdit, onDelete }: StaffTableProps) 
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((staff) => (
-            <TableRow key={staff.staffId} className="hover:bg-slate-50 border-b border-slate-100 transition-colors">
-              <TableCell className="px-6 py-4 max-w-[200px]">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm shrink-0">
-                    {staff.fullName.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-slate-800 text-sm truncate" title={staff.fullName}>
-                      {staff.fullName}
-                    </p>
-                    {staff.expertiseName && (
-                      <p className="text-xs text-slate-500 mt-0.5 truncate" title={staff.expertiseName}>
-                        {staff.expertiseName}
+          {data.map((staff) => {
+            const avatarUrl = getImageUrl(staff.imageUrl);
+            return (
+              <TableRow key={staff.staffId} className="hover:bg-slate-50 border-b border-slate-100 transition-colors">
+                <TableCell className="px-6 py-4 max-w-[200px]">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm shrink-0">
+                      {avatarUrl ? (
+                        <img
+                          src={avatarUrl}
+                          alt={staff.fullName}
+                          className="w-full h-full rounded-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const parent = e.currentTarget.parentElement;
+                            if (parent) {
+                              const fallback = document.createElement('span');
+                              fallback.className = 'text-sm font-bold';
+                              fallback.textContent = staff.fullName.charAt(0).toUpperCase();
+                              parent.appendChild(fallback);
+                            }
+                          }}
+                        />
+                      ) : (
+                        <span className="text-sm font-bold">{staff.fullName.charAt(0).toUpperCase()}</span>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-slate-800 text-sm truncate" title={staff.fullName}>
+                        {staff.fullName}
                       </p>
-                    )}
+                      {staff.expertiseName && (
+                        <p className="text-xs text-slate-500 mt-0.5 truncate" title={staff.expertiseName}>
+                          {staff.expertiseName}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </TableCell>
-              <TableCell className="px-6 py-4">
-                <div className="flex items-center gap-1.5">
-                  <Mail size={14} className="text-slate-400 shrink-0" />
-                  <span className="text-sm font-medium text-slate-700 truncate max-w-[140px]" title={staff.email || 'Chưa có email'}>
-                    {staff.email || '—'}
-                  </span>
-                </div>
-              </TableCell>
-              <TableCell className="px-6 py-4">
-                <div className="flex items-center gap-1.5">
-                  <Phone size={14} className="text-slate-400 shrink-0" />
-                  <span className="text-sm font-medium text-slate-700">
-                    {staff.phone || '—'}
-                  </span>
-                </div>
-              </TableCell>
-              <TableCell className="px-6 py-4">
-                <div className="flex items-center gap-2">
-                  {getRoleIcon(staff.staffType)}
-                  <span className="text-sm font-medium text-slate-700">{getRoleLabel(staff.staffType)}</span>
-                </div>
-              </TableCell>
-              <TableCell className="px-6 py-4">
-                {staff.staffType === 'DOCTOR' && staff.rating ? (
-                  renderStars(staff.rating)
-                ) : (
-                  <span className="text-sm text-slate-400">—</span>
-                )}
-              </TableCell>
-              <TableCell className="px-6 py-4">
-                <div className="flex gap-2">
-                  <EditButton onClick={() => onEdit(staff)} label="Sửa" />
-                  <DeleteButton onClick={() => onDelete(staff)} label="Xóa" />
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+                </TableCell>
+                <TableCell className="px-6 py-4">
+                  <div className="flex items-center gap-1.5">
+                    <Mail size={14} className="text-slate-400 shrink-0" />
+                    <span className="text-sm font-medium text-slate-700 truncate max-w-[140px]" title={staff.email || 'Chưa có email'}>
+                      {staff.email || '—'}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell className="px-6 py-4">
+                  <div className="flex items-center gap-1.5">
+                    <Phone size={14} className="text-slate-400 shrink-0" />
+                    <span className="text-sm font-medium text-slate-700">
+                      {staff.phone || '—'}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    {getRoleIcon(staff.staffType)}
+                    <span className="text-sm font-medium text-slate-700">{getRoleLabel(staff.staffType)}</span>
+                  </div>
+                </TableCell>
+                <TableCell className="px-6 py-4">
+                  {staff.staffType === 'DOCTOR' && staff.rating ? (
+                    renderStars(staff.rating)
+                  ) : (
+                    <span className="text-sm text-slate-400">—</span>
+                  )}
+                </TableCell>
+                <TableCell className="px-6 py-4">
+                  <div className="flex gap-2">
+                    <EditButton onClick={() => onEdit(staff)} label="Sửa" />
+                    <DeleteButton onClick={() => onDelete(staff)} label="Xóa" />
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>

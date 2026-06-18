@@ -37,45 +37,69 @@ export const dashboardApi = {
     }
   },
 
+  previewReport: async (filter: ReportFilter): Promise<string> => {
+    try {
+      const res = await axiosInstance.post('/dashboard/report-preview', filter);
+      return res.data.data || '';
+    } catch (error) {
+      console.error('Preview error:', error);
+      return '';
+    }
+  },
 
-  // features/dashboard/api/dashboardApi.ts
-previewReport: async (filter: ReportFilter): Promise<string> => {
-  try {
-    const res = await axiosInstance.post('/dashboard/report-preview', filter);
-    return res.data.data || '';
-  } catch (error) {
-    console.error('Preview error:', error);
-    return '';
-  }
-},
-
-  // Thống kê bác sĩ
   getDoctorStats: async (month: number, year: number): Promise<DoctorStat[]> => {
     try {
       const res = await axiosInstance.get(`/dashboard/doctor-stats?month=${month}&year=${year}`);
-      return res.data.data;
+      return res.data.data.map((item: any) => ({
+        doctorId: item.doctorId,
+        doctorName: item.doctorName,
+        totalAppointments: item.totalAppointments || 0,
+        completedAppointments: item.completedAppointments || 0,
+        completionRate: item.completionRate || 0,
+        revenue: item.revenue || 0,
+        avgRating: item.avgRating || 0,
+        imageUrl: item.imageUrl || null, //  map ảnh bác sĩ
+      }));
     } catch (error) {
       console.error('Error fetching doctor stats:', error);
       return [];
     }
   },
 
-  // Thống kê dịch vụ
   getServiceStats: async (month: number, year: number): Promise<ServiceStat[]> => {
     try {
       const res = await axiosInstance.get(`/dashboard/service-stats?month=${month}&year=${year}`);
-      return res.data.data;
+      return res.data.data.map((item: any) => ({
+        serviceId: item.serviceId,
+        serviceName: item.serviceName,
+        totalOrders: item.totalOrders || 0,
+        completedOrders: item.completedOrders || 0,
+        completionRate: item.completionRate || 0,
+        revenue: item.revenue || 0,
+        imageUrl: item.imageUrl || null, //  map ảnh dịch vụ
+      }));
     } catch (error) {
       console.error('Error fetching service stats:', error);
       return [];
     }
   },
 
-  // Thống kê bệnh nhân
   getPatientStats: async (month: number, year: number): Promise<PatientStatsSummary> => {
     try {
       const res = await axiosInstance.get(`/dashboard/patient-stats?month=${month}&year=${year}`);
-      return res.data.data;
+      const data = res.data.data;
+      return {
+        newPatients: data.newPatients || 0,
+        returningPatients: data.returningPatients || 0,
+        topPatients: (data.topPatients || []).map((p: any) => ({
+          patientId: p.patientId,
+          patientName: p.patientName,
+          visitCount: p.visitCount || 0,
+          lastVisit: p.lastVisit || null,
+          totalSpent: p.totalSpent || 0,
+          avatarUrl: p.avatarUrl || null, //  map avatar bệnh nhân
+        })),
+      };
     } catch (error) {
       console.error('Error fetching patient stats:', error);
       return {
@@ -86,7 +110,6 @@ previewReport: async (filter: ReportFilter): Promise<string> => {
     }
   },
 
-  // Thống kê doanh thu
   getRevenueStats: async (month: number, year: number): Promise<RevenueStatsSummary> => {
     try {
       const res = await axiosInstance.get(`/dashboard/revenue-stats?month=${month}&year=${year}`);
@@ -101,33 +124,36 @@ previewReport: async (filter: ReportFilter): Promise<string> => {
     }
   },
 
-  // Lấy dữ liệu thống kê theo tháng (cho biểu đồ)
-getMonthlyStats: async (year: number): Promise<MonthlyStat[]> => {
-  try {
-    const res = await axiosInstance.get(`/dashboard/monthly-stats?year=${year}`);
-    return res.data.data.map((item: any) => ({
-      name: item.name,
-      completed: item.completed || 0,
-      cancelled: item.cancelled || 0,
-    }));
-  } catch (error) {
-    console.error('Error fetching monthly stats:', error);
-    return [];
-  }
-},
+  getMonthlyStats: async (year: number): Promise<MonthlyStat[]> => {
+    try {
+      const res = await axiosInstance.get(`/dashboard/monthly-stats?year=${year}`);
+      return res.data.data.map((item: any) => ({
+        name: item.name || '',
+        completed: item.completed || 0,
+        cancelled: item.cancelled || 0,
+      }));
+    } catch (error) {
+      console.error('Error fetching monthly stats:', error);
+      return [];
+    }
+  },
 
-  // Lấy lịch hẹn gần đây
   getRecentAppointments: async (limit: number = 10): Promise<RecentAppointment[]> => {
     try {
       const res = await axiosInstance.get(`/dashboard/recent-appointments?limit=${limit}`);
-      return res.data.data;
+      return res.data.data.map((item: any) => ({
+        id: item.appointmentId?.toString() || '',
+        patientName: item.patientName || 'Unknown',
+        time: item.appointmentDate || '',
+        status: item.status || 'PENDING',
+        avatarUrl: item.patientAvatarUrl || null, 
+      }));
     } catch (error) {
       console.error('Error fetching recent appointments:', error);
       return [];
     }
   },
 
-  // Xuất báo cáo PDF
   generateReport: async (filter: ReportFilter): Promise<Blob> => {
     try {
       const response = await axiosInstance.post('/dashboard/report', filter, {

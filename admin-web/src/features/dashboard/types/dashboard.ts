@@ -20,13 +20,13 @@ export interface RecentAppointment {
   patientName: string;
   time: string;
   status: 'PENDING' | 'CONFIRMED' | 'CHECKED_IN' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW';
+  avatarUrl?: string;
 }
 
 export interface MonthlyStat {
   name: string;
   completed: number;
   cancelled: number;
-  rescheduled: number;
 }
 
 export interface DoctorStat {
@@ -37,6 +37,7 @@ export interface DoctorStat {
   completionRate: number;
   revenue: number;
   avgRating: number;
+  imageUrl?: string; 
 }
 
 export interface ServiceStat {
@@ -46,6 +47,7 @@ export interface ServiceStat {
   completedOrders: number;
   completionRate: number;
   revenue: number;
+  imageUrl?: string; 
 }
 
 export interface PatientStat {
@@ -54,6 +56,7 @@ export interface PatientStat {
   visitCount: number;
   lastVisit: string;
   totalSpent: number;
+  avatarUrl?: string; 
 }
 
 export interface PatientStatsSummary {

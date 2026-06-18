@@ -24,25 +24,35 @@ export default function OverviewTab({ stats, monthlyData, recentApts }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
         {statItems.map((stat, idx) => (
           <StatsCard key={idx} {...stat} />
         ))}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6">
-          <div className="flex items-center gap-2 mb-4">
+
+      {/* Chart & Recent Appointments - equal height */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        {/* Chart - chiếm 2/3 */}
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 flex flex-col">
+          <div className="flex items-center gap-2 mb-4 shrink-0">
             <Calendar size={18} className="text-blue-500" />
             <h3 className="text-sm font-semibold text-slate-600">Thống kê lịch hẹn theo tháng</h3>
           </div>
-          <AppointmentStatisticsChart data={monthlyData} />
+          <div className="flex-1 min-h-0">
+            <AppointmentStatisticsChart data={monthlyData} />
+          </div>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6">
-          <div className="flex items-center gap-2 mb-4">
+
+        {/* Recent Appointments - chiếm 1/3 */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 flex flex-col">
+          <div className="flex items-center gap-2 mb-4 shrink-0">
             <CalendarDays size={18} className="text-blue-500" />
             <h3 className="text-sm font-semibold text-slate-600">Lịch hẹn gần đây</h3>
           </div>
-          <RecentAppointmentsList appointments={recentApts} />
+          <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar">
+            <RecentAppointmentsList appointments={recentApts} />
+          </div>
         </div>
       </div>
     </div>

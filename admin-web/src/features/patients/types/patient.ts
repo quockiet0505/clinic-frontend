@@ -6,6 +6,7 @@ export interface Patient {
      age?: number;
      email?: string;
      phone: string;
+     avatarUrl?:string;
      address: string;
      bloodType?: string;
      allergies?: string;
