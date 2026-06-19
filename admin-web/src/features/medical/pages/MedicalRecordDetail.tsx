@@ -13,7 +13,7 @@ export default function MedicalRecordDetail() {
     recordId: Number(id), 
     date: '2026-04-20', 
     doctor: 'Dr. Sarah Smith', 
-    diagnosis: <span className="text-sm font-medium text-slate-600">Acute Bronchitis</span>, 
+    diagnosis: 'Acute Bronchitis', 
     treatment: 'Prescribed inhaler.' 
   }];
 

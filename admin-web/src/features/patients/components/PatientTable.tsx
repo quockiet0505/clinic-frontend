@@ -2,128 +2,104 @@
 import React from 'react';
 import { Eye, Edit2, Trash2, Phone, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import Table, { Column } from '@/components/tables/Table';
+import EntityAvatar from '@/components/common/EntityAvatar';
 import { Patient } from '../types/patient';
-import { getImageUrl } from '@/utils/image';
 
 interface Props {
   data: Patient[];
   onViewDetails: (id: number) => void;
   onEdit: (patient: Patient) => void;
   onDelete: (patient: Patient) => void;
+  loading?: boolean;
+  pagination?: { page: number; size: number; total: number; onPageChange: (page: number) => void };
 }
 
-export default function PatientTable({ data, onViewDetails, onEdit, onDelete }: Props) {
-  if (!data.length) {
-    return (
-      <div className="text-center py-12 bg-white rounded-2xl border border-slate-200">
-        <p className="text-slate-500 font-medium text-sm">Không có bệnh nhân nào.</p>
-      </div>
-    );
-  }
+const formatGender = (gender?: string) => {
+  const g = gender?.trim().toUpperCase();
+  if (g === 'MALE' || g === 'NAM') return 'Nam';
+  if (g === 'FEMALE' || g === 'NU' || g === 'NỮ') return 'Nữ';
+  return gender || 'Khác';
+};
 
-  const formatGender = (gender?: string) => {
-    if (gender === 'MALE') return 'Nam';
-    if (gender === 'FEMALE') return 'Nữ';
-    return 'Khác';
-  };
+const getBirthYear = (dateOfBirth?: string) => {
+  if (!dateOfBirth) return null;
+  const year = dateOfBirth.slice(0, 4);
+  return /^\d{4}$/.test(year) ? year : null;
+};
+
+export default function PatientTable({ data, onViewDetails, onEdit, onDelete, loading = false, pagination }: Props) {
+  const columns: Column<Patient>[] = [
+    {
+      key: 'fullName',
+      label: 'Bệnh nhân',
+      className: 'w-[28%] text-left',
+      noTruncate: true,
+      render: (patient) => {
+        const birthYear = getBirthYear(patient.dateOfBirth);
+        const genderLabel = formatGender(patient.gender);
+        const meta = [genderLabel, birthYear].filter(Boolean).join(' • ');
+        return (
+          <div className="flex items-center gap-3 min-w-0">
+            <EntityAvatar name={patient.fullName} imageUrl={patient.avatarUrl} size="md" />
+            <div className="min-w-0">
+              <p className="font-semibold text-slate-800 truncate text-sm">{patient.fullName}</p>
+              <p className="text-xs text-slate-500 mt-0.5">#{patient.patientId}{meta ? ` • ${meta}` : ''}</p>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      key: 'phone',
+      label: 'Số điện thoại',
+      className: 'w-[16%]',
+      render: (patient) => (
+        <div className="flex items-center gap-2 text-sm text-slate-700">
+          <Phone size={14} className="text-blue-500 shrink-0" />
+          <span className="font-medium">{patient.phone?.trim() || '—'}</span>
+        </div>
+      ),
+    },
+    {
+      key: 'address',
+      label: 'Địa chỉ',
+      className: 'w-[26%]',
+      render: (patient) => (
+        <div className="flex items-start gap-2 text-sm text-slate-600 min-w-0">
+          <MapPin size={14} className="text-rose-500 shrink-0 mt-0.5" />
+          <span className="line-clamp-2" title={patient.address}>{patient.address?.trim() || '—'}</span>
+        </div>
+      ),
+    },
+    {
+      key: 'actions',
+      label: 'Thao tác',
+      className: 'w-[30%]',
+      render: (patient) => (
+        <div className="flex gap-2 flex-wrap">
+          <Button onClick={() => onViewDetails(patient.patientId)} variant="outline" className="h-8 px-3 rounded-lg text-xs font-semibold border-emerald-200 text-emerald-600 hover:bg-emerald-50">
+            <Eye size={14} className="mr-1.5" /> Chi tiết
+          </Button>
+          <Button onClick={() => onEdit(patient)} variant="outline" className="h-8 px-3 rounded-lg text-xs font-semibold border-blue-200 text-blue-600 hover:bg-blue-50">
+            <Edit2 size={14} className="mr-1.5" /> Sửa
+          </Button>
+          <Button onClick={() => onDelete(patient)} variant="outline" className="h-8 px-3 rounded-lg text-xs font-semibold border-rose-200 text-rose-600 hover:bg-rose-50">
+            <Trash2 size={14} className="mr-1.5" /> Xóa
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 h-full overflow-auto">
-      <Table className="min-w-[800px]">
-        <TableHeader className="bg-slate-100/80 sticky top-0 z-10">
-          <TableRow>
-            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[28%] text-sm">Bệnh nhân</TableHead>
-            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[35%] text-sm">Thông tin liên hệ</TableHead>
-            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[12%] text-sm">Ngày sinh</TableHead>
-            <TableHead className="px-6 py-4 text-left font-semibold text-slate-700 w-[25%] text-sm">Thao tác</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((patient) => {
-            const avatarUrl = getImageUrl(patient.avatarUrl);
-            return (
-              <TableRow key={patient.patientId} className="hover:bg-slate-50 border-b border-slate-100 transition-colors">
-                <TableCell className="px-6 py-4">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm shrink-0">
-                      {avatarUrl ? (
-                        <img
-                          src={avatarUrl}
-                          alt={patient.fullName}
-                          className="w-full h-full rounded-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const parent = e.currentTarget.parentElement;
-                            if (parent) {
-                              const fallback = document.createElement('span');
-                              fallback.className = 'text-sm font-bold';
-                              fallback.textContent = patient.fullName.charAt(0).toUpperCase();
-                              parent.appendChild(fallback);
-                            }
-                          }}
-                        />
-                      ) : (
-                        <span className="text-sm font-bold">{patient.fullName.charAt(0).toUpperCase()}</span>
-                      )}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-semibold text-slate-800 truncate text-sm" title={patient.fullName}>
-                        {patient.fullName}
-                      </p>
-                      <p className="text-xs text-slate-500 mt-0.5">
-                        #{patient.patientId} • {formatGender(patient.gender)}
-                      </p>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                      <Phone size={14} className="text-blue-500 shrink-0" />
-                      <span>{patient.phone || '—'}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
-                      <MapPin size={14} className="text-rose-500 shrink-0" />
-                      <span className="truncate max-w-[260px]" title={patient.address}>
-                        {patient.address || '—'}
-                      </span>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="px-6 py-4 text-sm font-medium text-slate-600">
-                  {patient.dateOfBirth || '—'}
-                </TableCell>
-                <TableCell className="px-6 py-4">
-                  <div className="flex gap-2 flex-wrap">
-                    <Button
-                      onClick={() => onViewDetails(patient.patientId)}
-                      variant="outline"
-                      className="h-8 px-3 rounded-lg text-xs font-semibold border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-all cursor-pointer"
-                    >
-                      <Eye size={14} className="mr-1.5" /> Chi tiết
-                    </Button>
-                    <Button
-                      onClick={() => onEdit(patient)}
-                      variant="outline"
-                      className="h-8 px-3 rounded-lg text-xs font-semibold border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-all cursor-pointer"
-                    >
-                      <Edit2 size={14} className="mr-1.5" /> Sửa
-                    </Button>
-                    <Button
-                      onClick={() => onDelete(patient)}
-                      variant="outline"
-                      className="h-8 px-3 rounded-lg text-xs font-semibold border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 transition-all cursor-pointer"
-                    >
-                      <Trash2 size={14} className="mr-1.5" /> Xóa
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </div>
+    <Table
+      data={data}
+      columns={columns}
+      loading={loading}
+      emptyMessage="Không có bệnh nhân nào."
+      pagination={pagination}
+      rowClassName="hover:bg-slate-50 border-b border-slate-100 transition-colors"
+    />
   );
 }

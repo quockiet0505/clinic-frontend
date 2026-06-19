@@ -2,9 +2,9 @@ export interface Medicine {
   medicineId: number;
   name: string;
   activeElement: string;
-  unit: string;
+  baseUnit: string;
+  unit?: string; // alias for legacy forms
   usageNote?: string;
-  productionUnit?: string;
   packingStandard?: string;
 }
 

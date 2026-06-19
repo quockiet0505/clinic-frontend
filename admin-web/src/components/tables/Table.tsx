@@ -6,7 +6,12 @@ export interface Column<T> {
   key: keyof T | string;
   label: string;
   render?: (item: T) => React.ReactNode;
+  /** Alignment & width — applied to both header and body */
   className?: string;
+  /** Override header alignment/width only */
+  headerClassName?: string;
+  /** Skip truncate on body cell (use for avatar / multi-line cells) */
+  noTruncate?: boolean;
 }
 
 export interface PaginationProps {
@@ -22,51 +27,42 @@ export interface TableProps<T> {
   onRowClick?: (item: T) => void;
   loading?: boolean;
   emptyMessage?: string;
-  maxHeight?: string;
   pagination?: PaginationProps;
   rowClassName?: string;
+  maxHeight?: string;
 }
 
 export default function Table<T extends Record<string, any>>({
-  data,
+  data = [],
   columns,
   onRowClick,
-  loading = false,
   emptyMessage = 'Không có dữ liệu',
-  maxHeight = '400px',
   pagination,
   rowClassName,
 }: TableProps<T>) {
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12 text-slate-400">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-3 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm font-medium">Đang tải dữ liệu...</span>
-        </div>
-      </div>
-    );
-  }
+  const safeData = data || [];
 
-  if (!data || data.length === 0) {
+  if (!safeData.length) {
     return <div className="text-center py-12 text-slate-400 text-sm">{emptyMessage}</div>;
   }
 
+  // Server-side pagination: data is already the current page — do not slice
   const start = pagination ? (pagination.page - 1) * pagination.size : 0;
-  const end = pagination ? Math.min(start + pagination.size, data.length) : data.length;
-  const currentData = pagination ? data.slice(start, end) : data;
+  const end = pagination ? Math.min(start + safeData.length, pagination.total) : safeData.length;
+  const currentData = safeData;
   const totalPages = pagination ? Math.ceil(pagination.total / pagination.size) : 1;
 
   return (
-    <div className="space-y-4">
-      <div className="overflow-auto" style={{ maxHeight }}>
+    <div className="flex flex-col h-full w-full">
+      {/* Vùng cuộn - chiếm toàn bộ không gian còn lại */}
+      <div className="flex-1 overflow-auto min-h-0">
         <table className="w-full text-sm table-fixed border-collapse">
           <thead className="sticky top-0 z-10 bg-slate-100/90 backdrop-blur-sm border-b border-slate-200 shadow-sm">
             <tr>
               {columns.map((col) => (
                 <th
                   key={String(col.key)}
-                  className={`px-6 py-3 text-left font-semibold text-slate-700 text-sm ${col.className || ''}`}
+                  className={`px-6 py-3 font-semibold text-slate-700 text-sm ${col.headerClassName || col.className || 'text-left'}`}
                 >
                   {col.label}
                 </th>
@@ -83,20 +79,25 @@ export default function Table<T extends Record<string, any>>({
                 {columns.map((col) => (
                   <td
                     key={String(col.key)}
-                    className={`px-6 py-3 text-sm text-slate-700 truncate ${col.className || ''}`}
-                    title={typeof item[col.key as keyof T] === 'string' ? item[col.key as keyof T] : undefined}
+                    className={`px-6 py-3 text-sm text-slate-700 ${col.noTruncate ? 'overflow-visible' : 'truncate'} ${col.className || 'text-left'}`}
+                    title={!col.render && typeof item[col.key as keyof T] === 'string' ? String(item[col.key as keyof T]) : undefined}
                   >
                     {col.render ? col.render(item) : item[col.key as keyof T]}
                   </td>
                 ))}
               </tr>
             ))}
+            {/* Spacer cuối */}
+            <tr className="h-4 border-0">
+              <td colSpan={columns.length} className="border-0 p-0" />
+            </tr>
           </tbody>
         </table>
-      </div>
 
+
+        {/* Phân trang - chỉ hiển thị khi có >1 trang */}
       {pagination && totalPages > 1 && (
-        <div className="flex items-center justify-between px-2 py-3 border-t border-slate-200 bg-slate-50/50 rounded-b-2xl">
+        <div className="shrink-0 flex items-center justify-between px-2 py-3 border-t border-slate-200 bg-slate-50/50">
           <div className="text-sm text-slate-500">
             Hiển thị <span className="font-medium text-slate-700">{start + 1}</span> –{' '}
             <span className="font-medium text-slate-700">{Math.min(end, pagination.total)}</span> /{' '}
@@ -127,6 +128,9 @@ export default function Table<T extends Record<string, any>>({
           </div>
         </div>
       )}
+      </div>
+
+      
     </div>
   );
 }

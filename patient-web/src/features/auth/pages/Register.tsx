@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Logo } from '@/components/common/Logo';
 import { RegisterForm } from '../components/RegisterForm';
+import { homeApi } from '@/features/home/api/homeApi';
 
 export const Register: React.FC = () => {
+  const [logoUrl, setLogoUrl] = useState('/images/logo.png');
+
+  useEffect(() => {
+    homeApi.getLogo()
+      .then(url => setLogoUrl(url))
+      .catch(() => console.error('Failed to load logo'));
+  }, []);
+
   return (
     <div className="flex flex-col items-center w-full">
       <Link to="/" className="flex-shrink-0 mb-4">
         <div className="scale-110">
-          <Logo />
+          <img src={logoUrl} alt="Clinic Logo" className="h-10" />
         </div>
       </Link>
 

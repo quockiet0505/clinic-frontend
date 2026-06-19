@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import CustomSelect from './CustomSelect';
 
-export type FieldType = 'text' | 'number' | 'date' | 'time' | 'textarea' | 'select';
+export type FieldType = 'text' | 'number' | 'date' | 'time' | 'textarea' | 'select' | 'password';
 
 export interface FieldConfig {
   name: string;
@@ -32,6 +32,11 @@ interface FormDialogProps {
   validate?: (data: Record<string, any>) => boolean;
   compact?: boolean;
   columns?: 1 | 2;
+  wide?: boolean;
+  renderBeforeFields?: (ctx: {
+    formData: Record<string, any>;
+    onChange: (name: string, value: any) => void;
+  }) => React.ReactNode;
   renderFooter?: (formData: Record<string, any>) => React.ReactNode;
 }
 
@@ -49,6 +54,8 @@ export default function FormDialog({
   validate,
   compact = false,
   columns = 1,
+  wide = false,
+  renderBeforeFields,
   renderFooter,
 }: FormDialogProps) {
   const [formData, setFormData] = useState<Record<string, any>>({});
@@ -157,6 +164,16 @@ export default function FormDialog({
             placeholder={field.placeholder}
           />
         );
+      case 'password':
+        return (
+          <Input
+            type="password"
+            value={value}
+            onChange={(e) => handleChange(field.name, e.target.value)}
+            className={inputClassName}
+            placeholder={field.placeholder}
+          />
+        );
       default: // text
         return (
           <Input
@@ -174,7 +191,7 @@ export default function FormDialog({
 
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={`sm:max-w-[500px] p-0 overflow-hidden border-0 rounded-[24px] shadow-2xl ${compact ? 'max-w-[480px]' : ''}`}>
+      <DialogContent className={`${wide ? 'sm:max-w-[672px]' : 'sm:max-w-[500px]'} p-0 overflow-hidden border-0 rounded-[24px] shadow-2xl ${compact ? 'max-w-[480px]' : ''}`}>
         {/* ✅ TĂNG FONT CHO HEADER */}
         <div className={`${compact ? 'p-5' : 'p-6'} bg-primary-50 border-b border-primary-100 rounded-t-[24px]`}>
           {icon && <div className={`flex items-center gap-2 mb-2 text-primary-600 ${compact ? 'text-sm' : ''}`}>{icon}</div>}
@@ -186,6 +203,7 @@ export default function FormDialog({
 
         <div className={`${compact ? 'p-5' : 'p-6'} bg-white max-h-[60vh] overflow-y-auto custom-scrollbar`}>
           <div className={`grid ${gridCols} gap-4`}>
+            {renderBeforeFields?.({ formData, onChange: handleChange })}
             {fields.map(field => {
               const colSpan = field.colSpan === 2 ? 'col-span-2' : 'col-span-1';
               return (

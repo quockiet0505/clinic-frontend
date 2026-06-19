@@ -22,7 +22,7 @@ export interface ServiceResult {
   resultData: string;
   conclusion: string;
   attachmentUrl?: string;
-  enteredBy: number;
-  enteredName: string; // Joined from staff
+  enteredById: number;
+  enteredByName: string;
   enteredAt: string;
 }

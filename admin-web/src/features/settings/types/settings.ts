@@ -12,6 +12,8 @@ export interface Service {
   serviceType: 'EXAM' | 'LAB_TEST' | 'IMAGING';
   originalPrice: number;
   discountPrice?: number;
+  imageUrl?: string;
+  isFeatured?: boolean;
   isDeleted?: number;
 }
 

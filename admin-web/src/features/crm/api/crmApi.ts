@@ -1,61 +1,68 @@
 import axiosInstance from '@/config/axios';
+import { BaseFilterParams } from '@/types/common';
+import { parsePagedResponse } from '@/utils/pagedApi';
 import { Feedback, AppNotification } from '../types/crm';
 
-export const crmApi = {
-  // ===== FEEDBACK =====
+interface NotificationQueryParams extends BaseFilterParams {
+  type?: string;
+  sortBy?: string;
+  sortDir?: string;
+}
 
-  // Lấy danh sách feedback cho phòng khám (bảng feedback)
-  getClinicFeedbacks: async (params?: {
-    search?: string;
-    rating?: string;
-    fromDate?: string;
-    toDate?: string;
-  }): Promise<Feedback[]> => {
+interface FeedbackQueryParams extends BaseFilterParams {
+  rating?: string | number;
+  sortBy?: string;
+  sortDir?: string;
+}
+
+export const crmApi = {
+  getClinicFeedbacksPaged: async (
+    params?: FeedbackQueryParams
+  ): Promise<{ content: Feedback[]; totalElements: number }> => {
     try {
       const res = await axiosInstance.get('/feedbacks/clinic', { params });
-      return res.data.data || [];
+      return parsePagedResponse<Feedback>(res.data);
     } catch (error) {
       console.error('Lỗi lấy feedback phòng khám:', error);
-      return [];
+      return { content: [], totalElements: 0 };
     }
   },
 
-  // Lấy danh sách feedback cho bác sĩ (bảng doctor_review)
-  getDoctorFeedbacks: async (params?: {
-    search?: string;
-    rating?: string;
-    fromDate?: string;
-    toDate?: string;
-  }): Promise<Feedback[]> => {
+  getDoctorFeedbacksPaged: async (
+    params?: FeedbackQueryParams
+  ): Promise<{ content: Feedback[]; totalElements: number }> => {
     try {
       const res = await axiosInstance.get('/feedbacks/doctor', { params });
-      return res.data.data || [];
+      return parsePagedResponse<Feedback>(res.data);
     } catch (error) {
       console.error('Lỗi lấy feedback bác sĩ:', error);
-      return [];
+      return { content: [], totalElements: 0 };
     }
   },
 
-  // Phản hồi feedback (phòng khám)
   replyClinicFeedback: async (feedbackId: number, reply: string): Promise<void> => {
     await axiosInstance.post(`/feedbacks/clinic/${feedbackId}/reply`, { reply });
   },
 
-  // Phản hồi feedback (bác sĩ)
   replyDoctorFeedback: async (reviewId: number, reply: string): Promise<void> => {
     await axiosInstance.post(`/feedbacks/doctor/${reviewId}/reply`, { reply });
   },
 
-  // ===== NOTIFICATION =====
-
-  getNotifications: async (params?: {
-    search?: string;
-    type?: string;
-    fromDate?: string;
-    toDate?: string;
-  }): Promise<AppNotification[]> => {
+  getNotificationsPaged: async (
+    params?: NotificationQueryParams
+  ): Promise<{ content: AppNotification[]; totalElements: number }> => {
     try {
       const res = await axiosInstance.get('/notifications', { params });
+      return parsePagedResponse<AppNotification>(res.data);
+    } catch (error) {
+      console.error('Lỗi lấy notification:', error);
+      return { content: [], totalElements: 0 };
+    }
+  },
+
+  getNotifications: async (params?: NotificationQueryParams): Promise<AppNotification[]> => {
+    try {
+      const res = await axiosInstance.get('/notifications/all', { params });
       return res.data.data || [];
     } catch (error) {
       console.error('Lỗi lấy notification:', error);

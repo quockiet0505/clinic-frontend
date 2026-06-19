@@ -16,39 +16,45 @@ export default function DoctorPricing() {
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('doctor_asc');
   const [prices, setPrices] = useState<DoctorPricing[]>([]);
+  const [totalElements, setTotalElements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
   const [loading, setLoading] = useState(true);
   const [editingPrice, setEditingPrice] = useState<DoctorPricing | null>(null);
   const [deletingPrice, setDeletingPrice] = useState<DoctorPricing | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = React.useCallback(async () => {
     setLoading(true);
     try {
-      const data = await settingsApi.getDoctorPrices();
-      setPrices(Array.isArray(data) ? data : []);
+      const sortBy = sort.startsWith('price') ? 'price' : 'staff.fullName';
+      const sortDir = sort.endsWith('desc') ? 'DESC' : 'ASC';
+      const res = await settingsApi.getDoctorPricesPaged({
+        search: search || undefined,
+        page: currentPage - 1,
+        size: pageSize,
+        sortBy,
+        sortDir,
+      });
+      setPrices(res.content);
+      setTotalElements(res.totalElements);
     } catch (e) {
       console.error(e);
       setPrices([]);
+      setTotalElements(0);
     }
     setLoading(false);
-  };
+  }, [search, sort, currentPage]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  const filteredData = prices
-    .filter(p => (p.doctorName || '').toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => {
-      switch (sort) {
-        case 'doctor_asc': return (a.doctorName || '').localeCompare(b.doctorName || '');
-        case 'doctor_desc': return (b.doctorName || '').localeCompare(a.doctorName || '');
-        case 'price_asc': return (a.price || 0) - (b.price || 0);
-        case 'price_desc': return (b.price || 0) - (a.price || 0);
-        default: return 0;
-      }
-    });
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, sort]);
 
-  const totalPrices = prices.length;
+  const filteredData = prices;
+  const totalPrices = totalElements;
   const avgPrice = prices.length > 0 ? Math.round(prices.reduce((sum, p) => sum + (p.price || 0), 0) / prices.length) : 0;
 
   return (
@@ -77,13 +83,15 @@ export default function DoctorPricing() {
         onSortChange={setSort}
       />
 
-      {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải...</div>
-      ) : (
-        <div className="flex-1 min-h-0">
-          <DoctorPricingTable doctors={filteredData} onEdit={setEditingPrice} onDelete={setDeletingPrice} />
-        </div>
-      )}
+      <div className="flex-1 min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <DoctorPricingTable
+          doctors={filteredData}
+          loading={loading}
+          onEdit={setEditingPrice}
+          onDelete={setDeletingPrice}
+          pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
+        />
+      </div>
 
       <DoctorPricingFormDialog
         doctor={editingPrice}

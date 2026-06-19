@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { CalendarDays } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import PageHeader from '@/components/common/PageHeader';
@@ -11,39 +11,59 @@ import { staffApi } from '../api/staffApi';
 
 const TODAY = new Date().toISOString().split('T')[0];
 
+const viewToTab: Record<string, string> = {
+  TODAY: 'today',
+  PENDING: 'pending',
+  PROCESSED: 'processed',
+};
+
 export default function LeaveRequests() {
   const [requests, setRequests] = useState<LeaveRequest[]>([]);
+  const [totalElements, setTotalElements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
   const [loading, setLoading] = useState(true);
-
-  React.useEffect(() => {
-    staffApi.getLeaveRequests().then(data => {
-      setRequests(data);
-      setLoading(false);
-    });
-  }, []);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeView, setActiveView] = useState('TODAY');
   const [roleFilter, setRoleFilter] = useState('ALL');
-  const [filterDate, setFilterDate] = useState(TODAY); 
+  const [filterDate, setFilterDate] = useState(TODAY);
   const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(null);
 
+  const fetchRequests = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await staffApi.getLeaveRequestsPaged({
+        search: searchTerm || undefined,
+        staffType: roleFilter === 'ALL' ? undefined : roleFilter,
+        tab: viewToTab[activeView],
+        fromDate: activeView !== 'TODAY' ? filterDate : undefined,
+        page: currentPage - 1,
+        size: pageSize,
+        sortBy: 'fromDate',
+        sortDir: 'DESC',
+      });
+      setRequests(res.content);
+      setTotalElements(res.totalElements);
+    } catch {
+      setRequests([]);
+      setTotalElements(0);
+    } finally {
+      setLoading(false);
+    }
+  }, [searchTerm, activeView, roleFilter, filterDate, currentPage]);
+
+  useEffect(() => {
+    fetchRequests();
+  }, [fetchRequests]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, activeView, roleFilter, filterDate]);
+
   const handleProcessLeave = (action: string, reason: string) => {
-    setRequests(requests.map(req => req.leaveId === selectedRequest?.leaveId ? { ...req, status: action as any, approvedBy: 'System Admin', rejectionReason: reason } : req));
+    setRequests(requests.map(req => req.leaveId === selectedRequest?.leaveId ? { ...req, status: action as LeaveRequest['status'], approvedBy: 'System Admin', rejectionReason: reason } : req));
     setSelectedRequest(null);
   };
-
-  const filteredData = requests.filter(req => {
-    const matchSearch = req.fullName?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchRole = roleFilter === 'ALL' || req.staffType === roleFilter;
-    let matchView = false;
-    let matchDate = true;
-
-    if (activeView === 'TODAY') matchView = req.status === 'APPROVED' && req.fromDate <= TODAY && req.toDate >= TODAY;
-    else if (activeView === 'PENDING') { matchView = req.status === 'PENDING'; if (filterDate) matchDate = req.toDate >= filterDate; }
-    else if (activeView === 'PROCESSED') { matchView = req.status !== 'PENDING'; if (filterDate) matchDate = req.toDate >= filterDate; }
-
-    return matchSearch && matchRole && matchView && matchDate;
-  });
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
@@ -66,12 +86,16 @@ export default function LeaveRequests() {
       {loading ? (
         <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải danh sách...</div>
       ) : (
-        <LeaveRequestsTable data={filteredData} onAction={setSelectedRequest} />
+        <LeaveRequestsTable
+          data={requests}
+          onAction={setSelectedRequest}
+          pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
+        />
       )}
 
-      <ActionReasonDialog 
-        isOpen={!!selectedRequest} 
-        onClose={() => setSelectedRequest(null)} 
+      <ActionReasonDialog
+        isOpen={!!selectedRequest}
+        onClose={() => setSelectedRequest(null)}
         onConfirm={handleProcessLeave}
         title="Duyệt Đơn Xin Nghỉ"
         description={`Kiểm tra đơn xin nghỉ của ${selectedRequest?.fullName}.`}

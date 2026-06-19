@@ -71,9 +71,16 @@ export interface RevenueStat {
   percentage: number;
 }
 
+export interface RevenueMonthlyTrend {
+  name: string;
+  revenue: number;
+}
+
 export interface RevenueStatsSummary {
   totalRevenue: number;
-  monthlyTrend: MonthlyStat[];
+  consultationRevenue?: number;
+  serviceRevenue?: number;
+  monthlyTrend: RevenueMonthlyTrend[];
   byService: RevenueStat[];
 }
 

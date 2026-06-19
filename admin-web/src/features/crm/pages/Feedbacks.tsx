@@ -1,5 +1,4 @@
-// features/crm/pages/Feedbacks.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Star, MessageSquare, ThumbsUp } from 'lucide-react';
 import PageHeader from '@/components/common/PageHeader';
 import { StatsCard } from '@/components/common/StatsCard';
@@ -10,9 +9,12 @@ import { Feedback } from '../types/crm';
 import { crmApi } from '../api/crmApi';
 
 export default function Feedbacks() {
-  const [allFeedbacks, setAllFeedbacks] = useState<Feedback[]>([]);
-  const [filteredFeedbacks, setFilteredFeedbacks] = useState<Feedback[]>([]);
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+
   const [search, setSearch] = useState('');
   const [rating, setRating] = useState('ALL');
   const [activeTab, setActiveTab] = useState('ALL');
@@ -20,74 +22,62 @@ export default function Feedbacks() {
   const [toDate, setToDate] = useState('');
   const [replyTarget, setReplyTarget] = useState<Feedback | null>(null);
 
-  // Lấy dữ liệu từ API (không gửi fromDate/toDate)
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
-    let data: Feedback[] = [];
-    const params = { search, rating: rating === 'ALL' ? undefined : rating };
-    if (activeTab === 'ALL') {
-      const [clinicData, doctorData] = await Promise.all([
-        crmApi.getClinicFeedbacks(params),
-        crmApi.getDoctorFeedbacks(params),
-      ]);
-      data = [...clinicData, ...doctorData];
-    } else if (activeTab === 'CLINIC') {
-      data = await crmApi.getClinicFeedbacks(params);
-    } else {
-      data = await crmApi.getDoctorFeedbacks(params);
+    const params = {
+      search: search || undefined,
+      rating: rating === 'ALL' ? undefined : rating,
+      fromDate: fromDate || undefined,
+      toDate: toDate || undefined,
+      page: currentPage - 1,
+      size: pageSize,
+      sortBy: 'createdAt',
+      sortDir: 'DESC' as const,
+    };
+
+    try {
+      if (activeTab === 'CLINIC') {
+        const res = await crmApi.getClinicFeedbacksPaged(params);
+        setFeedbacks(res.content);
+        setTotalElements(res.totalElements);
+      } else if (activeTab === 'DOCTOR') {
+        const res = await crmApi.getDoctorFeedbacksPaged(params);
+        setFeedbacks(res.content);
+        setTotalElements(res.totalElements);
+      } else {
+        const [clinicRes, doctorRes] = await Promise.all([
+          crmApi.getClinicFeedbacksPaged({ ...params, page: currentPage - 1 }),
+          crmApi.getDoctorFeedbacksPaged({ ...params, page: currentPage - 1 }),
+        ]);
+        setFeedbacks([...clinicRes.content, ...doctorRes.content]);
+        setTotalElements(clinicRes.totalElements + doctorRes.totalElements);
+      }
+    } catch {
+      setFeedbacks([]);
+      setTotalElements(0);
     }
-    setAllFeedbacks(data);
     setLoading(false);
-  };
+  }, [search, rating, activeTab, fromDate, toDate, currentPage]);
 
-  // Lọc dữ liệu khi search, rating, fromDate, toDate thay đổi
-  useEffect(() => {
-    const filtered = allFeedbacks.filter(fb => {
-      // Lọc theo từ khóa (search)
-      const matchSearch = fb.patientName.toLowerCase().includes(search.toLowerCase()) ||
-                          (fb.doctorName && fb.doctorName.toLowerCase().includes(search.toLowerCase()));
-      
-      // Lọc theo rating
-      const matchRating = rating === 'ALL' || fb.rating === parseInt(rating);
-
-      // Lọc theo khoảng ngày (client-side)
-      let matchDate = true;
-      if (fromDate) {
-        matchDate = matchDate && fb.createdAt >= fromDate;
-      }
-      if (toDate) {
-        matchDate = matchDate && fb.createdAt <= `${toDate}T23:59:59`;
-      }
-
-      return matchSearch && matchRating && matchDate;
-    });
-    setFilteredFeedbacks(filtered);
-  }, [allFeedbacks, search, rating, fromDate, toDate]);
-
-  // Lấy dữ liệu khi tab thay đổi
   useEffect(() => {
     fetchData();
-  }, [activeTab]);
+  }, [fetchData]);
 
-  // Log để kiểm tra
   useEffect(() => {
-    console.log('fromDate:', fromDate, 'toDate:', toDate);
-  }, [fromDate, toDate]);
+    setCurrentPage(1);
+  }, [search, rating, activeTab, fromDate, toDate]);
 
-  const total = filteredFeedbacks.length;
-  const avgRating = total > 0
-    ? Math.round(filteredFeedbacks.reduce((sum, f) => sum + f.rating, 0) / total * 10) / 10
-    : 0;
-  const replied = filteredFeedbacks.filter(f => f.reply).length;
+  const avgRating =
+    feedbacks.length > 0
+      ? Math.round((feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length) * 10) / 10
+      : 0;
+  const replied = feedbacks.filter((f) => f.reply).length;
 
   const handleReply = async (feedbackId: number, reply: string) => {
-    const target = filteredFeedbacks.find(f => f.feedbackId === feedbackId);
+    const target = feedbacks.find((f) => f.feedbackId === feedbackId);
     if (target) {
-      if (target.type === 'CLINIC') {
-        await crmApi.replyClinicFeedback(feedbackId, reply);
-      } else {
-        await crmApi.replyDoctorFeedback(feedbackId, reply);
-      }
+      if (target.type === 'CLINIC') await crmApi.replyClinicFeedback(feedbackId, reply);
+      else await crmApi.replyDoctorFeedback(feedbackId, reply);
       await fetchData();
     }
   };
@@ -95,26 +85,11 @@ export default function Feedbacks() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
-        <PageHeader
-          title="Đánh giá bệnh nhân"
-          description="Theo dõi phản hồi và mức độ hài lòng của bệnh nhân."
-        />
+        <PageHeader title="Đánh giá bệnh nhân" description="Theo dõi phản hồi và mức độ hài lòng của bệnh nhân." />
         <div className="flex flex-wrap items-center gap-3">
-          <StatsCard icon={<MessageSquare size={16} />} label="Tổng đánh giá" value={total} />
-          <StatsCard
-            icon={<Star size={16} />}
-            label="Điểm trung bình"
-            value={avgRating}
-            bgColor="bg-amber-50"
-            iconColor="text-amber-600"
-          />
-          <StatsCard
-            icon={<ThumbsUp size={16} />}
-            label="Đã phản hồi"
-            value={replied}
-            bgColor="bg-emerald-50"
-            iconColor="text-emerald-600"
-          />
+          <StatsCard icon={<MessageSquare size={16} />} label="Tổng đánh giá" value={totalElements} />
+          <StatsCard icon={<Star size={16} />} label="Điểm TB (trang)" value={avgRating} bgColor="bg-amber-50" iconColor="text-amber-600" />
+          <StatsCard icon={<ThumbsUp size={16} />} label="Đã phản hồi (trang)" value={replied} bgColor="bg-emerald-50" iconColor="text-emerald-600" />
         </div>
       </div>
 
@@ -131,21 +106,16 @@ export default function Feedbacks() {
         onToDateChange={setToDate}
       />
 
-      {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải đánh giá...</div>
-      ) : (
+      <div className="flex-1 min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <FeedbackTable
-          data={filteredFeedbacks}
+          data={feedbacks}
           onReply={(fb) => setReplyTarget(fb)}
+          loading={loading}
+          pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
         />
-      )}
+      </div>
 
-      <ReplyDialog
-        isOpen={!!replyTarget}
-        onClose={() => setReplyTarget(null)}
-        feedback={replyTarget}
-        onReply={handleReply}
-      />
+      <ReplyDialog isOpen={!!replyTarget} onClose={() => setReplyTarget(null)} feedback={replyTarget} onReply={handleReply} />
     </div>
   );
 }

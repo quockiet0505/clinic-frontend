@@ -13,42 +13,52 @@ import { settingsApi } from '../api/settingsApi';
 
 export default function ExpertiseSettings() {
   const [data, setData] = useState<Expertise[]>([]);
+  const [totalElements, setTotalElements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('name_asc');
   const [editing, setEditing] = useState<Expertise | null>(null);
   const [deleting, setDeleting] = useState<Expertise | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = React.useCallback(async () => {
     setLoading(true);
     try {
-      const res = await settingsApi.getExpertises();
-      // Giả định backend trả về list có field doctorCount (đã thêm ở phần trước)
-      setData(res || []);
+      const sortBy = sort.startsWith('doctor') ? 'expertiseName' : 'expertiseName';
+      const sortDir = sort.endsWith('desc') ? 'DESC' : 'ASC';
+      const res = await settingsApi.getExpertisesPaged({
+        search: search || undefined,
+        page: currentPage - 1,
+        size: pageSize,
+        sortBy,
+        sortDir,
+      });
+      setData(res.content);
+      setTotalElements(res.totalElements);
     } catch (e) {
       console.error(e);
       setData([]);
+      setTotalElements(0);
     }
     setLoading(false);
-  };
+  }, [search, sort, currentPage]);
 
   React.useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  const filteredAndSorted = data
-    .filter(e => e.expertiseName?.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => {
-      switch (sort) {
-        case 'name_asc': return (a.expertiseName || '').localeCompare(b.expertiseName || '');
-        case 'name_desc': return (b.expertiseName || '').localeCompare(a.expertiseName || '');
-        case 'doctor_asc': return (a.doctorCount || 0) - (b.doctorCount || 0);
-        case 'doctor_desc': return (b.doctorCount || 0) - (a.doctorCount || 0);
-        default: return 0;
-      }
-    });
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [search, sort]);
 
-  const totalExpertise = data.length;
+  const filteredAndSorted = [...data].sort((a, b) => {
+    if (sort === 'doctor_asc') return (a.doctorCount || 0) - (b.doctorCount || 0);
+    if (sort === 'doctor_desc') return (b.doctorCount || 0) - (a.doctorCount || 0);
+    return 0;
+  });
+
+  const totalExpertise = totalElements;
 
   return (
     <div className="space-y-6 flex flex-col h-full animate-in fade-in duration-500">
@@ -75,15 +85,15 @@ export default function ExpertiseSettings() {
         onSortChange={setSort}
       />
 
-      {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải chuyên khoa...</div>
-      ) : (
-        <ExpertiseTable 
-          data={filteredAndSorted} 
-          onEdit={setEditing} 
-          onDelete={(id) => setDeleting(data.find(e => e.expertiseId === id) || null)} 
+      <div className="flex-1 min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <ExpertiseTable
+          data={filteredAndSorted}
+          loading={loading}
+          onEdit={setEditing}
+          onDelete={(id) => setDeleting(data.find((e) => e.expertiseId === id) || null)}
+          pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
         />
-      )}
+      </div>
       
       <ExpertiseFormDialog 
         expertise={editing} 

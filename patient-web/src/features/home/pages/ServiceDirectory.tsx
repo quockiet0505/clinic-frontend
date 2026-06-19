@@ -21,8 +21,13 @@ export const ServiceDirectory: React.FC = () => {
   const itemsPerPage = 10;
   const staticUrl = getStaticUrl();
 
+  const [bannerUrl, setBannerUrl] = useState('/images/banners/service.jpg');
+
   useEffect(() => {
     homeApi.getServices().then(setServices);
+    homeApi.getBanner('service')
+      .then(url => setBannerUrl(url))
+      .catch(console.error);
   }, []);
 
   const formatPrice = (price: number) => {
@@ -46,18 +51,21 @@ export const ServiceDirectory: React.FC = () => {
 
   const handleBooking = (serviceId: number) => {
     navigate(`/appointments/book?type=service&serviceId=${serviceId}`);
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <main className="w-full min-h-screen bg-[#f4f8fb] pb-16">
       <div className="relative w-full min-h-[380px] flex items-center justify-center bg-[#154679] pt-10 pb-20">
         <div className="absolute inset-0 z-0">
-          <img src={`${staticUrl}/images/banners/service.jpg`} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop'; }} alt="Service Banner" className="w-full h-full object-cover opacity-30 mix-blend-overlay" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#154679]/60 via-[#154679]/20 to-transparent"></div>        </div>
+          <img
+            src={bannerUrl}
+            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop'; }}
+            alt="Service Banner"
+            className="w-full h-full object-cover opacity-30 mix-blend-overlay"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#154679]/60 via-[#154679]/20 to-transparent"></div>
+        </div>
         <SectionContainer className="max-w-6xl relative z-10 w-full text-white">
           <div className="max-w-2xl">
             <h1 className="text-[32px] md:text-[36px] leading-tight font-black uppercase tracking-wide mb-5 text-white drop-shadow-sm">
@@ -79,7 +87,6 @@ export const ServiceDirectory: React.FC = () => {
           </div>
         </SectionContainer>
 
-        {/* Floating Search Bar (Gọn hơn) */}
         <div className="absolute left-0 right-0 -bottom-7 flex justify-center z-20 px-4">
           <div className="w-full max-w-2xl bg-white rounded-2xl shadow-[0_12px_40px_-10px_rgba(0,0,0,0.15)] overflow-hidden">
             <SearchInput
@@ -93,12 +100,9 @@ export const ServiceDirectory: React.FC = () => {
       </div>
 
       <SectionContainer className="max-w-5xl">
-        {/* Khu vực Lọc riêng biệt */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-16 mb-6">
           <h2 className="text-[22px] font-bold text-brand-dark">Danh sách Dịch vụ Xét nghiệm</h2>
-
           <div className="flex flex-wrap items-center gap-3">
-            {/* Mức giá Filter */}
             <div
               className="w-[200px] shrink-0 relative z-40"
               onMouseEnter={() => { if (priceTimeout.current) clearTimeout(priceTimeout.current); setIsPriceOpen(true); }}

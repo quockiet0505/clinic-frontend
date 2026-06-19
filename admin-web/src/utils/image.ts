@@ -1,6 +1,6 @@
 export const getImageUrl = (url?: string) => {
   if (!url) return '';
-  if (url.startsWith('http')) return url;
+  if (url.startsWith('http') || url.startsWith('blob:')) return url;
   
   // Use VITE_API_BASE_URL but remove the /api/v1 suffix if it exists
   let baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1';

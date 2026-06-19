@@ -1,14 +1,22 @@
 import axiosInstance from '@/config/axios';
+import { BaseFilterParams } from '@/types/common';
+import { parsePagedResponse } from '@/utils/pagedApi';
 import { Patient } from '../types/patient';
 
+interface PatientQueryParams extends BaseFilterParams {
+  gender?: string;
+  sortBy?: string;
+  sortDir?: string;
+}
+
 export const patientApi = {
-  getAll: async (): Promise<Patient[]> => {
+  getAllPaged: async (params?: PatientQueryParams): Promise<{ content: Patient[]; totalElements: number }> => {
     try {
-      const res = await axiosInstance.get('/patients');
-      return res.data.data;
+      const res = await axiosInstance.get('/patients', { params });
+      return parsePagedResponse<Patient>(res.data);
     } catch (e) {
       console.error(e);
-      return [];
+      return { content: [], totalElements: 0 };
     }
   },
 
@@ -32,5 +40,5 @@ export const patientApi = {
 
   delete: async (id: number): Promise<void> => {
     await axiosInstance.delete(`/patients/${id}`);
-  }
+  },
 };

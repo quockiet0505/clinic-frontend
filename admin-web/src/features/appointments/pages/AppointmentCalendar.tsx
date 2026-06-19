@@ -1,13 +1,14 @@
 // features/appointments/pages/AppointmentCalendar.tsx
 import React, { useState, useEffect } from 'react';
-import { CalendarDays, Clock, CheckCircle, Users, AlertCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { CalendarDays, Clock, CheckCircle, AlertCircle } from 'lucide-react';
 import PageHeader from '@/components/common/PageHeader';
 import { StatsCard } from '@/components/common/StatsCard';
-import { FilterBar, FilterOption } from '@/components/common/FilterBar';
+import { FilterOption } from '@/components/common/FilterBar';
 import WeeklyCalendarGrid from '../components/WeeklyCalendarGrid';
 import { Appointment } from '../types/appointment';
 import { appointmentApi } from '../api/appointmentApi';
 import { staffApi } from '@/features/staffs/api/staffApi';
+import { CalendarFilterBar } from '../components/CalendarFilterBar';
 
 const getStartOfWeek = (date: Date): Date => {
   const d = new Date(date);
@@ -22,10 +23,6 @@ const formatDate = (date: Date): string => {
   return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
 };
 
-const formatMonth = (date: Date): string => {
-  return date.toLocaleDateString('vi-VN', { month: 'long', year: 'numeric' });
-};
-
 export default function AppointmentCalendar() {
   const [doctorFilter, setDoctorFilter] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -37,24 +34,24 @@ export default function AppointmentCalendar() {
   const [toDate, setToDate] = useState('');
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(getStartOfWeek(new Date()));
 
+  // Cập nhật tuần khi từDate thay đổi hoặc appointments load
   useEffect(() => {
     if (fromDate) {
       const date = new Date(fromDate);
       if (!isNaN(date.getTime())) {
         setCurrentWeekStart(getStartOfWeek(date));
       }
-    } else {
-      if (appointments.length > 0) {
-        const firstAppDate = new Date(appointments[0].appointmentDate);
-        if (!isNaN(firstAppDate.getTime())) {
-          setCurrentWeekStart(getStartOfWeek(firstAppDate));
-          return;
-        }
+    } else if (appointments.length > 0) {
+      const firstAppDate = new Date(appointments[0].appointmentDate);
+      if (!isNaN(firstAppDate.getTime())) {
+        setCurrentWeekStart(getStartOfWeek(firstAppDate));
       }
+    } else {
       setCurrentWeekStart(getStartOfWeek(new Date()));
     }
   }, [fromDate, appointments]);
 
+  // Fetch dữ liệu
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -62,13 +59,7 @@ export default function AppointmentCalendar() {
         const appData = await appointmentApi.getAll();
         setAppointments(appData || []);
 
-        if (appData && appData.length > 0 && !fromDate) {
-          const firstAppDate = new Date(appData[0].appointmentDate);
-          if (!isNaN(firstAppDate.getTime())) {
-            setCurrentWeekStart(getStartOfWeek(firstAppDate));
-          }
-        }
-
+        // Lấy danh sách bác sĩ từ staffApi
         try {
           const staffData = await staffApi.getAll();
           const docs = staffData
@@ -79,6 +70,7 @@ export default function AppointmentCalendar() {
             }));
           setProviders(docs);
         } catch (e) {
+          // Fallback: lấy từ appointments
           const doctorNames = Array.from(new Set(appData.map(a => a.doctorName).filter(Boolean)));
           const fallback = doctorNames.map((name, idx) => ({ id: `doc-${idx}`, name }));
           setProviders(fallback);
@@ -93,7 +85,7 @@ export default function AppointmentCalendar() {
     fetchData();
   }, []);
 
-  // Lọc dữ liệu theo các filter (doctor, search, date range)
+  // Lọc dữ liệu
   const baseFiltered = appointments.filter((app) => {
     const matchDoctor = doctorFilter === 'ALL' || app.doctorName === doctorFilter;
     const matchSearch = app.patientName.toLowerCase().includes(search.toLowerCase());
@@ -102,12 +94,11 @@ export default function AppointmentCalendar() {
     return matchDoctor && matchSearch && matchFrom && matchTo;
   });
 
-  // Stats chỉ hiển thị các trạng thái quan trọng
+  // Stats
   const total = baseFiltered.length;
   const pending = baseFiltered.filter(a => a.status === 'PENDING').length;
   const inProgress = baseFiltered.filter(a => a.status === 'IN_PROGRESS').length;
   const completed = baseFiltered.filter(a => a.status === 'COMPLETED').length;
-  // Không hiển thị CONFIRMED, CHECKED_IN, NO_SHOW, CANCELLED
 
   const filteredAppointments = baseFiltered.filter((app) => {
     return statusFilter === 'ALL' || app.status === statusFilter;
@@ -129,9 +120,7 @@ export default function AppointmentCalendar() {
     ...providers.map(p => ({ value: p.name, label: p.name })),
   ];
 
-  const weekEnd = new Date(currentWeekStart);
-  weekEnd.setDate(weekEnd.getDate() + 6);
-
+  // Điều hướng tuần
   const goToPreviousWeek = () => {
     const newDate = new Date(currentWeekStart);
     newDate.setDate(newDate.getDate() - 7);
@@ -162,66 +151,25 @@ export default function AppointmentCalendar() {
         </div>
       </div>
 
-      <FilterBar
-        searchValue={search}
+      <CalendarFilterBar
+        search={search}
         onSearchChange={setSearch}
-        searchPlaceholder="Tìm kiếm bệnh nhân..."
-        filters={[
-          {
-            key: 'doctor',
-            label: 'Bác sĩ',
-            options: doctorOptions,
-            value: doctorFilter,
-            onChange: setDoctorFilter,
-            placeholder: 'Chọn bác sĩ',
-          },
-          {
-            key: 'status',
-            label: 'Trạng thái',
-            options: statusOptions,
-            value: statusFilter,
-            onChange: setStatusFilter,
-            placeholder: 'Trạng thái',
-          },
-        ]}
-        advancedFilters={{
-          dateRange: {
-            from: fromDate,
-            to: toDate,
-            onFromChange: setFromDate,
-            onToChange: setToDate,
-          },
-        }}
-      >
-        <div className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-1.5 border border-slate-200 shrink-0 ml-auto">
-          <button
-            onClick={goToPreviousWeek}
-            className="p-1 rounded hover:bg-slate-200 text-slate-500 transition-colors"
-          >
-            <ChevronLeft size={18} />
-          </button>
-          <div className="text-center min-w-[180px]">
-            <span className="text-sm font-semibold text-slate-700">
-              {formatDate(currentWeekStart)} – {formatDate(weekEnd)}
-            </span>
-            {/* <span className="text-xs text-slate-400 ml-1">
-              ({formatMonth(currentWeekStart)})
-            </span> */}
-          </div>
-          <button
-            onClick={goToNextWeek}
-            className="p-1 rounded hover:bg-slate-200 text-slate-500 transition-colors"
-          >
-            <ChevronRight size={18} />
-          </button>
-          <button
-            onClick={goToToday}
-            className="text-xs font-semibold text-blue-600 hover:text-blue-700 ml-1 whitespace-nowrap"
-          >
-            Hôm nay
-          </button>
-        </div>
-      </FilterBar>
+        doctorFilter={doctorFilter}
+        onDoctorFilterChange={setDoctorFilter}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        fromDate={fromDate}
+        toDate={toDate}
+        onFromDateChange={setFromDate}
+        onToDateChange={setToDate}
+        doctorOptions={doctorOptions}
+        statusOptions={statusOptions}
+        currentWeekStart={currentWeekStart}
+        onPreviousWeek={goToPreviousWeek}
+        onNextWeek={goToNextWeek}
+        onToday={goToToday}
+        formatDate={formatDate}
+      />
 
       {loading ? (
         <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải dữ liệu...</div>

@@ -90,13 +90,17 @@ export default function WeeklyCalendarGrid({ currentWeekStart, appointments, onA
                       >
                         <div className="font-bold truncate text-[11px]">{app.patientName}</div>
                         <div className="flex justify-between items-center mt-0.5">
-                          <span className="font-medium opacity-80 text-[10px]">{app.timeStart.substring(0,5)}</span>
-                          {app.appointmentType === 'ONLINE' ? (
-                            <Globe size={10} className="opacity-70" title="Khám trực tuyến" />
-                          ) : (
-                            <UserRound size={10} className="opacity-70" title="Khách vãng lai" />
-                          )}
-                        </div>
+                        <span className="font-medium opacity-80 text-[10px]">{app.timeStart.substring(0,5)}</span>
+                        {app.appointmentType === 'ONLINE' ? (
+                          <span title="Trực tuyến">
+                            <Globe size={10} className="opacity-70" />
+                          </span>
+                        ) : (
+                          <span title="Trực tiếp">
+                            <UserRound size={10} className="opacity-70" />
+                          </span>
+                        )}
+                      </div>
                       </button>
                     ))}
                   </div>

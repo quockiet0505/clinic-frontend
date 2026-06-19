@@ -1,44 +1,72 @@
 import axiosInstance from '@/config/axios';
+import { BaseFilterParams } from '@/types/common';
+import { parsePagedResponse } from '@/utils/pagedApi';
 import { Medicine, PrescriptionUI } from '../types/pharmacy';
 
+interface MedicineQueryParams extends BaseFilterParams {
+  sortBy?: string;
+  sortDir?: string;
+}
+
+interface PrescriptionQueryParams extends BaseFilterParams {
+  status?: string;
+  sortBy?: string;
+  sortDir?: string;
+}
+
 export const pharmacyApi = {
-  // Medicine
+  getMedicinesPaged: async (
+    params?: MedicineQueryParams
+  ): Promise<{ content: Medicine[]; totalElements: number }> => {
+    try {
+      const res = await axiosInstance.get('/medicines', { params });
+      return parsePagedResponse<Medicine>(res.data);
+    } catch (e) {
+      console.error(e);
+      return { content: [], totalElements: 0 };
+    }
+  },
+
   getMedicines: async (): Promise<Medicine[]> => {
     try {
-      const res = await axiosInstance.get('/medicines');
+      const res = await axiosInstance.get('/medicines/all');
       return res.data.data || [];
     } catch (e) {
       console.error(e);
       return [];
     }
   },
+
   createMedicine: async (data: Omit<Medicine, 'medicineId' | 'quantity'>): Promise<void> => {
     await axiosInstance.post('/medicines', data);
   },
+
   updateMedicine: async (id: number, data: Partial<Medicine>): Promise<void> => {
     await axiosInstance.put(`/medicines/${id}`, data);
   },
+
   deleteMedicine: async (id: number): Promise<void> => {
     await axiosInstance.delete(`/medicines/${id}`);
   },
 
-  // Prescription
-  getPrescriptions: async (): Promise<PrescriptionUI[]> => {
+  getPrescriptionsPaged: async (
+    params?: PrescriptionQueryParams
+  ): Promise<{ content: PrescriptionUI[]; totalElements: number }> => {
     try {
-      const res = await axiosInstance.get('/prescriptions');
-      return res.data.data || [];
+      const res = await axiosInstance.get('/prescriptions', { params });
+      return parsePagedResponse<PrescriptionUI>(res.data);
     } catch (e) {
       console.error(e);
-      return [];
+      return { content: [], totalElements: 0 };
     }
   },
+
   getPrescriptionById: async (id: number): Promise<PrescriptionUI> => {
     const res = await axiosInstance.get(`/prescriptions/${id}`);
     return res.data.data;
   },
+
   dispensePrescription: async (id: number): Promise<void> => {
-    // Giả sử có API để cập nhật trạng thái đơn thành 'DISPENSED'
-    // Nếu chưa có, bạn có thể gọi PUT /prescriptions/{id}/dispense
     await axiosInstance.put(`/prescriptions/${id}/dispense`);
   },
 };

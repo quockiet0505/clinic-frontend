@@ -2,15 +2,17 @@ import React, { useRef, useState, useEffect } from 'react';
 import { CheckCircle2, ChevronRight, ChevronLeft } from 'lucide-react';
 import { SearchInput } from '@/components/common/SearchInput';
 import { homeApi } from '@/features/home/api/homeApi';
-import { getStaticUrl } from '@/utils/url';
 import { useNavigate } from 'react-router-dom';
 import { ImageWithFallback } from '@/components/common/ImageWithFallback';
+// Không cần import getStaticUrl nữa
 
 interface QuickAction {
   id: number;
   title: string;
-  iconUrl: string;
+  iconUrl: string; // đã có full URL từ API
 }
+
+
 
 export const HeroSection: React.FC = () => {
   const navigate = useNavigate();
@@ -20,43 +22,37 @@ export const HeroSection: React.FC = () => {
   const [quickActions, setQuickActions] = useState<QuickAction[]>([]);
   const [bannerUrl, setBannerUrl] = useState('/images/banners/hero-banner.jpg');
   const [searchKeyword, setSearchKeyword] = useState('');
-  const staticUrl = getStaticUrl();
 
-  // const
+
+  useEffect(() => {
+  homeApi.getBanner('main')
+    .then(url => {
+      console.log('Banner URL từ API:', url);  
+      setBannerUrl(url);
+    })
+    .catch(console.error);
+}, []);
+
+
   const handleQuickActionClick = (title: string) => {
     const value = title.toLowerCase();
-
     if (value.includes('bác sĩ')) {
       navigate('/appointments/book?source=doctor');
-    }
-
-    else if (
-      value.includes('chuyên khoa') ||
-      value.includes('khám chuyên khoa')
-    ) {
+    } else if (value.includes('chuyên khoa') || value.includes('khám chuyên khoa')) {
       navigate('/appointments/book?source=specialty');
-    }
-
-    else if (
-      value.includes('dịch vụ') ||
-      value.includes('xét nghiệm')
-    ) {
+    } else if (value.includes('dịch vụ') || value.includes('xét nghiệm')) {
       navigate('/appointments/book?source=service');
-    }
-
-    else {
+    } else {
       navigate('/appointments/book');
     }
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   useEffect(() => {
     homeApi.getQuickActions().then(setQuickActions).catch(console.error);
-    // homeApi.getBanner().then(url => setBannerUrl(url)).catch(console.error);
+    homeApi.getBanner('main')
+      .then(url => setBannerUrl(url))
+      .catch(console.error);
   }, []);
 
   const handleSearch = (keyword: string) => {
@@ -92,11 +88,14 @@ export const HeroSection: React.FC = () => {
   return (
     <div className="relative bg-white pb-0">
       <div className="relative w-full h-[400px] md:h-[480px]">
-        <ImageWithFallback
-          src={`${staticUrl}${bannerUrl}`}
+        <img
+          src={bannerUrl}
           alt="Hero Banner"
           className="w-full h-full object-cover"
-          containerClassName="absolute inset-0 w-full h-full"
+          onError={(e) => {
+            console.error('Lỗi load ảnh banner:', e);
+            e.currentTarget.src = '/images/banners/hero-banner.jpg'; 
+          }}
         />
         <div className="absolute inset-0 flex flex-col items-center pt-8 md:pt-16 px-4 bg-gradient-to-b from-brand-dark/10 via-transparent to-transparent">
           <h1 className="text-2xl md:text-4xl font-bold text-white mb-6 text-center drop-shadow-md">
@@ -133,11 +132,14 @@ export const HeroSection: React.FC = () => {
                 className="min-w-[130px] max-w-[130px] h-[130px] snap-start shrink-0 bg-white rounded-2xl p-4 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center"
               >
                 <div className="h-12 w-12 mb-3 flex items-center justify-center">
-                  <ImageWithFallback
-                    src={`${staticUrl}${action.iconUrl}`}
+                  <img
+                    src={action.iconUrl}
                     alt={action.title}
-                    className="max-w-full max-h-full hover:scale-110 transition-transform duration-300"
-                    containerClassName="w-full h-full"
+                    className="max-w-full max-h-full"
+                    onError={(e) => {
+                      console.error('Lỗi load icon:', e);
+                      e.currentTarget.src = '/icons/placeholder.png';
+                    }}
                   />
                 </div>
                 <span className="font-semibold text-slate-700 text-xs leading-tight hover:text-primary-500 transition-colors">{action.title}</span>

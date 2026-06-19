@@ -102,7 +102,7 @@ export default function LabResultDetail({ result, onBack }: Props) {
                 </div>
                 <div>
                   <span className="text-slate-400 font-medium">Kỹ thuật viên thực hiện:</span>
-                  <span className="ml-2 font-bold text-slate-800">{result.performerName || result.enteredName || '—'}</span>
+                  <span className="ml-2 font-bold text-slate-800">{result.enteredByName || '—'}</span>
                 </div>
                 <div>
                   <span className="text-slate-400 font-medium">Trạng thái hồ sơ:</span>
@@ -132,7 +132,7 @@ export default function LabResultDetail({ result, onBack }: Props) {
           {/* CHỮ KÝ XÁC NHẬN PHÒNG XÉT NGHIỆM */}
           <div className="pt-12 flex justify-between items-start">
             <div className="text-xs text-slate-400 italic font-medium print:text-black">
-              * Người nhập liệu: {result.enteredName || '—'}
+              * Người nhập liệu: {result.enteredByName || '—'}
             </div>
             <div className="text-center text-sm print:text-xs">
               <p className="text-slate-500 italic mb-1 print:text-black">
@@ -143,7 +143,7 @@ export default function LabResultDetail({ result, onBack }: Props) {
               </p>
               <div className="h-24" />
               <p className="font-black text-slate-800">
-                {result.performerName || result.enteredName || '—'}
+                {result.enteredByName || '—'}
               </p>
             </div>
           </div>

@@ -1,18 +1,27 @@
 // features/dashboard/api/dashboardApi.ts
 import axiosInstance from '@/config/axios';
-import { 
-  DashboardStats, 
-  RecentAppointment, 
+import { BaseFilterParams } from '@/types/common';
+import { parsePagedResponse } from '@/utils/pagedApi';
+import {
+  DashboardStats,
+  RecentAppointment,
   MonthlyStat,
   DoctorStat,
   ServiceStat,
+  PatientStat,
   PatientStatsSummary,
   RevenueStatsSummary,
-  ReportFilter
+  ReportFilter,
 } from '../types/dashboard';
 
+export interface DashboardQueryParams extends BaseFilterParams {
+  month?: number;
+  year?: number;
+  sortBy?: string;
+  sortDir?: string;
+}
+
 export const dashboardApi = {
-  // Stats tổng quan
   getStats: async (): Promise<DashboardStats> => {
     try {
       const res = await axiosInstance.get('/dashboard/stats');
@@ -47,90 +56,105 @@ export const dashboardApi = {
     }
   },
 
-  getDoctorStats: async (month: number, year: number): Promise<DoctorStat[]> => {
+  getDoctorStatsPaged: async (params: DashboardQueryParams) => {
     try {
-      const res = await axiosInstance.get(`/dashboard/doctor-stats?month=${month}&year=${year}`);
-      return res.data.data.map((item: any) => ({
-        doctorId: item.doctorId,
-        doctorName: item.doctorName,
-        totalAppointments: item.totalAppointments || 0,
-        completedAppointments: item.completedAppointments || 0,
-        completionRate: item.completionRate || 0,
-        revenue: item.revenue || 0,
-        avgRating: item.avgRating || 0,
-        imageUrl: item.imageUrl || null, //  map ảnh bác sĩ
-      }));
+      const res = await axiosInstance.get('/dashboard/doctor-stats', { params });
+      const d = res.data?.data ?? {};
+      const page = parsePagedResponse<DoctorStat>({ data: d.page ?? d });
+      return {
+        totalDoctors: d.totalDoctors ?? 0,
+        totalRevenue: d.totalRevenue ?? 0,
+        avgCompletionRate: d.avgCompletionRate ?? 0,
+        content: (page.content ?? []).map((item) => ({
+          doctorId: item.doctorId,
+          doctorName: item.doctorName,
+          totalAppointments: item.totalAppointments ?? 0,
+          completedAppointments: item.completedAppointments ?? 0,
+          completionRate: item.completionRate ?? 0,
+          revenue: item.revenue ?? 0,
+          avgRating: item.avgRating ?? 0,
+          imageUrl: item.imageUrl ?? undefined,
+        })),
+        totalElements: page.totalElements ?? 0,
+      };
     } catch (error) {
       console.error('Error fetching doctor stats:', error);
-      return [];
+      return { totalDoctors: 0, totalRevenue: 0, avgCompletionRate: 0, content: [], totalElements: 0 };
     }
   },
 
-  getServiceStats: async (month: number, year: number): Promise<ServiceStat[]> => {
+  getServiceStatsPaged: async (params: DashboardQueryParams) => {
     try {
-      const res = await axiosInstance.get(`/dashboard/service-stats?month=${month}&year=${year}`);
-      return res.data.data.map((item: any) => ({
-        serviceId: item.serviceId,
-        serviceName: item.serviceName,
-        totalOrders: item.totalOrders || 0,
-        completedOrders: item.completedOrders || 0,
-        completionRate: item.completionRate || 0,
-        revenue: item.revenue || 0,
-        imageUrl: item.imageUrl || null, //  map ảnh dịch vụ
-      }));
+      const res = await axiosInstance.get('/dashboard/service-stats', { params });
+      const d = res.data?.data ?? {};
+      const page = parsePagedResponse<ServiceStat>({ data: d.page ?? d });
+      return {
+        totalServices: d.totalServices ?? 0,
+        totalOrders: d.totalOrders ?? 0,
+        totalRevenue: d.totalRevenue ?? 0,
+        content: (page.content ?? []).map((item) => ({
+          serviceId: item.serviceId,
+          serviceName: item.serviceName,
+          totalOrders: item.totalOrders ?? 0,
+          completedOrders: item.completedOrders ?? 0,
+          completionRate: item.completionRate ?? 0,
+          revenue: item.revenue ?? 0,
+          imageUrl: item.imageUrl ?? undefined,
+        })),
+        totalElements: page.totalElements ?? 0,
+      };
     } catch (error) {
       console.error('Error fetching service stats:', error);
-      return [];
+      return { totalServices: 0, totalOrders: 0, totalRevenue: 0, content: [], totalElements: 0 };
     }
   },
 
-  getPatientStats: async (month: number, year: number): Promise<PatientStatsSummary> => {
+  getPatientStatsPaged: async (params: DashboardQueryParams) => {
     try {
-      const res = await axiosInstance.get(`/dashboard/patient-stats?month=${month}&year=${year}`);
-      const data = res.data.data;
+      const res = await axiosInstance.get('/dashboard/patient-stats', { params });
+      const d = res.data.data;
+      const page = parsePagedResponse<PatientStat>({ data: d.topPatients });
       return {
-        newPatients: data.newPatients || 0,
-        returningPatients: data.returningPatients || 0,
-        topPatients: (data.topPatients || []).map((p: any) => ({
-          patientId: p.patientId,
-          patientName: p.patientName,
-          visitCount: p.visitCount || 0,
-          lastVisit: p.lastVisit || null,
-          totalSpent: p.totalSpent || 0,
-          avatarUrl: p.avatarUrl || null, //  map avatar bệnh nhân
-        })),
+        newPatients: d.newPatients || 0,
+        returningPatients: d.returningPatients || 0,
+        topPatients: page.content,
+        totalElements: page.totalElements,
       };
     } catch (error) {
       console.error('Error fetching patient stats:', error);
-      return {
-        newPatients: 0,
-        returningPatients: 0,
-        topPatients: [],
-      };
+      return { newPatients: 0, returningPatients: 0, topPatients: [], totalElements: 0 };
     }
   },
 
-  getRevenueStats: async (month: number, year: number): Promise<RevenueStatsSummary> => {
+  getRevenueStatsPaged: async (params: DashboardQueryParams): Promise<RevenueStatsSummary & { byServiceTotal: number }> => {
     try {
-      const res = await axiosInstance.get(`/dashboard/revenue-stats?month=${month}&year=${year}`);
-      return res.data.data;
+      const res = await axiosInstance.get('/dashboard/revenue-stats', { params });
+      const d = res.data.data;
+      const byServicePage = parsePagedResponse<{ serviceName: string; revenue: number; percentage: number }>({
+        data: d.byService,
+      });
+      return {
+        totalRevenue: d.totalRevenue || 0,
+        consultationRevenue: d.consultationRevenue || 0,
+        serviceRevenue: d.serviceRevenue || 0,
+        monthlyTrend: d.monthlyTrend || [],
+        byService: byServicePage.content,
+        byServiceTotal: byServicePage.totalElements,
+      };
     } catch (error) {
       console.error('Error fetching revenue stats:', error);
-      return {
-        totalRevenue: 0,
-        monthlyTrend: [],
-        byService: [],
-      };
+      return { totalRevenue: 0, consultationRevenue: 0, serviceRevenue: 0, monthlyTrend: [], byService: [], byServiceTotal: 0 };
     }
   },
 
   getMonthlyStats: async (year: number): Promise<MonthlyStat[]> => {
     try {
       const res = await axiosInstance.get(`/dashboard/monthly-stats?year=${year}`);
-      return res.data.data.map((item: any) => ({
+      return res.data.data.map((item: { name?: string; completed?: number; cancelled?: number; rescheduled?: number }) => ({
         name: item.name || '',
         completed: item.completed || 0,
         cancelled: item.cancelled || 0,
+        rescheduled: item.rescheduled || 0,
       }));
     } catch (error) {
       console.error('Error fetching monthly stats:', error);
@@ -141,12 +165,12 @@ export const dashboardApi = {
   getRecentAppointments: async (limit: number = 10): Promise<RecentAppointment[]> => {
     try {
       const res = await axiosInstance.get(`/dashboard/recent-appointments?limit=${limit}`);
-      return res.data.data.map((item: any) => ({
+      return res.data.data.map((item: { appointmentId?: number; patientName?: string; appointmentDate?: string; status?: string; patientAvatarUrl?: string }) => ({
         id: item.appointmentId?.toString() || '',
         patientName: item.patientName || 'Unknown',
         time: item.appointmentDate || '',
         status: item.status || 'PENDING',
-        avatarUrl: item.patientAvatarUrl || null, 
+        avatarUrl: item.patientAvatarUrl || null,
       }));
     } catch (error) {
       console.error('Error fetching recent appointments:', error);
@@ -155,14 +179,7 @@ export const dashboardApi = {
   },
 
   generateReport: async (filter: ReportFilter): Promise<Blob> => {
-    try {
-      const response = await axiosInstance.post('/dashboard/report', filter, {
-        responseType: 'blob',
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Error generating report:', error);
-      throw error;
-    }
+    const response = await axiosInstance.post('/dashboard/report', filter, { responseType: 'blob' });
+    return response.data;
   },
 };

@@ -1,5 +1,5 @@
-// features/staff/pages/MySchedule.tsx
-import React, { useState, useEffect } from 'react';
+// features/staffs/pages/MySchedule.tsx
+import React, { useState, useEffect, useCallback } from 'react';
 import { FileText, Plus } from 'lucide-react';
 import PageHeader from '@/components/common/PageHeader';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
@@ -13,6 +13,9 @@ import { toast } from 'react-hot-toast';
 
 export default function MySchedule() {
   const [leaves, setLeaves] = useState<any[]>([]);
+  const [totalElements, setTotalElements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
   const [loading, setLoading] = useState(true);
   const [isApplyOpen, setIsApplyOpen] = useState(false);
   const [cancelId, setCancelId] = useState<number | null>(null);
@@ -23,50 +26,48 @@ export default function MySchedule() {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
 
-  const fetchLeaveRequests = async () => {
+  const fetchLeaveRequests = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await staffApi.getLeaveRequests();
-      setLeaves(data);
+      let effectiveFromDate = fromDate || undefined;
+      let effectiveToDate = toDate || undefined;
+      if (activeTab === 'tomorrow') {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+        effectiveFromDate = tomorrowStr;
+        effectiveToDate = tomorrowStr;
+      }
+      const res = await staffApi.getLeaveRequestsPaged({
+        search: search || undefined,
+        status: statusFilter === 'ALL' ? undefined : statusFilter,
+        leaveType: leaveTypeFilter === 'ALL' ? undefined : leaveTypeFilter,
+        fromDate: effectiveFromDate,
+        toDate: effectiveToDate,
+        page: currentPage - 1,
+        size: pageSize,
+        sortBy: 'fromDate',
+        sortDir: 'DESC',
+      });
+      setLeaves(res.content);
+      setTotalElements(res.totalElements);
     } catch (error) {
       console.error('Lỗi tải đơn nghỉ:', error);
       toast.error('Không thể tải danh sách nghỉ phép');
       setLeaves([]);
+      setTotalElements(0);
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, statusFilter, leaveTypeFilter, activeTab, fromDate, toDate, currentPage]);
 
   useEffect(() => {
     fetchLeaveRequests();
-  }, []);
+  }, [fetchLeaveRequests]);
 
-  const filteredLeaves = leaves.filter(l => {
-    // Lọc theo search
-    const matchSearch = l.reason?.toLowerCase().includes(search.toLowerCase()) ||
-                        l.fromDate?.includes(search) ||
-                        l.toDate?.includes(search);
-    // Lọc theo status
-    const matchStatus = statusFilter === 'ALL' || l.status === statusFilter;
-    // Lọc theo loại nghỉ phép
-    const matchLeaveType = leaveTypeFilter === 'ALL' || l.leaveType === leaveTypeFilter;
-    // Lọc theo date range
-    const matchFrom = !fromDate || l.fromDate >= fromDate;
-    const matchTo = !toDate || l.toDate <= toDate;
-    // Lọc theo tab
-    let matchTab = true;
-    if (activeTab === 'tomorrow') {
-      const today = new Date();
-      const tomorrow = new Date(today);
-      tomorrow.setDate(today.getDate() + 1);
-      const tomorrowStr = tomorrow.toISOString().split('T')[0];
-      matchTab = l.fromDate <= tomorrowStr && l.toDate >= tomorrowStr;
-    }
-    return matchSearch && matchStatus && matchLeaveType && matchFrom && matchTo && matchTab;
-  });
-
-  // Chỉ hiển thị 1 stats: Tổng đơn nghỉ
-  const totalLeaves = leaves.length;
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter, leaveTypeFilter, activeTab, fromDate, toDate]);
 
   const handleCancel = async () => {
     if (cancelId) {
@@ -74,8 +75,9 @@ export default function MySchedule() {
         await staffApi.cancelLeaveRequest(cancelId);
         toast.success('Đã hủy đơn nghỉ phép');
         await fetchLeaveRequests();
-      } catch (error: any) {
-        toast.error(error.response?.data?.message || 'Hủy đơn thất bại');
+      } catch (error: unknown) {
+        const err = error as { response?: { data?: { message?: string } } };
+        toast.error(err.response?.data?.message || 'Hủy đơn thất bại');
       } finally {
         setCancelId(null);
       }
@@ -90,14 +92,9 @@ export default function MySchedule() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
-        <PageHeader 
-          title="Nghỉ Phép Của Tôi" 
-          description="Quản lý đơn xin nghỉ phép và lịch sử nghỉ phép." 
-        />
+        <PageHeader title="Nghỉ Phép Của Tôi" description="Quản lý đơn xin nghỉ phép và lịch sử nghỉ phép." />
         <div className="flex flex-wrap items-center gap-3">
-          {/* Stats card: Tổng đơn nghỉ */}
-          <StatsCard icon={<FileText size={16} />} label="Tổng đơn nghỉ" value={totalLeaves} />
-          {/* Nút nộp đơn */}
+          <StatsCard icon={<FileText size={16} />} label="Tổng đơn nghỉ" value={totalElements} />
           <GradientButton onClick={() => setIsApplyOpen(true)} className="w-full sm:w-auto">
             <Plus size={18} className="mr-2" /> Nộp Đơn Xin Nghỉ
           </GradientButton>
@@ -119,28 +116,24 @@ export default function MySchedule() {
         onToDateChange={setToDate}
       />
 
-      {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải danh sách nghỉ phép...</div>
-      ) : (
-        <MyScheduleTable 
-          data={filteredLeaves} 
-          onCancelRequest={(id) => setCancelId(id)} 
+      <div className="flex-1 min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <MyScheduleTable
+          data={leaves}
+          loading={loading}
+          onCancelRequest={(id) => setCancelId(id)}
+          pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
         />
-      )}
+      </div>
 
-      <LeaveApplicationDialog 
-        isOpen={isApplyOpen} 
-        onClose={() => setIsApplyOpen(false)} 
-        onSubmit={handleSubmitLeave} 
-      />
+      <LeaveApplicationDialog isOpen={isApplyOpen} onClose={() => setIsApplyOpen(false)} onSubmit={handleSubmitLeave} />
 
-      <ConfirmDialog 
-        isOpen={!!cancelId} 
-        onClose={() => setCancelId(null)} 
-        onConfirm={handleCancel} 
-        title="Hủy Đơn Xin Nghỉ" 
-        description="Bạn có chắc chắn muốn hủy đơn xin nghỉ này không?" 
-        confirmText="Xác nhận hủy" 
+      <ConfirmDialog
+        isOpen={!!cancelId}
+        onClose={() => setCancelId(null)}
+        onConfirm={handleCancel}
+        title="Hủy Đơn Xin Nghỉ"
+        description="Bạn có chắc chắn muốn hủy đơn xin nghỉ này không?"
+        confirmText="Xác nhận hủy"
       />
     </div>
   );

@@ -13,6 +13,9 @@ import { settingsApi } from '../api/settingsApi';
 
 export default function ServiceCatalog() {
   const [data, setData] = useState<Service[]>([]);
+  const [totalElements, setTotalElements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [type, setType] = useState('ALL');
@@ -20,43 +23,43 @@ export default function ServiceCatalog() {
   const [editing, setEditing] = useState<Service | null>(null);
   const [deleting, setDeleting] = useState<Service | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = React.useCallback(async () => {
     setLoading(true);
     try {
-      const res = await settingsApi.getServices();
-      setData(Array.isArray(res) ? res : []);
+      const sortBy = sort.startsWith('price') ? 'originalPrice' : 'serviceName';
+      const sortDir = sort.endsWith('desc') ? 'DESC' : 'ASC';
+      const res = await settingsApi.getServicesPaged({
+        search: search || undefined,
+        serviceType: type === 'ALL' ? undefined : type,
+        page: currentPage - 1,
+        size: pageSize,
+        sortBy,
+        sortDir,
+      });
+      setData(res.content);
+      setTotalElements(res.totalElements);
     } catch (e) {
       console.error(e);
       setData([]);
+      setTotalElements(0);
     }
     setLoading(false);
-  };
+  }, [search, type, sort, currentPage]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  // Filter and sort data
-  const filteredData = data
-    .filter(item => {
-      const matchSearch = item.serviceName.toLowerCase().includes(search.toLowerCase());
-      const matchType = type === 'ALL' || item.serviceType === type;
-      return matchSearch && matchType;
-    })
-    .sort((a, b) => {
-      switch (sort) {
-        case 'name_asc': return a.serviceName.localeCompare(b.serviceName);
-        case 'name_desc': return b.serviceName.localeCompare(a.serviceName);
-        case 'price_asc': return (a.originalPrice || 0) - (b.originalPrice || 0);
-        case 'price_desc': return (b.originalPrice || 0) - (a.originalPrice || 0);
-        default: return 0;
-      }
-    });
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, type, sort]);
 
-  const totalServices = data.length;
-  const examServices = data.filter(s => s.serviceType === 'EXAM').length;
-  const labServices = data.filter(s => s.serviceType === 'LAB_TEST').length;
-  const imagingServices = data.filter(s => s.serviceType === 'IMAGING').length;
+  const filteredData = data;
+
+  const totalServices = totalElements;
+  const examServices = filteredData.filter((s) => s.serviceType === 'EXAM').length;
+  const labServices = filteredData.filter((s) => s.serviceType === 'LAB_TEST').length;
+  const imagingServices = filteredData.filter((s) => s.serviceType === 'IMAGING').length;
 
   return (
     <div className="space-y-6 flex flex-col h-full animate-in fade-in duration-500">
@@ -88,13 +91,15 @@ export default function ServiceCatalog() {
         onSortChange={setSort}
       />
 
-      {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải danh mục dịch vụ...</div>
-      ) : (
-        <div className="flex-1 min-h-0">
-          <ServiceCatalogTable data={filteredData} onEdit={setEditing} onDelete={setDeleting} />
-        </div>
-      )}
+      <div className="flex-1 min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <ServiceCatalogTable
+          data={filteredData}
+          loading={loading}
+          onEdit={setEditing}
+          onDelete={setDeleting}
+          pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
+        />
+      </div>
 
       <ServiceFormDialog
         service={editing}

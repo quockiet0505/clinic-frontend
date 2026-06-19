@@ -1,7 +1,9 @@
 import axiosInstance from '@/config/axios';
+import { getStaticUrl } from '@/utils/url';
+
+const staticUrl = getStaticUrl();
 
 export const homeApi = {
-
   getSpecialties: async () => {
     const res = await axiosInstance.get('/expertise');
     return res.data.data;
@@ -28,17 +30,22 @@ export const homeApi = {
   },
 
   getQuickActions: async () => {
-    const res = await axiosInstance.get('/static/quick-actions');
-    return res.data.data;
+    const res = await axiosInstance.get('/public/quick-actions');
+    // Ghép staticUrl cho iconUrl của từng action
+    const actions = res.data.data.map((action: any) => ({
+      ...action,
+      iconUrl: `${staticUrl}${action.iconUrl}`
+    }));
+    return actions;
   },
 
   getLogo: async () => {
     const res = await axiosInstance.get('/public/logos/main');
-    return res.data.data.imageUrl;
+    return `${staticUrl}${res.data.data.imageUrl}`;
   },
 
-  getBanner: async () => {
-    const res = await axiosInstance.get('/static/banner');
-    return res.data.data.bannerUrl;
+  getBanner: async (key: string = 'main') => {
+    const res = await axiosInstance.get(`/public/banners/${key}`);
+    return `${staticUrl}${res.data.data.imageUrl}`;
   },
 };

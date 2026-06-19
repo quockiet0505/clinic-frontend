@@ -1,23 +1,23 @@
-// features/appointments/pages/AppointmentList.tsx
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Clock, Activity } from 'lucide-react';
 import { AppointmentFilterBar } from '../components/AppointmentFilterBar';
-import AppointmentTable from '../components/AppointmentTable';
 import AppointmentFormDialog from '../components/AppointmentFormDialog';
 import ActionReasonDialog from '@/components/common/ActionReasonDialog';
 import GradientButton from '@/components/common/GradientButton';
 import { Plus } from 'lucide-react';
 import { Appointment, AppointmentStatus } from '../types/appointment';
 import { appointmentApi } from '../api/appointmentApi';
+import AppointmentTable from '../components/AppointmentTable';
 import PageHeader from '@/components/common/PageHeader';
 
-const TODAY = new Date().toISOString().split('T')[0];
-
 export default function AppointmentList() {
+  // ---- Data & Pagination ----
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [totalElements, setTotalElements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
 
-  // Filter states
+  // ---- Filters ----
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<AppointmentStatus | 'ALL'>('ALL');
   const [activeTab, setActiveTab] = useState('all');
@@ -29,61 +29,59 @@ export default function AppointmentList() {
   const [isBookOpen, setIsBookOpen] = useState(false);
   const [cancelApt, setCancelApt] = useState<Appointment | null>(null);
 
-  React.useEffect(() => {
-    appointmentApi.getAll().then((data) => {
-      setAppointments(data);
-      setLoading(false);
-    });
-  }, []);
+  // ---- Fetch data ----
+  const fetchData = useCallback(async () => {
+    try {
+      const res = await appointmentApi.getAllPaged({
+        search: search || undefined,
+        status: status === 'ALL' ? undefined : status,
+        fromDate: fromDate || undefined,
+        toDate: toDate || undefined,
+        tab: activeTab === 'all' ? undefined : activeTab,
+        source: source === 'ALL' ? undefined : source,
+        page: currentPage - 1,
+        size: pageSize,
+      });
+      setAppointments(Array.isArray(res.content) ? res.content : []);
+      setTotalElements(res.totalElements ?? 0);
+    } catch (error) {
+      console.error('Error fetching appointments:', error);
+      setAppointments([]);
+      setTotalElements(0);
+    }
+  }, [search, status, activeTab, fromDate, toDate, source, currentPage]);
 
-  const stats = useMemo(() => {
-    const total = appointments.length;
-    const pending = appointments.filter(a => a.status === 'PENDING').length;
-    const inProgress = appointments.filter(a => a.status === 'IN_PROGRESS').length;
-    return { total, pending, inProgress };
-  }, [appointments]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-  const filteredAppointments = useMemo(() => {
-    return appointments.filter((a) => {
-      const matchesSearch = a.patientName.toLowerCase().includes(search.toLowerCase());
-      const matchesStatus = status === 'ALL' || a.status === status;
-      const matchesFrom = !fromDate || a.appointmentDate >= fromDate;
-      const matchesTo = !toDate || a.appointmentDate <= toDate;
-      const matchesSource = source === 'ALL' || a.source === source;
-      const matchesServiceAdv = serviceAdvanced === 'ALL' || a.appointmentType === serviceAdvanced;
+  // Reset page về 1 khi filter thay đổi
+  const resetPage = useCallback(() => setCurrentPage(1), []);
+  useEffect(() => {
+    resetPage();
+  }, [search, status, activeTab, fromDate, toDate, source]);
 
-      let matchesTab = true;
-      if (activeTab === 'today') matchesTab = a.appointmentDate === TODAY;
-      else if (activeTab === 'upcoming') matchesTab = a.appointmentDate > TODAY;
+  // ---- Stats (chỉ tính trên trang hiện tại – cần endpoint riêng sau) ----
+  const pendingCount = (appointments || []).filter(a => a.status === 'PENDING').length;
+  const inProgressCount = (appointments || []).filter(a => a.status === 'IN_PROGRESS').length;
 
-      return matchesSearch && matchesStatus && matchesFrom && matchesTo && matchesSource && matchesServiceAdv && matchesTab;
-    });
-  }, [appointments, search, status, activeTab, fromDate, toDate, source, serviceAdvanced]);
-
+  // ---- Handlers ----
   const handleCheckIn = async (id: number) => {
     await appointmentApi.checkIn(id);
-    setAppointments((prev) =>
-      prev.map((a) => (a.appointmentId === id ? { ...a, status: 'CHECKED_IN' } : a))
-    );
+    fetchData();
   };
 
   const handleCancel = async (id: number, reason: string) => {
     await appointmentApi.cancel(id, reason);
-    setAppointments((prev) =>
-      prev.map((a) =>
-        a.appointmentId === id ? { ...a, status: 'CANCELLED', cancelReason: reason } : a
-      )
-    );
+    fetchData();
   };
 
+  // ---- Render ----
   return (
-    <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
+    <div className="space-y-6 flex flex-col h-[calc(100vh-6rem)]">
+      {/* Header + Stats */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
-        <div>
-          <PageHeader title="Lịch hẹn" description="Quản lý đặt lịch khám."></PageHeader>
-                
-        
-        </div>
+        <PageHeader title="Lịch hẹn" description="Quản lý đặt lịch khám." />
         <div className="flex flex-wrap items-center gap-3">
           <div className="bg-white px-4 py-2 rounded-[20px] shadow-sm border border-slate-200 flex items-center gap-3">
             <div className="w-8 h-8 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center font-bold">
@@ -91,7 +89,7 @@ export default function AppointmentList() {
             </div>
             <div>
               <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Chờ xác nhận</p>
-              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{stats.pending}</p>
+              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{pendingCount}</p>
             </div>
           </div>
           <div className="bg-white px-4 py-2 rounded-[20px] shadow-sm border border-slate-200 flex items-center gap-3">
@@ -100,7 +98,7 @@ export default function AppointmentList() {
             </div>
             <div>
               <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Đang khám</p>
-              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{stats.inProgress}</p>
+              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{inProgressCount}</p>
             </div>
           </div>
           <GradientButton onClick={() => setIsBookOpen(true)} className="w-full sm:w-auto">
@@ -109,6 +107,7 @@ export default function AppointmentList() {
         </div>
       </div>
 
+      {/* Filter Bar */}
       <AppointmentFilterBar
         search={search}
         onSearchChange={setSearch}
@@ -126,34 +125,28 @@ export default function AppointmentList() {
         onServiceAdvancedChange={setServiceAdvanced}
       />
 
-      {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải lịch hẹn...</div>
-      ) : (
-        <div className="flex-1 overflow-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <AppointmentTable
-            data={filteredAppointments}
-            onCheckIn={handleCheckIn}
-            onCancel={(apt) => setCancelApt(apt)}
-          />
-        </div>
-      )}
+      {/* Table */}
+      <div className="flex-1 min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <AppointmentTable
+          data={appointments}
+          onCheckIn={handleCheckIn}
+          onCancel={setCancelApt}
+          loading={false}
+          pagination={{
+            page: currentPage,
+            size: pageSize,
+            total: totalElements,
+            onPageChange: setCurrentPage,
+          }}
+        />
+      </div>
 
+      {/* Dialogs */}
       <AppointmentFormDialog
         isOpen={isBookOpen}
         onClose={() => setIsBookOpen(false)}
-        onBook={(data) => {
-          const newApt: Appointment = {
-            ...data,
-            appointmentId: Date.now(),
-            patientName: data.patientName || 'New Patient',
-            doctorName: data.doctorName || 'Assigned Doctor',
-            appointmentType: data.appointmentType || 'WALK_IN',
-            status: 'PENDING',
-            createdBy: 'STAFF',
-            appointmentDate: data.appointmentDate || TODAY,
-            source: data.source || 'WALK_IN',
-          };
-          setAppointments((prev) => [newApt, ...prev]);
+        onBook={() => {
+          fetchData();
           setIsBookOpen(false);
         }}
       />

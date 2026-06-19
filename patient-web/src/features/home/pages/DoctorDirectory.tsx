@@ -22,10 +22,15 @@ export const DoctorDirectory: React.FC = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const staticUrl = getStaticUrl();
+  const staticUrl = getStaticUrl(); // dùng cho avatar bác sĩ
+
+  const [bannerUrl, setBannerUrl] = useState('/images/banners/doctor.webp');
 
   useEffect(() => {
     homeApi.getDoctors().then(setDoctors);
+    homeApi.getBanner('doctor')
+      .then(url => setBannerUrl(url))
+      .catch(console.error);
   }, []);
 
   const formatPrice = (price: number) => {
@@ -51,10 +56,7 @@ export const DoctorDirectory: React.FC = () => {
 
   const handleBooking = (doctorId: number) => {
     navigate(`/appointments/book?type=doctor&doctorId=${doctorId}`);
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const specialties = Array.from(new Set(doctors.map(d => d.expertiseName).filter(Boolean)));
@@ -63,7 +65,12 @@ export const DoctorDirectory: React.FC = () => {
     <main className="w-full min-h-screen bg-[#f4f8fb] pb-16">
       <div className="relative w-full min-h-[380px] flex items-center justify-center pt-10 pb-20">
         <div className="absolute inset-0 z-0">
-          <img src={`${staticUrl}/images/banners/doctor.webp`} onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop'; }} alt="Doctor Banner" className="w-full h-full object-cover opacity-150 mix-blend-overlay" />
+          <img
+            src={bannerUrl} // đã có full URL
+            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop'; }}
+            alt="Doctor Banner"
+            className="w-full h-full object-cover opacity-150 mix-blend-overlay"
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-[#154679]/95 via-[#154679]/80 to-transparent"></div>
         </div>
         <SectionContainer className="max-w-6xl relative z-10 w-full text-white">
@@ -87,7 +94,6 @@ export const DoctorDirectory: React.FC = () => {
           </div>
         </SectionContainer>
 
-        {/* Floating Search Bar (Gọn hơn) */}
         <div className="absolute left-0 right-0 -bottom-7 flex justify-center z-20 px-4">
           <div className="w-full max-w-2xl bg-white rounded-2xl shadow-[0_12px_40px_-10px_rgba(0,0,0,0.15)] overflow-hidden">
             <SearchInput
@@ -101,10 +107,8 @@ export const DoctorDirectory: React.FC = () => {
       </div>
 
       <SectionContainer className="max-w-5xl">
-        {/* Khu vực Lọc riêng biệt */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-16 mb-6">
           <h2 className="text-[22px] font-bold text-brand-dark">Danh sách Bác sĩ</h2>
-
           <div className="flex flex-wrap items-center gap-3">
             {/* Chuyên khoa Filter */}
             <div
@@ -130,7 +134,7 @@ export const DoctorDirectory: React.FC = () => {
               </div>
             </div>
 
-            {/* Mức giá Filter */}
+            {/* Price Filter */}
             <div
               className="w-[180px] shrink-0 relative z-40"
               onMouseEnter={() => { if (priceTimeout.current) clearTimeout(priceTimeout.current); setIsPriceOpen(true); }}
@@ -164,8 +168,6 @@ export const DoctorDirectory: React.FC = () => {
           {currentItems.length > 0 ? (
             currentItems.map((doctor, idx) => (
               <div key={doctor.staffId} className="bg-white rounded-[28px] p-6 border border-slate-100 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_40px_-10px_rgba(0,181,241,0.15)] hover:border-primary-200 transition-all duration-300 flex gap-6 hover:-translate-y-1 group">
-
-                {/* Left Side: Avatar & Rating */}
                 <div className="w-[140px] shrink-0 flex flex-col items-center">
                   <div className="w-[140px] h-[150px] bg-[#eef5fa] rounded-2xl overflow-hidden relative border border-slate-50 group-hover:border-primary-100 transition-colors">
                     <img src={`${staticUrl}${doctor.imageUrl}`} alt={doctor.fullName} className="w-full h-full object-cover" />
@@ -180,14 +182,12 @@ export const DoctorDirectory: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Right Side: Info & Actions */}
                 <div className="flex-1 flex flex-col">
                   <h3 className="text-xl mb-3 text-brand-dark">
                     <span className="font-normal text-primary-500">Bác sĩ </span>
                     <strong className="font-black text-primary-500">{doctor.fullName}</strong>
                   </h3>
                   <div className="w-full h-px bg-slate-100 mb-4"></div>
-
                   <div className="flex flex-col gap-3 text-[14.5px] flex-1 text-slate-700">
                     <div className="flex items-start gap-3">
                       <Stethoscope className="w-4.5 h-4.5 text-slate-400 shrink-0 mt-0.5" />
@@ -211,7 +211,6 @@ export const DoctorDirectory: React.FC = () => {
                       <span>Giá khám: <span className="font-bold text-brand-dark">{formatPrice(doctor.consultationFee || 300000)}</span></span>
                     </div>
                   </div>
-
                   <ActionButton
                     onClick={() => handleBooking(doctor.staffId)}
                     className="mt-5 w-full h-[46px] text-[15px] font-bold rounded-xl shadow-lg shadow-primary-500/20"

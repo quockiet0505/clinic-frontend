@@ -126,7 +126,7 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = "http://local
             <img
               src={logoUrl}
               alt="Logo"
-              className={`object-contain shrink-0 transition-all duration-300 ${isCollapsed ? 'w-8 h-8' : 'w-20 h-20'
+              className={`object-contain shrink-0 transition-all duration-300 ${isCollapsed ? 'w-18 h-18' : 'w-24 h-24'
                 }`}
               onError={(e) => {
                 e.currentTarget.onerror = null;
@@ -191,15 +191,23 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = "http://local
                   <Link
                     key={itemIdx}
                     to={item.path}
-                    title={isCollapsed ? item.name : undefined} // Tooltip khi thu gọn
-                    className={`flex items-center transition-all duration-200 rounded-xl ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2.5'
-                      } ${isActive
-                        ? 'bg-blue-50 text-blue-700 font-bold shadow-sm border border-blue-100/50'
-                        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900 font-medium'
-                      }`}
+                    title={isCollapsed ? item.name : undefined}
+                    className={`
+                      flex items-center transition-all duration-150 rounded-xl group
+                      ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2.5'}
+                      ${isActive
+                        ? 'bg-blue-50 text-blue-700 font-semibold shadow-sm ring-1 ring-blue-200/50'
+                        : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700 font-medium'
+                      }
+                    `}
                   >
-                    <item.icon size={isCollapsed ? 22 : 18} className={`${isActive ? 'text-blue-600' : 'text-slate-400'} shrink-0`} />
-                    {/* Ẩn text khi thu gọn */}
+                    {/* Icon size cố định, không đổi khi active */}
+                    <item.icon 
+                      size={isCollapsed ? 20 : 18} 
+                      className={`shrink-0 transition-colors duration-150 ${
+                        isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
+                      }`} 
+                    />
                     {!isCollapsed && <span className="text-sm tracking-wide whitespace-nowrap">{item.name}</span>}
                   </Link>
                 );

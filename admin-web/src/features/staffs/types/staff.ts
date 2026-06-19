@@ -5,19 +5,28 @@ export type LeaveStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 export interface Staff {
   staffId: number;
   fullName: string;
-  email: string;
-  phone: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  gender?: string;
+  dateOfBirth?: string;
   staffType: StaffType;
+  expertiseId?: number;
   expertiseName?: string;
+  experience?: string;
+  specialtyTreatment?: string;
   imageUrl?: string;
+  isFeatured?: boolean;
+  featuredPriority?: number;
   rating?: number;
-  isActive: boolean;
+  isActive?: number | boolean;
+  isDeleted?: number;
 }
 
 export interface LeaveRequest {
   leaveId: number;
   staffId: number;
-  fullName?: string; // Joined for Admin view
+  fullName?: string;
   staffType?: StaffType;
   leaveType: LeaveType;
   fromDate: string;

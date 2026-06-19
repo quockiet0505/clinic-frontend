@@ -31,7 +31,10 @@ export default function AppointmentStatisticsChart({ data }: Props) {
               return [value, labels[name] || name];
             }}
           />
-          <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} formatter={(value) => ({ completed: 'Hoàn thành', cancelled: 'Hủy' }[value] || value)} />
+          <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} formatter={(value: string) => {
+            const labels: Record<string, string> = { completed: 'Hoàn thành', cancelled: 'Hủy' };
+            return labels[value] || value;
+          }} />
           <Bar dataKey="completed" name="completed" fill={COLORS.completed} radius={[4, 4, 0, 0]} barSize={28} />
           <Bar dataKey="cancelled" name="cancelled" fill={COLORS.cancelled} radius={[4, 4, 0, 0]} barSize={28} />
         </BarChart>

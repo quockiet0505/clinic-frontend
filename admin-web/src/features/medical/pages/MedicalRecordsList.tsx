@@ -1,66 +1,86 @@
 // features/medical/pages/MedicalRecordsList.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Archive, CheckCircle, XCircle } from 'lucide-react';
 import { MedicalRecordFilterBar } from '../components/MedicalRecordFilterBar';
 import MedicalRecordTable from '../components/MedicalRecordTable';
 import { MedicalRecord } from '../types/medical';
 import { medicalApi } from '../api/medicalApi';
+import { staffApi } from '@/features/staffs/api/staffApi';
 import PageHeader from '@/components/common/PageHeader';
 
 export default function MedicalRecordsList() {
   const navigate = useNavigate();
+  const [records, setRecords] = useState<MedicalRecord[]>([]);
+  const [totalElements, setTotalElements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 20;
+  const [loading, setLoading] = useState(true);
+  const [doctorMap, setDoctorMap] = useState<Record<string, number>>({});
+
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [doctorFilter, setDoctorFilter] = useState('ALL');
 
-  const [records, setRecords] = useState<MedicalRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  React.useEffect(() => {
-    medicalApi.getRecords().then(data => {
-      const pastRecords = data.filter(r => ['DONE', 'CANCELLED'].includes(r.status));
-      setRecords(pastRecords);
-      setLoading(false);
+  useEffect(() => {
+    staffApi.getAll().then((staff) => {
+      const map: Record<string, number> = {};
+      staff.filter((s) => s.staffType === 'DOCTOR').forEach((s) => { map[s.fullName] = s.staffId; });
+      setDoctorMap(map);
     });
   }, []);
 
-  const doctorOptions = React.useMemo(() => {
-    const doctors = Array.from(new Set(records.map(r => r.doctorName).filter(Boolean)));
-    return doctors.map(name => ({ value: name, label: name }));
-  }, [records]);
+  const doctorOptions = Object.keys(doctorMap).map((name) => ({ value: name, label: name }));
 
-  const stats = React.useMemo(() => {
-    const total = records.length;
-    const done = records.filter(r => r.status === 'DONE').length;
-    const cancelled = records.filter(r => r.status === 'CANCELLED').length;
-    return { total, done, cancelled };
-  }, [records]);
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await medicalApi.getRecordsPaged({
+        search: search || undefined,
+        status: statusFilter === 'ALL' ? undefined : statusFilter,
+        doctorId: doctorFilter === 'ALL' ? undefined : doctorMap[doctorFilter],
+        fromDate: fromDate || undefined,
+        toDate: toDate || undefined,
+        tab: 'archived',
+        page: currentPage - 1,
+        size: pageSize,
+        sortBy: 'createdAt',
+        sortDir: 'DESC',
+      });
+      setRecords(res.content);
+      setTotalElements(res.totalElements);
+    } catch {
+      setRecords([]);
+      setTotalElements(0);
+    }
+    setLoading(false);
+  }, [search, statusFilter, doctorFilter, fromDate, toDate, currentPage, doctorMap]);
 
-  const filteredData = records.filter(rec => {
-    const matchesSearch = rec.patientName.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter === 'ALL' || rec.status === statusFilter;
-    const matchesDoctor = doctorFilter === 'ALL' || rec.doctorName === doctorFilter;
-    const matchesDate = (!fromDate || rec.createdAt >= fromDate) && (!toDate || rec.createdAt <= toDate);
-    return matchesSearch && matchesStatus && matchesDoctor && matchesDate;
-  });
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter, doctorFilter, fromDate, toDate]);
+
+  const done = records.filter((r) => r.status === 'DONE').length;
+  const cancelled = records.filter((r) => r.status === 'CANCELLED').length;
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
-        <PageHeader title="Lưu trữ bệnh án" description="Tìm kiếm và xem lại các hồ sơ bệnh án cũ."></PageHeader>
-              
-      
+        <PageHeader title="Lưu trữ bệnh án" description="Tìm kiếm và xem lại các hồ sơ bệnh án cũ." />
         <div className="flex flex-wrap items-center gap-3">
           <div className="bg-white px-4 py-2 rounded-[20px] shadow-sm border border-slate-200 flex items-center gap-3">
             <div className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center font-bold">
               <CheckCircle size={16} />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Hoàn thành</p>
-              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{stats.done} hồ sơ</p>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Hoàn thành (trang)</p>
+              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{done}</p>
             </div>
           </div>
           <div className="bg-white px-4 py-2 rounded-[20px] shadow-sm border border-slate-200 flex items-center gap-3">
@@ -68,8 +88,8 @@ export default function MedicalRecordsList() {
               <XCircle size={16} />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Đã hủy</p>
-              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{stats.cancelled} hồ sơ</p>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Đã hủy (trang)</p>
+              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{cancelled}</p>
             </div>
           </div>
           <div className="bg-white px-4 py-2 rounded-[20px] shadow-sm border border-slate-200 flex items-center gap-3">
@@ -78,7 +98,7 @@ export default function MedicalRecordsList() {
             </div>
             <div>
               <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Tổng lưu trữ</p>
-              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{stats.total} hồ sơ</p>
+              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{totalElements}</p>
             </div>
           </div>
         </div>
@@ -98,14 +118,14 @@ export default function MedicalRecordsList() {
         doctorOptions={doctorOptions}
       />
 
-      {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải hồ sơ...</div>
-      ) : (
-        <MedicalRecordTable 
-          data={filteredData} 
-          onViewDetail={(id) => navigate(`/medical/records/${id}`)} 
+      <div className="flex-1 min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <MedicalRecordTable
+          data={records}
+          loading={loading}
+          onViewDetail={(id) => navigate(`/medical/records/${id}`)}
+          pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
         />
-      )}
+      </div>
     </div>
   );
 }

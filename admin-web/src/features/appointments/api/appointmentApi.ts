@@ -1,24 +1,59 @@
 import axiosInstance from '@/config/axios';
 import { Appointment } from '../types/appointment';
 
+interface AppointmentQueryParams {
+  search?: string;
+  status?: string;
+  fromDate?: string;
+  toDate?: string;
+  tab?: string;          // 'today' | 'upcoming'
+  source?: string;       // 'ONLINE' | 'WALK_IN'
+  doctorId?: number;
+  patientId?: number;
+  page?: number;         // 0‑based
+  size?: number;
+}
+
 export const appointmentApi = {
+  // Lấy tất cả (không phân trang) – dùng cho Calendar
   getAll: async (): Promise<Appointment[]> => {
-    // Assuming backend returns an array of appointments via ApiResponse.data
-    // Since we use mock data in the UI temporarily, let's still hit the backend but fallback
     try {
-      const res = await axiosInstance.get('/appointments');
-      return res.data.data;
-    } catch (e) {
-      console.error(e);
+      const response = await axiosInstance.get('/appointments/all');
+      const apiResponse = response.data;
+      if (apiResponse.success && Array.isArray(apiResponse.data)) {
+        return apiResponse.data;
+      }
+      return [];
+    } catch (error) {
+      console.error('Error fetching all appointments:', error);
       return [];
     }
   },
-  
+
+  // Lấy có phân trang – dùng cho AppointmentList
+  getAllPaged: async (params?: AppointmentQueryParams): Promise<{ content: Appointment[]; totalElements: number }> => {
+    try {
+      const response = await axiosInstance.get('/appointments', { params });
+      const apiResponse = response.data;
+      if (apiResponse.success && apiResponse.data) {
+        return {
+          content: apiResponse.data.content || [],
+          totalElements: apiResponse.data.totalElements || 0,
+        };
+      }
+      console.warn('Unexpected API response structure:', apiResponse);
+      return { content: [], totalElements: 0 };
+    } catch (error) {
+      console.error('Error fetching paged appointments:', error);
+      return { content: [], totalElements: 0 };
+    }
+  },
+
   cancel: async (id: number, reason: string): Promise<void> => {
-    await axiosInstance.patch(`/appointments/${id}/cancel?reason=${encodeURIComponent(reason)}`);
+    await axiosInstance.patch(`/appointments/${id}/cancel`, null, { params: { reason } });
   },
 
   checkIn: async (id: number): Promise<void> => {
-    await axiosInstance.patch(`/appointments/${id}/status`, { status: 'CHECKED_IN' });
-  }
+    await axiosInstance.patch(`/appointments/${id}/status`, null, { params: { status: 'CHECKED_IN' } });
+  },
 };

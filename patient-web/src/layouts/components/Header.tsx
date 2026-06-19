@@ -10,7 +10,6 @@ import {
   UserCircle,
   X,
 } from 'lucide-react';
-import { Logo } from '@/components/common/Logo';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { HoverDropdown } from '@/components/common/HoverDropdown';
 import { GradientButton } from '@/components/common/GradientButton';
@@ -18,6 +17,7 @@ import { HeaderMenuDropdown } from '@/components/common/index';
 import { NotificationPanel } from '@/features/home/components/NotificationPanel';
 import { useAuth } from '@/hooks/useAuth';
 import { appointmentApi } from '@/features/appointments/api/appointmentApi';
+import { homeApi } from '@/features/home/api/homeApi'; // 👈 import thêm
 import type { Expertise, Service } from '@/features/appointments/types/appointment';
 
 export const Header: React.FC = () => {
@@ -26,9 +26,18 @@ export const Header: React.FC = () => {
   const [language, setLanguage] = useState('vi');
   const [expertises, setExpertises] = useState<Expertise[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [logoUrl, setLogoUrl] = useState('/images/logo.png'); // fallback
+
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout, loading } = useAuth();
+
+  // Fetch logo
+  useEffect(() => {
+    homeApi.getLogo()
+      .then(url => setLogoUrl(url))
+      .catch(() => console.error('Failed to load logo'));
+  }, []);
 
   // Fetch dữ liệu cho dropdown chuyên khoa & xét nghiệm
   useEffect(() => {
@@ -119,7 +128,7 @@ export const Header: React.FC = () => {
         <div className="flex items-center justify-between gap-6">
           {/* Logo */}
           <Link to="/" className="flex-shrink-0">
-            <Logo />
+            <img src={logoUrl} alt="Clinic Logo" className="h-10" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -297,7 +306,7 @@ export const Header: React.FC = () => {
             <SheetContent side="right" className="w-[320px] p-0 border-l-border-default bg-white">
               <div className="flex flex-col h-full">
                 <div className="flex items-center justify-between px-6 py-5 border-b border-border-default">
-                  <Logo />
+                  <img src={logoUrl} alt="Clinic Logo" className="h-10" />
                   <button
                     onClick={() => setIsSheetOpen(false)}
                     className="p-1 text-slate-400 hover:text-slate-600"
