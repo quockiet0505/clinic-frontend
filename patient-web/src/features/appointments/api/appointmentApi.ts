@@ -23,17 +23,17 @@ function enrichTimeSlot(slot: TimeSlotRaw): TimeSlot {
 export const appointmentApi = {
   // Public endpoints
   getExpertises: async (): Promise<Expertise[]> => {
-    const res = await axiosInstance.get<ApiResponse<Expertise[]>>('/expertise');
+    const res = await axiosInstance.get<ApiResponse<Expertise[]>>('/expertise/all');
     return res.data.data;
   },
 
   getServices: async (): Promise<Service[]> => {
-    const res = await axiosInstance.get<ApiResponse<Service[]>>('/services');
+    const res = await axiosInstance.get<ApiResponse<Service[]>>('/services/all');
     return res.data.data;
   },
 
   getDoctorsByExpertise: async (expertiseId: number): Promise<Doctor[]> => {
-    const res = await axiosInstance.get<ApiResponse<Doctor[]>>(`/staffs?expertiseId=${expertiseId}&staffType=DOCTOR`);
+    const res = await axiosInstance.get<ApiResponse<Doctor[]>>(`/staffs/filter?expertiseId=${expertiseId}&staffType=DOCTOR`);
     return res.data.data;
   },
 

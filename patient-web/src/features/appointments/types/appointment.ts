@@ -62,6 +62,7 @@ export interface AppointmentHistoryItem {
   doctorImageUrl?: string; // mapped from getDoctors API
   specialty: string; // expertiseName
   serviceName: string; // newly added to distinguish consultation/test
+  serviceType?: 'EXAM' | 'LAB_TEST' | 'IMAGING';
   servicePrice?: number;
   doctorFee?: number;
   facility: string;

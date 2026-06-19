@@ -17,6 +17,10 @@ export interface Doctor {
   expertiseName: string;
   experience: string;
   consultationFee?: number; 
+  gender?: string;
+  rating?: number;
+  patientCount?: number;
+  specialtyTreatment?: string;
 }
 
 export interface ServicePackage {
@@ -25,4 +29,5 @@ export interface ServicePackage {
   originalPrice: number;
   discountPrice: number | null;
   imageUrl: string;
+  serviceType?: string;
 }

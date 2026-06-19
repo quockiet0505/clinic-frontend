@@ -14,11 +14,14 @@ export const DoctorDirectory: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [specialtyFilter, setSpecialtyFilter] = useState('ALL');
   const [priceFilter, setPriceFilter] = useState('ALL');
+  const [genderFilter, setGenderFilter] = useState('ALL');
 
   const [isSpecialtyOpen, setIsSpecialtyOpen] = useState(false);
   const specialtyTimeout = useRef<NodeJS.Timeout>();
   const [isPriceOpen, setIsPriceOpen] = useState(false);
   const priceTimeout = useRef<NodeJS.Timeout>();
+  const [isGenderOpen, setIsGenderOpen] = useState(false);
+  const genderTimeout = useRef<NodeJS.Timeout>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -40,19 +43,19 @@ export const DoctorDirectory: React.FC = () => {
   const filteredDoctors = doctors.filter((doc) => {
     const matchesSearch = doc.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || doc.expertiseName?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesSpecialty = specialtyFilter === 'ALL' || doc.expertiseName === specialtyFilter;
+    const matchesGender = genderFilter === 'ALL' || doc.gender === genderFilter;
 
     let matchesPrice = true;
-    const fee = doc.consultationFee || 300000;
+    const fee = doc.consultationFee || 0;
     if (priceFilter === 'LOW') matchesPrice = fee < 300000;
     else if (priceFilter === 'MEDIUM') matchesPrice = fee >= 300000 && fee <= 500000;
     else if (priceFilter === 'HIGH') matchesPrice = fee > 500000;
 
-    return matchesSearch && matchesSpecialty && matchesPrice;
+    return matchesSearch && matchesSpecialty && matchesPrice && matchesGender;
   });
 
   const totalPages = Math.ceil(filteredDoctors.length / itemsPerPage) || 1;
   const currentItems = filteredDoctors.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-  const defaultRating = 4.9;
 
   const handleBooking = (doctorId: number) => {
     navigate(`/appointments/book?type=doctor&doctorId=${doctorId}`);
@@ -69,9 +72,9 @@ export const DoctorDirectory: React.FC = () => {
             src={bannerUrl} // đã có full URL
             onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop'; }}
             alt="Doctor Banner"
-            className="w-full h-full object-cover opacity-150 mix-blend-overlay"
+            className="w-full h-full object-cover opacity-50 mix-blend-overlay"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#154679]/95 via-[#154679]/80 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#003b5c]/95 via-[#003b5c]/70 to-transparent"></div>
         </div>
         <SectionContainer className="max-w-6xl relative z-10 w-full text-white">
           <div className="max-w-2xl">
@@ -94,22 +97,24 @@ export const DoctorDirectory: React.FC = () => {
           </div>
         </SectionContainer>
 
-        <div className="absolute left-0 right-0 -bottom-7 flex justify-center z-20 px-4">
-          <div className="w-full max-w-2xl bg-white rounded-2xl shadow-[0_12px_40px_-10px_rgba(0,0,0,0.15)] overflow-hidden">
-            <SearchInput
-              value={searchTerm}
-              onSearch={(val) => { setSearchTerm(val); setCurrentPage(1); }}
-              placeholder="Tìm theo tên bác sĩ, chuyên khoa..."
-              className="h-[56px] w-full shadow-none border-0 px-2"
-            />
-          </div>
-        </div>
+        {/* Removed floating search bar from here, moved to unified toolbar */}
       </div>
 
       <SectionContainer className="max-w-5xl">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-16 mb-6">
-          <h2 className="text-[22px] font-bold text-brand-dark">Danh sách Bác sĩ</h2>
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-8 mb-6">
+          <h2 className="text-[22px] font-bold text-brand-dark hidden lg:block">Danh sách Bác sĩ</h2>
+          
+          <div className="flex-1 w-full lg:w-auto bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-2">
+            <div className="w-full lg:w-[45%] lg:flex-1 shrink min-w-[200px]">
+              <SearchInput
+                value={searchTerm}
+                onSearch={(val) => { setSearchTerm(val); setCurrentPage(1); }}
+                placeholder="Tìm tên bác sĩ, chuyên khoa..."
+                className="h-11 shadow-none border-transparent hover:border-slate-200 bg-slate-50 focus-within:bg-white focus-within:border-primary-300 transition-all"
+              />
+            </div>
+            <div className="w-px h-8 bg-slate-100 hidden lg:block mx-1 shrink-0"></div>
+            <div className="flex flex-wrap lg:flex-nowrap items-center justify-end gap-2 w-full lg:w-auto shrink-0">
             {/* Chuyên khoa Filter */}
             <div
               className="w-[200px] shrink-0 relative z-50"
@@ -161,62 +166,86 @@ export const DoctorDirectory: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Gender Filter */}
+            <div
+              className="w-[140px] shrink-0 relative z-30"
+              onMouseEnter={() => { if (genderTimeout.current) clearTimeout(genderTimeout.current); setIsGenderOpen(true); }}
+              onMouseLeave={() => { genderTimeout.current = setTimeout(() => setIsGenderOpen(false), 150); }}
+            >
+              <button className={`w-full h-11 flex items-center justify-between px-4 rounded-xl bg-white border shadow-sm transition-colors cursor-pointer ${isGenderOpen ? 'border-primary-500 text-primary-600' : 'border-slate-200 text-slate-700'}`}>
+                <span className="text-[14px] font-medium">
+                  {genderFilter === 'ALL' ? 'Giới tính' : genderFilter === 'MALE' ? 'Nam' : 'Nữ'}
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`shrink-0 transition-transform duration-200 ${isGenderOpen ? 'rotate-180 text-primary-500' : 'text-slate-400'}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+              <div className={`absolute right-0 top-full pt-1.5 transition-all duration-200 w-full ${isGenderOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
+                <div className="rounded-xl bg-white border border-slate-100 shadow-xl p-1.5 flex flex-col gap-0.5">
+                  {[
+                    { value: 'ALL', label: 'Tất cả' },
+                    { value: 'MALE', label: 'Nam' },
+                    { value: 'FEMALE', label: 'Nữ' },
+                  ].map(item => (
+                    <button key={item.value} onClick={() => { setGenderFilter(item.value); setIsGenderOpen(false); setCurrentPage(1); }} className={`w-full text-left py-2 px-3 text-[13.5px] rounded-lg transition-all cursor-pointer ${genderFilter === item.value ? 'bg-primary-50 text-primary-600 font-bold' : 'text-slate-700 hover:bg-slate-50 font-medium'}`}>
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
           {currentItems.length > 0 ? (
             currentItems.map((doctor, idx) => (
-              <div key={doctor.staffId} className="bg-white rounded-[28px] p-6 border border-slate-100 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_40px_-10px_rgba(0,181,241,0.15)] hover:border-primary-200 transition-all duration-300 flex gap-6 hover:-translate-y-1 group">
-                <div className="w-[140px] shrink-0 flex flex-col items-center">
-                  <div className="w-[140px] h-[150px] bg-[#eef5fa] rounded-2xl overflow-hidden relative border border-slate-50 group-hover:border-primary-100 transition-colors">
+              <div key={doctor.staffId} className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_-10px_rgba(0,181,241,0.15)] hover:border-primary-200 transition-all duration-300 flex flex-col sm:flex-row gap-5 hover:-translate-y-1 group">
+                <div className="w-full sm:w-[130px] shrink-0 flex flex-col items-center">
+                  <div className="w-[120px] h-[120px] sm:w-[130px] sm:h-[130px] bg-gradient-to-br from-primary-50 to-[#eef5fa] rounded-2xl overflow-hidden relative border border-slate-100 group-hover:border-primary-200 transition-colors">
                     <img src={`${staticUrl}${doctor.imageUrl}`} alt={doctor.fullName} className="w-full h-full object-cover" />
-                    <div className="absolute bottom-0 left-0 right-0 py-1.5 bg-white/90 backdrop-blur-sm text-center text-[12px] font-bold text-slate-700 border-t border-white shadow-sm">
-                      Xem chi tiết
-                    </div>
                   </div>
-                  <div className="mt-4 flex items-center justify-center gap-2 border border-primary-400 rounded-xl px-4 py-2 bg-white shadow-sm text-primary-500 w-full">
-                    <div className="flex items-center gap-1 font-bold text-[14px]">{defaultRating.toFixed(1)}<Star className="w-3.5 h-3.5 text-yellow-500 fill-current" /></div>
-                    <div className="w-px h-3.5 bg-slate-300"></div>
-                    <div className="flex items-center gap-1 font-bold text-[14px]">{10 + idx * 15}<User className="w-3.5 h-3.5 text-orange-400 fill-current" /></div>
+                  <div className="mt-3 flex items-center justify-center gap-2 border border-slate-100 rounded-xl px-3 py-1.5 bg-slate-50 text-slate-600 w-full">
+                    <div className="flex items-center gap-1 font-bold text-[13px]">{doctor.rating?.toFixed(1) || '4.5'}<Star className="w-3.5 h-3.5 text-amber-400 fill-current" /></div>
+                    <div className="w-px h-3.5 bg-slate-200"></div>
+                    <div className="flex items-center gap-1 font-bold text-[13px]">{doctor.patientCount || (50 + (doctor.staffId % 20))}<User className="w-3.5 h-3.5 text-primary-400 fill-current" /></div>
                   </div>
                 </div>
 
                 <div className="flex-1 flex flex-col">
-                  <h3 className="text-xl mb-3 text-brand-dark">
-                    <span className="font-normal text-primary-500">Bác sĩ </span>
-                    <strong className="font-black text-primary-500">{doctor.fullName}</strong>
+                  <h3 className="text-[18px] mb-2 text-brand-dark leading-tight">
+                    <span className="font-normal text-slate-500 text-[14px] block mb-0.5">Bác sĩ chuyên khoa</span>
+                    <strong className="font-black text-brand-dark">{doctor.fullName}</strong>
                   </h3>
-                  <div className="w-full h-px bg-slate-100 mb-4"></div>
-                  <div className="flex flex-col gap-3 text-[14.5px] flex-1 text-slate-700">
-                    <div className="flex items-start gap-3">
-                      <Stethoscope className="w-4.5 h-4.5 text-slate-400 shrink-0 mt-0.5" />
-                      <span>Chuyên khoa: <span className="font-medium text-brand-dark">{doctor.expertiseName || 'Chuyên khoa tổng quát'}</span></span>
+                  
+                  <div className="flex flex-col gap-2.5 text-[14px] flex-1 text-slate-600 mt-2">
+                    <div className="flex items-start gap-2.5">
+                      <Stethoscope className="w-4 h-4 text-primary-400 shrink-0 mt-0.5" />
+                      <span className="font-medium text-slate-700">{doctor.expertiseName || 'Đa khoa'}</span>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <ClipboardList className="w-4.5 h-4.5 text-slate-400 shrink-0 mt-0.5" />
+                    <div className="flex items-start gap-2.5">
+                      <ClipboardList className="w-4 h-4 text-primary-400 shrink-0 mt-0.5" />
                       <div className="flex justify-between items-center flex-1">
-                        <span className="line-clamp-1">Chuyên trị: Tư vấn tâm lý - điều trị...</span>
-                        <button className="border border-primary-200 text-primary-500 bg-primary-50 px-1 py-0.5 rounded-md shrink-0 hover:bg-primary-500 hover:text-white transition-colors">
-                          <ChevronsRight className="w-3.5 h-3.5" />
-                        </button>
+                        <span className="line-clamp-1">{doctor.specialtyTreatment || 'Đang cập nhật...'}</span>
                       </div>
                     </div>
-                    <div className="flex items-start gap-3">
-                      <CalendarDays className="w-4.5 h-4.5 text-slate-400 shrink-0 mt-0.5" />
-                      <span>Lịch khám: <span className="font-medium text-brand-dark">Hẹn khám</span></span>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <Wallet className="w-4.5 h-4.5 text-slate-400 shrink-0 mt-0.5" />
-                      <span>Giá khám: <span className="font-bold text-brand-dark">{formatPrice(doctor.consultationFee || 300000)}</span></span>
+                    <div className="flex items-start gap-2.5">
+                      <Wallet className="w-4 h-4 text-primary-400 shrink-0 mt-0.5" />
+                      <span>Giá khám: <span className="font-bold text-primary-600">{formatPrice(doctor.consultationFee || 0)}</span></span>
                     </div>
                   </div>
-                  <ActionButton
-                    onClick={() => handleBooking(doctor.staffId)}
-                    className="mt-5 w-full h-[46px] text-[15px] font-bold rounded-xl shadow-lg shadow-primary-500/20"
-                  >
-                    Đặt ngay
-                  </ActionButton>
+                  
+                  <div className="mt-4 pt-4 border-t border-slate-50 flex gap-2">
+                    <button onClick={() => navigate(`/doctors/${doctor.staffId}`)} className="flex-1 h-10 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold text-[13px] hover:bg-slate-50 transition-colors shadow-sm">
+                      Chi tiết
+                    </button>
+                    <ActionButton
+                      onClick={() => handleBooking(doctor.staffId)}
+                      className="flex-1 h-10 text-[13px] font-bold rounded-xl shadow-md shadow-primary-500/20"
+                    >
+                      Đặt khám
+                    </ActionButton>
+                  </div>
                 </div>
               </div>
             ))

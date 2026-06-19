@@ -5,7 +5,7 @@ const staticUrl = getStaticUrl();
 
 export const homeApi = {
   getSpecialties: async () => {
-    const res = await axiosInstance.get('/expertise');
+    const res = await axiosInstance.get('/expertise/all');
     return res.data.data;
   },
 
@@ -20,7 +20,7 @@ export const homeApi = {
   },
 
   getServices: async () => {
-    const res = await axiosInstance.get('/services');
+    const res = await axiosInstance.get('/services/all');
     return res.data.data;
   },
 
@@ -47,5 +47,15 @@ export const homeApi = {
   getBanner: async (key: string = 'main') => {
     const res = await axiosInstance.get(`/public/banners/${key}`);
     return `${staticUrl}${res.data.data.imageUrl}`;
+  },
+
+  submitContactMessage: async (data: { fullName: string; phone: string; email?: string; subject?: string; content: string }) => {
+    const res = await axiosInstance.post('/contact-messages', data);
+    return res.data;
+  },
+
+  getSystemSettings: async () => {
+    const res = await axiosInstance.get('/settings');
+    return res.data.data;
   },
 };

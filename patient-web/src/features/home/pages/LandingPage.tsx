@@ -9,7 +9,7 @@ export const LandingPage: React.FC = () => {
   const [specialties, setSpecialties] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [services, setServices] = useState([]);
-  // const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,22 +19,17 @@ export const LandingPage: React.FC = () => {
           homeApi.getFeaturedDoctors(),
           homeApi.getFeaturedServices(),
         ]);
-        setSpecialties(specs);
-        setDoctors(docs);
-        setServices(servs);
+        setSpecialties(Array.isArray(specs) ? specs : []);
+        setDoctors(Array.isArray(docs) ? docs : []);
+        setServices(Array.isArray(servs) ? servs : []);
       } catch (error) {
         console.error('Failed to load home data', error);
-      } 
-      // finally {
-      //   setLoading(false);
-      // }
+      } finally {
+        setIsLoading(false);
+      }
     };
     fetchData();
   }, []);
-
-  // if (loading) {
-  //   return <div className="flex justify-center items-center min-h-screen">Đang tải...</div>;
-  // }
 
   // Sort specialties: ones with at least one doctor appear first
   const sortedSpecialties = [...specialties].sort((a: any, b: any) => {
@@ -48,9 +43,9 @@ export const LandingPage: React.FC = () => {
   return (
     <main className="w-full min-h-screen overflow-x-hidden">
       <HeroSection />
-      <SpecialtyCarousel specialties={sortedSpecialties} />
-      <FeaturedDoctors doctors={doctors} />
-      <HowItWorks services={services} />
+      <SpecialtyCarousel specialties={sortedSpecialties} isLoading={isLoading} />
+      <FeaturedDoctors doctors={doctors} isLoading={isLoading} />
+      <HowItWorks services={services} isLoading={isLoading} />
     </main>
   );
 };

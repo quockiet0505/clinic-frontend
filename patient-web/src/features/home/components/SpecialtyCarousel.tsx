@@ -8,9 +8,10 @@ import type { Specialty } from '../types/home';
 
 interface Props {
   specialties: Specialty[];
+  isLoading?: boolean;
 }
 
-export const SpecialtyCarousel: React.FC<Props> = ({ specialties }) => {
+export const SpecialtyCarousel: React.FC<Props> = ({ specialties, isLoading }) => {
   const staticUrl = getStaticUrl();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
@@ -55,27 +56,36 @@ export const SpecialtyCarousel: React.FC<Props> = ({ specialties }) => {
           </div>
         )}
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-7 gap-x-2 gap-y-10">
-          {displaySpecialties.map((item) => (
-            <div
-              key={item.expertiseId}
-              onClick={() => handleSpecialtyClick(item.expertiseId)}
-              className="cursor-pointer flex flex-col items-center text-center group"
-            >
-              <div className="h-[60px] w-[60px] mb-3 flex items-center justify-center relative">
-                <ImageWithFallback
-                  src={`${staticUrl}${item.iconUrl}`}
-                  alt={item.expertiseName}
-                  className="max-w-full max-h-full transition-transform duration-300 group-hover:scale-110 object-contain"
-                  containerClassName="absolute inset-0 w-full h-full flex items-center justify-center"
-                />
+          {isLoading ? (
+            Array(14).fill(0).map((_, i) => (
+              <div key={`skel-spec-${i}`} className="flex flex-col items-center text-center animate-pulse">
+                <div className="h-[60px] w-[60px] mb-3 rounded-full bg-slate-200"></div>
+                <div className="h-3 w-16 bg-slate-200 rounded mt-1"></div>
               </div>
-              <span className="font-medium text-sm text-brand-dark group-hover:text-primary-500 transition-colors px-1 leading-snug">
-                {item.expertiseName}
-              </span>
-            </div>
-          ))}
+            ))
+          ) : (
+            displaySpecialties.map((item) => (
+              <div
+                key={item.expertiseId}
+                onClick={() => handleSpecialtyClick(item.expertiseId)}
+                className="cursor-pointer flex flex-col items-center text-center group"
+              >
+                <div className="h-[60px] w-[60px] mb-3 flex items-center justify-center relative">
+                  <ImageWithFallback
+                    src={`${staticUrl}${item.iconUrl}`}
+                    alt={item.expertiseName}
+                    className="max-w-full max-h-full transition-transform duration-300 group-hover:scale-110 object-contain"
+                    containerClassName="absolute inset-0 w-full h-full flex items-center justify-center"
+                  />
+                </div>
+                <span className="font-medium text-sm text-brand-dark group-hover:text-primary-500 transition-colors px-1 leading-snug">
+                  {item.expertiseName}
+                </span>
+              </div>
+            ))
+          )}
         </div>
-        {!expanded && (
+        {!expanded && !isLoading && (
           <div className="text-center mt-6">
             <ViewAllButton onClick={handleViewAll} />
           </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { EmptyState, Pagination, SectionContainer, ActionButton } from '@/components/common';
@@ -10,12 +10,16 @@ import type { ServicePackage } from '../types/home';
 
 export const ServiceDirectory: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [services, setServices] = useState<ServicePackage[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [priceFilter, setPriceFilter] = useState('ALL');
+  const [typeFilter, setTypeFilter] = useState('ALL');
 
   const [isPriceOpen, setIsPriceOpen] = useState(false);
   const priceTimeout = useRef<NodeJS.Timeout>();
+  const [isTypeOpen, setIsTypeOpen] = useState(false);
+  const typeTimeout = useRef<NodeJS.Timeout>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -30,12 +34,20 @@ export const ServiceDirectory: React.FC = () => {
       .catch(console.error);
   }, []);
 
+  useEffect(() => {
+    const q = searchParams.get('search');
+    if (q !== null && q !== searchTerm) {
+      setSearchTerm(q);
+    }
+  }, [searchParams]);
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
   };
 
   const filteredServices = services.filter((s) => {
     const matchesSearch = s.serviceName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === 'ALL' || s.serviceType === typeFilter;
 
     let matchesPrice = true;
     const price = s.discountPrice || s.originalPrice || 0;
@@ -43,7 +55,7 @@ export const ServiceDirectory: React.FC = () => {
     else if (priceFilter === 'MEDIUM') matchesPrice = price >= 500000 && price <= 2000000;
     else if (priceFilter === 'HIGH') matchesPrice = price > 2000000;
 
-    return matchesSearch && matchesPrice;
+    return matchesSearch && matchesPrice && matchesType;
   });
 
   const totalPages = Math.ceil(filteredServices.length / itemsPerPage) || 1;
@@ -62,14 +74,14 @@ export const ServiceDirectory: React.FC = () => {
             src={bannerUrl}
             onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop'; }}
             alt="Service Banner"
-            className="w-full h-full object-cover opacity-30 mix-blend-overlay"
+            className="w-full h-full object-cover opacity-50 mix-blend-overlay"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#154679]/60 via-[#154679]/20 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#003b5c]/95 via-[#003b5c]/70 to-transparent"></div>
         </div>
         <SectionContainer className="max-w-6xl relative z-10 w-full text-white">
           <div className="max-w-2xl">
             <h1 className="text-[32px] md:text-[36px] leading-tight font-black uppercase tracking-wide mb-5 text-white drop-shadow-sm">
-              ĐẶT LỊCH<br /><span className="text-[#38bdf8]">XÉT NGHIỆM</span>
+              ĐẶT LỊCH<br /><span className="text-[#38bdf8]">DỊCH VỤ</span>
             </h1>
             <div className="flex flex-col gap-3 font-medium text-[15px] mb-7 text-slate-100">
               <p className="flex items-start gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-[#38bdf8] shrink-0 mt-0.5" />Đặt lịch xét nghiệm trực tiếp, không qua khâu khám trước</p>
@@ -87,22 +99,24 @@ export const ServiceDirectory: React.FC = () => {
           </div>
         </SectionContainer>
 
-        <div className="absolute left-0 right-0 -bottom-7 flex justify-center z-20 px-4">
-          <div className="w-full max-w-2xl bg-white rounded-2xl shadow-[0_12px_40px_-10px_rgba(0,0,0,0.15)] overflow-hidden">
-            <SearchInput
-              value={searchTerm}
-              onSearch={(val) => { setSearchTerm(val); setCurrentPage(1); }}
-              placeholder="Tìm kiếm dịch vụ xét nghiệm..."
-              className="h-[56px] w-full shadow-none border-0 px-2"
-            />
-          </div>
-        </div>
+        {/* Removed floating search bar from here, moved to unified toolbar */}
       </div>
 
       <SectionContainer className="max-w-5xl">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-16 mb-6">
-          <h2 className="text-[22px] font-bold text-brand-dark">Danh sách Dịch vụ Xét nghiệm</h2>
-          <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-8 mb-6">
+          <h2 className="text-[22px] font-bold text-brand-dark hidden lg:block">Danh sách Dịch vụ</h2>
+          
+          <div className="flex-1 w-full lg:w-auto bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-2">
+            <div className="w-full lg:w-[45%] lg:flex-1 shrink min-w-[200px]">
+              <SearchInput
+                value={searchTerm}
+                onSearch={(val) => { setSearchTerm(val); setCurrentPage(1); }}
+                placeholder="Tìm dịch vụ xét nghiệm..."
+                className="h-11 shadow-none border-transparent hover:border-slate-200 bg-slate-50 focus-within:bg-white focus-within:border-primary-300 transition-all"
+              />
+            </div>
+            <div className="w-px h-8 bg-slate-100 hidden lg:block mx-1 shrink-0"></div>
+            <div className="flex flex-wrap lg:flex-nowrap items-center justify-end gap-2 w-full lg:w-auto shrink-0">
             <div
               className="w-[200px] shrink-0 relative z-40"
               onMouseEnter={() => { if (priceTimeout.current) clearTimeout(priceTimeout.current); setIsPriceOpen(true); }}
@@ -129,39 +143,95 @@ export const ServiceDirectory: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Type Filter */}
+            <div
+              className="w-[200px] shrink-0 relative z-30"
+              onMouseEnter={() => { if (typeTimeout.current) clearTimeout(typeTimeout.current); setIsTypeOpen(true); }}
+              onMouseLeave={() => { typeTimeout.current = setTimeout(() => setIsTypeOpen(false), 150); }}
+            >
+              <button className={`w-full h-11 flex items-center justify-between px-4 rounded-xl bg-white border shadow-sm transition-colors cursor-pointer ${isTypeOpen ? 'border-primary-500 text-primary-600' : 'border-slate-200 text-slate-700'}`}>
+                <span className="text-[14px] font-medium truncate pr-2">
+                  {typeFilter === 'ALL' ? 'Tất cả dịch vụ' : typeFilter === 'EXAM' ? 'Khám bệnh' : typeFilter === 'LAB_TEST' ? 'Xét nghiệm' : typeFilter === 'IMAGING' ? 'Chẩn đoán hình ảnh' : 'Khám sức khỏe tổng quát'}
+                </span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`shrink-0 transition-transform duration-200 ${isTypeOpen ? 'rotate-180 text-primary-500' : 'text-slate-400'}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+              <div className={`absolute right-0 top-full pt-1.5 transition-all duration-200 w-full ${isTypeOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'}`}>
+                <div className="rounded-xl bg-white border border-slate-100 shadow-xl p-1.5 flex flex-col gap-0.5">
+                  {[
+                    { value: 'ALL', label: 'Tất cả dịch vụ' },
+                    { value: 'EXAM', label: 'Khám bệnh' },
+                    { value: 'LAB_TEST', label: 'Xét nghiệm' },
+                    { value: 'IMAGING', label: 'Chẩn đoán hình ảnh' },
+                  ].map(item => (
+                    <button key={item.value} onClick={() => { setTypeFilter(item.value); setIsTypeOpen(false); setCurrentPage(1); }} className={`w-full text-left py-2 px-3 text-[13.5px] rounded-lg transition-all cursor-pointer ${typeFilter === item.value ? 'bg-primary-50 text-primary-600 font-bold' : 'text-slate-700 hover:bg-slate-50 font-medium'}`}>
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           {currentItems.length > 0 ? (
-            currentItems.map((service) => (
+            currentItems.map((service) => {
+              const hasDiscount = !!(service.discountPrice && service.originalPrice && service.discountPrice < service.originalPrice);
+              const discountPercent = hasDiscount ? Math.round((1 - service.discountPrice! / service.originalPrice!) * 100) : 0;
+              
+              return (
               <div
                 key={service.serviceId}
-                className="bg-white rounded-[28px] p-6 border border-slate-100 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_40px_-10px_rgba(0,181,241,0.15)] hover:border-primary-200 transition-all duration-300 flex flex-col sm:flex-row gap-6 hover:-translate-y-1 group cursor-pointer"
+                className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_-10px_rgba(0,181,241,0.15)] hover:border-primary-200 transition-all duration-300 flex flex-col sm:flex-row gap-5 hover:-translate-y-1 group cursor-pointer"
               >
-                <div className="w-[100px] h-[100px] bg-gradient-to-br from-primary-50 to-[#eef9ff] rounded-2xl p-4 flex items-center justify-center shrink-0 border border-primary-100 group-hover:border-primary-300 transition-colors">
-                  <img src={`${staticUrl}${service.imageUrl}`} alt={service.serviceName} className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm group-hover:scale-110 transition-transform duration-300" />
+                <div className="w-full sm:w-[120px] shrink-0 flex flex-col items-center">
+                  <div className="w-[120px] h-[120px] bg-gradient-to-br from-primary-50 to-[#eef9ff] rounded-2xl p-3 flex items-center justify-center border border-slate-100 group-hover:border-primary-200 transition-colors">
+                    <img src={`${staticUrl}${service.imageUrl}`} alt={service.serviceName} className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm group-hover:scale-110 transition-transform duration-300" />
+                  </div>
                 </div>
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
                     <h3 className="font-bold text-brand-dark text-[17px] leading-snug mb-3 line-clamp-2 group-hover:text-primary-500 transition-colors">{service.serviceName}</h3>
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg w-fit text-slate-600 text-[13px] font-medium border border-slate-100">
-                      <Building2 className="w-4 h-4 text-primary-500" />
+                      <Building2 className="w-4 h-4 text-primary-400" />
                       <span>Phòng khám ClinicPro</span>
                     </div>
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-5 gap-4">
-                    <span className="text-[#ff6b00] font-black text-[18px]">{formatPrice(service.discountPrice || service.originalPrice || 0)}</span>
+                  <div className="flex flex-col sm:flex-row sm:items-end justify-between mt-5 gap-4">
+                    <div className="flex flex-col">
+                      {hasDiscount ? (
+                        <>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[13px] font-medium text-slate-400 line-through">
+                              {formatPrice(service.originalPrice!)}
+                            </span>
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-black bg-rose-100 text-rose-600">
+                              -{discountPercent}%
+                            </span>
+                          </div>
+                          <span className="text-primary-600 font-black text-[20px] leading-none">
+                            {formatPrice(service.discountPrice!)}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-primary-600 font-black text-[20px] leading-none">
+                          {formatPrice(service.originalPrice || 0)}
+                        </span>
+                      )}
+                    </div>
                     <ActionButton
                       onClick={() => handleBooking(service.serviceId)}
-                      className="h-[42px] px-6 text-[14.5px] font-bold rounded-xl shadow-lg shadow-primary-500/20"
+                      className="h-10 px-5 text-[13.5px] font-bold rounded-xl shadow-md shadow-primary-500/20 shrink-0"
                     >
                       Đặt khám
                     </ActionButton>
                   </div>
                 </div>
               </div>
-            ))
+              );
+            })
           ) : (
             <div className="col-span-full py-10">
               <EmptyState title="Không tìm thấy dịch vụ" description="Vui lòng thử bộ lọc hoặc từ khóa tìm kiếm khác." />

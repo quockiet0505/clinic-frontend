@@ -24,8 +24,8 @@ export const CarouselWrapper: React.FC<CarouselWrapperProps> = ({ children }) =>
   const handleScroll = () => {
     if (scrollRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      setShowLeft(scrollLeft > 10);
-      setShowRight(scrollLeft + clientWidth < scrollWidth - 10);
+      setShowLeft(scrollLeft > 20);
+      setShowRight(scrollLeft + clientWidth < scrollWidth - 20);
     }
   };
 
@@ -45,7 +45,7 @@ export const CarouselWrapper: React.FC<CarouselWrapperProps> = ({ children }) =>
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current && cardWidth > 0) {
       const gap = 16; // gap-4 = 16px
-      const scrollAmount = direction === 'left' ? -(cardWidth + gap) : cardWidth + gap;
+      const scrollAmount = direction === 'left' ? -((cardWidth + gap) * 4) : ((cardWidth + gap) * 4);
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
@@ -58,7 +58,7 @@ export const CarouselWrapper: React.FC<CarouselWrapperProps> = ({ children }) =>
       {showLeft && (
         <button
           onClick={() => scroll('left')}
-          className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-lg flex items-center justify-center text-slate-600 hover:text-primary-500 hover:shadow-xl transition-all"
+          className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-lg flex items-center justify-center text-slate-600 hover:text-primary-500 hover:shadow-xl transition-all cursor-pointer"
           aria-label="Previous"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -69,7 +69,7 @@ export const CarouselWrapper: React.FC<CarouselWrapperProps> = ({ children }) =>
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex gap-4 overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        className="flex gap-4 overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory pt-6 pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
         {childrenArray.map((child, index) => (
           <div key={index} className="snap-start shrink-0">
@@ -82,7 +82,7 @@ export const CarouselWrapper: React.FC<CarouselWrapperProps> = ({ children }) =>
       {showRight && (
         <button
           onClick={() => scroll('right')}
-          className="absolute -right-4 md:-right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-lg flex items-center justify-center text-slate-600 hover:text-primary-500 hover:shadow-xl transition-all"
+          className="absolute -right-4 md:-right-6 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-lg flex items-center justify-center text-slate-600 hover:text-primary-500 hover:shadow-xl transition-all cursor-pointer"
           aria-label="Next"
         >
           <ChevronRight className="w-5 h-5" />

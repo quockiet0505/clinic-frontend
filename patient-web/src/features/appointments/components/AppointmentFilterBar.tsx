@@ -3,17 +3,13 @@ import { SearchInput } from '@/components/common/SearchInput';
 import type { AppointmentStatus } from '../types/appointment';
 
 interface AppointmentFilterBarProps {
-  search: string;
-  onSearchChange: (value: string) => void;
   status: AppointmentStatus | 'ALL';
   onStatusChange: (value: AppointmentStatus | 'ALL') => void;
-  serviceType: 'ALL' | 'CONSULTATION' | 'TEST';
-  onServiceTypeChange: (value: 'ALL' | 'CONSULTATION' | 'TEST') => void;
+  serviceType: 'ALL' | 'EXAM' | 'LAB_TEST' | 'IMAGING';
+  onServiceTypeChange: (value: 'ALL' | 'EXAM' | 'LAB_TEST' | 'IMAGING') => void;
 }
 
 export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
-  search,
-  onSearchChange,
   status,
   onStatusChange,
   serviceType,
@@ -42,15 +38,7 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto items-center">
-      <div className="w-full md:w-64">
-        <SearchInput
-          value={search}
-          onSearch={onSearchChange}
-          placeholder="Tìm theo tên bác sĩ..."
-          className="h-11"
-        />
-      </div>
+    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto items-center justify-end">
       
       {/* Lọc theo Loại Dịch Vụ */}
       <div 
@@ -61,8 +49,9 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
         <button className={`w-full h-11 flex items-center justify-between px-4 rounded-full bg-white border shadow-sm font-medium text-slate-700 cursor-pointer transition-colors ${isServiceOpen ? 'border-primary-500 text-primary-600' : 'border-slate-200'}`}>
           <span className="text-[14px]">
             {serviceType === 'ALL' && 'Loại dịch vụ'}
-            {serviceType === 'CONSULTATION' && 'Khám bệnh'}
-            {serviceType === 'TEST' && 'Xét nghiệm'}
+            {serviceType === 'EXAM' && 'Khám bệnh'}
+            {serviceType === 'LAB_TEST' && 'Xét nghiệm'}
+            {serviceType === 'IMAGING' && 'Chẩn đoán hình ảnh'}
           </span>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${isServiceOpen ? 'rotate-180 text-primary-500' : 'text-slate-400'}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
@@ -70,8 +59,9 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
           <div className="rounded-2xl bg-white border border-slate-100 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] p-1.5 flex flex-col gap-0.5">
             {[
               { value: 'ALL', label: 'Tất cả dịch vụ' },
-              { value: 'CONSULTATION', label: 'Khám bệnh' },
-              { value: 'TEST', label: 'Xét nghiệm' },
+              { value: 'EXAM', label: 'Khám bệnh' },
+              { value: 'LAB_TEST', label: 'Xét nghiệm' },
+              { value: 'IMAGING', label: 'Chẩn đoán hình ảnh' },
             ].map(item => (
               <button
                 key={item.value}

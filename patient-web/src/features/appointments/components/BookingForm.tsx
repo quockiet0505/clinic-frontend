@@ -178,13 +178,13 @@ export const BookingForm: React.FC<BookingFormProps> = ({
   const getDoctorOptions = () => {
     if (doctorDisabled && preselectedDoctorId) {
       const found = doctors.find(d => d.staffId === preselectedDoctorId);
-      if (found) return [{ value: String(found.staffId), label: found.fullName, description: found.description, icon: Stethoscope }];
+      if (found) return [{ value: String(found.staffId), label: found.fullName, description: found.expertiseName, icon: Stethoscope }];
       if (loading.doctor) return [{ value: String(preselectedDoctorId), label: 'Đang tải...', icon: Stethoscope }];
       return [{ value: String(preselectedDoctorId), label: 'Không tìm thấy bác sĩ', icon: Stethoscope }];
     }
     return [
       { value: 'none', label: 'Sắp xếp bác sĩ ngẫu nhiên' },
-      ...doctors.map(d => ({ value: String(d.staffId), label: d.fullName, description: d.description, icon: Stethoscope })),
+      ...(Array.isArray(doctors) ? doctors : []).map(d => ({ value: String(d.staffId), label: d.fullName, description: d.expertiseName, icon: Stethoscope })),
     ];
   };
 

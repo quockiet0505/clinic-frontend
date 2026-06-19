@@ -178,7 +178,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
                   BS. {appointment.doctorName}
                 </h3>
                 <p className="text-primary-600 text-[14.5px] font-bold">{appointment.specialty}</p>
-                {appointment.serviceName && appointment.serviceName !== 'Khám chuyên khoa' && (
+                {appointment.serviceName && appointment.serviceType !== 'EXAM' && (
                    <p className="text-slate-500 text-[13px] font-medium mt-0.5">{appointment.serviceName}</p>
                 )}
               </div>

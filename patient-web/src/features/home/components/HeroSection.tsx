@@ -57,7 +57,10 @@ export const HeroSection: React.FC = () => {
 
   const handleSearch = (keyword: string) => {
     setSearchKeyword(keyword);
-    console.log('Searching for:', keyword);
+    if (keyword.trim()) {
+      navigate(`/services?search=${encodeURIComponent(keyword.trim())}`);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handleScroll = () => {
@@ -97,8 +100,8 @@ export const HeroSection: React.FC = () => {
             e.currentTarget.src = '/images/banners/hero-banner.jpg'; 
           }}
         />
-        <div className="absolute inset-0 flex flex-col items-center pt-8 md:pt-16 px-4 bg-gradient-to-b from-brand-dark/10 via-transparent to-transparent">
-          <h1 className="text-2xl md:text-4xl font-bold text-white mb-6 text-center drop-shadow-md">
+        <div className="absolute inset-0 flex flex-col items-center pt-8 md:pt-16 px-4 bg-gradient-to-b from-white/60 via-white/30 to-transparent">
+          <h1 className="text-2xl md:text-4xl font-bold text-brand-dark mb-6 text-center drop-shadow-sm">
             Kết nối Người Dân với Cơ sở & Dịch vụ Y tế hàng đầu
           </h1>
           <div className="w-full max-w-3xl mb-8">
@@ -108,10 +111,10 @@ export const HeroSection: React.FC = () => {
               placeholder="Tìm kiếm gói khám..."
             />
           </div>
-          <div className="flex flex-col items-start gap-2.5 text-white font-medium text-sm md:text-base drop-shadow-md mx-auto">
-            <p className="flex items-center gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-green-400 fill-white/20 shrink-0" /><span>Đặt khám nhanh - Lấy số thứ tự trực tuyến - Tư vấn sức khỏe từ xa</span></p>
-            <p className="flex items-center gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-green-400 fill-white/20 shrink-0" /><span>Đặt khám theo giờ - Đặt càng sớm để có số thứ tự thấp nhất</span></p>
-            <p className="flex items-center gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-green-400 fill-white/20 shrink-0" /><span>Được hoàn tiền khi hủy khám - Có cơ hội nhận ưu đãi hoàn tiền</span></p>
+          <div className="flex flex-col items-start gap-2.5 text-slate-700 font-medium text-sm md:text-base drop-shadow-sm mx-auto">
+            <p className="flex items-center gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-green-500 fill-green-50 shrink-0" /><span>Đặt khám nhanh - Lấy số thứ tự trực tuyến - Tư vấn sức khỏe từ xa</span></p>
+            <p className="flex items-center gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-green-500 fill-green-50 shrink-0" /><span>Đặt khám theo giờ - Đặt càng sớm để có số thứ tự thấp nhất</span></p>
+            <p className="flex items-center gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-green-500 fill-green-50 shrink-0" /><span>Được hoàn tiền khi hủy khám - Có cơ hội nhận ưu đãi hoàn tiền</span></p>
           </div>
         </div>
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent via-gradient-white-blue/70 to-white pointer-events-none"></div>

@@ -6,9 +6,9 @@ import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
 const fields: FieldConfig[] = [
   { name: 'serviceName', label: 'Tên dịch vụ', type: 'text', required: true, placeholder: 'Ví dụ: Khám tổng quát' },
   { name: 'serviceType', label: 'Danh mục', type: 'select', required: true, options: [
-    { value: 'EXAMINATION', label: 'Khám bệnh' },
+    { value: 'EXAM', label: 'Khám bệnh' },
     { value: 'LAB_TEST', label: 'Xét nghiệm' },
-    { value: 'IMAGING', label: 'Chẩn đoán hình ảnh' },
+    { value: 'IMAGING', label: 'Chẩn đoán hình ảnh' }
     { value: 'SURGERY', label: 'Phẫu thuật' },
     { value: 'OTHER', label: 'Khác' }
   ]},
@@ -28,7 +28,7 @@ export default function ServiceFormDialog({ service, onClose, onSave }: Props) {
 
   const initialData = service ? {
     serviceName: service.serviceName || '',
-    serviceType: service.serviceType || 'EXAMINATION',
+    serviceType: service.serviceType || 'EXAM',
     originalPrice: service.originalPrice || '',
     discountPrice: service.discountPrice || '',
   } : undefined;

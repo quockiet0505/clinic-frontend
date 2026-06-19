@@ -9,9 +9,10 @@ import type { ServicePackage } from '../types/home';
 
 interface Props {
   services: ServicePackage[];
+  isLoading?: boolean;
 }
 
-export const HowItWorks: React.FC<Props> = ({ services }) => {
+export const HowItWorks: React.FC<Props> = ({ services, isLoading }) => {
   const staticUrl = getStaticUrl();
   const navigate = useNavigate();
 
@@ -34,56 +35,87 @@ export const HowItWorks: React.FC<Props> = ({ services }) => {
 
   return (
     <section className="py-14 bg-gradient-to-b from-white via-gradient-white-blue to-gradient-blue">
-      <SectionContainer className="relative">
+      <SectionContainer className="relative max-w-[1140px]">
         <SectionHeader title="Chăm sóc sức khỏe toàn diện" />
         <CarouselWrapper>
-          {services.slice(0, 8).map((service) => (
-            <div
-              key={service.serviceId}
-              onClick={() => handleServiceClick(service.serviceId)}
-              className="cursor-pointer min-w-[270px] max-w-[270px] shrink-0 snap-start bg-white rounded-xl overflow-hidden shadow-md border border-slate-100 flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-            >
-              <div className="w-full h-[160px] overflow-hidden bg-slate-50 relative">
-                <ImageWithFallback
-                  src={`${staticUrl}${service.imageUrl}`}
-                  alt={service.serviceName}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                  containerClassName="absolute inset-0 w-full h-full"
-                />
+          {isLoading ? (
+            Array(4).fill(0).map((_, i) => (
+              <div key={`skel-srv-${i}`} className="w-[265px] min-w-[265px] max-w-[265px] shrink-0 snap-start bg-white rounded-[24px] overflow-hidden shadow-sm border border-slate-100 flex flex-col animate-pulse">
+                <div className="w-full h-[160px] bg-slate-200"></div>
+                <div className="p-5 flex flex-col flex-1 gap-3">
+                  <div className="h-5 bg-slate-200 rounded w-full"></div>
+                  <div className="h-5 bg-slate-200 rounded w-2/3"></div>
+                  <div className="h-4 bg-slate-100 rounded w-1/2 mt-2"></div>
+                  <div className="h-6 bg-slate-200 rounded w-3/4 mt-auto"></div>
+                  <div className="h-11 bg-slate-200 rounded-xl w-full mt-2"></div>
+                </div>
               </div>
-              <div className="p-4 flex flex-col flex-1">
-                <h3 className="font-bold text-brand-dark text-[15px] leading-snug line-clamp-2 mb-3 min-h-[44px]">
-                  {service.serviceName}
-                </h3>
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-start gap-1.5 text-[13px] min-h-[42px]">
-                    <Building2 className="w-[18px] h-[18px] text-slate-500 shrink-0" />
-                    <span className="line-clamp-2 text-slate-600">ClinicPro</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-[13px]">
-                    <CircleDollarSign className="w-[18px] h-[18px] text-slate-500" />
-                    <span className="text-warning font-bold text-[15px]">
-                      {formatPrice(service.discountPrice || service.originalPrice || 0)}
-                    </span>
-                    {service.discountPrice && service.originalPrice && service.discountPrice < service.originalPrice && (
-                      <span className="text-slate-400 line-through">{formatPrice(service.originalPrice) }</span>
+            ))
+          ) : (
+            services.slice(0, 8).map((service) => {
+              const hasDiscount = service.discountPrice && service.originalPrice && service.discountPrice < service.originalPrice;
+              const discountPercent = hasDiscount 
+                ? Math.round((1 - service.discountPrice! / service.originalPrice!) * 100) 
+                : 0;
+
+              return (
+                <div
+                  key={service.serviceId}
+                  onClick={() => handleServiceClick(service.serviceId)}
+                  className="cursor-pointer w-[265px] min-w-[265px] max-w-[265px] shrink-0 snap-start bg-white rounded-[24px] overflow-hidden shadow-lg shadow-slate-200/40 border border-slate-200/80 flex flex-col hover:shadow-2xl hover:shadow-primary-500/20 hover:border-primary-300 hover:-translate-y-1 transition-all duration-300 group"
+                >
+                  <div className="w-full h-[160px] overflow-hidden bg-slate-50 relative">
+                    <ImageWithFallback
+                      src={`${staticUrl}${service.imageUrl}`}
+                      alt={service.serviceName}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      containerClassName="absolute inset-0 w-full h-full"
+                    />
+                    {hasDiscount && (
+                      <div className="absolute top-3 right-3 bg-red-500 text-white text-[12px] font-black px-2.5 py-1 rounded-full shadow-md z-10">
+                        -{discountPercent}%
+                      </div>
                     )}
                   </div>
+                  <div className="p-5 flex flex-col flex-1">
+                    <h3 className="font-bold text-brand-dark text-[16px] leading-snug line-clamp-2 mb-3 min-h-[44px] group-hover:text-primary-600 transition-colors">
+                      {service.serviceName}
+                    </h3>
+                    <div className="flex flex-col gap-2 mt-auto">
+                      <div className="flex items-center gap-2 text-[13px] bg-slate-50 p-2.5 rounded-xl">
+                        <CircleDollarSign className="w-[18px] h-[18px] text-slate-400 shrink-0" />
+                        <div className="flex flex-col">
+                          {hasDiscount ? (
+                            <>
+                              <span className="text-slate-400 line-through text-[11px] leading-none mb-0.5">{formatPrice(service.originalPrice!)}</span>
+                              <span className="text-red-500 font-bold text-[15px] leading-none">
+                                {formatPrice(service.discountPrice!)}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-brand-dark font-bold text-[15px] leading-none">
+                              {formatPrice(service.originalPrice || 0)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <ActionButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleServiceClick(service.serviceId);
+                      }}
+                      className="mt-4 h-[42px] px-6 text-[14px] font-bold rounded-xl shadow-md shadow-primary-500/20 group-hover:shadow-lg transition-all"
+                    >
+                      Đặt khám ngay
+                    </ActionButton>
+                  </div>
                 </div>
-                <ActionButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleServiceClick(service.serviceId);
-                  }}
-                  className="mt-4 h-11 px-6 text-sm"
-                >
-                  Đặt khám ngay
-                </ActionButton>
-              </div>
-            </div>
-          ))}
+              );
+            })
+          )}
         </CarouselWrapper>
-        <div className="text-center mt-6">
+        <div className="text-center mt-8">
           <ViewAllButton onClick={handleViewAll} />
         </div>
       </SectionContainer>

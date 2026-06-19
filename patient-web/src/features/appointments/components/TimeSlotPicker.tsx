@@ -212,30 +212,34 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, update
         </DialogContent>
       </Dialog>
 
-      {/* Giờ khám – giữ nguyên */}
+      {/* Giờ khám */}
       <div className="flex flex-col gap-3">
-        <label className="text-[14px] font-bold text-[#003B5C]">Giờ khám <span className="text-red-500">*</span></label>
+        <label className="text-[14px] font-bold text-brand-dark flex items-center gap-1">Giờ khám <span className="text-red-500">*</span></label>
         {!formData.appointmentDate ? (
-          <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 p-5 text-[14px] font-medium text-slate-500 text-center">
-            Vui lòng chọn ngày khám để xem giờ trống
+          <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 flex flex-col items-center justify-center gap-2">
+            <span className="text-[14px] font-medium text-slate-500">Vui lòng chọn ngày khám để xem giờ trống</span>
+          </div>
+        ) : timeSlots.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 flex flex-col items-center justify-center gap-2">
+            <span className="text-[14px] font-bold text-slate-500">Không có giờ khám trống</span>
           </div>
         ) : (
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-6">
             {timeSlots.filter(t => t.period === 'morning').length > 0 && (
               <div className="flex flex-col gap-3">
-                <span className="text-[13px] font-bold text-[#00b5f1] uppercase tracking-wide">Buổi sáng</span>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                <span className="text-[12px] font-bold text-primary-500 uppercase tracking-widest pl-1">Buổi sáng</span>
+                <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5">
                   {timeSlots.filter(t => t.period === 'morning').map(slot => (
                     <button
                       key={slot.timeStart}
                       disabled={!slot.isAvailable}
                       onClick={() => updateForm({ timeStart: slot.timeStart, timeEnd: slot.timeEnd })}
-                      className={`rounded-xl border-2 py-3 px-2 text-[14px] font-semibold transition-all cursor-pointer ${
+                      className={`rounded-2xl border py-3 px-1 text-[14px] font-bold transition-all duration-300 cursor-pointer shadow-sm ${
                         !slot.isAvailable 
-                          ? 'border-slate-100 bg-slate-50 text-slate-300 line-through cursor-not-allowed' 
+                          ? 'border-slate-100 bg-slate-50/50 text-slate-300 line-through cursor-not-allowed shadow-none' 
                           : formData.timeStart === slot.timeStart 
-                            ? 'border-[#00b5f1] bg-[#00b5f1] text-white shadow-md' 
-                            : 'border-slate-200 bg-white text-[#003B5C] hover:border-[#00b5f1] hover:bg-[#eaf7fd] hover:text-[#00b5f1]'
+                            ? 'border-primary-500 bg-primary-500 text-white shadow-md shadow-primary-500/20' 
+                            : 'border-slate-200/80 bg-white text-brand-dark hover:border-primary-300 hover:bg-primary-50/50 hover:text-primary-600 hover:shadow-md'
                       }`}
                     >
                       {slot.displayTime}
@@ -246,19 +250,19 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, update
             )}
             {timeSlots.filter(t => t.period === 'afternoon').length > 0 && (
               <div className="flex flex-col gap-3">
-                <span className="text-[13px] font-bold text-[#00b5f1] uppercase tracking-wide">Buổi chiều</span>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+                <span className="text-[12px] font-bold text-primary-500 uppercase tracking-widest pl-1">Buổi chiều</span>
+                <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5">
                   {timeSlots.filter(t => t.period === 'afternoon').map(slot => (
                     <button
                       key={slot.timeStart}
                       disabled={!slot.isAvailable}
                       onClick={() => updateForm({ timeStart: slot.timeStart, timeEnd: slot.timeEnd })}
-                      className={`rounded-xl border-2 py-3 px-2 text-[14px] font-semibold transition-all cursor-pointer ${
+                      className={`rounded-2xl border py-3 px-1 text-[14px] font-bold transition-all duration-300 cursor-pointer shadow-sm ${
                         !slot.isAvailable 
-                          ? 'border-slate-100 bg-slate-50 text-slate-300 line-through cursor-not-allowed' 
+                          ? 'border-slate-100 bg-slate-50/50 text-slate-300 line-through cursor-not-allowed shadow-none' 
                           : formData.timeStart === slot.timeStart 
-                            ? 'border-[#00b5f1] bg-[#00b5f1] text-white shadow-md' 
-                            : 'border-slate-200 bg-white text-[#003B5C] hover:border-[#00b5f1] hover:bg-[#eaf7fd] hover:text-[#00b5f1]'
+                            ? 'border-primary-500 bg-primary-500 text-white shadow-md shadow-primary-500/20' 
+                            : 'border-slate-200/80 bg-white text-brand-dark hover:border-primary-300 hover:bg-primary-50/50 hover:text-primary-600 hover:shadow-md'
                       }`}
                     >
                       {slot.displayTime}

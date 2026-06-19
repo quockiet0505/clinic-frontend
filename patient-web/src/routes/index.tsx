@@ -10,6 +10,8 @@ import { LandingPage } from '@/features/home/pages/LandingPage';
 import { DoctorDirectory } from '@/features/home/pages/DoctorDirectory';
 import { ServiceDirectory } from '@/features/home/pages/ServiceDirectory';
 import { ContactPage } from '@/features/contact/pages/ContactPage';
+import { FAQPage } from '@/features/home/pages/FAQPage';
+import { NotificationPage } from '@/features/home/pages/NotificationPage';
 
 // Appointments Feature
 import { BookAppointment } from '@/features/appointments/pages/BookAppointment';
@@ -39,6 +41,8 @@ export const router = createBrowserRouter([
       { path: 'doctors', element: <DoctorDirectory /> },
       { path: 'services', element: <ServiceDirectory /> },
       { path: 'contact', element: <ContactPage /> },
+      { path: 'faq', element: <FAQPage /> },
+      { path: 'notifications', element: <NotificationPage /> },
       {
         path: 'appointments',
         children: [
