@@ -11,7 +11,7 @@ export default function ExpenseTable({ data, onRowClick }: { data: ClinicExpense
             <TableHead className="font-bold text-slate-600 text-[11px] uppercase px-8">ID & Date</TableHead>
             <TableHead className="font-bold text-slate-600 text-[11px] uppercase">Category</TableHead>
             <TableHead className="font-bold text-slate-600 text-[11px] uppercase">Mô tả</TableHead>
-            <TableHead className="font-bold text-slate-600 text-[11px] uppercase text-center">Method</TableHead>
+            <TableHead className="font-bold text-slate-600 text-[11px] uppercase text-left">Method</TableHead>
             <TableHead className="font-bold text-slate-600 text-[11px] uppercase text-right pr-8">Số tiền</TableHead>
           </TableRow>
         </TableHeader>

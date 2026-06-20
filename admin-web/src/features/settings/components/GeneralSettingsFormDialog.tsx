@@ -15,28 +15,40 @@ export default function GeneralSettingsForm({ formData, onChange, onSave }: Gene
       <div className="max-w-3xl space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Building2 size={14}/> Tên phòng khám</label>
-            <Input name="clinicName" value={formData.clinicName} onChange={onChange} className="h-12 rounded-[16px] bg-slate-50 font-bold border-slate-200 focus-visible:ring-4 focus-visible:ring-primary-100" />
+            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+              <Building2 size={16} className="text-blue-500" /> Tên phòng khám
+            </label>
+            <Input name="clinicName" value={formData.clinicName} onChange={onChange} className="h-11 rounded-xl border-slate-200 bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100" />
           </div>
           <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><MapPin size={14}/> Địa chỉ</label>
-            <Input name="address" value={formData.address} onChange={onChange} className="h-12 rounded-[16px] bg-slate-50 font-bold border-slate-200 focus-visible:ring-4 focus-visible:ring-primary-100" />
+            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+              <MapPin size={16} className="text-amber-500" /> Địa chỉ
+            </label>
+            <Input name="address" value={formData.address} onChange={onChange} className="h-11 rounded-xl border-slate-200 bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100" />
           </div>
           <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Phone size={14}/> Số điện thoại</label>
-            <Input name="phone" value={formData.phone} onChange={onChange} className="h-12 rounded-[16px] bg-slate-50 font-bold border-slate-200 focus-visible:ring-4 focus-visible:ring-primary-100" />
+            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+              <Phone size={16} className="text-emerald-500" /> Số điện thoại
+            </label>
+            <Input name="phone" value={formData.phone} onChange={onChange} className="h-11 rounded-xl border-slate-200 bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100" />
           </div>
           <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Mail size={14}/> Email</label>
-            <Input name="email" value={formData.email} onChange={onChange} className="h-12 rounded-[16px] bg-slate-50 font-bold border-slate-200 focus-visible:ring-4 focus-visible:ring-primary-100" />
+            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+              <Mail size={16} className="text-indigo-500" /> Email
+            </label>
+            <Input name="email" value={formData.email} onChange={onChange} className="h-11 rounded-xl border-slate-200 bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100" />
           </div>
           <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Globe size={14}/> Website</label>
-            <Input name="website" value={formData.website} onChange={onChange} className="h-12 rounded-[16px] bg-slate-50 font-bold border-slate-200 focus-visible:ring-4 focus-visible:ring-primary-100" />
+            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+              <Globe size={16} className="text-purple-500" /> Website
+            </label>
+            <Input name="website" value={formData.website} onChange={onChange} className="h-11 rounded-xl border-slate-200 bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100" />
           </div>
           <div className="space-y-2">
-            <label className="block mb-3 text-xs font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5"><Clock size={14}/> Giờ hoạt động</label>
-            <Input name="operatingHours" value={formData.operatingHours} onChange={onChange} className="h-12 rounded-[16px] bg-slate-50 font-bold border-slate-200 focus-visible:ring-4 focus-visible:ring-primary-100" />
+            <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+              <Clock size={16} className="text-rose-500" /> Giờ hoạt động
+            </label>
+            <Input name="operatingHours" value={formData.operatingHours} onChange={onChange} className="h-11 rounded-xl border-slate-200 bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-100" />
           </div>
         </div>
 

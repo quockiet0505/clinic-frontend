@@ -10,6 +10,7 @@ import PatientFormDialog from '../components/PatientFormDialog';
 import GradientButton from '@/components/common/GradientButton';
 import { Patient } from '../types/patient';
 import { patientApi } from '../api/patientApi';
+import toast from 'react-hot-toast';
 
 export default function PatientList() {
   const navigate = useNavigate();
@@ -54,13 +55,18 @@ export default function PatientList() {
   }, [search, genderTab]);
 
   const handleFormSubmit = async (formData: unknown, isEdit: boolean) => {
-    if (isEdit) {
-      await patientApi.update(selectedPatient!.patientId, formData as Partial<Patient>);
-    } else {
-      await patientApi.create(formData as Omit<Patient, 'patientId'>);
+    try {
+      if (isEdit) {
+        await patientApi.update(selectedPatient!.patientId, formData as Partial<Patient>);
+      } else {
+        await patientApi.create(formData as Omit<Patient, 'patientId'>);
+      }
+      toast.success(isEdit ? 'Cập nhật bệnh nhân thành công' : 'Thêm bệnh nhân thành công');
+      await fetchPatients();
+      setIsFormOpen(false);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra');
     }
-    await fetchPatients();
-    setIsFormOpen(false);
   };
 
   return (
@@ -103,8 +109,13 @@ export default function PatientList() {
         onClose={() => setDeletingPatient(null)}
         onConfirm={async () => {
           if (deletingPatient) {
-            await patientApi.delete(deletingPatient.patientId);
-            await fetchPatients();
+            try {
+              await patientApi.delete(deletingPatient.patientId);
+              toast.success('Xóa bệnh nhân thành công');
+              await fetchPatients();
+            } catch (err: any) {
+              toast.error(err.response?.data?.message || 'Xóa bệnh nhân thất bại');
+            }
           }
           setDeletingPatient(null);
         }}

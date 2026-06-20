@@ -8,6 +8,7 @@ import { Medicine } from '../types/pharmacy';
 import MedicineFilterBar from '../components/MedicineFilterBar';
 import MedicineTable from '../components/MedicineTable';
 import MedicineFormDialog from '../components/MedicineFormDialog';
+import toast from 'react-hot-toast';
 
 export default function MedicineInventory() {
   const [medicines, setMedicines] = useState<Medicine[]>([]);
@@ -62,9 +63,10 @@ export default function MedicineInventory() {
     if (window.confirm(`Bạn có chắc chắn muốn xóa thuốc ${medicine.name}?`)) {
       try {
         await pharmacyApi.deleteMedicine(medicine.medicineId);
+        toast.success('Xóa thuốc thành công');
         fetchMedicines();
-      } catch (error) {
-        console.error('Lỗi xóa thuốc:', error);
+      } catch (error: any) {
+        toast.error(error.response?.data?.message || 'Lỗi xóa thuốc');
       }
     }
   };
@@ -76,10 +78,11 @@ export default function MedicineInventory() {
       } else {
         await pharmacyApi.createMedicine(data as Omit<Medicine, 'medicineId' | 'quantity'>);
       }
+      toast.success(selectedMedicine ? 'Cập nhật thuốc thành công' : 'Thêm thuốc mới thành công');
       setIsDialogOpen(false);
       fetchMedicines();
-    } catch (error) {
-      console.error('Lỗi lưu thông tin thuốc:', error);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Lỗi lưu thông tin thuốc');
     }
   };
 

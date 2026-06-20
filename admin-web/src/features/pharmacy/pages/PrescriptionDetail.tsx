@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, Printer, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { pharmacyApi } from '../api/pharmacyApi';
+import toast from 'react-hot-toast';
 
 interface Props {
   prescriptionId: number;
@@ -34,10 +35,11 @@ export default function PrescriptionDetail({ prescriptionId, onBack, onDispensed
     setDispensing(true);
     try {
       await pharmacyApi.dispensePrescription(prescriptionId);
+      toast.success('Phát thuốc thành công');
       fetchDetail();
       onDispensed();
-    } catch (error) {
-      console.error("Lỗi phát thuốc:", error);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || 'Lỗi phát thuốc');
     } finally {
       setDispensing(false);
     }

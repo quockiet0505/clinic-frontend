@@ -62,10 +62,10 @@ export default function MedicineTable({ data, onEdit, onDelete, loading = false,
       className: 'w-[20%]',
       render: (medicine) => (
         <div className="flex gap-2">
-          <Button onClick={() => onEdit(medicine)} variant="outline" className="h-8 px-3 rounded-xl text-xs font-semibold border-blue-200 text-blue-600 hover:bg-blue-50">
+          <Button onClick={() => onEdit(medicine)} variant="outline" className="h-8 px-3 rounded-xl text-xs font-semibold border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-colors">
             <Edit2 size={14} className="mr-1.5" /> Sửa
           </Button>
-          <Button onClick={() => onDelete(medicine)} variant="outline" className="h-8 px-3 rounded-xl text-xs font-semibold border-rose-200 text-rose-600 hover:bg-rose-50">
+          <Button onClick={() => onDelete(medicine)} variant="outline" className="h-8 px-3 rounded-xl text-xs font-semibold border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 transition-colors">
             <Trash2 size={14} className="mr-1.5" /> Xóa
           </Button>
         </div>

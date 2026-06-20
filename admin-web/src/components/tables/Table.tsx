@@ -62,7 +62,7 @@ export default function Table<T extends Record<string, any>>({
               {columns.map((col) => (
                 <th
                   key={String(col.key)}
-                  className={`px-6 py-3 font-semibold text-slate-700 text-sm ${col.headerClassName || col.className || 'text-left'}`}
+                  className={`px-6 py-3 font-semibold text-slate-700 text-sm text-left ${col.headerClassName || (col.className || '').replace(/text-(center|right)/g, '')}`}
                 >
                   {col.label}
                 </th>

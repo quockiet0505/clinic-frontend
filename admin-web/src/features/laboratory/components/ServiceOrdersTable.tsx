@@ -25,7 +25,7 @@ export default function ServiceOrdersTable({ data, onInputResult, onReject, load
     {
       key: 'orderId',
       label: 'Order ID & Ngày',
-      className: 'w-[18%]',
+      className: 'w-[20%]',
       render: (item) => (
         <div>
           <p className="text-sm font-medium text-slate-700 flex items-center gap-1">
@@ -52,7 +52,7 @@ export default function ServiceOrdersTable({ data, onInputResult, onReject, load
     {
       key: 'serviceName',
       label: 'Xét nghiệm',
-      className: 'w-[32%]',
+      className: 'w-[35%]',
       render: (item) => (
         <div>
           <div className="flex items-center gap-2">
@@ -74,7 +74,7 @@ export default function ServiceOrdersTable({ data, onInputResult, onReject, load
     {
       key: 'actions',
       label: 'Thao tác',
-      className: 'w-[25%] text-right',
+      className: 'w-[15%] text-right',
       render: (item) => (
         <div className="flex justify-end gap-2">
           {item.status === 'ORDERED' ? (

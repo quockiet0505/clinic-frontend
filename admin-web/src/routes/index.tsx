@@ -2,7 +2,6 @@
 import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
-// Layouts & Guards
 import AdminLayout from '@/layouts/AdminLayout';
 import AuthLayout from '@/layouts/AuthLayout';
 import RoleGuard from '@/routes/guards/RoleGuard';

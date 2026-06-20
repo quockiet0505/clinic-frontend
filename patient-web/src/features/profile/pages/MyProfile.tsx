@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from 'react';
-import { Mail, MapPin, Phone, User, ShieldCheck, Camera, CalendarHeart } from 'lucide-react';
+import { Mail, MapPin, Phone, User as UserIcon, ShieldCheck, Key, CalendarDays } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SectionContainer } from '@/components/common';
 import { ProfileInfoForm } from '../components/ProfileInfoForm';
@@ -12,6 +12,7 @@ export const MyProfile: React.FC = () => {
   const [profile, setProfile] = useState<PatientProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'info' | 'security'>('info');
 
   const fetchProfile = async () => {
     setLoading(true); setError(null);
@@ -26,20 +27,10 @@ export const MyProfile: React.FC = () => {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#f0f9ff]">
-        <div className="bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-primary-500 py-12 px-4">
-          <SectionContainer className="max-w-5xl">
-            <div className="h-5 bg-white/10 rounded w-32 mb-3 animate-pulse" />
-            <div className="h-8 bg-white/10 rounded w-52 animate-pulse" />
-          </SectionContainer>
-        </div>
-        <SectionContainer className="max-w-5xl py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            <div className="lg:col-span-4 h-96 bg-white rounded-2xl animate-pulse border border-slate-200" />
-            <div className="lg:col-span-8 flex flex-col gap-4">
-              <div className="h-14 bg-white rounded-2xl animate-pulse border border-slate-200" />
-              <div className="h-80 bg-white rounded-2xl animate-pulse border border-slate-200" />
-            </div>
+      <main className="min-h-screen bg-[#f0f9ff] py-10">
+        <SectionContainer className="max-w-5xl">
+          <div className="flex h-[60vh] items-center justify-center">
+            <div className="text-slate-400">Đang tải thông tin...</div>
           </div>
         </SectionContainer>
       </main>
@@ -52,9 +43,9 @@ export const MyProfile: React.FC = () => {
       <main className="min-h-screen bg-[#f0f9ff] flex items-center justify-center">
         <div className="p-10 text-center max-w-md bg-white rounded-3xl shadow-sm border border-slate-200">
           <div className="w-20 h-20 bg-red-50 text-red-400 rounded-full flex items-center justify-center mx-auto mb-5">
-            <User className="w-10 h-10" />
+            <UserIcon className="w-10 h-10" />
           </div>
-          <h2 className="text-2xl font-black text-brand-dark mb-3">
+          <h2 className="text-2xl font-black text-slate-800 mb-3">
             {isForbidden ? 'Không có quyền truy cập' : 'Chưa có dữ liệu hồ sơ'}
           </h2>
           <p className="text-slate-500 font-medium mb-8 text-[15px]">
@@ -88,7 +79,7 @@ export const MyProfile: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center border border-white/30 shadow-sm">
-                  <User className="w-5 h-5 text-white" />
+                  <UserIcon className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <h1 className="text-2xl font-black text-white tracking-tight drop-shadow-sm">Hồ Sơ Cá Nhân</h1>
@@ -97,7 +88,7 @@ export const MyProfile: React.FC = () => {
               </div>
               <TabsList className="bg-white/20 p-1 rounded-xl flex gap-1 h-11 border border-white/30 shadow-sm">
                 <TabsTrigger value="personal" className="rounded-lg px-5 h-full text-[13px] font-bold text-white gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm cursor-pointer">
-                  <User className="w-4 h-4" /> Thông tin
+                  <UserIcon className="w-4 h-4" /> Thông tin
                 </TabsTrigger>
                 <TabsTrigger value="security" className="rounded-lg px-5 h-full text-[13px] font-bold text-white gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm cursor-pointer">
                   <ShieldCheck className="w-4 h-4" /> Bảo mật
@@ -112,43 +103,55 @@ export const MyProfile: React.FC = () => {
 
             {/* ── Profile Card Sidebar ── */}
             <div className="lg:col-span-4 lg:sticky top-24">
-              <div className="rounded-2xl border border-slate-200 shadow-sm bg-white overflow-hidden">
-                <div className="h-24 bg-gradient-to-r from-primary-500 to-sky-400 w-full" />
-                <div className="px-6 pb-6 flex flex-col items-center text-center -mt-12 relative z-10">
-                  <div className="w-24 h-24 bg-white p-1.5 rounded-full shadow-lg mb-3 relative group cursor-pointer">
-                    <div className="w-full h-full rounded-full bg-primary-50 flex items-center justify-center border-2 border-primary-100">
-                      <span className="text-3xl font-black text-primary-500">
-                        {profile.fullName ? profile.fullName.charAt(0).toUpperCase() : 'U'}
-                      </span>
+              <div className="rounded-2xl border border-slate-200 shadow-sm bg-white p-6 flex flex-col items-center shrink-0">
+                <div className="w-24 h-24 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-4xl shadow-inner mb-4">
+                  {profile.fullName ? profile.fullName.charAt(0).toUpperCase() : 'U'}
+                </div>
+                <h2 className="text-xl font-bold text-slate-800 text-center">{profile.fullName}</h2>
+                <div className="flex items-center gap-1.5 mt-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-xs font-semibold border border-blue-100">
+                  <ShieldCheck size={14} /> Bệnh nhân
+                </div>
+
+                <div className="w-full h-px bg-slate-100 my-6"></div>
+
+                <div className="w-full space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                      <Mail size={14} />
                     </div>
-                    <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Camera className="w-8 h-8 text-white" />
+                    <div className="overflow-hidden">
+                      <p className="text-[11px] font-semibold text-slate-500">Email</p>
+                      <p className="text-sm font-medium text-slate-700 truncate">{profile.email || 'Chưa cập nhật'}</p>
                     </div>
                   </div>
-                  <h2 className="text-[17px] font-black text-brand-dark">{profile.fullName}</h2>
-                  <div className="flex items-center gap-2 mt-2 mb-5">
-                    <span className="text-primary-600 font-bold text-[12px] bg-primary-50 px-2.5 py-1 rounded-full border border-primary-100">Bệnh nhân</span>
-                    <span className="flex items-center gap-1 text-slate-500 font-medium text-[12px] bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">
-                      <CalendarHeart className="w-3 h-3" /> Thành viên
-                    </span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                      <Phone size={14} />
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-[11px] font-semibold text-slate-500">Số điện thoại</p>
+                      <p className="text-sm font-medium text-slate-700 truncate">{profile.phone || 'Chưa cập nhật'}</p>
+                    </div>
                   </div>
-                  <div className="w-full border-t border-slate-100 mb-5" />
-                  <div className="w-full flex flex-col gap-4 text-left">
-                    {[
-                      { icon: <Phone className="w-4 h-4" />, label: 'Điện thoại', value: profile.phone || 'Chưa cập nhật' },
-                      { icon: <Mail className="w-4 h-4" />, label: 'Email', value: profile.email, truncate: true },
-                      { icon: <MapPin className="w-4 h-4" />, label: 'Địa chỉ', value: profile.address || 'Chưa cập nhật' },
-                    ].map((row, i) => (
-                      <div key={i} className="flex items-center gap-3 group">
-                        <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 group-hover:bg-primary-50 group-hover:border-primary-100 group-hover:text-primary-500 flex items-center justify-center text-slate-400 transition-colors shrink-0">
-                          {row.icon}
-                        </div>
-                        <div className="overflow-hidden">
-                          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{row.label}</p>
-                          <p className={`font-semibold text-slate-700 text-[14px] mt-0.5 ${row.truncate ? 'truncate' : 'leading-tight'}`}>{row.value}</p>
-                        </div>
-                      </div>
-                    ))}
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                      <MapPin size={14} />
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-[11px] font-semibold text-slate-500">Địa chỉ</p>
+                      <p className="text-sm font-medium text-slate-700 truncate">{profile.address || 'Chưa cập nhật'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 shrink-0">
+                      <CalendarDays size={14} />
+                    </div>
+                    <div className="overflow-hidden">
+                      <p className="text-[11px] font-semibold text-slate-500">Ngày tham gia</p>
+                      <p className="text-sm font-medium text-slate-700 truncate">
+                        Chưa cập nhật
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -156,21 +159,13 @@ export const MyProfile: React.FC = () => {
 
             {/* ── Form Content ── */}
             <div className="lg:col-span-8">
-              <div className="rounded-2xl border border-slate-200 shadow-sm bg-white overflow-hidden">
+              <div className="rounded-2xl border border-slate-200 shadow-sm bg-white overflow-hidden flex flex-col">
                 <TabsContent value="personal" className="outline-none mt-0">
-                  <div className="px-7 py-5 border-b border-slate-200 bg-slate-50">
-                    <h3 className="text-[16px] font-black text-brand-dark">Cập nhật hồ sơ bệnh nhân</h3>
-                    <p className="text-slate-500 text-[12px] mt-0.5">Thông tin cá nhân và hồ sơ bệnh lý</p>
-                  </div>
                   <div className="p-6 md:p-7">
                     <ProfileInfoForm initialData={profile} onSuccess={fetchProfile} />
                   </div>
                 </TabsContent>
                 <TabsContent value="security" className="outline-none mt-0">
-                  <div className="px-7 py-5 border-b border-slate-200 bg-slate-50">
-                    <h3 className="text-[16px] font-black text-brand-dark">Thiết lập bảo mật</h3>
-                    <p className="text-slate-500 text-[12px] mt-0.5">Đổi mật khẩu và bảo vệ tài khoản</p>
-                  </div>
                   <div className="p-6 md:p-7">
                     <PasswordChangeForm />
                   </div>

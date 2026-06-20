@@ -2,6 +2,7 @@
 import { Pill, CalendarDays, UserRound, FileSignature, X, Printer, Download, Stethoscope } from 'lucide-react';
 import { DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { generatePdf, formatDoctorName } from '@/utils/generatePdf';
+import { toast } from 'sonner';
 
 export const PrescriptionModalContent = ({ prescription }: { prescription: any }) => {
   const pdfId = `pdf-pres-${prescription.prescriptionId}`;
@@ -106,13 +107,13 @@ export const PrescriptionModalContent = ({ prescription }: { prescription: any }
 
         <div className="bg-white border-t border-slate-200 p-4 px-6 md:px-8 flex gap-3 justify-end shrink-0">
           <button
-            onClick={() => window.print()}
+            onClick={() => { toast.success('Đang chuẩn bị in đơn thuốc...'); window.print(); }}
             className="cursor-pointer px-5 py-2.5 rounded-xl border border-slate-200 bg-white font-bold text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2 text-[14px] shadow-sm"
           >
             <Printer className="w-4 h-4" /> In đơn
           </button>
           <button
-            onClick={handleDownloadPdf}
+            onClick={() => { toast.success('Đang chuẩn bị tải PDF...'); handleDownloadPdf(); }}
             className="cursor-pointer px-5 py-2.5 rounded-xl font-bold text-cyan-700 bg-cyan-50 border border-cyan-200 hover:bg-cyan-100 transition-colors flex items-center gap-2 text-[14px] shadow-sm"
           >
             <Download className="w-4 h-4" /> Tải PDF

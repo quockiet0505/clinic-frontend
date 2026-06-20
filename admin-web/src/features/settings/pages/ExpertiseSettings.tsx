@@ -10,6 +10,7 @@ import { StatsCard } from '@/components/common/StatsCard';
 import GradientButton from '@/components/common/GradientButton';
 import { Expertise } from '../types/settings';
 import { settingsApi } from '../api/settingsApi';
+import toast from 'react-hot-toast';
 
 export default function ExpertiseSettings() {
   const [data, setData] = useState<Expertise[]>([]);
@@ -99,13 +100,18 @@ export default function ExpertiseSettings() {
         expertise={editing} 
         onClose={() => setEditing(null)} 
         onSave={async (id: number, updated: any) => {
-          if (id === 0) {
-            await settingsApi.createExpertise(updated);
-          } else {
-            await settingsApi.updateExpertise(id, updated);
+          try {
+            if (id === 0) {
+              await settingsApi.createExpertise(updated);
+            } else {
+              await settingsApi.updateExpertise(id, updated);
+            }
+            toast.success(id === 0 ? 'Thêm chuyên khoa thành công' : 'Cập nhật chuyên khoa thành công');
+            await fetchData();
+            setEditing(null);
+          } catch (err: any) {
+            toast.error(err.response?.data?.message || 'Có lỗi xảy ra');
           }
-          await fetchData();
-          setEditing(null);
         }} 
       />
       
@@ -114,8 +120,13 @@ export default function ExpertiseSettings() {
         onClose={() => setDeleting(null)} 
         onConfirm={async () => {
           if (deleting) {
-            await settingsApi.deleteExpertise(deleting.expertiseId);
-            await fetchData();
+            try {
+              await settingsApi.deleteExpertise(deleting.expertiseId);
+              toast.success('Xóa chuyên khoa thành công');
+              await fetchData();
+            } catch (err: any) {
+              toast.error(err.response?.data?.message || 'Xóa chuyên khoa thất bại');
+            }
           }
           setDeleting(null);
         }} 

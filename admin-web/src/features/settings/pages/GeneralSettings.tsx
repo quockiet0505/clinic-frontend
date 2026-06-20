@@ -3,6 +3,7 @@ import PageHeader from '@/components/common/PageHeader';
 import GeneralSettingsForm from '../components/GeneralSettingsFormDialog';
 
 import { settingsApi } from '../api/settingsApi';
+import toast from 'react-hot-toast';
 
 export default function GeneralSettings() {
   const [formData, setFormData] = useState<any>({
@@ -38,8 +39,12 @@ export default function GeneralSettings() {
   }, []);
 
   const handleSave = async () => {
-    await settingsApi.updateGeneralSettings(formData);
-    alert('Đã lưu cấu hình chung thành công!');
+    try {
+      await settingsApi.updateGeneralSettings(formData);
+      toast.success('Đã lưu cấu hình chung thành công!');
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra');
+    }
   };
 
   return (

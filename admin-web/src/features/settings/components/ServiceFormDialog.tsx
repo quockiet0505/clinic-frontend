@@ -8,7 +8,7 @@ const fields: FieldConfig[] = [
   { name: 'serviceType', label: 'Danh mục', type: 'select', required: true, options: [
     { value: 'EXAM', label: 'Khám bệnh' },
     { value: 'LAB_TEST', label: 'Xét nghiệm' },
-    { value: 'IMAGING', label: 'Chẩn đoán hình ảnh' }
+    { value: 'IMAGING', label: 'Chẩn đoán hình ảnh' },
     { value: 'SURGERY', label: 'Phẫu thuật' },
     { value: 'OTHER', label: 'Khác' }
   ]},

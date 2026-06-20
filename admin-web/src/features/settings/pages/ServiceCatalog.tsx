@@ -10,6 +10,7 @@ import { StatsCard } from '@/components/common/StatsCard';
 import GradientButton from '@/components/common/GradientButton';
 import { Service } from '../types/settings';
 import { settingsApi } from '../api/settingsApi';
+import toast from 'react-hot-toast';
 
 export default function ServiceCatalog() {
   const [data, setData] = useState<Service[]>([]);
@@ -105,13 +106,18 @@ export default function ServiceCatalog() {
         service={editing}
         onClose={() => setEditing(null)}
         onSave={async (id: number, updated: any) => {
-          if (id === 0) {
-            await settingsApi.createService(updated);
-          } else {
-            await settingsApi.updateService(id, updated);
+          try {
+            if (id === 0) {
+              await settingsApi.createService(updated);
+            } else {
+              await settingsApi.updateService(id, updated);
+            }
+            toast.success(id === 0 ? 'Thêm dịch vụ thành công' : 'Cập nhật dịch vụ thành công');
+            await fetchData();
+            setEditing(null);
+          } catch (err: any) {
+            toast.error(err.response?.data?.message || 'Có lỗi xảy ra');
           }
-          await fetchData();
-          setEditing(null);
         }}
       />
 
@@ -120,8 +126,13 @@ export default function ServiceCatalog() {
         onClose={() => setDeleting(null)}
         onConfirm={async () => {
           if (deleting) {
-            await settingsApi.deleteService(deleting.serviceId);
-            await fetchData();
+            try {
+              await settingsApi.deleteService(deleting.serviceId);
+              toast.success('Xóa dịch vụ thành công');
+              await fetchData();
+            } catch (err: any) {
+              toast.error(err.response?.data?.message || 'Xóa dịch vụ thất bại');
+            }
           }
           setDeleting(null);
         }}

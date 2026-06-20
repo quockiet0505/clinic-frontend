@@ -9,6 +9,7 @@ import StaffFormDialog from '../components/StaffFormDialog';
 import GradientButton from '@/components/common/GradientButton';
 import { Staff } from '../types/staff';
 import { staffApi } from '../api/staffApi';
+import toast from 'react-hot-toast';
 
 export default function StaffList() {
   const [staffList, setStaffList] = useState<Staff[]>([]);
@@ -54,10 +55,15 @@ export default function StaffList() {
   }, [searchTerm, activeTab, ratingFilter]);
 
   const handleFormSubmit = async (formData: Record<string, unknown>, isEdit: boolean) => {
-    if (isEdit) await staffApi.update(selectedStaff!.staffId, formData);
-    else await staffApi.create(formData as Omit<Staff, 'staffId'>);
-    await fetchStaff();
-    setIsFormOpen(false);
+    try {
+      if (isEdit) await staffApi.update(selectedStaff!.staffId, formData);
+      else await staffApi.create(formData as Omit<Staff, 'staffId'>);
+      toast.success(isEdit ? 'Cập nhật nhân viên thành công' : 'Thêm nhân viên thành công');
+      await fetchStaff();
+      setIsFormOpen(false);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Thao tác thất bại');
+    }
   };
 
   return (
@@ -106,8 +112,13 @@ export default function StaffList() {
         onClose={() => setDeletingStaff(null)}
         onConfirm={async () => {
           if (deletingStaff) {
-            await staffApi.delete(deletingStaff.staffId);
-            await fetchStaff();
+            try {
+              await staffApi.delete(deletingStaff.staffId);
+              toast.success('Xóa nhân viên thành công');
+              await fetchStaff();
+            } catch (err: any) {
+              toast.error(err.response?.data?.message || 'Xóa nhân viên thất bại');
+            }
           }
           setDeletingStaff(null);
         }}

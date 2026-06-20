@@ -15,6 +15,8 @@ import {
   Mail,
   User,
   Stethoscope,
+  Ruler,
+  Scale
 } from 'lucide-react';
 
 import PatientHistoryTimeline from '../components/PatientHistoryTimeline';
@@ -164,6 +166,34 @@ export default function PatientDetails() {
                   label="Nhóm máu" 
                   value={patient.bloodType} 
                   valueClassName="text-rose-600 bg-rose-50 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap"
+                  isOneLine
+                />
+                <InfoRow 
+                  icon={Ruler} 
+                  label="Chiều cao" 
+                  value={patient.height ? `${patient.height} cm` : 'Chưa có'} 
+                  valueClassName="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap"
+                  isOneLine
+                />
+                <InfoRow 
+                  icon={Scale} 
+                  label="Cân nặng" 
+                  value={patient.weight ? `${patient.weight} kg` : 'Chưa có'} 
+                  valueClassName="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md font-semibold whitespace-nowrap"
+                  isOneLine
+                />
+                <InfoRow 
+                  icon={Activity} 
+                  label="Huyết áp" 
+                  value={patient.bloodPressure || 'Chưa có'} 
+                  valueClassName="text-slate-700 whitespace-nowrap"
+                  isOneLine
+                />
+                <InfoRow 
+                  icon={Activity} 
+                  label="Nhịp tim" 
+                  value={patient.pulse ? `${patient.pulse} bpm` : 'Chưa có'} 
+                  valueClassName="text-slate-700 whitespace-nowrap"
                   isOneLine
                 />
                 <InfoRow 

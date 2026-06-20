@@ -11,6 +11,7 @@ import GradientButton from '@/components/common/GradientButton';
 import { DoctorPricingFilterBar } from '../components/DoctorPricingFilterBar';
 import type { DoctorPricing } from '../types/settings';
 import { settingsApi } from '../api/settingsApi';
+import toast from 'react-hot-toast';
 
 export default function DoctorPricing() {
   const [search, setSearch] = useState('');
@@ -97,9 +98,14 @@ export default function DoctorPricing() {
         doctor={editingPrice}
         onClose={() => setEditingPrice(null)}
         onSave={async (id: number, data: any) => {
-          await settingsApi.createOrUpdateDoctorPrice(data);
-          await fetchData();
-          setEditingPrice(null);
+          try {
+            await settingsApi.createOrUpdateDoctorPrice(data);
+            toast.success('Lưu phí khám thành công');
+            await fetchData();
+            setEditingPrice(null);
+          } catch (err: any) {
+            toast.error(err.response?.data?.message || 'Có lỗi xảy ra');
+          }
         }}
       />
 
@@ -111,8 +117,13 @@ export default function DoctorPricing() {
         onClose={() => setDeletingPrice(null)}
         onConfirm={async () => {
           if (deletingPrice) {
-            await settingsApi.deleteDoctorPrice(deletingPrice.id);
-            await fetchData();
+            try {
+              await settingsApi.deleteDoctorPrice(deletingPrice.id);
+              toast.success('Xóa phí khám thành công');
+              await fetchData();
+            } catch (err: any) {
+              toast.error(err.response?.data?.message || 'Xóa phí khám thất bại');
+            }
           }
           setDeletingPrice(null);
         }}

@@ -3,8 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { MapPin, CheckCircle, CalendarClock, ShieldCheck, Clock, AlertCircle } from 'lucide-react';
 import { SectionContainer } from '@/components/common';
 import { BookingForm } from '../components/BookingForm';
-import { useToast } from '@/hooks/useToast';
-
+import { toast } from 'sonner';
 const STEPS = [
   { label: 'Dịch vụ & Bác sĩ', icon: '01' },
   { label: 'Ngày & Giờ', icon: '02' },
@@ -26,8 +25,6 @@ const GUARANTEES = [
 export const BookAppointment: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { toast } = useToast();
-
   const doctorId = Number(searchParams.get('doctorId')) || undefined;
   const expertiseId = Number(searchParams.get('expertiseId')) || undefined;
   const serviceId = Number(searchParams.get('serviceId')) || undefined;
@@ -39,7 +36,7 @@ export const BookAppointment: React.FC = () => {
   const bookingMode = mode === 'service' ? 'service' : 'doctor';
 
   const handleSubmit = () => {
-    toast({ title: 'Thành công', description: 'Lịch khám đã được đặt thành công!' });
+    toast.success('Lịch khám đã được đặt thành công!');
     navigate('/appointments/my');
   };
 

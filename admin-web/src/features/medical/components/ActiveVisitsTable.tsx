@@ -29,7 +29,7 @@ export default function ActiveVisitsTable({ data, onConsult, loading = false, pa
     {
       key: 'createdAt',
       label: 'Ngày & Mã HSBA',
-      className: 'w-[18%]',
+      className: 'w-[15%]',
       render: (visit) => (
         <div>
           <p className="text-sm font-medium text-slate-700 flex items-center gap-1">
@@ -43,7 +43,7 @@ export default function ActiveVisitsTable({ data, onConsult, loading = false, pa
     {
       key: 'patientName',
       label: 'Bệnh nhân',
-      className: 'w-[20%]',
+      className: 'w-[15%]',
       render: (visit) => (
         <div>
           <p className="font-medium text-slate-800">{visit.patientName}</p>
@@ -54,7 +54,7 @@ export default function ActiveVisitsTable({ data, onConsult, loading = false, pa
     {
       key: 'doctorName',
       label: 'Bác sĩ',
-      className: 'w-[15%]',
+      className: 'w-[10%]',
       render: (visit) => (
         <div className="flex items-center gap-2">
           <Stethoscope size={14} className="text-blue-500" />
@@ -65,7 +65,7 @@ export default function ActiveVisitsTable({ data, onConsult, loading = false, pa
     {
       key: 'vitalsTaken',
       label: 'Sinh hiệu',
-      className: 'w-[12%]',
+      className: 'w-[10%]',
       render: (visit) =>
         visit.vitalsTaken ? (
           <Badge className="bg-emerald-100 text-emerald-700 border-0 px-2 py-0.5 text-xs font-medium">
@@ -78,13 +78,13 @@ export default function ActiveVisitsTable({ data, onConsult, loading = false, pa
     {
       key: 'status',
       label: 'Trạng thái',
-      className: 'w-[12%]',
+      className: 'w-[15%]',
       render: (visit) => <StatusBadge status={visit.status} />,
     },
     {
       key: 'actions',
       label: 'Thao tác',
-      className: 'w-[13%]',
+      className: 'w-[10%]',
       render: (visit) => (
         <Button onClick={() => onConsult(visit.recordId)} size="sm" className="h-9 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm">
           Khám <ArrowRight size={14} className="ml-1.5" />

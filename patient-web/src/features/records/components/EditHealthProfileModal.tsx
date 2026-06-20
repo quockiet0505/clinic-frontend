@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Activity } from 'lucide-react';
 import { FormModal, type FormFieldConfig } from '@/components/common/FormModal';
 import { profileApi } from '@/features/profile/api/profileApi';
-import { useToast } from '@/hooks/useToast';
+import { toast } from 'sonner';
 import type { PatientProfile } from '@/features/profile/types/profile';
 
 interface EditHealthProfileModalProps {
@@ -30,7 +30,6 @@ export const EditHealthProfileModal: React.FC<EditHealthProfileModalProps> = ({
   profile,
   onSuccess,
 }) => {
-  const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
 
@@ -70,11 +69,11 @@ export const EditHealthProfileModal: React.FC<EditHealthProfileModalProps> = ({
         allergies: formData.allergies?.trim() || null,
         medicalHistory: formData.medicalHistory?.trim() || null,
       });
-      toast({ title: 'Thành công', description: 'Cập nhật hồ sơ sức khoẻ thành công' });
+      toast.success('Cập nhật hồ sơ sức khoẻ thành công');
       onOpenChange(false);
       onSuccess();
     } catch {
-      toast({ title: 'Lỗi', description: 'Không thể cập nhật hồ sơ sức khoẻ', variant: 'destructive' });
+      toast.error('Không thể cập nhật hồ sơ sức khoẻ');
     } finally {
       setIsSubmitting(false);
     }

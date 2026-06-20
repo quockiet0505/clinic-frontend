@@ -33,7 +33,7 @@ export default function PatientTable({ data, onViewDetails, onEdit, onDelete, lo
     {
       key: 'fullName',
       label: 'Bệnh nhân',
-      className: 'w-[28%] text-left',
+      className: 'w-[25%] text-left',
       noTruncate: true,
       render: (patient) => {
         const birthYear = getBirthYear(patient.dateOfBirth);
@@ -53,7 +53,7 @@ export default function PatientTable({ data, onViewDetails, onEdit, onDelete, lo
     {
       key: 'phone',
       label: 'Số điện thoại',
-      className: 'w-[16%]',
+      className: 'w-[15%]',
       render: (patient) => (
         <div className="flex items-center gap-2 text-sm text-slate-700">
           <Phone size={14} className="text-blue-500 shrink-0" />
@@ -64,7 +64,7 @@ export default function PatientTable({ data, onViewDetails, onEdit, onDelete, lo
     {
       key: 'address',
       label: 'Địa chỉ',
-      className: 'w-[26%]',
+      className: 'w-[30%]',
       render: (patient) => (
         <div className="flex items-start gap-2 text-sm text-slate-600 min-w-0">
           <MapPin size={14} className="text-rose-500 shrink-0 mt-0.5" />
@@ -78,13 +78,13 @@ export default function PatientTable({ data, onViewDetails, onEdit, onDelete, lo
       className: 'w-[30%]',
       render: (patient) => (
         <div className="flex gap-2 flex-wrap">
-          <Button onClick={() => onViewDetails(patient.patientId)} variant="outline" className="h-8 px-3 rounded-lg text-xs font-semibold border-emerald-200 text-emerald-600 hover:bg-emerald-50">
+          <Button onClick={() => onViewDetails(patient.patientId)} variant="outline" className="h-8 px-3 rounded-lg text-xs font-semibold border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-colors">
             <Eye size={14} className="mr-1.5" /> Chi tiết
           </Button>
-          <Button onClick={() => onEdit(patient)} variant="outline" className="h-8 px-3 rounded-lg text-xs font-semibold border-blue-200 text-blue-600 hover:bg-blue-50">
+          <Button onClick={() => onEdit(patient)} variant="outline" className="h-8 px-3 rounded-lg text-xs font-semibold border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-colors">
             <Edit2 size={14} className="mr-1.5" /> Sửa
           </Button>
-          <Button onClick={() => onDelete(patient)} variant="outline" className="h-8 px-3 rounded-lg text-xs font-semibold border-rose-200 text-rose-600 hover:bg-rose-50">
+          <Button onClick={() => onDelete(patient)} variant="outline" className="h-8 px-3 rounded-lg text-xs font-semibold border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 transition-colors">
             <Trash2 size={14} className="mr-1.5" /> Xóa
           </Button>
         </div>

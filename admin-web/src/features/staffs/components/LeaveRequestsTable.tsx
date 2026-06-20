@@ -26,8 +26,8 @@ export default function LeaveRequestsTable({ data, onAction, pagination }: Props
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-6 h-12">Nhân viên</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Thời gian nghỉ</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Lý do</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-left">Trạng thái</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-left w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

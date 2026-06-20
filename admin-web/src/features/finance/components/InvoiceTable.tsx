@@ -24,8 +24,8 @@ export default function InvoiceTable({ data, onActionClick, onPrintClick }: { da
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Invoice</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bệnh nhân</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Total Amount</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-left">Trạng thái</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-left w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

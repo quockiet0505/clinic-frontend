@@ -8,6 +8,7 @@ import LeaveRequestsFilterBar from '../components/LeaveRequestsFilterBar';
 import LeaveRequestsTable from '../components/LeaveRequestsTable';
 import { LeaveRequest } from '../types/staff';
 import { staffApi } from '../api/staffApi';
+import toast from 'react-hot-toast';
 
 const TODAY = new Date().toISOString().split('T')[0];
 
@@ -61,7 +62,12 @@ export default function LeaveRequests() {
   }, [searchTerm, activeView, roleFilter, filterDate]);
 
   const handleProcessLeave = (action: string, reason: string) => {
-    setRequests(requests.map(req => req.leaveId === selectedRequest?.leaveId ? { ...req, status: action as LeaveRequest['status'], approvedBy: 'System Admin', rejectionReason: reason } : req));
+    try {
+      setRequests(requests.map(req => req.leaveId === selectedRequest?.leaveId ? { ...req, status: action as LeaveRequest['status'], approvedBy: 'System Admin', rejectionReason: reason } : req));
+      toast.success('Đã lưu quyết định duyệt đơn');
+    } catch (err) {
+      toast.error('Có lỗi xảy ra khi duyệt đơn');
+    }
     setSelectedRequest(null);
   };
 

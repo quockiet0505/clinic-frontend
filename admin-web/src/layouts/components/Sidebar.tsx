@@ -103,7 +103,7 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = "http://local
       title: 'CÀI ĐẶT',
       allowedRoles: ['ADMIN'],
       items: [
-        // { name: 'Cài đặt chung', icon: Settings, path: '/settings/general' },
+        { name: 'Cài đặt chung', icon: Settings, path: '/settings/general' },
         { name: 'Phân quyền', icon: ShieldCheck, path: '/settings/roles' },
         { name: 'Danh mục Dịch vụ', icon: Layers, path: '/settings/services' },
         { name: 'Phí khám bệnh', icon: CircleDollarSign, path: '/settings/doctor_pricing' },

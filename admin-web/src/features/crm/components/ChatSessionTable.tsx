@@ -13,8 +13,8 @@ export default function ChatSessionTable({ data, onView }: { data: ChatSession[]
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Session ID</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">User</TableHead>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Duration</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Messages</TableHead>
-            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center w-[15%]">Thao tác</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-left">Messages</TableHead>
+            <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-left w-[15%]">Thao tác</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
