@@ -46,31 +46,31 @@ export const BookAppointment: React.FC = () => {
   return (
     <main className="w-full min-h-screen bg-[#f0f9ff]">
       {/* ── Hero banner ── */}
-      <div className="relative overflow-hidden bg-brand-dark py-10 px-4">
-        <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-primary-400/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-56 h-56 rounded-full bg-sky-400/10 blur-2xl pointer-events-none" />
+      <div className="relative overflow-hidden bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-primary-500 py-10 px-4">
+        <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" />
         <SectionContainer className="max-w-6xl relative z-10">
           {/* breadcrumb */}
-          <div className="flex items-center gap-1.5 text-[12px] font-semibold text-primary-400 mb-4">
+          <div className="flex items-center gap-1.5 text-[12px] font-semibold text-white/80 mb-4">
             <span
-              className="hover:text-primary-200 cursor-pointer transition-colors"
+              className="hover:text-white cursor-pointer transition-colors"
               onClick={() => navigate('/')}
             >Trang chủ</span>
-            <span className="text-white/20">/</span>
-            <span className="text-primary-200">Đặt lịch khám</span>
+            <span className="text-white/40">/</span>
+            <span className="text-white">Đặt lịch khám</span>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-primary-500/20 rounded-2xl flex items-center justify-center border border-primary-400/30">
-                  <CalendarClock className="w-5 h-5 text-primary-300" />
+                <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center border border-white/30 shadow-sm">
+                  <CalendarClock className="w-5 h-5 text-white" />
                 </div>
-                <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
+                <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight drop-shadow-sm">
                   Đặt Lịch Khám Trực Tuyến
                 </h1>
               </div>
-              <p className="text-primary-300 text-sm ml-[52px]">Đặt lịch nhanh, xác nhận ngay — không cần chờ đợi.</p>
+              <p className="text-white/90 text-sm ml-[52px] drop-shadow-sm">Đặt lịch nhanh, xác nhận ngay — không cần chờ đợi.</p>
             </div>
 
             {/* Step progress */}
@@ -78,15 +78,15 @@ export const BookAppointment: React.FC = () => {
               {STEPS.map((step, i) => (
                 <React.Fragment key={i}>
                   <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold transition-all ${
-                    i === 0 ? 'bg-primary-500 text-white shadow-md shadow-primary-500/30' : 'bg-white/5 text-primary-400 border border-white/10'
+                    i === 0 ? 'bg-white text-primary-600 shadow-md' : 'bg-white/10 text-white/80 border border-white/20'
                   }`}>
                     <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black ${
-                      i === 0 ? 'bg-white/20 text-white' : 'bg-white/5'
+                      i === 0 ? 'bg-primary-100 text-primary-600' : 'bg-white/20'
                     }`}>{step.icon}</span>
                     {step.label}
                   </div>
                   {i < STEPS.length - 1 && (
-                    <div className={`w-5 h-0.5 ${i === 0 ? 'bg-primary-400/50' : 'bg-white/10'}`} />
+                    <div className={`w-5 h-0.5 ${i === 0 ? 'bg-white/50' : 'bg-white/20'}`} />
                   )}
                 </React.Fragment>
               ))}
@@ -137,6 +137,10 @@ export const BookAppointment: React.FC = () => {
                   />
                 </div>
               ))}
+            </div>
+            <div className="mt-3 pt-3 border-t border-amber-100 flex items-start gap-2 bg-red-50/50 p-2 rounded-lg">
+              <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+              <p className="text-[12px] text-red-600 font-bold leading-snug">Cảnh báo: Nếu huỷ hoặc không đến khám quá 3 lần, tài khoản của bạn sẽ bị khoá tự động.</p>
             </div>
           </div>
 

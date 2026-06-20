@@ -125,8 +125,8 @@ function transformFollowUp(follow: ApiFollowUp): FollowUp {
 
 export const recordApi = {
   getMedicalHistory: async (): Promise<MedicalRecord[]> => {
-    const response = await axiosInstance.get<ApiMedicalRecordResponse[]>('/medical-records/my');
-    return response.data.map(transformMedicalRecord);
+    const response = await axiosInstance.get<{data: ApiMedicalRecordResponse[]}>('/medical-records/my');
+    return response.data.data.map(transformMedicalRecord);
   },
 
   getRecordDetail: async (recordId: number): Promise<MedicalRecordDetail> => {

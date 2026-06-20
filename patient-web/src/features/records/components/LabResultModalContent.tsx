@@ -1,11 +1,11 @@
 import React from 'react';
-import { CalendarDays, UserRound, X, Download, FlaskConical, AlertCircle, Activity, FileText } from 'lucide-react';
+import { CalendarDays, X, Download, FlaskConical, AlertCircle, Activity, FileText } from 'lucide-react';
 import { DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
+import { generatePdf, formatDoctorName } from '@/utils/generatePdf';
 
 const getStatusProps = (result: any) => {
   const data = result.resultData?.toLowerCase() || '';
   const conclusion = result.conclusion?.toLowerCase() || '';
-  
   if (data.includes('bất thường') || conclusion.includes('bất thường') || data.includes('cao') || data.includes('thấp')) {
     return { label: 'Bất thường', color: 'bg-amber-50 text-amber-600 border-amber-200', dot: 'bg-amber-500' };
   }
@@ -17,6 +17,11 @@ const getStatusProps = (result: any) => {
 
 export const LabResultModalContent = ({ result }: { result: any }) => {
   const status = getStatusProps(result);
+  const pdfId = `pdf-lab-${result.resultId}`;
+
+  const handleDownloadPdf = () =>
+    generatePdf(pdfId, `XetNghiem_${String(result.resultId || '0000').padStart(5, '0')}.pdf`);
+
   return (
     <DialogContent showCloseButton={false} className="w-[95vw] sm:max-w-5xl max-w-5xl rounded-3xl bg-white border-0 p-0 shadow-2xl overflow-hidden">
       <div className="flex flex-col" style={{ maxHeight: '85vh' }}>
@@ -34,7 +39,12 @@ export const LabResultModalContent = ({ result }: { result: any }) => {
                   <div className="flex items-center gap-3 mt-2 text-[13px] text-slate-500 font-medium flex-wrap">
                     <span>Mã XN: <strong className="text-slate-700">#{String(result.resultId || '00000').padStart(5, '0')}</strong></span>
                     <span className="w-1 h-1 bg-slate-300 rounded-full" />
-                    <span>{new Date(result.enteredAt || new Date()).toLocaleString('vi-VN')}</span>
+                    <span className="flex items-center gap-1.5">
+                      <CalendarDays className="w-3.5 h-3.5" />
+                      {new Date(result.enteredAt || Date.now()).toLocaleString('vi-VN')}
+                    </span>
+                    <span className="w-1 h-1 bg-slate-300 rounded-full" />
+                    <span>{formatDoctorName(result.doctorName)}</span>
                   </div>
                 </div>
               </div>
@@ -62,14 +72,14 @@ export const LabResultModalContent = ({ result }: { result: any }) => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-1">Bác sĩ chỉ định</p>
-                  <p className="font-bold text-slate-700 text-[15px]">{result.doctorName || 'Đang cập nhật'}</p>
+                  <p className="font-bold text-slate-700 text-[15px]">{formatDoctorName(result.doctorName)}</p>
                 </div>
                 <div>
                   <p className="text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-1">Kỹ thuật viên</p>
                   <p className="font-bold text-slate-700 text-[15px]">{result.enteredBy || 'Đang cập nhật'}</p>
                 </div>
               </div>
-              <div className="w-full h-px bg-slate-200"></div>
+              <div className="w-full h-px bg-slate-200" />
               <div>
                 <h3 className="font-bold text-slate-400 uppercase tracking-wider text-[13px] mb-3 flex items-center gap-2">
                   <FileText className="w-4 h-4 text-blue-500" /> Kết luận của bác sĩ
@@ -99,8 +109,12 @@ export const LabResultModalContent = ({ result }: { result: any }) => {
             </div>
           </div>
         </div>
+
         <div className="bg-white border-t border-slate-200 p-4 px-6 md:px-8 flex gap-3 justify-end shrink-0">
-          <button className="cursor-pointer px-5 py-2.5 rounded-xl border border-transparent bg-emerald-500 font-bold text-white hover:bg-emerald-600 transition-colors flex items-center gap-2 text-[14px] shadow-sm shadow-emerald-200">
+          <button
+            onClick={handleDownloadPdf}
+            className="cursor-pointer px-5 py-2.5 rounded-xl font-bold text-cyan-700 bg-cyan-50 border border-cyan-200 hover:bg-cyan-100 transition-colors flex items-center gap-2 text-[14px] shadow-sm"
+          >
             <Download className="w-4 h-4" /> Tải PDF
           </button>
         </div>

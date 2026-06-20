@@ -27,6 +27,7 @@ export interface ServiceOrder {
   orderId: number;
   serviceId: number;
   serviceName: string;
+  price?: number;
   status: string;
   orderedBy: string;
   createdAt: string;
@@ -56,6 +57,11 @@ export interface MedicalRecord {
 }
 
 export interface MedicalRecordDetail extends MedicalRecord {
+  patientFullName?: string;
+  patientGender?: string;
+  patientDob?: string;
+  patientPhone?: string;
+  patientAddress?: string;
   prescription?: Prescription;
   serviceOrders: ServiceOrder[];
   followUps: FollowUp[];

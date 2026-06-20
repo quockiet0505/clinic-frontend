@@ -70,7 +70,7 @@ export const SpecialtyCarousel: React.FC<Props> = ({ specialties, isLoading }) =
                 onClick={() => handleSpecialtyClick(item.expertiseId)}
                 className="cursor-pointer flex flex-col items-center text-center group"
               >
-                <div className="h-[60px] w-[60px] mb-3 flex items-center justify-center relative">
+        <div className="h-[60px] w-[60px] mb-3 flex items-center justify-center relative">
                   <ImageWithFallback
                     src={`${staticUrl}${item.iconUrl}`}
                     alt={item.expertiseName}

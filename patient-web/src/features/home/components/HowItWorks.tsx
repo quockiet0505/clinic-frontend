@@ -34,6 +34,11 @@ export const HowItWorks: React.FC<Props> = ({ services, isLoading }) => {
   };
 
   return (
+    /*
+      Nhận từ FeaturedDoctors: kết thúc white
+      Bắt đầu white → gradient-white-blue → gradient-blue
+      → Kết thúc gradient-blue (#e0f2fe) trước Footer
+    */
     <section className="py-14 bg-gradient-to-b from-white via-gradient-white-blue to-gradient-blue">
       <SectionContainer className="relative max-w-[1140px]">
         <SectionHeader title="Chăm sóc sức khỏe toàn diện" />

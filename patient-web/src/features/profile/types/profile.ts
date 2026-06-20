@@ -1,22 +1,36 @@
 export interface PatientProfile {
-  patient_id: number;
-  account_id: number;
+  patientId: number;
+  accountId: number;
   email: string;
-  full_name: string;
+  fullName: string;
   phone?: string;
   gender?: 'MALE' | 'FEMALE' | 'OTHER';
-  date_of_birth?: string;
+  dateOfBirth?: string;
   address?: string;
-  avatar_url?: string;
+  avatarUrl?: string;
+  height?: number | null;
+  weight?: number | null;
+  bloodPressure?: string | null;
+  pulse?: number | null;
+  bloodType?: string | null;
+  allergies?: string | null;
+  medicalHistory?: string | null;
 }
 
 export interface UpdateProfilePayload {
-  full_name: string;
+  fullName: string;
   phone?: string;
   email?: string;
   gender?: string;
-  date_of_birth?: string;
+  dateOfBirth?: string;
   address?: string;
+  height?: number | null;
+  weight?: number | null;
+  bloodPressure?: string | null;
+  pulse?: number | null;
+  bloodType?: string | null;
+  allergies?: string | null;
+  medicalHistory?: string | null;
 }
 
 export interface ChangePasswordRequest {

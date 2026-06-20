@@ -27,7 +27,7 @@ export const MyProfile: React.FC = () => {
   if (loading) {
     return (
       <main className="min-h-screen bg-[#f0f9ff]">
-        <div className="bg-brand-dark py-12 px-4">
+        <div className="bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-primary-500 py-12 px-4">
           <SectionContainer className="max-w-5xl">
             <div className="h-5 bg-white/10 rounded w-32 mb-3 animate-pulse" />
             <div className="h-8 bg-white/10 rounded w-52 animate-pulse" />
@@ -76,29 +76,30 @@ export const MyProfile: React.FC = () => {
   return (
     <main className="min-h-screen bg-[#f0f9ff]">
       <Tabs defaultValue="personal" className="block w-full">
-        {/* ── Hero Header ── */}
-        <div className="relative overflow-hidden bg-brand-dark py-10 px-4">
-          <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-primary-500/10 blur-3xl pointer-events-none" />
+        {/* ── Hero Banner with tabs ── */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-primary-500 py-10 px-4">
+          <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
           <SectionContainer className="max-w-5xl relative z-10">
-            <div className="flex items-center gap-1.5 text-[12px] font-semibold text-primary-400 mb-3">
-              <span>Trang chủ</span><span className="text-white/20">/</span>
-              <span className="text-primary-200">Hồ sơ cá nhân</span>
+            <div className="flex items-center gap-1.5 text-[12px] font-semibold text-white/80 mb-3">
+              <span className="hover:text-white cursor-pointer transition-colors" onClick={() => window.location.href = '/'}>Trang chủ</span>
+              <span className="text-white/40">/</span>
+              <span className="text-white">Hồ sơ cá nhân</span>
             </div>
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-primary-500/20 rounded-2xl flex items-center justify-center border border-primary-400/30">
-                  <User className="w-5 h-5 text-primary-300" />
+                <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center border border-white/30 shadow-sm">
+                  <User className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-black text-white tracking-tight">Hồ Sơ Cá Nhân</h1>
-                  <p className="text-primary-300 text-sm">{profile.full_name}</p>
+                  <h1 className="text-2xl font-black text-white tracking-tight drop-shadow-sm">Hồ Sơ Cá Nhân</h1>
+                  <p className="text-white/90 text-sm drop-shadow-sm">{profile.fullName}</p>
                 </div>
               </div>
-              <TabsList className="bg-white/10 p-1 rounded-xl flex gap-1 h-11 border border-white/10">
-                <TabsTrigger value="personal" className="rounded-lg px-5 h-full text-[13px] font-bold text-primary-300 gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm cursor-pointer">
+              <TabsList className="bg-white/20 p-1 rounded-xl flex gap-1 h-11 border border-white/30 shadow-sm">
+                <TabsTrigger value="personal" className="rounded-lg px-5 h-full text-[13px] font-bold text-white gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm cursor-pointer">
                   <User className="w-4 h-4" /> Thông tin
                 </TabsTrigger>
-                <TabsTrigger value="security" className="rounded-lg px-5 h-full text-[13px] font-bold text-primary-300 gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm cursor-pointer">
+                <TabsTrigger value="security" className="rounded-lg px-5 h-full text-[13px] font-bold text-white gap-2 data-[state=active]:bg-white data-[state=active]:text-primary-600 data-[state=active]:shadow-sm cursor-pointer">
                   <ShieldCheck className="w-4 h-4" /> Bảo mật
                 </TabsTrigger>
               </TabsList>
@@ -117,14 +118,14 @@ export const MyProfile: React.FC = () => {
                   <div className="w-24 h-24 bg-white p-1.5 rounded-full shadow-lg mb-3 relative group cursor-pointer">
                     <div className="w-full h-full rounded-full bg-primary-50 flex items-center justify-center border-2 border-primary-100">
                       <span className="text-3xl font-black text-primary-500">
-                        {profile.full_name ? profile.full_name.charAt(0).toUpperCase() : 'U'}
+                        {profile.fullName ? profile.fullName.charAt(0).toUpperCase() : 'U'}
                       </span>
                     </div>
-                    <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
+                    <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <Camera className="w-8 h-8 text-white" />
                     </div>
                   </div>
-                  <h2 className="text-[17px] font-black text-brand-dark">{profile.full_name}</h2>
+                  <h2 className="text-[17px] font-black text-brand-dark">{profile.fullName}</h2>
                   <div className="flex items-center gap-2 mt-2 mb-5">
                     <span className="text-primary-600 font-bold text-[12px] bg-primary-50 px-2.5 py-1 rounded-full border border-primary-100">Bệnh nhân</span>
                     <span className="flex items-center gap-1 text-slate-500 font-medium text-[12px] bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200">

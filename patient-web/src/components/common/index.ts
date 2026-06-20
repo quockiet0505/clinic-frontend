@@ -1,5 +1,6 @@
 // src/components/common/index.ts
 
+export * from './FormModal';
 export * from './CarouselWrapper';
 export * from './ConfirmDialog';
 export * from './EmptyState';
@@ -22,3 +23,4 @@ export * from './GradientButton';
 export * from './HeaderMenuDropdown';
 export * from './ScrollToTop';
 export * from './ImageWithFallback';
+export * from './ClinicPdfLayout';

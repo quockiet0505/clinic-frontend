@@ -21,7 +21,9 @@ import { AppointmentDetail } from '@/features/appointments/pages/AppointmentDeta
 // // Patient Area Features
 import { MyProfile } from '@/features/profile/pages/MyProfile';
 import { BillingHistory } from '@/features/profile/pages/BillingHistory';
+import { MyReviews } from '@/features/profile/pages/MyReviews';
 import { MyRecords } from '@/features/records/pages/MyRecords';
+import { HealthProfile } from '@/features/records/pages/HealthProfile';
 import { Prescriptions } from '@/features/records/pages/Prescriptions';
 import { LabResults } from '@/features/records/pages/LabResults';
 
@@ -48,12 +50,14 @@ export const router = createBrowserRouter([
         children: [
           { path: 'book', element: <BookAppointment /> },
           { path: 'detail', element: <AppointmentDetail /> },
-          { path: 'my', element: <MyAppointments /> },
+          { path: 'my', element: <MyAppointments /> }
         ]
       },
       { path: 'profile', element: <MyProfile /> },
       { path: 'profile/billing', element: <BillingHistory /> },
-      { path: 'records', element: <MyRecords /> },
+      { path: 'profile/reviews', element: <MyReviews /> },
+      { path: 'records', element: <HealthProfile /> },
+      { path: 'records/history', element: <MyRecords /> },
       { path: 'records/prescriptions', element: <Prescriptions /> },
       { path: 'records/lab-results', element: <LabResults /> },
       // { path: 'chatbot', element: <FloatingChatbot /> },

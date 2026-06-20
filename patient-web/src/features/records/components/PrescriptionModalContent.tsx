@@ -1,8 +1,14 @@
-import React from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Pill, CalendarDays, UserRound, FileSignature, X, Printer, Download, Stethoscope } from 'lucide-react';
 import { DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
+import { generatePdf, formatDoctorName } from '@/utils/generatePdf';
 
 export const PrescriptionModalContent = ({ prescription }: { prescription: any }) => {
+  const pdfId = `pdf-pres-${prescription.prescriptionId}`;
+
+  const handleDownloadPdf = () =>
+    generatePdf(pdfId, `DonThuoc_${String(prescription.prescriptionId).padStart(5, '0')}.pdf`);
+
   return (
     <DialogContent showCloseButton={false} className="w-[95vw] sm:max-w-5xl max-w-5xl rounded-3xl bg-white border-0 p-0 shadow-2xl overflow-hidden">
       <div className="flex flex-col" style={{ maxHeight: '85vh' }}>
@@ -18,7 +24,7 @@ export const PrescriptionModalContent = ({ prescription }: { prescription: any }
                     Đơn thuốc #{String(prescription.prescriptionId).padStart(5, '0')}
                   </h2>
                   <div className="flex items-center gap-3 mt-2 text-[13px] text-slate-500 font-medium flex-wrap">
-                    <span className="flex items-center gap-1.5"><UserRound className="w-3.5 h-3.5" /> BS. <strong className="text-slate-700">{prescription.doctorName}</strong></span>
+                    <span className="flex items-center gap-1.5"><UserRound className="w-3.5 h-3.5" /> {formatDoctorName(prescription.doctorName)}</span>
                     <span className="w-1 h-1 bg-slate-300 rounded-full" />
                     <span className="flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5" /> {new Date(prescription.createdAt).toLocaleString('vi-VN')}</span>
                   </div>
@@ -42,7 +48,7 @@ export const PrescriptionModalContent = ({ prescription }: { prescription: any }
                 </h3>
                 <p className="font-bold text-slate-800 text-[16px]">{prescription.diagnosis}</p>
               </div>
-              <div className="w-full h-px bg-slate-200"></div>
+              <div className="w-full h-px bg-slate-200" />
               <div>
                 <h3 className="text-[13px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-2">
                   <FileSignature className="w-4 h-4 text-amber-500" /> Lời dặn của bác sĩ
@@ -97,11 +103,18 @@ export const PrescriptionModalContent = ({ prescription }: { prescription: any }
             </div>
           </div>
         </div>
+
         <div className="bg-white border-t border-slate-200 p-4 px-6 md:px-8 flex gap-3 justify-end shrink-0">
-          <button className="cursor-pointer px-5 py-2.5 rounded-xl border border-slate-200 bg-white font-bold text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors flex items-center gap-2 text-[14px] shadow-sm">
+          <button
+            onClick={() => window.print()}
+            className="cursor-pointer px-5 py-2.5 rounded-xl border border-slate-200 bg-white font-bold text-slate-600 hover:bg-slate-50 transition-colors flex items-center gap-2 text-[14px] shadow-sm"
+          >
             <Printer className="w-4 h-4" /> In đơn
           </button>
-          <button className="cursor-pointer px-5 py-2.5 rounded-xl border border-transparent bg-emerald-500 font-bold text-white hover:bg-emerald-600 transition-colors flex items-center gap-2 text-[14px] shadow-sm shadow-emerald-200">
+          <button
+            onClick={handleDownloadPdf}
+            className="cursor-pointer px-5 py-2.5 rounded-xl font-bold text-cyan-700 bg-cyan-50 border border-cyan-200 hover:bg-cyan-100 transition-colors flex items-center gap-2 text-[14px] shadow-sm"
+          >
             <Download className="w-4 h-4" /> Tải PDF
           </button>
         </div>

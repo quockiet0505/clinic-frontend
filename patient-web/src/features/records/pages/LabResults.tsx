@@ -5,13 +5,23 @@ import { SearchInput } from '@/components/common/SearchInput';
 import { SectionContainer } from '@/components/common';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { LabResultModalContent } from '../components/LabResultModalContent';
+import { ClinicPdfLayout } from '@/components/common/ClinicPdfLayout';
+import { generatePdf, formatDoctorName } from '@/utils/generatePdf';
+import { profileApi } from '@/features/profile/api/profileApi';
+import type { PatientProfile } from '@/features/profile/types/profile';
 
 export const LabResults: React.FC = () => {
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('ALL');
+  const [patientProfile, setPatientProfile] = useState<PatientProfile | null>(null);
+
+  useEffect(() => {
+    profileApi.getMyProfile()
+      .then(setPatientProfile)
+      .catch(() => {});
+  }, []);
 
   React.useEffect(() => {
     const fetchResults = async () => {
@@ -21,14 +31,12 @@ export const LabResults: React.FC = () => {
           recordApi.getLabResults(),
           recordApi.getMedicalHistory().catch(() => [])
         ]);
-        
-        const recordsMap = new Map(recordsData.map((r: any) => [r.recordId, r]));
+        const recordsMap = new Map<any, any>(recordsData.map((r: any) => [r.recordId, r] as [any, any]));
         const enriched = labData.map((r: any) => ({
           ...r,
           doctorName: recordsMap.get(r.recordId)?.mainDoctorName || 'Bác sĩ chỉ định',
           diagnosis: recordsMap.get(r.recordId)?.diagnosis || 'Chưa cập nhật chẩn đoán',
         }));
-        
         setResults(enriched);
       } catch (error) {
         console.error('Failed to fetch lab results:', error);
@@ -41,16 +49,14 @@ export const LabResults: React.FC = () => {
 
   const filteredResults = results.filter((r: any) => {
     const sName = (r.serviceName || 'Xét nghiệm cận lâm sàng').toLowerCase();
-    const isAbnormal = (r.resultData?.toLowerCase().includes('bất thường') || r.conclusion?.toLowerCase().includes('bất thường'));
+    const isAbnormal = r.resultData?.toLowerCase().includes('bất thường') || r.conclusion?.toLowerCase().includes('bất thường');
     const isCompleted = !!r.resultData;
-
-    const matchSearch = r.resultData?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    const matchSearch =
+      r.resultData?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       r.conclusion?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       r.doctorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sName.includes(searchQuery.toLowerCase());
-
     if (!matchSearch) return false;
-
     switch (filterType) {
       case 'COMPLETED': return isCompleted;
       case 'PROCESSING': return !isCompleted;
@@ -64,7 +70,7 @@ export const LabResults: React.FC = () => {
   if (loading) {
     return (
       <main className="min-h-screen bg-[#f0f9ff]">
-        <div className="bg-brand-dark py-12 px-4">
+        <div className="bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-primary-500 py-12 px-4">
           <SectionContainer className="max-w-4xl">
             <div className="h-5 bg-white/10 rounded w-32 mb-3 animate-pulse" />
             <div className="h-8 bg-white/10 rounded w-52 animate-pulse" />
@@ -83,32 +89,33 @@ export const LabResults: React.FC = () => {
   return (
     <main className="min-h-screen bg-[#f0f9ff]">
       {/* ── Hero Banner ── */}
-      <div className="relative overflow-hidden bg-brand-dark py-10 px-4">
-        <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-primary-500 py-10 px-4">
+        <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
         <SectionContainer className="max-w-4xl relative z-10">
-          <div className="flex items-center gap-1.5 text-[12px] font-semibold text-primary-400 mb-3">
-            <span>Trang chủ</span><span className="text-white/20">/</span>
-            <span className="text-primary-200">Kết quả xét nghiệm</span>
+          <div className="flex items-center gap-1.5 text-[12px] font-semibold text-white/80 mb-3">
+            <span className="hover:text-white cursor-pointer transition-colors" onClick={() => window.location.href = '/'}>Trang chủ</span>
+            <span className="text-white/40">/</span>
+            <span className="text-white">Kết quả xét nghiệm</span>
           </div>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-cyan-500/20 rounded-2xl flex items-center justify-center border border-cyan-400/30">
-                <FlaskConical className="w-5 h-5 text-cyan-400" />
+              <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center border border-white/30 shadow-sm">
+                <FlaskConical className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-black text-white tracking-tight">Kết Quả Xét Nghiệm & CLS</h1>
-                <p className="text-primary-300 text-sm">Xem và tải kết quả chẩn đoán cận lâm sàng</p>
+                <h1 className="text-2xl font-black text-white tracking-tight drop-shadow-sm">Kết Quả Xét Nghiệm & CLS</h1>
+                <p className="text-white/90 text-sm drop-shadow-sm">Xem và tải kết quả chẩn đoán cận lâm sàng</p>
               </div>
             </div>
             <div className="w-full md:w-80 shrink-0">
-              <SearchInput value={searchQuery} onSearch={setSearchQuery} placeholder="Tìm xét nghiệm, kết luận..." className="h-11 shadow-sm" />
+              <SearchInput value={searchQuery} onSearch={setSearchQuery} placeholder="Tìm xét nghiệm, kết luận..." className="h-11 shadow-md border-transparent bg-white text-slate-700 placeholder:text-slate-400 focus-within:ring-4 focus-within:ring-white/20" />
             </div>
           </div>
         </SectionContainer>
       </div>
 
       <SectionContainer className="max-w-4xl py-8 flex flex-col gap-6">
-        {/* Toolbar: Filters - Modern Segmented Control */}
+        {/* Filters */}
         <div className="bg-slate-100/80 p-1 rounded-[14px] border border-slate-200/60 shadow-sm flex items-center gap-1 overflow-x-auto hide-scrollbar w-full md:w-fit">
           {[
             { id: 'ALL', label: `Tất cả (${results.length})` },
@@ -116,14 +123,14 @@ export const LabResults: React.FC = () => {
             { id: 'PROCESSING', label: 'Đang xử lý' },
             { id: 'ABNORMAL', label: 'Bất thường' },
             { id: 'CLS', label: 'Chẩn đoán hình ảnh' },
-            { id: 'XN', label: 'Xét nghiệm' }
+            { id: 'XN', label: 'Xét nghiệm' },
           ].map(tab => (
             <button
               key={tab.id}
               onClick={() => setFilterType(tab.id)}
               className={`px-4 py-2 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
-                filterType === tab.id 
-                  ? 'bg-white text-cyan-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] border border-slate-200/50' 
+                filterType === tab.id
+                  ? 'bg-white text-cyan-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] border border-slate-200/50'
                   : 'bg-transparent text-slate-500 border border-transparent hover:text-slate-700'
               }`}
             >
@@ -135,7 +142,7 @@ export const LabResults: React.FC = () => {
         <div className="flex flex-col gap-4">
           {filteredResults.length > 0 ? (
             filteredResults.map((result: any) => (
-              <LabResultCard key={result.resultId} result={result} />
+              <LabResultCard key={result.resultId} result={result} patientProfile={patientProfile} />
             ))
           ) : (
             <div className="rounded-2xl border border-slate-200 shadow-sm p-14 text-center flex flex-col items-center justify-center bg-white mt-2">
@@ -154,10 +161,11 @@ export const LabResults: React.FC = () => {
   );
 };
 
+/* ─────────────────────────────────────── helpers ───────────── */
+
 const getStatusProps = (result: any) => {
   const data = result.resultData?.toLowerCase() || '';
   const conclusion = result.conclusion?.toLowerCase() || '';
-  
   if (data.includes('bất thường') || conclusion.includes('bất thường') || data.includes('cao') || data.includes('thấp')) {
     return { label: 'Bất thường', color: 'bg-amber-50 text-amber-600 border-amber-200', dot: 'bg-amber-500' };
   }
@@ -167,12 +175,17 @@ const getStatusProps = (result: any) => {
   return { label: 'Đã có kết quả', color: 'bg-cyan-50 text-cyan-700 border-cyan-200', dot: 'bg-cyan-500' };
 };
 
-const LabResultCard: React.FC<{ result: any }> = ({ result }) => {
+/* ─────────────────────────────────────── LabResultCard ─────── */
+
+const LabResultCard: React.FC<{ result: any; patientProfile: PatientProfile | null }> = ({ result, patientProfile }) => {
   const status = getStatusProps(result);
   const isAbnormal = status.label === 'Bất thường';
-  
   const isImaging = result.serviceName?.toLowerCase().includes('chụp') || result.serviceName?.toLowerCase().includes('siêu âm');
   const serviceTypeLabel = isImaging ? 'Chẩn đoán hình ảnh' : 'Xét nghiệm';
+  const pdfId = `pdf-lab-${result.resultId}`;
+
+  const handleDownloadPdf = () =>
+    generatePdf(pdfId, `XetNghiem_${String(result.resultId || '0000').padStart(5, '0')}.pdf`);
 
   return (
     <Dialog>
@@ -213,26 +226,63 @@ const LabResultCard: React.FC<{ result: any }> = ({ result }) => {
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6">
             <div className="flex items-center gap-2 text-[14px] text-slate-600">
               <UserRound className="w-4 h-4 text-slate-400 shrink-0" />
-              <span className="font-bold">BS. {result.doctorName || 'Đang cập nhật'}</span>
+              <span className="font-bold">{formatDoctorName(result.doctorName)}</span>
             </div>
-            <div className="flex items-center gap-2 text-[14px] text-slate-600">
-              <Stethoscope className="w-4 h-4 text-slate-400 shrink-0" />
-              <span className="font-medium text-[13px]">KTV: {result.technicianName || 'Đang cập nhật'}</span>
-            </div>
+            {result.technicianName && (
+              <div className="flex items-center gap-2 text-[14px] text-slate-600">
+                <Stethoscope className="w-4 h-4 text-slate-400 shrink-0" />
+                <span className="font-medium text-[13px]">KTV: {result.technicianName}</span>
+              </div>
+            )}
           </div>
           <div className="flex gap-2 w-full md:w-auto">
-             <button className="flex-1 md:flex-none justify-center flex items-center gap-2 text-[13px] font-bold text-slate-600 bg-white border border-slate-200 px-5 py-2.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer shadow-sm">
+            <button
+              onClick={handleDownloadPdf}
+              className="flex-1 md:flex-none justify-center flex items-center gap-2 text-[13px] font-bold text-cyan-700 bg-cyan-50 border border-cyan-200 px-5 py-2.5 rounded-xl hover:bg-cyan-100 hover:border-cyan-300 transition-colors cursor-pointer shadow-sm"
+            >
               <Download className="w-4 h-4" /> Tải PDF
-             </button>
-             <DialogTrigger asChild>
-               <button className="flex-1 md:flex-none justify-center flex items-center gap-2 text-[13px] font-bold text-white bg-cyan-500 border border-transparent px-5 py-2.5 rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer shadow-sm active:scale-[0.98]">
-                 Xem kết quả <ChevronRight className="w-4 h-4" />
-               </button>
-             </DialogTrigger>
+            </button>
+            <DialogTrigger asChild>
+              <button className="flex-1 md:flex-none justify-center flex items-center gap-2 text-[13px] font-bold text-white bg-cyan-500 border border-transparent px-5 py-2.5 rounded-xl hover:bg-cyan-600 transition-colors cursor-pointer shadow-sm active:scale-[0.98]">
+                Xem kết quả <ChevronRight className="w-4 h-4" />
+              </button>
+            </DialogTrigger>
           </div>
         </div>
       </div>
+
       <LabResultModalContent result={result} />
+
+      {/* ── Common PDF layout (hidden) ── */}
+      <ClinicPdfLayout
+        id={pdfId}
+        documentTitle="KẾT QUẢ XÉT NGHIỆM"
+        documentCode={`#${String(result.resultId || '00000').padStart(5, '0')}`}
+        issuedDate={new Date(result.enteredAt || Date.now()).toLocaleDateString('vi-VN')}
+        patient={{
+          name: result.patientFullName || patientProfile?.fullName,
+          gender: result.patientGender || patientProfile?.gender,
+          dob: result.patientDob || patientProfile?.dateOfBirth,
+          phone: result.patientPhone || patientProfile?.phone,
+          address: result.patientAddress || patientProfile?.address,
+          bloodType: patientProfile?.bloodType,
+          height: patientProfile?.height,
+          weight: patientProfile?.weight,
+          bloodPressure: patientProfile?.bloodPressure,
+          pulse: patientProfile?.pulse,
+          allergies: patientProfile?.allergies,
+          medicalHistory: patientProfile?.medicalHistory,
+        }}
+        doctorName={result.doctorName}
+        technicianName={result.enteredBy}
+        serviceName={result.serviceName}
+        extraSections={[
+          { title: 'Kết quả đo lường', content: result.resultData || 'Chưa có dữ liệu.' },
+        ]}
+        conclusion={result.conclusion}
+        serviceFee={result.price}
+        totalAmount={result.price}
+      />
     </Dialog>
   );
 };

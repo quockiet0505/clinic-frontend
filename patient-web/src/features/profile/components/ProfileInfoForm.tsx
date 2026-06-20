@@ -14,12 +14,19 @@ interface ProfileInfoFormProps {
 
 export const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSuccess }) => {
   const [formData, setFormData] = useState<UpdateProfilePayload>({
-    full_name: initialData.full_name,
+    fullName: initialData.fullName,
     phone: initialData.phone || '',
     email: initialData.email || '',
     gender: initialData.gender || '',
-    date_of_birth: initialData.date_of_birth || '',
+    dateOfBirth: initialData.dateOfBirth || '',
     address: initialData.address || '',
+    height: initialData.height ?? null,
+    weight: initialData.weight ?? null,
+    bloodPressure: initialData.bloodPressure ?? null,
+    pulse: initialData.pulse ?? null,
+    bloodType: initialData.bloodType ?? null,
+    allergies: initialData.allergies ?? null,
+    medicalHistory: initialData.medicalHistory ?? null,
   });
 
   const [isGenderOpen, setIsGenderOpen] = useState(false);
@@ -85,8 +92,8 @@ export const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, o
             <div className="relative">
               <Input
                 required
-                value={formData.full_name}
-                onChange={(e) => handleChange('full_name', e.target.value)}
+                value={formData.fullName}
+                onChange={(e) => handleChange('fullName', e.target.value)}
                 className="h-12 rounded-xl pl-11 pr-4 text-[15px] font-medium border-slate-200 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 shadow-sm bg-slate-50/50 hover:bg-white transition-colors"
                 placeholder="Nhập họ và tên..."
               />
@@ -137,8 +144,8 @@ export const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, o
             <div className="relative">
               <Input
                 type="date"
-                value={formData.date_of_birth}
-                onChange={(e) => handleChange('date_of_birth', e.target.value)}
+                value={formData.dateOfBirth}
+                onChange={(e) => handleChange('dateOfBirth', e.target.value)}
                 className="h-12 rounded-xl px-4 text-[15px] font-medium border-slate-200 focus-visible:ring-indigo-500/20 focus-visible:border-indigo-500 shadow-sm bg-slate-50/50 hover:bg-white transition-colors"
               />
             </div>
@@ -201,7 +208,7 @@ export const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, o
       </div>
 
       <div className="flex justify-end mt-4">
-        <Button disabled={isLoading} type="submit" className="bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl h-12 px-8 font-bold shadow-md shadow-indigo-500/20 transition-all cursor-pointer text-[15px]">
+        <Button disabled={isLoading} type="submit" className="bg-primary-500 hover:bg-primary-600 text-white rounded-xl h-12 px-8 font-bold shadow-sm shadow-primary-200 transition-all cursor-pointer text-[15px]">
           {isLoading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Đang xử lý...</> : <><Save className="w-5 h-5 mr-2" /> Lưu Thay Đổi</>}
         </Button>
       </div>

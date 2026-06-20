@@ -34,28 +34,43 @@ export const BillingHistory: React.FC = () => {
   ];
 
   return (
-    <main className="min-h-screen bg-slate-50 py-10">
-      <SectionContainer className="max-w-4xl">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
-          <div>
-            <h1 className="text-2xl font-black text-slate-800 mb-2">Lịch Sử Thanh Toán</h1>
-            <p className="text-[14.5px] text-slate-500 font-medium">
-              Xem lại lịch sử hóa đơn và các dịch vụ đã sử dụng.
-            </p>
+    <main className="min-h-screen bg-[#f0f9ff]">
+      {/* ── Hero Banner ── */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-primary-500 py-10 px-4">
+        <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+        <SectionContainer className="max-w-4xl relative z-10">
+          <div className="flex items-center gap-1.5 text-[12px] font-semibold text-white/80 mb-3">
+            <span className="hover:text-white cursor-pointer transition-colors" onClick={() => window.location.href = '/'}>Trang chủ</span>
+            <span className="text-white/40">/</span>
+            <span className="text-white">Lịch sử thanh toán</span>
           </div>
-          <div className="relative w-full md:w-72">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-slate-400" />
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-5">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center border border-white/30 shadow-sm">
+                <Receipt className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-black text-white tracking-tight drop-shadow-sm">Lịch Sử Thanh Toán</h1>
+                <p className="text-white/90 text-sm drop-shadow-sm">Xem lại lịch sử hóa đơn và các dịch vụ đã sử dụng.</p>
+              </div>
             </div>
-            <input
-              type="text"
-              placeholder="Tìm mã hóa đơn, dịch vụ..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-11 pl-10 pr-4 rounded-full border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition-all shadow-sm"
-            />
+            <div className="relative w-full md:w-72 shrink-0">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-slate-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Tìm mã hóa đơn, dịch vụ..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-11 pl-10 pr-4 rounded-xl border-none bg-white text-slate-700 placeholder:text-slate-400 text-sm focus:outline-none focus:ring-4 focus:ring-white/20 transition-all shadow-md"
+              />
+            </div>
           </div>
-        </div>
+        </SectionContainer>
+      </div>
+
+      <SectionContainer className="max-w-4xl py-8">
 
         <Card className="rounded-3xl border-0 shadow-sm bg-white overflow-hidden">
           <div className="p-1">

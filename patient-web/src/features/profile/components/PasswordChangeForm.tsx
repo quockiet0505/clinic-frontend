@@ -138,7 +138,7 @@ export const PasswordChangeForm: React.FC = () => {
       <div className="w-full border-t border-slate-100"></div>
 
       <div className="flex justify-end mt-2">
-        <Button disabled={isLoading} type="submit" className="bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl h-12 px-8 font-bold shadow-md shadow-indigo-500/20 transition-all cursor-pointer text-[15px]">
+        <Button disabled={isLoading} type="submit" className="bg-primary-500 hover:bg-primary-600 text-white rounded-xl h-12 px-8 font-bold shadow-sm shadow-primary-200 transition-all cursor-pointer text-[15px]">
           {isLoading ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Đang xử lý...</> : <><KeyRound className="w-5 h-5 mr-2" /> Cập nhật mật khẩu</>}
         </Button>
       </div>

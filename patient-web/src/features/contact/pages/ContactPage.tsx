@@ -78,19 +78,19 @@ export const ContactPage: React.FC = () => {
   return (
     <main className="w-full min-h-screen bg-[#f0f9ff]">
       {/* ── Hero ── */}
-      <div className="relative overflow-hidden bg-brand-dark py-20 px-4">
+      <div className="relative overflow-hidden bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-primary-500 py-20 px-4">
         {/* decorative blobs */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-primary-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-10 w-64 h-64 rounded-full bg-sky-400/10 blur-2xl pointer-events-none" />
+        <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-10 w-64 h-64 rounded-full bg-white/5 blur-2xl pointer-events-none" />
         <SectionContainer className="max-w-5xl text-center relative z-10">
-          <span className="inline-flex items-center gap-2 bg-white/10 text-primary-200 text-xs font-bold px-4 py-1.5 rounded-full mb-6 border border-white/10 tracking-wider uppercase">
+          <span className="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-bold px-4 py-1.5 rounded-full mb-6 border border-white/20 tracking-wider uppercase drop-shadow-sm">
             <MessageSquare className="w-3.5 h-3.5" />
             Hỗ trợ khách hàng
           </span>
-          <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight leading-tight">
+          <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight leading-tight drop-shadow-sm">
             Liên Hệ Với Chúng Tôi
           </h1>
-          <p className="text-primary-200 text-base max-w-xl mx-auto leading-relaxed">
+          <p className="text-white/90 text-base max-w-xl mx-auto leading-relaxed drop-shadow-sm">
             Đội ngũ CSKH luôn sẵn sàng hỗ trợ bạn. Hãy để lại thông tin — chúng tôi sẽ phản hồi sớm nhất!
           </p>
         </SectionContainer>

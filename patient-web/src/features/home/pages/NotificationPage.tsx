@@ -55,23 +55,23 @@ export const NotificationPage: React.FC = () => {
   return (
     <main className="w-full min-h-screen bg-[#f0f9ff]">
       {/* ── Hero Header ── */}
-      <div className="relative overflow-hidden bg-brand-dark py-12 px-4">
-        <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-primary-500/10 blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-primary-500 py-12 px-4">
+        <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
         <SectionContainer className="max-w-5xl relative z-10">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-primary-300 hover:text-white text-sm font-medium mb-6 cursor-pointer transition-colors group"
+            className="flex items-center gap-2 text-white/80 hover:text-white text-sm font-medium mb-6 cursor-pointer transition-colors group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Quay lại
           </button>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center border border-white/15">
+            <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center border border-white/30 shadow-sm">
               <Bell className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-black text-white tracking-tight">Thông báo của bạn</h1>
-              <p className="text-primary-300 text-sm mt-0.5">
+              <h1 className="text-2xl font-black text-white tracking-tight drop-shadow-sm">Thông báo của bạn</h1>
+              <p className="text-white/90 text-sm mt-0.5 drop-shadow-sm">
                 {loading ? 'Đang tải...' : notifications.length > 0 ? `${notifications.length} thông báo` : 'Chưa có thông báo nào'}
               </p>
             </div>

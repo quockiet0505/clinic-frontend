@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { format } from 'date-fns';
-import { CalendarDays, Clock3, User, Activity, FileText, FlaskConical, HelpCircle, XCircle, FileSignature, Pill, Loader2 } from 'lucide-react';
+import { CalendarDays, Clock3, User, Activity, FileText, FlaskConical, HelpCircle, XCircle, FileSignature, Pill, Loader2, CalendarOff } from 'lucide-react';
 import { CancelAppointmentDialog } from './CancelAppointmentDialog';
 import type { AppointmentHistoryItem } from '../types/appointment';
 import { recordApi } from '../../records/api/recordApi';
+import { useNavigate } from 'react-router-dom';
 import { Dialog } from '@/components/ui/dialog';
 import { PrescriptionModalContent } from '../../records/components/PrescriptionModalContent';
 import { LabResultModalContent } from '../../records/components/LabResultModalContent';
+import { ReviewModal } from './ReviewModal';
 import { useToast } from '@/hooks/useToast';
+import { Star } from 'lucide-react';
 
 interface AppointmentCardProps {
   appointment: AppointmentHistoryItem;
@@ -17,11 +20,14 @@ interface AppointmentCardProps {
 
 export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, onCancelSuccess, isUpcoming }) => {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [hasReviewed, setHasReviewed] = useState(false);
   const [loadingModal, setLoadingModal] = useState(false);
   const [prescriptionData, setPrescriptionData] = useState<any>(null);
   const [labResultData, setLabResultData] = useState<any>(null);
   const { status } = appointment;
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Status mapping based on Patient Journey
   const statusConfig: Record<string, { label: string, color: string, icon: React.ReactNode, message: string }> = {
@@ -55,6 +61,12 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
       icon: <FlaskConical className="w-4 h-4 text-purple-600" />,
       message: 'Vui lòng chờ kết quả cận lâm sàng/xét nghiệm.'
     },
+    SKIPPED: {
+      label: 'Bị qua lượt',
+      color: 'bg-orange-100 text-orange-700 border-orange-200',
+      icon: <Clock3 className="w-4 h-4 text-orange-600" />,
+      message: 'Đã gọi tên nhưng bạn không có mặt. Vui lòng liên hệ quầy lễ tân để được xếp lại vào cuối hàng đợi.'
+    },
     COMPLETED: {
       label: 'Hoàn thành',
       color: 'bg-slate-100 text-slate-700 border-slate-200',
@@ -66,6 +78,12 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
       color: 'bg-rose-100 text-rose-700 border-rose-200',
       icon: <XCircle className="w-4 h-4 text-rose-600" />,
       message: 'Lịch hẹn này đã được huỷ bỏ.'
+    },
+    NO_SHOW: {
+      label: 'Không đến khám',
+      color: 'bg-red-100 text-red-700 border-red-200',
+      icon: <CalendarOff className="w-4 h-4 text-red-600" />,
+      message: 'Bạn đã không đến khám theo lịch hẹn.'
     }
   };
 
@@ -99,6 +117,11 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
           diagnosis: detail.diagnosis,
           treatment: detail.treatment,
           doctorName: detail.mainDoctorName,
+          patientFullName: detail.patientFullName,
+          patientGender: detail.patientGender,
+          patientDob: detail.patientDob,
+          patientPhone: detail.patientPhone,
+          patientAddress: detail.patientAddress,
         });
       } else {
         toast({ title: 'Trống', description: 'Bác sĩ không kê đơn thuốc cho lần khám này.' });
@@ -126,14 +149,38 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
         setLabResultData({
           ...labOrder.result,
           serviceName: labOrder.serviceName,
+          price: labOrder.price,
           doctorName: detail.mainDoctorName,
           resultId: labOrder.result.resultId,
+          patientFullName: detail.patientFullName,
+          patientGender: detail.patientGender,
+          patientDob: detail.patientDob,
+          patientPhone: detail.patientPhone,
+          patientAddress: detail.patientAddress,
         });
       } else {
         toast({ title: 'Trống', description: 'Chưa có kết quả xét nghiệm nào.' });
       }
     } catch (e) {
       toast({ title: 'Lỗi', description: 'Không thể tải kết quả xét nghiệm.', variant: 'destructive' });
+    } finally {
+      setLoadingModal(false);
+    }
+  };
+
+  const handleOpenRecord = async () => {
+    setLoadingModal(true);
+    try {
+      const histories = await recordApi.getMedicalHistory();
+      const record = histories.find(r => r.appointmentId === Number(appointment.id));
+      if (!record) {
+        toast({ title: 'Không tìm thấy', description: 'Chưa có hồ sơ khám cho lịch này.', variant: 'destructive' });
+        return;
+      }
+      toast({ title: 'Thành công', description: 'Đang chuyển đến chi tiết hồ sơ...', variant: 'default', className: 'bg-emerald-500 text-white border-none' });
+      navigate(`/records/detail/${record.recordId}`);
+    } catch (e) {
+      toast({ title: 'Lỗi', description: 'Không thể tải hồ sơ khám.', variant: 'destructive' });
     } finally {
       setLoadingModal(false);
     }
@@ -166,12 +213,11 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
             </div>
 
             <div className="flex gap-4">
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${avatarGradient} flex items-center justify-center shrink-0 shadow-inner text-white font-black text-2xl`}>
+              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${avatarGradient} flex items-center justify-center shrink-0 shadow-inner text-white font-black text-2xl overflow-hidden`}>
                 {appointment.doctorImageUrl ? (
-                  <img src={appointment.doctorImageUrl} alt="Doctor" className="w-full h-full object-cover rounded-2xl" />
-                ) : (
-                  initial
-                )}
+                  <img src={appointment.doctorImageUrl} onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); }} alt="Bác sĩ" className="w-full h-full object-cover" />
+                ) : null}
+                <span className={appointment.doctorImageUrl ? 'hidden' : ''}>{initial}</span>
               </div>
               <div className="flex flex-col justify-center">
                 <h3 className="font-black text-slate-800 text-[18px] leading-tight mb-1">
@@ -224,33 +270,45 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
                   <p className="text-[13px] font-medium text-slate-600 line-clamp-2">{appointment.symptoms}</p>
                 </div>
               )}
+              {status === 'NO_SHOW' && (
+                <div className="mt-3 bg-red-50 p-2.5 rounded-xl border border-red-100 flex items-start gap-2">
+                  <XCircle className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+                  <p className="text-[12px] text-red-700 font-bold leading-snug">
+                    Cảnh báo: Bạn đã vắng mặt. Nếu không đến khám quá 3 lần, tài khoản của bạn sẽ bị khoá tự động.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-wrap gap-2 mt-auto">
               {status === 'COMPLETED' && (
                 <>
-                  <button onClick={handleOpenPrescription} disabled={loadingModal} className="cursor-pointer flex-1 min-w-[120px] justify-center px-4 py-2.5 rounded-xl border border-slate-200 bg-white font-bold text-slate-700 hover:border-emerald-300 hover:text-emerald-600 transition-colors flex items-center gap-2 text-[13px] shadow-sm disabled:opacity-50">
-                    {loadingModal && !prescriptionData ? <Loader2 className="w-4 h-4 animate-spin" /> : <Pill className="w-4 h-4" />} Xem đơn thuốc
+                  <button onClick={handleOpenPrescription} disabled={loadingModal} className="cursor-pointer flex-1 min-w-[120px] justify-center px-4 py-2.5 rounded-xl border border-transparent bg-emerald-500 font-bold text-white hover:bg-emerald-600 transition-colors flex items-center gap-2 text-[13px] shadow-sm shadow-emerald-200 disabled:opacity-50">
+                    {loadingModal && !prescriptionData ? <Loader2 className="w-4 h-4 animate-spin" /> : <Pill className="w-4 h-4" />} Đơn thuốc
                   </button>
-                  <button onClick={handleOpenLabResult} disabled={loadingModal} className="cursor-pointer flex-1 min-w-[120px] justify-center px-4 py-2.5 rounded-xl border border-slate-200 bg-white font-bold text-slate-700 hover:border-blue-300 hover:text-blue-600 transition-colors flex items-center gap-2 text-[13px] shadow-sm disabled:opacity-50">
-                    {loadingModal && !labResultData ? <Loader2 className="w-4 h-4 animate-spin" /> : <FlaskConical className="w-4 h-4" />} Xem xét nghiệm
+                  <button onClick={handleOpenLabResult} disabled={loadingModal} className="cursor-pointer flex-1 min-w-[120px] justify-center px-4 py-2.5 rounded-xl border border-transparent bg-blue-500 font-bold text-white hover:bg-blue-600 transition-colors flex items-center gap-2 text-[13px] shadow-sm shadow-blue-200 disabled:opacity-50">
+                    {loadingModal && !labResultData ? <Loader2 className="w-4 h-4 animate-spin" /> : <FlaskConical className="w-4 h-4" />} Xét nghiệm
                   </button>
-                  <button className="cursor-pointer flex-1 min-w-[120px] justify-center px-4 py-2.5 rounded-xl border border-slate-200 bg-white font-bold text-slate-700 hover:border-primary-300 hover:text-primary-600 transition-colors flex items-center gap-2 text-[13px] shadow-sm">
-                    <FileText className="w-4 h-4" /> Hồ sơ khám
-                  </button>
+                  {!hasReviewed && (
+                    <button onClick={() => setReviewModalOpen(true)} className="cursor-pointer flex-1 min-w-[120px] justify-center px-4 py-2.5 rounded-xl border border-yellow-500 bg-yellow-50 font-bold text-yellow-600 hover:bg-yellow-100 transition-colors flex items-center gap-2 text-[13px] shadow-sm">
+                      <Star className="w-4 h-4 fill-yellow-500" /> Đánh giá
+                    </button>
+                  )}
+                  {hasReviewed && (
+                    <button disabled className="cursor-not-allowed flex-1 min-w-[120px] justify-center px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-100 font-bold text-slate-500 flex items-center gap-2 text-[13px]">
+                      <Star className="w-4 h-4" /> Đã đánh giá
+                    </button>
+                  )}
                 </>
               )}
 
               {status === 'CONFIRMED' && (
                 <>
-                  <button className="cursor-pointer flex-1 min-w-[100px] justify-center px-4 py-2.5 rounded-xl border border-slate-200 bg-white font-bold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 text-[13px] shadow-sm">
-                    Đổi lịch
-                  </button>
                   <button 
                     onClick={() => setCancelDialogOpen(true)}
-                    className="cursor-pointer flex-1 min-w-[100px] justify-center px-4 py-2.5 rounded-xl border border-transparent bg-rose-50 font-bold text-rose-600 hover:bg-rose-100 transition-colors flex items-center gap-2 text-[13px]"
+                    className="cursor-pointer flex-1 min-w-[100px] justify-center px-4 py-2.5 rounded-xl border border-transparent bg-rose-100 font-bold text-rose-600 hover:bg-rose-200 transition-colors flex items-center gap-2 text-[13px]"
                   >
-                    Huỷ lịch
+                    Hủy lịch
                   </button>
                 </>
               )}
@@ -264,7 +322,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
                 </button>
               )}
               
-              {(status === 'CHECKED_IN' || status === 'IN_PROGRESS' || status === 'WAITING_RESULT') && (
+              {(status === 'CHECKED_IN' || status === 'IN_PROGRESS' || status === 'WAITING_RESULT' || status === 'SKIPPED') && (
                 <div className="w-full text-center px-4 py-2.5 rounded-xl bg-white border border-slate-200 shadow-sm text-slate-500 font-bold text-[13px]">
                    Vui lòng theo dõi thông báo tại phòng khám
                 </div>
@@ -288,7 +346,10 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
 
       {/* Lab Result Modal */}
       <Dialog open={!!labResultData} onOpenChange={(open) => !open && setLabResultData(null)}>
-        {labResultData && <LabResultModalContent result={labResultData} status={getLabStatus(labResultData)} />}
+        {labResultData && <LabResultModalContent result={labResultData} />}
+      </Dialog>
+      <Dialog open={reviewModalOpen} onOpenChange={setReviewModalOpen}>
+        <ReviewModal appointment={appointment} onSuccess={() => { setReviewModalOpen(false); setHasReviewed(true); }} />
       </Dialog>
     </>
   );

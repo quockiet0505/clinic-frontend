@@ -78,17 +78,17 @@ export const FAQPage: React.FC = () => {
   return (
     <main className="w-full min-h-screen bg-[#f0f9ff]">
       {/* ── Hero ── */}
-      <div className="relative overflow-hidden bg-brand-dark py-20 px-4 text-center">
-        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-primary-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-60 h-60 rounded-full bg-sky-400/10 blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-primary-500 py-20 px-4 text-center">
+        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-60 h-60 rounded-full bg-white/10 blur-3xl pointer-events-none" />
         <SectionContainer className="max-w-4xl relative z-10">
-          <span className="inline-block text-[11px] font-bold uppercase tracking-widest text-primary-300 mb-4 bg-white/10 px-4 py-1.5 rounded-full border border-white/10">
+          <span className="inline-block text-[11px] font-bold uppercase tracking-widest text-white mb-4 bg-white/20 px-4 py-1.5 rounded-full border border-white/30 shadow-sm">
             Hỗ trợ & Hướng dẫn
           </span>
-          <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight drop-shadow-sm">
             Câu Hỏi Thường Gặp
           </h1>
-          <p className="text-primary-200 text-base max-w-2xl mx-auto leading-relaxed">
+          <p className="text-white/90 text-base max-w-2xl mx-auto leading-relaxed drop-shadow-sm">
             Mọi thắc mắc về dịch vụ, quy trình khám chữa bệnh và cách thanh toán — bạn đều tìm thấy ở đây.
           </p>
         </SectionContainer>

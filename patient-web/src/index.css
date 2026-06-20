@@ -17,6 +17,15 @@
   --color-gradient-blue-light: #f0f9ff;
   --color-gradient-white-blue: #f8fafc;
   --color-gradient-white-cold: #ffffff;
+  
+  /* Banner Gradients */
+  --color-banner-overlay-start: rgba(255, 255, 255, 0.95);
+  --color-banner-overlay-mid: rgba(255, 255, 255, 0.7);
+  --color-banner-overlay-end: transparent;
+  
+  --color-banner-dark-start: rgba(3, 105, 161, 0.9); /* primary-700/90 */
+  --color-banner-dark-mid: rgba(2, 132, 199, 0.7); /* primary-600/70 */
+  --color-banner-dark-end: transparent;
 
   /* Brand */
   /* --color-brand-dark: #003b5c; */
@@ -60,6 +69,14 @@
     font-family: 'Inter', system-ui, sans-serif;
     @apply bg-background-light text-slate-800;
   }
+  
+  button:not(:disabled), a {
+    cursor: pointer !important;
+  }
+
+  button:disabled {
+    cursor: not-allowed !important;
+  }
 }
 
 @layer utilities {
@@ -86,4 +103,54 @@ button:focus-visible,
 .rdp-day:focus {
   outline: none !important;
   box-shadow: none !important;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+  
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Show dialog content */
+  [role="dialog"], [role="dialog"] * {
+    visibility: visible;
+  }
+  
+  [role="dialog"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: auto;
+    box-shadow: none !important;
+    background: white !important;
+    border: none !important;
+  }
+
+  /* Hide close and print buttons and normal UI */
+  button, .print-hidden {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  /* Adjust dialog scrollable area to full height for print */
+  [role="dialog"] > div {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  
+  /* Background adjustments */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }

@@ -5,24 +5,35 @@ import { Link } from 'react-router-dom';
 
 export const AppointmentDetail: React.FC = () => {
   return (
-    <main className="w-full min-h-screen bg-background-light py-10">
-      <div className="container mx-auto max-w-4xl px-4">
-        
-        {/* Nút quay lại */}
-        <Link to="/appointments/my" className="flex items-center gap-2 text-slate-500 font-semibold hover:text-primary-500 transition-colors mb-6 w-fit">
-          <ArrowLeft className="w-5 h-5" /> Quay lại Lịch khám của tôi
-        </Link>
+    <main className="w-full min-h-screen bg-[#f0f9ff]">
+      {/* ── Hero Banner ── */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-primary-500 py-10 px-4">
+        <div className="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+        <SectionContainer className="max-w-4xl relative z-10">
+          <Link to="/appointments/my" className="flex items-center gap-2 text-white/80 hover:text-white font-semibold transition-colors mb-4 w-fit text-[13px]">
+            <ArrowLeft className="w-4 h-4" /> Quay lại Lịch khám của tôi
+          </Link>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center border border-white/30 shadow-sm">
+              <FileText className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-black text-white tracking-tight drop-shadow-sm">Chi Tiết Lịch Hẹn</h1>
+              <p className="text-white/90 text-sm drop-shadow-sm">Mã lịch khám: <span className="font-bold text-white">APT-2026-0522</span></p>
+            </div>
+          </div>
+        </SectionContainer>
+      </div>
 
+      <div className="container mx-auto max-w-4xl px-4 py-8">
         <Card className="rounded-3xl border border-slate-200 shadow-sm bg-white overflow-hidden">
           {/* Header Card */}
-          <div className="bg-primary-50 px-8 py-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-slate-50 px-8 py-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-black text-brand-dark flex items-center gap-3">
-                <FileText className="w-6 h-6 text-primary-500" /> Chi tiết lịch hẹn
-              </h1>
-              <p className="text-slate-600 font-medium mt-1">Mã lịch khám: <span className="font-bold text-brand-dark">APT-2026-0522</span></p>
+              <h2 className="text-[16px] font-black text-brand-dark">Thông tin lịch hẹn</h2>
+              <p className="text-slate-500 text-[13px] mt-0.5">Kiểm tra lại thông tin chi tiết</p>
             </div>
-            <span className="px-4 py-1.5 rounded-lg text-[12px] font-black tracking-wider bg-primary-500 text-white w-fit">
+            <span className="px-4 py-1.5 rounded-lg text-[12px] font-black tracking-wider bg-primary-50 text-primary-600 border border-primary-200 w-fit">
               ĐÃ XÁC NHẬN
             </span>
           </div>

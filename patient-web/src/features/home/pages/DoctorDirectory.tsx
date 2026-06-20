@@ -65,34 +65,30 @@ export const DoctorDirectory: React.FC = () => {
   const specialties = Array.from(new Set(doctors.map(d => d.expertiseName).filter(Boolean)));
 
   return (
-    <main className="w-full min-h-screen bg-[#f4f8fb] pb-16">
+    <main className="w-full min-h-screen bg-[#f0f9ff] pb-16">
       <div className="relative w-full min-h-[380px] flex items-center justify-center pt-10 pb-20">
         <div className="absolute inset-0 z-0">
           <img
             src={bannerUrl} // đã có full URL
             onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop'; }}
             alt="Doctor Banner"
-            className="w-full h-full object-cover opacity-50 mix-blend-overlay"
+            className="w-full h-full object-cover opacity-60 mix-blend-overlay"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#003b5c]/95 via-[#003b5c]/70 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-[var(--color-banner-dark-end)]"></div>
         </div>
         <SectionContainer className="max-w-6xl relative z-10 w-full text-white">
           <div className="max-w-2xl">
             <h1 className="text-[32px] md:text-[36px] leading-tight font-black uppercase tracking-wide mb-5 text-white drop-shadow-sm">
-              KHÁM VỚI<br /><span className="text-[#38bdf8]">BÁC SĨ CHUYÊN KHOA</span>
+              ĐỘI NGŨ<br /><span className="text-[#38bdf8]">BÁC SĨ CHUYÊN KHOA</span>
             </h1>
             <div className="flex flex-col gap-3 font-medium text-[15px] mb-7 text-slate-100">
-              <p className="flex items-start gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-[#38bdf8] shrink-0 mt-0.5" />Khám và tư vấn sức khỏe từ xa tiện lợi</p>
               <p className="flex items-start gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-[#38bdf8] shrink-0 mt-0.5" />Đội ngũ bác sĩ giàu kinh nghiệm, chuyên môn cao</p>
-              <p className="flex items-start gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-[#38bdf8] shrink-0 mt-0.5" />Được nhắn tin riêng tư với bác sĩ</p>
+              <p className="flex items-start gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-[#38bdf8] shrink-0 mt-0.5" />Tư vấn sức khỏe từ xa tiện lợi, bảo mật tuyệt đối</p>
               <p className="flex items-start gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-[#38bdf8] shrink-0 mt-0.5" />Thời lượng tư vấn tối thiểu 15 phút, đảm bảo chất lượng</p>
-              <p className="flex items-start gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-[#38bdf8] shrink-0 mt-0.5" />Bảo mật tuyệt đối hồ sơ y tế</p>
             </div>
             <div className="flex flex-wrap items-center gap-4 text-sm bg-white/15 backdrop-blur-md p-3.5 rounded-2xl border border-white/20 w-fit shadow-lg">
               <span>Liên hệ hỗ trợ đặt khám:</span>
               <a href="tel:19002115" className="flex items-center gap-1.5 text-white font-black text-xl hover:text-primary-300 transition-colors">19002115</a>
-              <span className="opacity-60">hoặc</span>
-              <Button className="bg-warning hover:bg-warning/90 text-white rounded-xl px-5 py-4 shadow-lg shadow-warning/20 border-none font-bold">Chat ngay</Button>
             </div>
           </div>
         </SectionContainer>

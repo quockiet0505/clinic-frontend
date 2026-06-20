@@ -41,7 +41,13 @@ export const FeaturedDoctors: React.FC<Props> = ({ doctors, isLoading }) => {
   };
 
   return (
-    <section id="featured-doctors-section" className="py-14 bg-gradient-to-b from-gradient-blue via-gradient-white-cold to-white border-y border-slate-200/50">
+    /*
+      Nhận từ SpecialtyCarousel: kết thúc gradient-blue (#e0f2fe)
+      Bắt đầu từ gradient-blue → qua white → kết thúc white
+      → HowItWorks tiếp nhận từ white
+      Bỏ border-y cứng để không tạo đường cắt thấy được
+    */
+    <section id="featured-doctors-section" className="py-14 bg-gradient-to-b from-gradient-blue via-gradient-white-cold to-white">
       <SectionContainer className="relative max-w-[1140px]">
         <SectionHeader title="Bác sĩ tư vấn khám bệnh" />
         <CarouselWrapper>

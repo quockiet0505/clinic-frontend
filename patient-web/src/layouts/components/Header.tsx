@@ -3,12 +3,16 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   CalendarDays,
   FileText,
+  FlaskConical,
+  Heart,
   LogOut,
   Menu,
   Phone,
+  Pill,
   User,
   UserCircle,
   X,
+  Star,
 } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { HoverDropdown } from '@/components/common/HoverDropdown';
@@ -269,19 +273,33 @@ export const Header: React.FC = () => {
                         <CalendarDays className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
                         Lịch sử đặt khám
                       </button>
+                      <button
+                        onClick={() => navigate('/profile/reviews')}
+                        className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
+                      >
+                        <Star className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
+                        Lịch sử đánh giá
+                      </button>
+                      <button
+                        onClick={() => navigate('/records')}
+                        className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
+                      >
+                        <Heart className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
+                        Hồ sơ sức khoẻ
+                      </button>
 
                       <button
                         onClick={() => navigate('/records/prescriptions')}
                         className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
                       >
-                        <FileText className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
+                        <Pill className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
                         Đơn thuốc
                       </button>
                       <button
                         onClick={() => navigate('/records/lab-results')}
                         className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
                       >
-                        <FileText className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
+                        <FlaskConical className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
                         Kết quả xét nghiệm
                       </button>
                     </div>
@@ -411,7 +429,34 @@ export const Header: React.FC = () => {
                         >
                           Lịch sử đặt khám
                         </Link>
-
+                        <Link
+                          to="/profile/reviews"
+                          onClick={() => setIsSheetOpen(false)}
+                          className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50"
+                        >
+                          Lịch sử đánh giá
+                        </Link>
+                        <Link
+                          to="/records"
+                          onClick={() => setIsSheetOpen(false)}
+                          className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50"
+                        >
+                          Hồ sơ sức khoẻ
+                        </Link>
+                        <Link
+                          to="/records/prescriptions"
+                          onClick={() => setIsSheetOpen(false)}
+                          className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50"
+                        >
+                          Đơn thuốc
+                        </Link>
+                        <Link
+                          to="/records/lab-results"
+                          onClick={() => setIsSheetOpen(false)}
+                          className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50"
+                        >
+                          Kết quả xét nghiệm
+                        </Link>
                       </div>
                     </>
                   )}
