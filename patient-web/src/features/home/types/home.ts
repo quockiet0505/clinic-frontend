@@ -30,4 +30,5 @@ export interface ServicePackage {
   discountPrice: number | null;
   imageUrl: string;
   serviceType?: string;
+  description?: string;
 }

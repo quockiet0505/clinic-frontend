@@ -8,8 +8,8 @@ import 'package:clinic_management_system/screens/home/all_doctors_screen.dart';
 import 'package:clinic_management_system/screens/home/all_services_screen.dart';
 import 'package:clinic_management_system/screens/home/all_specialties_screen.dart';
 import 'package:clinic_management_system/screens/notifications/notification_screen.dart';
-import 'package:clinic_management_system/screens/notifications/notification_screen.dart';
-import 'package:clinic_management_system/utils/service_price_utils.dart';
+import 'package:clinic_management_system/models/service_model.dart';
+import 'package:clinic_management_system/utils/service_price_utils.dart' show ServicePriceUtils, serviceTypeLabel;
 import 'package:clinic_management_system/widgets/common/service_price_text.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -405,7 +405,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }),
         const SizedBox(height: 16),
         SizedBox(
-          height: 280,
+          height: 180,
           child: provider.isLoading
               ? _buildShimmerCards()
               : displayServices.isEmpty
@@ -426,94 +426,122 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFeaturedServiceCard(BuildContext context, dynamic service, HomeProvider provider) {
+  Widget _buildFeaturedServiceCard(BuildContext context, ServiceModel service, HomeProvider provider) {
     return GestureDetector(
       onTap: () {
         context.read<AppointmentProvider>().selectService(service);
         Navigator.push(context, MaterialPageRoute(builder: (_) => const SelectTimeScreen()));
       },
       child: Container(
-        width: 220,
+        width: 240,
         margin: const EdgeInsets.only(right: 14, bottom: 10),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: const Color(0xFFE2E8F0)),
           boxShadow: [
-            BoxShadow(color: AppColors.primary.withValues(alpha: 0.08), blurRadius: 16, offset: const Offset(0, 6)),
+            BoxShadow(color: AppColors.primary.withValues(alpha: 0.06), blurRadius: 14, offset: const Offset(0, 4)),
           ],
         ),
-        clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.network(
-                  provider.fixImageUrl(service.imageUrl),
-                  height: 110,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    height: 110,
-                    color: AppColors.accentMint,
-                    child: const Icon(Icons.biotech_rounded, color: AppColors.secondary, size: 36),
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: Image.network(
+                        provider.fixImageUrl(service.imageUrl),
+                        height: 56,
+                        width: 56,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Container(
+                          height: 56,
+                          width: 56,
+                          decoration: BoxDecoration(color: AppColors.accentMint, borderRadius: BorderRadius.circular(14)),
+                          child: const Icon(Icons.biotech_rounded, color: AppColors.secondary),
+                        ),
+                      ),
+                    ),
+                    if (service.hasDiscount)
+                      Positioned(
+                        top: -6,
+                        right: -6,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEF4444),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '-${service.discountPercent}%',
+                            style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w800),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        service.serviceName,
+                        style: AppStyles.bodyLarge.copyWith(
+                          color: AppColors.textMainLight,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          height: 1.25,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 4),
+                      ServicePriceText(service: service, priceFontSize: 12, strikeFontSize: 10),
+                    ],
                   ),
                 ),
-                if (service.hasDiscount)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEF4444),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '-${service.discountPercent}%',
-                        style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w800),
-                      ),
-                    ),
-                  ),
               ],
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      service.serviceName,
-                      style: AppStyles.bodyLarge.copyWith(
-                        color: AppColors.textMainLight,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        height: 1.25,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const Spacer(),
-                    ServicePriceText(service: service, priceFontSize: 14, strikeFontSize: 10),
-                    const SizedBox(height: 10),
-                    Container(
-                      width: double.infinity,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF2563EB), Color(0xFF60A5FA)],
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        'Đặt khám ngay',
-                        style: AppStyles.caption.copyWith(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
-                      ),
-                    ),
-                  ],
+            const SizedBox(height: 8),
+            Text(
+              service.description ?? 'Mô tả dịch vụ đang cập nhật...',
+              style: AppStyles.caption.copyWith(color: AppColors.textSubLight, fontSize: 11, height: 1.35),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const Spacer(),
+            Container(
+              width: double.infinity,
+              height: 34,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF2563EB), Color(0xFF60A5FA)],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.25),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                'Đặt khám ngay',
+                style: AppStyles.caption.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
                 ),
               ),
             ),

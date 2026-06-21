@@ -177,7 +177,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
         toast({ title: 'Không tìm thấy', description: 'Chưa có hồ sơ khám cho lịch này.', variant: 'destructive' });
         return;
       }
-      toast({ title: 'Thành công', description: 'Đang chuyển đến chi tiết hồ sơ...', variant: 'default', className: 'bg-emerald-500 text-white border-none' });
+      toast({ title: 'Thành công', description: 'Đang chuyển đến chi tiết hồ sơ...', variant: 'default' });
       navigate(`/records/detail/${record.recordId}`);
     } catch (e) {
       toast({ title: 'Lỗi', description: 'Không thể tải hồ sơ khám.', variant: 'destructive' });

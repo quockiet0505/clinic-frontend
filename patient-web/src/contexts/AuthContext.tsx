@@ -26,12 +26,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         accountId: account.accountId,
         email: account.email,
         roles: account.roles,
-        fullName: profile.full_name,
+        fullName: profile.fullName,
         phone: profile.phone,
         address: profile.address,
         gender: profile.gender,
-        dateOfBirth: profile.date_of_birth,
-        patientId: profile.patient_id,
+        dateOfBirth: profile.dateOfBirth,
+        patientId: profile.patientId,
       });
     } catch {
       // Fallback khi chưa có profile (mới đăng ký)

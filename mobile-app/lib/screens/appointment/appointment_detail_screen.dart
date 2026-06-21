@@ -8,6 +8,10 @@ import 'package:intl/intl.dart';
 import 'package:clinic_management_system/screens/appointment/review_screen.dart';
 import 'package:clinic_management_system/screens/profile/review_history_screen.dart';
 
+import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
+
+import 'package:clinic_management_system/services/feedback_service.dart';
+
 class AppointmentDetailScreen extends StatefulWidget {
   final AppointmentModel appointment;
 
@@ -19,11 +23,41 @@ class AppointmentDetailScreen extends StatefulWidget {
 
 class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
   bool _hasReviewed = false;
+  bool _isLoadingReviewStatus = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkReviewStatus();
+  }
+
+  Future<void> _checkReviewStatus() async {
+    if (widget.appointment.status != 'COMPLETED') {
+      setState(() => _isLoadingReviewStatus = false);
+      return;
+    }
+    
+    try {
+      final feedbackService = FeedbackService();
+      final reviews = await feedbackService.getMyDoctorFeedbacks();
+      final hasReviewed = reviews.any((r) => r['appointmentId'] == widget.appointment.appointmentId);
+      if (mounted) {
+        setState(() {
+          _hasReviewed = hasReviewed;
+          _isLoadingReviewStatus = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoadingReviewStatus = false);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final appointment = widget.appointment;
-    final homeProvider = context.read<HomeProvider>();
+    final homeProvider = context.watch<HomeProvider>();
     final doctor = homeProvider.doctors.where((d) => d.id == appointment.mainDoctorId).firstOrNull;
     final avatarUrl = ImageUtils.fixImageUrl(appointment.doctorAvatar ?? doctor?.imageUrl);
     final doctorName = appointment.doctorName ?? 'Bác sĩ';
@@ -40,19 +74,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFF),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          'Chi tiết lịch hẹn',
-          style: TextStyle(color: Color(0xFF1F2937), fontWeight: FontWeight.bold, fontSize: 18),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF1F2937), size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      appBar: const GradientAppBar(title: 'Chi tiết lịch hẹn'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -159,46 +181,52 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
               ),
             ),
             
-            if (appointment.status == 'COMPLETED') ...[
-              const SizedBox(height: 32),
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (_hasReviewed) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ReviewHistoryScreen(),
-                        ),
-                      );
-                    } else {
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ReviewScreen(appointment: appointment),
-                        ),
-                      );
-                      if (result == true && mounted) {
-                        setState(() => _hasReviewed = true);
+              if (appointment.status == 'COMPLETED') ...[
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _isLoadingReviewStatus ? null : () async {
+                      if (_hasReviewed) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ReviewHistoryScreen(),
+                          ),
+                        );
+                      } else {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReviewScreen(appointment: appointment),
+                          ),
+                        );
+                        if (result == true && mounted) {
+                          setState(() => _hasReviewed = true);
+                        }
                       }
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _hasReviewed ? Colors.white : const Color(0xFF0EA5E9),
-                    foregroundColor: _hasReviewed ? const Color(0xFF0EA5E9) : Colors.white,
-                    side: _hasReviewed ? const BorderSide(color: Color(0xFF0EA5E9), width: 1.5) : null,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    _hasReviewed ? 'Xem đánh giá' : 'Đánh giá Dịch vụ', 
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _hasReviewed ? Colors.white : const Color(0xFF0EA5E9),
+                      foregroundColor: _hasReviewed ? const Color(0xFF0EA5E9) : Colors.white,
+                      side: _hasReviewed ? const BorderSide(color: Color(0xFF0EA5E9), width: 1.5) : null,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      elevation: 0,
+                    ),
+                    child: _isLoadingReviewStatus 
+                      ? const SizedBox(
+                          height: 24, 
+                          width: 24, 
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+                        )
+                      : Text(
+                          _hasReviewed ? 'Xem đánh giá' : 'Đánh giá Dịch vụ', 
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
                   ),
                 ),
-              ),
-            ],
+              ],
           ],
         ),
       ),

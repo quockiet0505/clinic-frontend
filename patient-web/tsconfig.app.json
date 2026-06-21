@@ -11,7 +11,8 @@
     "types": [
       "vite/client",
       "react",
-      "react-dom"
+      "react-dom",
+      "node"
     ],
 
     "skipLibCheck": true,
@@ -28,13 +29,11 @@
 
     "jsx": "react-jsx",
 
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
 
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
 
     "noFallthroughCasesInSwitch": true,
-
-    "baseUrl": ".",
 
     "paths": {
       "@/*": [

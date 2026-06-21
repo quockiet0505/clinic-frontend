@@ -30,7 +30,7 @@ class DoctorDetailScreen extends StatelessWidget {
                 fit: StackFit.expand,
                 children: [
                   Image.network(
-                    doctor['imageUrl'] ?? 'https://via.placeholder.com/400',
+                    doctor['imageUrl'] ?? 'https://ui-avatars.com/api/?name=N/A&background=random&format=png',
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200], child: const Icon(Icons.person, size: 100, color: Colors.grey)),
                   ),

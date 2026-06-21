@@ -113,7 +113,17 @@ class _RecordsScreenState extends State<RecordsScreen> {
             children: [
               // Unified header - same bg as body
               Container(
-                color: const Color(0xFFF8FAFF),
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFFDBEAFE), // Blue-100
+                      Color(0xFFF8FAFF),
+                    ],
+                    stops: [0.0, 1.0],
+                  ),
+                ),
                 padding: EdgeInsets.only(
                   top: MediaQuery.of(context).padding.top + 12,
                   left: 20, right: 20, bottom: 16,

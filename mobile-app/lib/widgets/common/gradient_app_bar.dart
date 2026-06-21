@@ -7,6 +7,7 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? leading;
   final bool automaticallyImplyLeading;
   final PreferredSizeWidget? bottom;
+  final VoidCallback? onBackPress;
 
   const GradientAppBar({
     super.key,
@@ -16,18 +17,42 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.leading,
     this.automaticallyImplyLeading = true,
     this.bottom,
+    this.onBackPress,
   });
 
   @override
   Widget build(BuildContext context) {
+    Widget? leadingWidget = leading;
+    
+    if (leadingWidget == null && automaticallyImplyLeading && Navigator.canPop(context)) {
+      leadingWidget = Center(
+        child: Container(
+          height: 40,
+          width: 40,
+          margin: const EdgeInsets.only(left: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+          ),
+          child: IconButton(
+            padding: EdgeInsets.zero,
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight, size: 18),
+            onPressed: onBackPress ?? () => Navigator.pop(context),
+          ),
+        ),
+      );
+    }
+
     return AppBar(
-      toolbarHeight: 80,
+      toolbarHeight: 70,
       title: Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textMainLight)),
       centerTitle: centerTitle,
       elevation: 0,
       backgroundColor: Colors.transparent,
-      automaticallyImplyLeading: automaticallyImplyLeading,
-      leading: leading,
+      automaticallyImplyLeading: false,
+      leading: leadingWidget,
+      leadingWidth: 64, // 16 margin + 40 width + 8 padding
       actions: actions,
       bottom: bottom,
       flexibleSpace: Container(
@@ -37,7 +62,7 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
             end: Alignment.bottomCenter,
             colors: [
               Color(0xFFDBEAFE), // Blue-100
-              Colors.white,
+              Color(0xFFF8FAFF), // Light background color instead of pure white
             ],
             stops: [0.0, 1.0],
           ),
@@ -47,5 +72,5 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size.fromHeight(80.0 + (bottom?.preferredSize.height ?? 0.0));
+  Size get preferredSize => Size.fromHeight(70.0 + (bottom?.preferredSize.height ?? 0.0));
 }

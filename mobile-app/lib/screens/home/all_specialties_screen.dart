@@ -5,6 +5,8 @@ import 'package:clinic_management_system/providers/home_provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
 import 'package:clinic_management_system/screens/appointment/select_time_screen.dart';
 
+import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
+
 class AllSpecialtiesScreen extends StatelessWidget {
   const AllSpecialtiesScreen({super.key});
 
@@ -12,13 +14,7 @@ class AllSpecialtiesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgLight,
-      appBar: AppBar(
-        title: Text('Tất cả Chuyên khoa', style: AppStyles.heading3.copyWith(color: AppColors.textMainLight)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.textMainLight),
-        centerTitle: true,
-      ),
+      appBar: const GradientAppBar(title: 'Tất cả Chuyên khoa'),
       body: Consumer<HomeProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {

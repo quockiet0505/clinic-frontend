@@ -83,9 +83,14 @@ export const HowItWorks: React.FC<Props> = ({ services, isLoading }) => {
                     )}
                   </div>
                   <div className="p-5 flex flex-col flex-1">
-                    <h3 className="font-bold text-brand-dark text-[16px] leading-snug line-clamp-2 mb-3 min-h-[44px] group-hover:text-primary-600 transition-colors">
+                    <h3 className="font-bold text-brand-dark text-[16px] leading-snug line-clamp-2 mb-2 min-h-[44px] group-hover:text-primary-600 transition-colors">
                       {service.serviceName}
                     </h3>
+                    {service.description && (
+                      <p className="text-slate-500 text-[12px] leading-relaxed line-clamp-2 mb-3">
+                        {service.description}
+                      </p>
+                    )}
                     <div className="flex flex-col gap-2 mt-auto">
                       <div className="flex items-center gap-2 text-[13px] bg-slate-50 p-2.5 rounded-xl">
                         <CircleDollarSign className="w-[18px] h-[18px] text-slate-400 shrink-0" />

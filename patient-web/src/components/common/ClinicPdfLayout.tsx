@@ -80,7 +80,7 @@ const cell = (label: string, value?: string | number | null, full = false) =>
 
 const sectionHeader = (num: string, title: string, color = '#0284c7') => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '7px' }}>
-    <span style={{ fontWeight: 900, fontSize: '11px', color: '#1e293b', background: color, color: '#fff', borderRadius: '3px', padding: '1px 6px' }}>{num}</span>
+    <span style={{ fontWeight: 900, fontSize: '11px', background: color, color: '#fff', borderRadius: '3px', padding: '1px 6px' }}>{num}</span>
     <span style={{ fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.8px', color }}>
       {title}
     </span>

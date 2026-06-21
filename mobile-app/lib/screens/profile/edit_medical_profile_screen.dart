@@ -1,6 +1,8 @@
 import 'package:clinic_management_system/app_exports.dart';
 import 'package:provider/provider.dart';
 
+import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
+
 class EditMedicalProfileScreen extends StatefulWidget {
   const EditMedicalProfileScreen({super.key});
 
@@ -117,19 +119,7 @@ class _EditMedicalProfileScreenState extends State<EditMedicalProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF1F5F9),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: const Text(
-          'Hồ sơ y tế cơ bản',
-          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: Color(0xFF0F172A), letterSpacing: -0.3),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Color(0xFF0F172A), size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      appBar: const GradientAppBar(title: 'Hồ sơ y tế cơ bản'),
       body: Form(
         key: _formKey,
         child: ListView(

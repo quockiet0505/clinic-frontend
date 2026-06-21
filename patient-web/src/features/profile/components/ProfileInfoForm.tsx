@@ -31,7 +31,7 @@ export const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, o
   });
 
   const [isGenderOpen, setIsGenderOpen] = useState(false);
-  const genderTimeoutRef = useRef<NodeJS.Timeout>();
+  const genderTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const handleGenderMouseEnter = () => {
     if (genderTimeoutRef.current) clearTimeout(genderTimeoutRef.current);

@@ -11,6 +11,7 @@ class ClinicListToolbar extends StatelessWidget {
   /// Price / generic sort cycle (0 none, 1 asc, 2 desc). Null = hidden.
   final int? sortState;
   final VoidCallback? onSortTap;
+  final String sortLabel;
 
   final VoidCallback? onDateFilterTap;
   final bool dateFilterActive;
@@ -28,6 +29,7 @@ class ClinicListToolbar extends StatelessWidget {
     this.autofocusSearch = false,
     this.sortState,
     this.onSortTap,
+    this.sortLabel = 'Giá',
     this.onDateFilterTap,
     this.dateFilterActive = false,
     this.tabs,
@@ -60,7 +62,7 @@ class ClinicListToolbar extends StatelessWidget {
               ),
               if (showSort) ...[
                 const SizedBox(width: 10),
-                ClinicSortButton(sortState: sortState!, onTap: onSortTap!),
+                ClinicSortButton(sortState: sortState!, onTap: onSortTap!, label: sortLabel),
               ],
             ],
           ),

@@ -17,11 +17,11 @@ export const DoctorDirectory: React.FC = () => {
   const [genderFilter, setGenderFilter] = useState('ALL');
 
   const [isSpecialtyOpen, setIsSpecialtyOpen] = useState(false);
-  const specialtyTimeout = useRef<NodeJS.Timeout>();
+  const specialtyTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   const [isPriceOpen, setIsPriceOpen] = useState(false);
-  const priceTimeout = useRef<NodeJS.Timeout>();
+  const priceTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   const [isGenderOpen, setIsGenderOpen] = useState(false);
-  const genderTimeout = useRef<NodeJS.Timeout>();
+  const genderTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;

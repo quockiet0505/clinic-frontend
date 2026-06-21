@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:clinic_management_system/app_exports.dart';
 import 'package:clinic_management_system/services/feedback_service.dart';
+import 'package:clinic_management_system/widgets/common/clinic_segmented_tabs.dart';
 import 'package:intl/intl.dart';
+
+import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
 
 class ReviewHistoryScreen extends StatefulWidget {
   const ReviewHistoryScreen({super.key});
@@ -10,9 +12,14 @@ class ReviewHistoryScreen extends StatefulWidget {
   State<ReviewHistoryScreen> createState() => _ReviewHistoryScreenState();
 }
 
-class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> {
+  String _selectedTab = 'DOCTOR';
   final FeedbackService _feedbackService = FeedbackService();
+
+  static const _tabs = [
+    ClinicTabItem(value: 'DOCTOR', label: 'Bác sĩ'),
+    ClinicTabItem(value: 'CLINIC', label: 'Phòng khám'),
+  ];
 
   List<dynamic> _doctorFeedbacks = [];
   List<dynamic> _clinicFeedbacks = [];
@@ -22,7 +29,6 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> with SingleTi
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
     _fetchHistory();
   }
 
@@ -49,12 +55,6 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> with SingleTi
     }
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
   Widget _buildStars(int rating) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -62,7 +62,7 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> with SingleTi
         return Icon(
           index < rating ? Icons.star_rounded : Icons.star_border_rounded,
           size: 16,
-          color: index < rating ? Colors.amber : AppColors.textSubLight.withOpacity(0.3),
+          color: index < rating ? Colors.amber : AppColors.textSubLight.withValues(alpha: 0.3),
         );
       }),
     );
@@ -78,7 +78,7 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> with SingleTi
         formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(d);
       } catch (_) {}
     }
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -87,7 +87,7 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> with SingleTi
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
@@ -110,7 +110,7 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> with SingleTi
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.05),
+                color: AppColors.primary.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
@@ -124,21 +124,163 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> with SingleTi
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.05),
+                color: Colors.green.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(8),
                 border: const Border(left: BorderSide(color: Colors.green, width: 3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Phản hồi từ ${feedback['repliedBy'] ?? 'Phòng khám'}:', style: AppStyles.caption.copyWith(fontWeight: FontWeight.bold, color: Colors.green)),
+                  Text(
+                    'Phản hồi từ ${feedback['repliedBy'] ?? 'Phòng khám'}:',
+                    style: AppStyles.caption.copyWith(fontWeight: FontWeight.bold, color: Colors.green),
+                  ),
                   const SizedBox(height: 4),
                   Text(feedback['reply'], style: AppStyles.caption.copyWith(color: AppColors.textMainLight)),
                 ],
               ),
             ),
           ],
+          if (dateStr != null) Builder(builder: (context) {
+            final createdAt = DateTime.tryParse(dateStr);
+            if (createdAt != null && DateTime.now().difference(createdAt).inHours < 24) {
+              return Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    onPressed: () => _showEditReviewDialog(feedback, isDoctor),
+                    icon: const Icon(Icons.edit_rounded, size: 16),
+                    label: const Text('Sửa đánh giá'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.primary,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ),
+                ),
+              );
+            }
+            return const SizedBox.shrink();
+          }),
         ],
+      ),
+    );
+  }
+
+  void _showEditReviewDialog(dynamic feedback, bool isDoctor) {
+    int rating = feedback['rating'] ?? 0;
+    final commentController = TextEditingController(text: feedback['comment'] ?? '');
+    bool isAnonymous = feedback['isAnonymous'] ?? false;
+    bool isSubmitting = false;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setStateDialog) => AlertDialog(
+          title: const Text('Sửa đánh giá', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(5, (index) {
+                    return IconButton(
+                      icon: Icon(
+                        index < rating ? Icons.star_rounded : Icons.star_border_rounded,
+                        size: 32,
+                        color: index < rating ? Colors.amber : Colors.grey[300],
+                      ),
+                      onPressed: () => setStateDialog(() => rating = index + 1),
+                    );
+                  }),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: commentController,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: 'Nhập bình luận của bạn...',
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    SizedBox(
+                      height: 24,
+                      width: 24,
+                      child: Checkbox(
+                        value: isAnonymous,
+                        onChanged: (v) => setStateDialog(() => isAnonymous = v ?? false),
+                        activeColor: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    const Text('Đánh giá ẩn danh', style: TextStyle(fontSize: 14)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: isSubmitting ? null : () => Navigator.pop(context),
+              child: const Text('Hủy', style: TextStyle(color: Colors.grey)),
+            ),
+            ElevatedButton(
+              onPressed: isSubmitting ? null : () async {
+                if (rating == 0) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Vui lòng chọn số sao')));
+                  return;
+                }
+                setStateDialog(() => isSubmitting = true);
+                try {
+                  if (isDoctor) {
+                    await _feedbackService.updateDoctorReview(
+                      reviewId: feedback['reviewId'] ?? feedback['id'] ?? feedback['feedbackId'],
+                      doctorId: feedback['doctorId'],
+                      appointmentId: feedback['appointmentId'] ?? 0,
+                      rating: rating,
+                      comment: commentController.text,
+                      isAnonymous: isAnonymous,
+                    );
+                  } else {
+                    await _feedbackService.updateClinicReview(
+                      reviewId: feedback['feedbackId'] ?? feedback['id'],
+                      recordId: feedback['recordId'],
+                      appointmentId: feedback['appointmentId'],
+                      rating: rating,
+                      comment: commentController.text,
+                      isAnonymous: isAnonymous,
+                    );
+                  }
+                  if (mounted) {
+                    Navigator.pop(context);
+                    _fetchHistory();
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã cập nhật đánh giá')));
+                  }
+                } catch (e) {
+                  setStateDialog(() => isSubmitting = false);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              child: isSubmitting 
+                ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                : const Text('Lưu'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -149,23 +291,21 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> with SingleTi
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.rate_review_outlined, size: 64, color: AppColors.textSubLight.withOpacity(0.3)),
+            Icon(Icons.rate_review_outlined, size: 64, color: AppColors.textSubLight.withValues(alpha: 0.3)),
             const SizedBox(height: 16),
             Text('Chưa có đánh giá nào', style: AppStyles.bodyMedium.copyWith(color: AppColors.textSubLight)),
           ],
         ),
       );
     }
-    
+
     return RefreshIndicator(
       onRefresh: _fetchHistory,
       color: AppColors.primary,
       child: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: list.length,
-        itemBuilder: (context, index) {
-          return _buildReviewCard(list[index], isDoctor);
-        },
+        itemBuilder: (context, index) => _buildReviewCard(list[index], isDoctor),
       ),
     );
   }
@@ -174,51 +314,44 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> with SingleTi
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFF),
-      appBar: AppBar(
-        title: Text('Lịch sử đánh giá', style: AppStyles.heading3.copyWith(color: AppColors.textMainLight)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight),
-          onPressed: () => Navigator.pop(context),
-        ),
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: AppColors.primary,
-          unselectedLabelColor: AppColors.textSubLight,
-          indicatorColor: AppColors.primary,
-          tabs: const [
-            Tab(icon: Icon(Icons.person), text: 'Bác sĩ'),
-            Tab(icon: Icon(Icons.local_hospital), text: 'Phòng khám'),
-          ],
-        ),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
-          : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Đã có lỗi xảy ra', style: AppStyles.bodyLarge.copyWith(color: AppColors.error)),
-                      const SizedBox(height: 8),
-                      Text(_error!, style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _fetchHistory,
-                        style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-                        child: const Text('Thử lại'),
+      appBar: const GradientAppBar(title: 'Lịch sử đánh giá'),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+            child: ClinicSegmentedTabs(
+              tabs: _tabs,
+              selectedValue: _selectedTab,
+              onChanged: (v) => setState(() => _selectedTab = v),
+            ),
+          ),
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                : _error != null
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Đã có lỗi xảy ra', style: AppStyles.bodyLarge.copyWith(color: AppColors.error)),
+                            const SizedBox(height: 8),
+                            Text(_error!, style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: _fetchHistory,
+                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+                              child: const Text('Thử lại'),
+                            ),
+                          ],
+                        ),
+                      )
+                    : _buildList(
+                        _selectedTab == 'DOCTOR' ? _doctorFeedbacks : _clinicFeedbacks,
+                        _selectedTab == 'DOCTOR',
                       ),
-                    ],
-                  ),
-                )
-              : TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildList(_doctorFeedbacks, true),
-                    _buildList(_clinicFeedbacks, false),
-                  ],
-                ),
+          ),
+        ],
+      ),
     );
   }
 }

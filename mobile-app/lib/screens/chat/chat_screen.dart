@@ -53,14 +53,28 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFF),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // ─── Unified Header ───
-            Container(
-              color: const Color(0xFFF8FAFF),
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-              child: Row(
+      body: Column(
+        children: [
+          // ─── Unified Header ───
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFFDBEAFE), // Blue-100
+                  Color(0xFFF8FAFF),
+                ],
+                stops: [0.0, 1.0],
+              ),
+            ),
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top + 16,
+              left: 20,
+              right: 20,
+              bottom: 12,
+            ),
+            child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
@@ -124,7 +138,6 @@ class _ChatScreenState extends State<ChatScreen> {
             _buildInputArea(),
           ],
         ),
-      ),
     );
   }
 

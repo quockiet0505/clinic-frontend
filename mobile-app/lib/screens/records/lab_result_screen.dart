@@ -2,6 +2,7 @@ import 'package:clinic_management_system/app_exports.dart';
 import 'package:clinic_management_system/models/lab_result_model.dart';
 import 'package:clinic_management_system/utils/currency_formatter.dart';
 import 'package:clinic_management_system/utils/date_formatter.dart';
+import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
 
 class LabResultScreen extends StatelessWidget {
   final List<LabResultModel> results;
@@ -12,15 +13,7 @@ class LabResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        title: Text('Kết quả cận lâm sàng', style: AppStyles.heading3.copyWith(color: AppColors.textMainLight)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      appBar: const GradientAppBar(title: 'Kết quả cận lâm sàng'),
       body: results.isEmpty
           ? Center(
               child: Column(

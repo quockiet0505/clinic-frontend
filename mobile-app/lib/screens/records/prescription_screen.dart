@@ -2,6 +2,8 @@ import 'package:clinic_management_system/app_exports.dart';
 import 'package:clinic_management_system/models/prescription_model.dart';
 import 'package:clinic_management_system/utils/currency_formatter.dart';
 
+import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
+
 class PrescriptionScreen extends StatelessWidget {
   final List<PrescriptionItemModel> medicines;
 
@@ -12,15 +14,7 @@ class PrescriptionScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        title: Text('Đơn thuốc', style: AppStyles.heading3.copyWith(color: AppColors.textMainLight)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      appBar: const GradientAppBar(title: 'Đơn thuốc'),
       body: medicines.isEmpty
           ? Center(
               child: Column(

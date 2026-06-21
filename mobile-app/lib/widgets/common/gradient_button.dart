@@ -7,6 +7,7 @@ class GradientButton extends StatelessWidget {
   final double? width;
   final double height;
   final EdgeInsetsGeometry padding;
+  final bool isLoading;
 
   const GradientButton({
     super.key,
@@ -16,6 +17,7 @@ class GradientButton extends StatelessWidget {
     this.width,
     this.height = 54,
     this.padding = const EdgeInsets.symmetric(horizontal: 24),
+    this.isLoading = false,
   });
 
   @override
@@ -25,18 +27,18 @@ class GradientButton extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(27),
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: [
-            Color(0xFF60A5FA), // Blue 400
-            Color(0xFF3B82F6), // Blue 500
-            Color(0xFF2563EB), // Blue 600
+            const Color(0xFF60A5FA).withValues(alpha: isLoading ? 0.7 : 1.0), // Blue 400
+            const Color(0xFF3B82F6).withValues(alpha: isLoading ? 0.7 : 1.0), // Blue 500
+            const Color(0xFF2563EB).withValues(alpha: isLoading ? 0.7 : 1.0), // Blue 600
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF3B82F6).withOpacity(0.4),
+            color: const Color(0xFF3B82F6).withValues(alpha: isLoading ? 0.2 : 0.4),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -45,7 +47,7 @@ class GradientButton extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onPressed,
+          onTap: isLoading ? null : onPressed,
           borderRadius: BorderRadius.circular(27),
           child: Padding(
             padding: padding,
@@ -53,18 +55,29 @@ class GradientButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                if (icon != null) ...[
-                  Icon(icon, color: Colors.white, size: 22),
-                  const SizedBox(width: 8),
-                ],
-                Text(
-                  text,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                if (isLoading)
+                  const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2.5,
+                    ),
+                  )
+                else ...[
+                  if (icon != null) ...[
+                    Icon(icon, color: Colors.white, size: 22),
+                    const SizedBox(width: 8),
+                  ],
+                  Text(
+                    text,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

@@ -17,9 +17,9 @@ export const ServiceDirectory: React.FC = () => {
   const [typeFilter, setTypeFilter] = useState('ALL');
 
   const [isPriceOpen, setIsPriceOpen] = useState(false);
-  const priceTimeout = useRef<NodeJS.Timeout>();
+  const priceTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   const [isTypeOpen, setIsTypeOpen] = useState(false);
-  const typeTimeout = useRef<NodeJS.Timeout>();
+  const typeTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -189,7 +189,12 @@ export const ServiceDirectory: React.FC = () => {
                 </div>
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
-                    <h3 className="font-bold text-brand-dark text-[17px] leading-snug mb-3 line-clamp-2 group-hover:text-primary-500 transition-colors">{service.serviceName}</h3>
+                    <h3 className="font-bold text-brand-dark text-[17px] leading-snug mb-2 line-clamp-2 group-hover:text-primary-500 transition-colors">{service.serviceName}</h3>
+                    {service.description && (
+                      <p className="text-slate-500 text-[13px] leading-relaxed line-clamp-2 mb-3">
+                        {service.description}
+                      </p>
+                    )}
                     <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg w-fit text-slate-600 text-[13px] font-medium border border-slate-100">
                       <Building2 className="w-4 h-4 text-primary-400" />
                       <span>Phòng khám ClinicPro</span>

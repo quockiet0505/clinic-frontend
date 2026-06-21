@@ -79,6 +79,7 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
                 onSearchChanged: (v) => setState(() => _searchQuery = v.trim().toLowerCase()),
                 sortState: _sortByFee,
                 onSortTap: () => setState(() => _sortByFee = (_sortByFee + 1) % 3),
+                sortLabel: 'Phí',
                 tabs: tabs,
                 selectedTab: _selectedSpecialty,
                 onTabChanged: (v) => setState(() => _selectedSpecialty = v),
@@ -179,11 +180,18 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.star_rounded, color: AppColors.warning, size: 18),
+                          const Icon(Icons.star_rounded, color: AppColors.warning, size: 16),
                           const SizedBox(width: 4),
                           Text(
-                            '${doctor.rating.toStringAsFixed(1)} (${doctor.viewCount})',
+                            doctor.rating.toStringAsFixed(1),
                             style: AppStyles.caption.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 10),
+                          const Icon(Icons.people_alt_rounded, color: AppColors.textSubLight, size: 14),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${doctor.patientCount}',
+                            style: AppStyles.caption.copyWith(color: AppColors.textSubLight),
                           ),
                         ],
                       ),

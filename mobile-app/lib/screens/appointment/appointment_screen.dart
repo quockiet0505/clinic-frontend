@@ -42,14 +42,28 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFF),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // ─── Header ───
-            Container(
-              color: const Color(0xFFF8FAFF),
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-              child: Column(
+      body: Column(
+        children: [
+          // ─── Header ───
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFFDBEAFE), // Blue-100
+                  Color(0xFFF8FAFF),
+                ],
+                stops: [0.0, 1.0],
+              ),
+            ),
+            padding: EdgeInsets.only(
+              top: MediaQuery.of(context).padding.top + 16,
+              left: 20,
+              right: 20,
+              bottom: 0,
+            ),
+            child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
@@ -139,20 +153,19 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
             // ─── Body ───
             Expanded(
-              child: Consumer<AppointmentProvider>(
-                builder: (context, provider, child) {
+              child: Consumer2<AppointmentProvider, HomeProvider>(
+                builder: (context, provider, homeProvider, child) {
                   if (provider.isLoading) {
                     return const Center(child: CircularProgressIndicator(color: AppColors.primary));
                   }
 
                   final filtered = _filterAppointments(provider.myAppointments);
-                  return _buildList(filtered, provider.myAppointments.isNotEmpty, context.read<HomeProvider>());
+                  return _buildList(filtered, provider.myAppointments.isNotEmpty, homeProvider);
                 },
               ),
             ),
           ],
         ),
-      ),
     );
   }
 

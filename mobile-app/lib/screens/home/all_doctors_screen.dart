@@ -9,6 +9,8 @@ import 'package:clinic_management_system/utils/image_utils.dart';
 import 'package:clinic_management_system/widgets/common/clinic_list_toolbar.dart';
 import 'package:clinic_management_system/widgets/common/clinic_segmented_tabs.dart';
 
+import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
+
 class AllDoctorsScreen extends StatefulWidget {
   const AllDoctorsScreen({super.key});
 
@@ -60,6 +62,7 @@ class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFF),
+      appBar: const GradientAppBar(title: 'Tất cả bác sĩ'),
       body: Consumer2<HomeProvider, AppointmentProvider>(
         builder: (context, homeProvider, appointmentProvider, child) {
           if (homeProvider.isLoading) {
@@ -71,13 +74,13 @@ class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
 
           return Column(
             children: [
-              _buildHeader(context),
               ClinicListToolbar(
                 searchHint: 'Tìm kiếm bác sĩ, chuyên khoa...',
                 autofocusSearch: true,
                 onSearchChanged: (v) => setState(() => _searchQuery = v.trim().toLowerCase()),
                 sortState: _sortByFee,
                 onSortTap: () => setState(() => _sortByFee = (_sortByFee + 1) % 3),
+                sortLabel: 'Phí',
                 tabs: tabs,
                 selectedTab: _selectedSpecialty,
                 onTabChanged: (v) => setState(() => _selectedSpecialty = v),
@@ -101,43 +104,6 @@ class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
             ],
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      color: const Color(0xFFF8FAFF),
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + 12,
-        left: 20,
-        right: 20,
-        bottom: 12,
-      ),
-      child: Row(
-        children: [
-          Container(
-            height: 40,
-            width: 40,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFE2E8F0)),
-            ),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight, size: 18),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-          const Expanded(
-            child: Text(
-              'Tất cả bác sĩ',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textMainLight),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          const SizedBox(width: 40),
-        ],
       ),
     );
   }
@@ -202,6 +168,13 @@ class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
                           Text(
                             doctor.rating.toStringAsFixed(1),
                             style: AppStyles.caption.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 10),
+                          const Icon(Icons.people_alt_rounded, color: AppColors.textSubLight, size: 14),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${doctor.patientCount}',
+                            style: AppStyles.caption.copyWith(color: AppColors.textSubLight),
                           ),
                         ],
                       ),

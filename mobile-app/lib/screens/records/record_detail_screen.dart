@@ -8,6 +8,8 @@ import 'package:clinic_management_system/providers/record_provider.dart';
 import 'package:clinic_management_system/utils/date_formatter.dart';
 import 'package:provider/provider.dart';
 
+import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
+
 class RecordDetailScreen extends StatefulWidget {
   final RecordModel record;
 
@@ -30,15 +32,7 @@ class _RecordDetailScreenState extends State<RecordDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        title: Text('Chi tiết bệnh án', style: AppStyles.heading3.copyWith(color: AppColors.textMainLight)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      appBar: const GradientAppBar(title: 'Chi tiết bệnh án'),
       body: Consumer<RecordProvider>(
         builder: (context, provider, child) {
           if (provider.isLoading) {

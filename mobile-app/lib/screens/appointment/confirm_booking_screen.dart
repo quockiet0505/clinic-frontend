@@ -177,7 +177,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.network(
-                doctor.imageUrl != null ? ImageUtils.fixImageUrl(doctor.imageUrl) : 'https://via.placeholder.com/150',
+                doctor.imageUrl != null ? ImageUtils.fixImageUrl(doctor.imageUrl) : 'https://ui-avatars.com/api/?name=N/A&background=random&format=png',
                 height: 70, width: 70, fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200], height: 70, width: 70, child: const Icon(Icons.person, color: Colors.grey)),
               ),

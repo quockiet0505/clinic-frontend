@@ -2,6 +2,8 @@ import 'package:clinic_management_system/app_exports.dart';
 import 'package:clinic_management_system/models/appointment_model.dart';
 import 'package:clinic_management_system/services/feedback_service.dart';
 
+import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
+
 class ReviewScreen extends StatefulWidget {
   final AppointmentModel appointment;
 
@@ -241,14 +243,8 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text('Đánh giá dịch vụ', style: AppStyles.heading3.copyWith(color: AppColors.textMainLight)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight),
-          onPressed: () => Navigator.pop(context),
-        ),
+      appBar: GradientAppBar(
+        title: 'Đánh giá dịch vụ',
         bottom: TabBar(
           controller: _tabController,
           labelColor: AppColors.primary,

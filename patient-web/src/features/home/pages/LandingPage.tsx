@@ -6,9 +6,9 @@ import { HowItWorks } from '@/features/home/components/HowItWorks';
 import { homeApi } from '../api/homeApi';
 
 export const LandingPage: React.FC = () => {
-  const [specialties, setSpecialties] = useState([]);
-  const [doctors, setDoctors] = useState([]);
-  const [services, setServices] = useState([]);
+  const [specialties, setSpecialties] = useState<any[]>([]);
+  const [doctors, setDoctors] = useState<any[]>([]);
+  const [services, setServices] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

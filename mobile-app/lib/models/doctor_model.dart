@@ -8,7 +8,7 @@ class DoctorModel {
   final String biography;
   final double consultationFee;
   final double rating;
-  final int viewCount;
+  final int patientCount;
 
   // Aliases for compatibility
   int get id => staffId;
@@ -25,19 +25,19 @@ class DoctorModel {
     required this.biography,
     required this.consultationFee,
     required this.rating,
-    required this.viewCount,
+    required this.patientCount,
   });
 
   factory DoctorModel.fromJson(Map<String, dynamic> json) {
-    // Generate mock rating and viewCount as fallback if not provided by backend yet
+    // Generate mock rating and patientCount as fallback if not provided by backend yet
     final int safeStaffId = (json['staffId'] as num?)?.toInt() ?? 0;
     
     final double rating = (json['rating'] != null) 
         ? (json['rating'] as num).toDouble() 
         : (4.0 + (safeStaffId % 10) / 10.0);
         
-    final int viewCount = (json['viewCount'] != null) 
-        ? (json['viewCount'] as num).toInt() 
+    final int patientCount = (json['patientCount'] != null) 
+        ? (json['patientCount'] as num).toInt() 
         : (100 + safeStaffId * 15);
         
     final double fee = json['consultationFee'] != null 
@@ -54,7 +54,7 @@ class DoctorModel {
       biography: json['biography'] ?? 'Bác sĩ có chuyên môn cao và luôn tận tâm với bệnh nhân.',
       consultationFee: fee,
       rating: rating,
-      viewCount: viewCount,
+      patientCount: patientCount,
     );
   }
 }

@@ -49,7 +49,7 @@ export interface BookingFormState {
   description: string;
 }
 
-export type AppointmentStatus = 'PENDING' | 'CONFIRMED' | 'CHECKED_IN' | 'IN_PROGRESS' | 'WAITING_RESULT' | 'COMPLETED' | 'CANCELLED';
+export type AppointmentStatus = 'PENDING' | 'CONFIRMED' | 'CHECKED_IN' | 'IN_PROGRESS' | 'WAITING_RESULT' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW' | 'SKIPPED';
 
 export interface AppointmentHistoryItem {
   id: string; // appointmentId

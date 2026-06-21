@@ -1,3 +1,4 @@
+import { SectionContainer } from '@/components/common';
 import React from 'react';
 import { CalendarDays, Clock3, MapPin, Stethoscope, User, ArrowLeft, FileText, Activity } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';

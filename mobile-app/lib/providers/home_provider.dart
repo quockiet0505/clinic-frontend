@@ -8,6 +8,7 @@ import '../utils/image_utils.dart';
 import '../models/doctor_model.dart';
 import '../models/service_model.dart';
 import '../services/doctor_service.dart';
+import 'package:clinic_management_system/utils/service_price_utils.dart';
 
 class HomeProvider extends ChangeNotifier {
   final DioClient _dioClient = DioClient();
@@ -61,9 +62,10 @@ class HomeProvider extends ChangeNotifier {
               .toList();
       featuredServices = _extractList((responses[3] as Response).data['data'])
               .map((json) => ServiceModel.fromJson(json))
+              .where((s) => s.effectivePrice > 0)
               .toList();
       if (featuredServices.isEmpty) {
-        featuredServices = services.take(8).toList();
+        featuredServices = services.where((s) => s.effectivePrice > 0).take(8).toList();
       }
       quickActions = _extractList((responses[4] as Response).data['data']);
       logoUrl = (responses[5] as Response).data['data']?['logoUrl'];

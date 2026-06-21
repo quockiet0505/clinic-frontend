@@ -16,10 +16,10 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
   onServiceTypeChange,
 }) => {
   const [isStatusOpen, setIsStatusOpen] = useState(false);
-  const statusTimeoutRef = useRef<NodeJS.Timeout>();
+  const statusTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const [isServiceOpen, setIsServiceOpen] = useState(false);
-  const serviceTimeoutRef = useRef<NodeJS.Timeout>();
+  const serviceTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const handleStatusEnter = () => {
     if (statusTimeoutRef.current) clearTimeout(statusTimeoutRef.current);
