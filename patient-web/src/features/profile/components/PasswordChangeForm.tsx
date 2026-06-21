@@ -8,7 +8,6 @@ import { toast } from 'sonner';
 export const PasswordChangeForm: React.FC = () => {
   const [passwords, setPasswords] = useState({ oldPass: '', newPass: '', confirmPass: '' });
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   
   const [showOldPass, setShowOldPass] = useState(false);
   const [showNewPass, setShowNewPass] = useState(false);

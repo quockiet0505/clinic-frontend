@@ -51,7 +51,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   icon: Icon(
                     index < _rating ? Icons.star_rounded : Icons.star_border_rounded,
                     size: 40,
-                    color: index < _rating ? AppColors.warning : AppColors.textSubLight.withOpacity(0.3),
+                    color: index < _rating ? Colors.amber : AppColors.textSubLight.withOpacity(0.3),
                   ),
                   onPressed: () {
                     setState(() {

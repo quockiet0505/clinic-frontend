@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:clinic_management_system/core/constants/app_colors.dart';
+import 'clinic_search_field.dart';
 
+/// @deprecated Use [ClinicSearchField] or [ClinicListToolbar] instead.
 class CustomSearchBar extends StatelessWidget {
   final String hintText;
   final bool autofocus;
@@ -17,34 +19,11 @@ class CustomSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: TextField(
-        autofocus: autofocus,
-        onChanged: onChanged,
-        decoration: InputDecoration(
-          hintText: hintText,
-          prefixIcon: Icon(Icons.search, color: AppColors.textSubLight),
-          suffixIcon: onFilterTap != null
-              ? IconButton(
-                  icon: Icon(Icons.tune, color: AppColors.primary),
-                  onPressed: onFilterTap,
-                )
-              : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        ),
-      ),
+    return ClinicSearchField(
+      hintText: hintText,
+      autofocus: autofocus,
+      onChanged: onChanged,
+      onFilterTap: onFilterTap,
     );
   }
 }

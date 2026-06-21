@@ -59,6 +59,28 @@ class AuthService {
     }
   }
 
+  Future<String> uploadAvatar(String filePath) async {
+    try {
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(filePath),
+      });
+      final response = await _dioClient.dio.post(
+        '/upload/image',
+        data: formData,
+      );
+      if (response.statusCode == 200) {
+        return response.data['data']; // Returns the URL
+      } else {
+        throw Exception(response.data['message'] ?? 'Failed to upload avatar');
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(e.response?.data['message'] ?? 'Failed to upload avatar');
+      }
+      throw Exception('Network error');
+    }
+  }
+
   Future<Map<String, dynamic>> register(String fullName, String phone, String email, String password) async {
     try {
       final response = await _dioClient.dio.post(

@@ -8,7 +8,10 @@ class MedicalService {
     try {
       final response = await _dioClient.dio.get('/services');
       if (response.statusCode == 200) {
-        return response.data['data'] ?? [];
+        final data = response.data['data'];
+        if (data is List) return data;
+        if (data is Map && data.containsKey('content')) return data['content'] as List;
+        return data == null ? [] : [data];
       } else {
         throw Exception(response.data['message'] ?? 'Failed to fetch services');
       }
@@ -23,7 +26,10 @@ class MedicalService {
     try {
       final response = await _dioClient.dio.get('/medical-records/my');
       if (response.statusCode == 200) {
-        return response.data['data'] ?? [];
+        final data = response.data['data'];
+        if (data is List) return data;
+        if (data is Map && data.containsKey('content')) return data['content'] as List;
+        return data == null ? [] : [data];
       } else {
         throw Exception(response.data['message'] ?? 'Failed to fetch records');
       }
@@ -38,7 +44,10 @@ class MedicalService {
     try {
       final response = await _dioClient.dio.get('/service-results/my');
       if (response.statusCode == 200) {
-        return response.data['data'] ?? [];
+        final data = response.data['data'];
+        if (data is List) return data;
+        if (data is Map && data.containsKey('content')) return data['content'] as List;
+        return data == null ? [] : [data];
       } else {
         throw Exception(response.data['message'] ?? 'Failed to fetch lab results');
       }

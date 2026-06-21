@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Pill, FileSignature, ChevronRight, Download, UserRound } from 'lucide-react';
 import { SearchInput } from '@/components/common/SearchInput';
-import { SectionContainer } from '@/components/common';
+import { SectionContainer, DateFilter } from '@/components/common';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { PrescriptionModalContent } from '../components/PrescriptionModalContent';
 import { ClinicPdfLayout } from '@/components/common/ClinicPdfLayout';
@@ -15,6 +15,8 @@ export const Prescriptions: React.FC = () => {
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [patientProfile, setPatientProfile] = useState<PatientProfile | null>(null);
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
 
   useEffect(() => {
     // Fetch patient profile for health data in PDF
@@ -27,32 +29,55 @@ export const Prescriptions: React.FC = () => {
     const fetchPrescriptions = async () => {
       try {
         const { recordApi } = await import('../api/recordApi');
-        const [presData, recordsData] = await Promise.all([
-          recordApi.getPrescriptions(),
-          recordApi.getMedicalHistory().catch(() => [])
-        ]);
-        const recordsMap = new Map<any, any>(recordsData.map((r: any) => [r.recordId, r] as [any, any]));
-        const enriched = presData.map((p: any) => ({
+        const presData = await recordApi.getPrescriptions();
+        
+        // Initial map with fallback
+        const initialEnriched = presData.map((p: any) => ({
           ...p,
-          diagnosis: recordsMap.get(p.recordId)?.diagnosis || 'Chưa cập nhật chẩn đoán',
-          treatment: recordsMap.get(p.recordId)?.treatment || 'Chưa có ghi chú điều trị',
-          doctorName: recordsMap.get(p.recordId)?.mainDoctorName || 'Bác sĩ chuyên khoa',
+          diagnosis: 'Chưa cập nhật chẩn đoán',
+          treatment: 'Chưa có ghi chú điều trị',
+          doctorName: 'Bác sĩ chuyên khoa',
         }));
-        setPrescriptions(enriched);
+        
+        setPrescriptions(initialEnriched);
+        setLoading(false); // Stop loading early
+
+        // Fetch records asynchronously
+        recordApi.getMedicalHistory().then(recordsData => {
+          const recordsMap = new Map<any, any>(recordsData.map((r: any) => [r.recordId, r] as [any, any]));
+          setPrescriptions(prev => prev.map(p => ({
+            ...p,
+            diagnosis: recordsMap.get(p.recordId)?.diagnosis || p.diagnosis,
+            treatment: recordsMap.get(p.recordId)?.treatment || p.treatment,
+            doctorName: recordsMap.get(p.recordId)?.mainDoctorName || p.doctorName,
+          })));
+        }).catch(() => {});
+
       } catch (error) {
         console.error('Failed to fetch prescriptions:', error);
-      } finally {
         setLoading(false);
       }
     };
     fetchPrescriptions();
   }, []);
 
-  const filteredPrescriptions = prescriptions.filter((p: any) =>
-    p.items?.some((item: any) => item.medicineName?.toLowerCase().includes(searchQuery.toLowerCase())) ||
-    p.diagnosis?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.doctorName?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredPrescriptions = prescriptions.filter((p: any) => {
+    const matchSearch = p.items?.some((item: any) => item.medicineName?.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      p.diagnosis?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.doctorName?.toLowerCase().includes(searchQuery.toLowerCase());
+      
+    let matchDate = true;
+    if (fromDate) {
+      matchDate = matchDate && new Date(p.createdAt) >= new Date(fromDate);
+    }
+    if (toDate) {
+      const end = new Date(toDate);
+      end.setHours(23, 59, 59, 999);
+      matchDate = matchDate && new Date(p.createdAt) <= end;
+    }
+    
+    return matchSearch && matchDate;
+  });
 
   if (loading) {
     return (
@@ -94,8 +119,17 @@ export const Prescriptions: React.FC = () => {
                 <p className="text-white/90 text-sm drop-shadow-sm">Theo dõi lịch sử đơn thuốc và y lệnh điều trị</p>
               </div>
             </div>
-            <div className="w-full md:w-80 shrink-0">
-              <SearchInput value={searchQuery} onSearch={setSearchQuery} placeholder="Tìm thuốc, chẩn đoán, bác sĩ..." className="h-11 shadow-md border-transparent bg-white text-slate-700 placeholder:text-slate-400 focus-within:ring-4 focus-within:ring-white/20" />
+            <div className="w-full md:w-auto flex flex-col sm:flex-row items-center gap-3 shrink-0">
+              <div className="w-full sm:w-72 shrink-0">
+                <SearchInput value={searchQuery} onSearch={setSearchQuery} placeholder="Tìm thuốc, chẩn đoán, bác sĩ..." className="h-11 shadow-md border-transparent bg-white text-slate-700 placeholder:text-slate-400 focus-within:ring-4 focus-within:ring-white/20" />
+              </div>
+              <DateFilter 
+                fromDate={fromDate}
+                toDate={toDate}
+                onFromDateChange={setFromDate}
+                onToDateChange={setToDate}
+                onClear={() => { setFromDate(''); setToDate(''); }}
+              />
             </div>
           </div>
         </SectionContainer>

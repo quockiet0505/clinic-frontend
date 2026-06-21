@@ -1,12 +1,13 @@
 import 'package:clinic_management_system/app_exports.dart';
-import 'package:clinic_management_system/widgets/common/custom_search_bar.dart';
-import 'package:clinic_management_system/utils/image_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/home_provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
 import 'package:clinic_management_system/screens/appointment/select_time_screen.dart';
 import 'package:clinic_management_system/models/doctor_model.dart';
 import 'package:clinic_management_system/utils/currency_formatter.dart';
+import 'package:clinic_management_system/utils/image_utils.dart';
+import 'package:clinic_management_system/widgets/common/clinic_list_toolbar.dart';
+import 'package:clinic_management_system/widgets/common/clinic_segmented_tabs.dart';
 
 class AllDoctorsScreen extends StatefulWidget {
   const AllDoctorsScreen({super.key});
@@ -16,106 +17,86 @@ class AllDoctorsScreen extends StatefulWidget {
 }
 
 class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
-  int _selectedSpecialtyIndex = 0;
+  String _selectedSpecialty = 'ALL';
   String _searchQuery = '';
+  int _sortByFee = 0;
+
+  List<ClinicTabItem> _specialtyTabs(HomeProvider provider) {
+    return [
+      const ClinicTabItem(value: 'ALL', label: 'Tất cả'),
+      ...provider.specialties.map(
+        (s) => ClinicTabItem(
+          value: '${s['expertiseId'] ?? s['expertiseName']}',
+          label: s['expertiseName'] ?? 'Chuyên khoa',
+        ),
+      ),
+    ];
+  }
+
+  List<DoctorModel> _filterDoctors(HomeProvider provider) {
+    var list = provider.doctors.where((doctor) {
+      if (_selectedSpecialty != 'ALL') {
+        final tab = _specialtyTabs(provider).firstWhere((t) => t.value == _selectedSpecialty);
+        if (doctor.specialty != tab.label) return false;
+      }
+      if (_searchQuery.isNotEmpty) {
+        final q = _searchQuery.toLowerCase();
+        final name = (doctor.name ?? '').toLowerCase();
+        final spec = (doctor.specialty ?? '').toLowerCase();
+        if (!name.contains(q) && !spec.contains(q)) return false;
+      }
+      return true;
+    }).toList();
+
+    if (_sortByFee == 1) {
+      list.sort((a, b) => a.consultationFee.compareTo(b.consultationFee));
+    } else if (_sortByFee == 2) {
+      list.sort((a, b) => b.consultationFee.compareTo(a.consultationFee));
+    }
+    return list;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgLight,
-      appBar: const GradientAppBar(
-        title: 'Tất cả Bác sĩ',
-      ),
+      backgroundColor: const Color(0xFFF8FAFF),
       body: Consumer2<HomeProvider, AppointmentProvider>(
         builder: (context, homeProvider, appointmentProvider, child) {
           if (homeProvider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(color: AppColors.primary));
           }
+
+          final doctors = _filterDoctors(homeProvider);
+          final tabs = _specialtyTabs(homeProvider);
 
           return Column(
             children: [
-              // 1. Search Bar
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: CustomSearchBar(
-                  hintText: 'Tìm kiếm bác sĩ, chuyên khoa...',
-                  autofocus: true,
-                  onChanged: (val) {
-                    setState(() {
-                      _searchQuery = val.toLowerCase();
-                    });
-                  },
-                  onFilterTap: () {},
-                ),
+              _buildHeader(context),
+              ClinicListToolbar(
+                searchHint: 'Tìm kiếm bác sĩ, chuyên khoa...',
+                autofocusSearch: true,
+                onSearchChanged: (v) => setState(() => _searchQuery = v.trim().toLowerCase()),
+                sortState: _sortByFee,
+                onSortTap: () => setState(() => _sortByFee = (_sortByFee + 1) % 3),
+                tabs: tabs,
+                selectedTab: _selectedSpecialty,
+                onTabChanged: (v) => setState(() => _selectedSpecialty = v),
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
               ),
-
-              // 2. Specialty Categories
-              SizedBox(
-                height: 50,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: homeProvider.specialties.length + 1, // +1 for "All"
-                  itemBuilder: (context, index) {
-                    final isSelected = _selectedSpecialtyIndex == index;
-                    final isAll = index == 0;
-                    final specialtyName = isAll ? 'Tất cả' : homeProvider.specialties[index - 1]['expertiseName'];
-                    
-                    return GestureDetector(
-                      onTap: () => setState(() => _selectedSpecialtyIndex = index),
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 12),
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: isSelected ? AppColors.primary : Colors.transparent,
-                          border: Border.all(
-                            color: isSelected ? AppColors.primary : AppColors.textSubLight.withValues(alpha: 0.2),
-                          ),
-                          borderRadius: BorderRadius.circular(24),
-                        ),
-                        child: Text(
-                          specialtyName ?? '',
-                          style: AppStyles.bodyMedium.copyWith(
-                            color: isSelected ? Colors.white : AppColors.textSubLight,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // 3. Doctors List
               Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 20).copyWith(bottom: 100),
-                  itemCount: homeProvider.doctors.length,
-                  itemBuilder: (context, index) {
-                    final doctor = homeProvider.doctors[index];
-                    
-                    // Basic filtering logic based on specialty
-                    if (_selectedSpecialtyIndex != 0) {
-                      final selectedSpecialty = homeProvider.specialties[_selectedSpecialtyIndex - 1]['expertiseName'];
-                      if (doctor.specialty != selectedSpecialty) {
-                        return const SizedBox.shrink();
-                      }
-                    }
-
-                    // Filtering based on search query
-                    if (_searchQuery.isNotEmpty) {
-                      final doctorName = (doctor.name ?? '').toLowerCase();
-                      final doctorSpec = (doctor.specialty ?? '').toLowerCase();
-                      if (!doctorName.contains(_searchQuery) && !doctorSpec.contains(_searchQuery)) {
-                        return const SizedBox.shrink();
-                      }
-                    }
-
-                    return _buildDoctorCard(context, doctor, appointmentProvider, homeProvider);
-                  },
-                ),
+                child: doctors.isEmpty
+                    ? Center(
+                        child: Text(
+                          homeProvider.doctors.isEmpty ? 'Chưa có bác sĩ' : 'Không tìm thấy bác sĩ phù hợp',
+                          style: AppStyles.bodyMedium.copyWith(color: AppColors.textSubLight),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                        itemCount: doctors.length,
+                        itemBuilder: (context, index) =>
+                            _buildDoctorCard(context, doctors[index], appointmentProvider),
+                      ),
               ),
             ],
           );
@@ -124,46 +105,75 @@ class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
     );
   }
 
-  Widget _buildDoctorCard(BuildContext context, DoctorModel doctor, AppointmentProvider appointmentProvider, HomeProvider homeProvider) {
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      color: const Color(0xFFF8FAFF),
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 12,
+        left: 20,
+        right: 20,
+        bottom: 12,
+      ),
+      child: Row(
+        children: [
+          Container(
+            height: 40,
+            width: 40,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight, size: 18),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+          const Expanded(
+            child: Text(
+              'Tất cả bác sĩ',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textMainLight),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(width: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDoctorCard(BuildContext context, DoctorModel doctor, AppointmentProvider appointmentProvider) {
     return GestureDetector(
       onTap: () {
         appointmentProvider.selectDoctor(doctor);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SelectTimeScreen()),
-        );
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectTimeScreen()));
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: const EdgeInsets.only(bottom: 14),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.textSubLight.withValues(alpha: 0.1)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 4))],
         ),
         child: Row(
           children: [
             Hero(
-              tag: 'all_doctor_img_${doctor.id}', // changed tag to avoid conflict if both screens in stack
+              tag: 'all_doctor_img_${doctor.id}',
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(14),
                 child: Image.network(
                   ImageUtils.fixImageUrl(doctor.imageUrl),
-                  height: 80,
-                  width: 80,
+                  height: 76,
+                  width: 76,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200], height: 80, width: 80, child: const Icon(Icons.person, color: Colors.grey)),
+                  errorBuilder: (_, __, ___) =>
+                      Container(color: Colors.grey[200], height: 76, width: 76, child: const Icon(Icons.person, color: Colors.grey)),
                 ),
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,7 +186,7 @@ class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${doctor.specialty} • ClinicCare',
+                    doctor.specialty ?? 'Chuyên khoa',
                     style: AppStyles.caption.copyWith(color: AppColors.textSubLight),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -187,17 +197,17 @@ class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.star_rounded, color: AppColors.warning, size: 18),
+                          const Icon(Icons.star_rounded, color: AppColors.warning, size: 16),
                           const SizedBox(width: 4),
                           Text(
-                            '${doctor.rating.toStringAsFixed(1)} (${doctor.viewCount})',
+                            doctor.rating.toStringAsFixed(1),
                             style: AppStyles.caption.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
                       Text(
                         CurrencyFormatter.formatVND(doctor.consultationFee),
-                        style: AppStyles.bodyLarge.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
+                        style: AppStyles.bodyMedium.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),

@@ -7,7 +7,10 @@ class BookingService {
     try {
       final response = await _dioClient.dio.get('/appointments/my');
       if (response.statusCode == 200) {
-        return response.data['data'] ?? [];
+        final data = response.data['data'];
+        if (data is List) return data;
+        if (data is Map && data.containsKey('content')) return data['content'] as List;
+        return data == null ? [] : [data];
       } else {
         throw Exception(response.data['message'] ?? 'Failed to fetch appointments');
       }
@@ -23,7 +26,10 @@ class BookingService {
         'date': date,
       });
       if (response.statusCode == 200) {
-        return response.data['data'] ?? [];
+        final data = response.data['data'];
+        if (data is List) return data;
+        if (data is Map && data.containsKey('content')) return data['content'] as List;
+        return data == null ? [] : [data];
       } else {
         throw Exception(response.data['message'] ?? 'Failed to fetch slots');
       }

@@ -6,6 +6,8 @@ import 'package:clinic_management_system/screens/records/lab_result_screen.dart'
 import 'package:clinic_management_system/utils/date_formatter.dart';
 import 'package:provider/provider.dart';
 import '../../providers/record_provider.dart';
+import 'package:clinic_management_system/widgets/common/clinic_list_toolbar.dart';
+import 'package:clinic_management_system/widgets/common/clinic_segmented_tabs.dart';
 
 class RecordsScreen extends StatefulWidget {
   const RecordsScreen({super.key});
@@ -16,7 +18,14 @@ class RecordsScreen extends StatefulWidget {
 
 class _RecordsScreenState extends State<RecordsScreen> {
   String _searchQuery = '';
-  String _selectedTab = 'Tất cả';
+  String _selectedTab = 'ALL';
+  DateTime? _filterDate;
+
+  static const _tabs = [
+    ClinicTabItem(value: 'ALL', label: 'Tất cả'),
+    ClinicTabItem(value: 'MEDICAL', label: 'Khám bệnh'),
+    ClinicTabItem(value: 'LAB', label: 'Xét nghiệm'),
+  ];
 
   @override
   void initState() {
@@ -63,18 +72,30 @@ class _RecordsScreenState extends State<RecordsScreen> {
           final labResults = provider.myLabResults;
           
           List<dynamic> allRecords = [];
-          if (_selectedTab == 'Khám bệnh') {
+          if (_selectedTab == 'MEDICAL') {
             allRecords = medicalRecords;
-          } else if (_selectedTab == 'Xét nghiệm') {
+          } else if (_selectedTab == 'LAB') {
             allRecords = labResults;
           } else {
             allRecords = [...medicalRecords, ...labResults];
-            // Sort by date descending
             allRecords.sort((a, b) {
               String dateA = a is RecordModel ? a.createdAt : (a as LabResultModel).date ?? '';
               String dateB = b is RecordModel ? b.createdAt : (b as LabResultModel).date ?? '';
               return dateB.compareTo(dateA);
             });
+          }
+
+          if (_filterDate != null) {
+            allRecords = allRecords.where((r) {
+              try {
+                final raw = r is RecordModel ? r.createdAt : (r as LabResultModel).date;
+                if (raw == null || raw.isEmpty) return false;
+                final d = DateTime.parse(raw);
+                return d.year == _filterDate!.year && d.month == _filterDate!.month && d.day == _filterDate!.day;
+              } catch (_) {
+                return false;
+              }
+            }).toList();
           }
 
           final records = allRecords.where((r) {
@@ -126,61 +147,45 @@ class _RecordsScreenState extends State<RecordsScreen> {
                       ],
                     ),
                     const SizedBox(height: 14),
-                    // Search
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 2))],
-                      ),
-                      child: TextField(
-                        onChanged: (v) => setState(() => _searchQuery = v),
-                        decoration: const InputDecoration(
-                          hintText: 'Tìm theo chẩn đoán, bác sĩ...',
-                          hintStyle: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
-                          prefixIcon: Icon(Icons.search_rounded, color: Color(0xFF9CA3AF), size: 20),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(vertical: 13),
+                    ClinicListToolbar(
+                      searchHint: 'Tìm theo chẩn đoán, bác sĩ...',
+                      onSearchChanged: (v) => setState(() => _searchQuery = v.trim()),
+                      onDateFilterTap: () async {
+                        final date = await showDatePicker(
+                          context: context,
+                          initialDate: _filterDate ?? DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (date != null) {
+                          setState(() => _filterDate = date);
+                        }
+                      },
+                      dateFilterActive: _filterDate != null,
+                      tabs: _tabs,
+                      selectedTab: _selectedTab,
+                      onTabChanged: (v) => setState(() => _selectedTab = v),
+                      padding: EdgeInsets.zero,
+                    ),
+                    if (_filterDate != null) ...[
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: InputChip(
+                          label: Text(
+                            'Ngày: ${DateFormatter.formatDateTime(_filterDate!.toIso8601String())}',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          onDeleted: () => setState(() => _filterDate = null),
+                          deleteIconColor: AppColors.primary,
                         ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),
 
-              // Tabs
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: ['Tất cả', 'Khám bệnh', 'Xét nghiệm'].map((tab) {
-                      final isSelected = _selectedTab == tab;
-                      return GestureDetector(
-                        onTap: () => setState(() => _selectedTab = tab),
-                        child: Container(
-                          margin: const EdgeInsets.only(right: 8),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            tab,
-                            style: TextStyle(
-                              color: isSelected ? AppColors.primary : const Color(0xFF9CA3AF),
-                              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-
-              // Body - same bg, no visual break
+              // Body
               Expanded(
                 child: records.isEmpty
                     ? _buildEmptyState(isSearchEmpty: allRecords.isNotEmpty)

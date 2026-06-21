@@ -13,6 +13,7 @@ class AppointmentModel {
   final String? note;
   final String? cancelReason;
   final String? appointmentType;
+  final String? serviceName;
 
   AppointmentModel({
     required this.appointmentId,
@@ -29,6 +30,7 @@ class AppointmentModel {
     this.note,
     this.cancelReason,
     this.appointmentType,
+    this.serviceName,
   });
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
@@ -47,6 +49,7 @@ class AppointmentModel {
       note: json['note'],
       cancelReason: json['cancelReason'],
       appointmentType: json['appointmentType'] ?? 'OFFLINE',
+      serviceName: json['serviceName'],
     );
   }
 }

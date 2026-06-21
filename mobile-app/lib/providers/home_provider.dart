@@ -16,6 +16,7 @@ class HomeProvider extends ChangeNotifier {
   List<DoctorModel> doctors = [];
   List<dynamic> specialties = [];
   List<ServiceModel> services = [];
+  List<ServiceModel> featuredServices = [];
   List<dynamic> quickActions = [];
   String? logoUrl;
   String? bannerUrl;
@@ -25,6 +26,12 @@ class HomeProvider extends ChangeNotifier {
 
   String fixImageUrl(String? url) {
     return ImageUtils.fixImageUrl(url);
+  }
+
+  List<dynamic> _extractList(dynamic data) {
+    if (data is List) return data;
+    if (data is Map && data.containsKey('content')) return data['content'] as List;
+    return data == null ? [] : [data];
   }
 
   Future<void> fetchHomeData() async {
@@ -39,7 +46,8 @@ class HomeProvider extends ChangeNotifier {
         _doctorService.getSpecialties(),
         _doctorService.getDoctors(),
         _dioClient.dio.get('/services'),
-        _dioClient.dio.get('/static/quick-actions'),
+        _dioClient.dio.get('/services/featured'),
+        _dioClient.dio.get('/public/quick-actions'),
         _dioClient.dio.get('/static/logo'),
         _dioClient.dio.get('/static/banner'),
       ]);
@@ -48,12 +56,18 @@ class HomeProvider extends ChangeNotifier {
       doctors = (responses[1] as List<dynamic>)
               .map((json) => DoctorModel.fromJson(json))
               .toList();
-      services = ((responses[2] as Response).data['data'] as List?)
-              ?.map((json) => ServiceModel.fromJson(json))
-              .toList() ?? [];
-      quickActions = (responses[3] as Response).data['data'] ?? [];
-      logoUrl = (responses[4] as Response).data['data']?['logoUrl'];
-      bannerUrl = (responses[5] as Response).data['data']?['bannerUrl'];
+      services = _extractList((responses[2] as Response).data['data'])
+              .map((json) => ServiceModel.fromJson(json))
+              .toList();
+      featuredServices = _extractList((responses[3] as Response).data['data'])
+              .map((json) => ServiceModel.fromJson(json))
+              .toList();
+      if (featuredServices.isEmpty) {
+        featuredServices = services.take(8).toList();
+      }
+      quickActions = _extractList((responses[4] as Response).data['data']);
+      logoUrl = (responses[5] as Response).data['data']?['logoUrl'];
+      bannerUrl = (responses[6] as Response).data['data']?['bannerUrl'];
 
       // Lazy Shimmer logic: Ensure at least 300ms delay to prevent flickering
       final elapsedTime = DateTime.now().difference(startTime).inMilliseconds;

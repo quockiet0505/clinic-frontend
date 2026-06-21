@@ -24,3 +24,4 @@ export * from './HeaderMenuDropdown';
 export * from './ScrollToTop';
 export * from './ImageWithFallback';
 export * from './ClinicPdfLayout';
+export * from './DateFilter';

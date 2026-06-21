@@ -48,8 +48,16 @@ export const reviewApi = {
     await axiosInstance.post('/feedbacks/doctor/my', data);
   },
   
+  updateDoctorReview: async (id: number, data: DoctorFeedbackSubmitRequest): Promise<void> => {
+    await axiosInstance.put(`/feedbacks/doctor/my/${id}`, data);
+  },
+  
   submitClinicReview: async (data: ClinicFeedbackSubmitRequest): Promise<void> => {
     await axiosInstance.post('/feedbacks/clinic/my', data);
+  },
+  
+  updateClinicReview: async (id: number, data: ClinicFeedbackSubmitRequest): Promise<void> => {
+    await axiosInstance.put(`/feedbacks/clinic/my/${id}`, data);
   },
   
   getMyDoctorReviews: async (): Promise<DoctorFeedbackResponse[]> => {

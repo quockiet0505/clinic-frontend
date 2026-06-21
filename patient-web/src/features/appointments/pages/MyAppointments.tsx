@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState, useMemo } from 'react';
 import { CalendarOff, CalendarDays, Plus, ClipboardList, HelpCircle, User, Activity, FlaskConical, Clock3, FileSignature, XCircle, ChevronDown, Info } from 'lucide-react';
-import { SectionContainer } from '@/components/common';
+import { SectionContainer, DateFilter } from '@/components/common';
 import { SearchInput } from '@/components/common/SearchInput';
 import { AppointmentCard } from '../components/AppointmentCard';
 import { AppointmentFilterBar } from '../components/AppointmentFilterBar';
@@ -20,6 +20,8 @@ export const MyAppointments: React.FC = () => {
   const [serviceType, setServiceType] = useState<string>('ALL');
   const [activeTab, setActiveTab] = useState<'ALL' | 'UPCOMING' | 'PAST'>('ALL');
   const [showGuide, setShowGuide] = useState(false);
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
 
   const STATUS_GUIDE = [
     { status: 'PENDING', label: 'Chờ xác nhận', desc: 'Đang đợi phòng khám xác nhận lịch hẹn.', icon: <HelpCircle className="w-4 h-4 text-amber-600"/>, color: 'bg-amber-100 text-amber-700' },
@@ -36,23 +38,23 @@ export const MyAppointments: React.FC = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [apptData, doctorsData] = await Promise.all([
-        appointmentApi.getMyAppointments(),
-        appointmentApi.getDoctors().catch(() => []),
-      ]);
+      const apptData = await appointmentApi.getMyAppointments();
       
-      const doctorsMap = new Map(doctorsData.map(d => [d.staffId, d.imageUrl]));
+      apptData.sort((a, b) => new Date(b.appointmentDate).getTime() - new Date(a.appointmentDate).getTime());
+      setAppointments(apptData);
       
-      const mappedAppts = apptData.map(appt => {
-        let imageUrl = appt.mainDoctorId ? doctorsMap.get(appt.mainDoctorId) : undefined;
-        if (imageUrl && imageUrl.startsWith('/')) {
-          imageUrl = `http://localhost:8080${imageUrl}`;
-        }
-        return { ...appt, doctorImageUrl: imageUrl };
-      });
-      
-      mappedAppts.sort((a, b) => new Date(b.appointmentDate).getTime() - new Date(a.appointmentDate).getTime());
-      setAppointments(mappedAppts);
+      // Fetch doctor images asynchronously to prevent blocking the UI
+      appointmentApi.getDoctors().then(doctorsData => {
+        const doctorsMap = new Map(doctorsData.map(d => [d.staffId, d.imageUrl]));
+        setAppointments(prev => prev.map(appt => {
+          let imageUrl = appt.mainDoctorId ? doctorsMap.get(appt.mainDoctorId) : undefined;
+          if (imageUrl && imageUrl.startsWith('/')) {
+            imageUrl = `http://localhost:8080${imageUrl}`;
+          }
+          return { ...appt, doctorImageUrl: imageUrl };
+        }));
+      }).catch(() => {});
+
     } catch (error) {
       console.error('Failed to fetch data:', error);
       setAppointments([]);
@@ -71,9 +73,19 @@ export const MyAppointments: React.FC = () => {
       const matchStatus = status === 'ALL' || item.status === status;
       const matchService = serviceType === 'ALL' || item.serviceType === serviceType;
 
-      return matchSearch && matchStatus && matchService;
+      let matchDate = true;
+      if (fromDate) {
+        matchDate = matchDate && new Date(item.appointmentDate) >= new Date(fromDate);
+      }
+      if (toDate) {
+        const end = new Date(toDate);
+        end.setHours(23, 59, 59, 999);
+        matchDate = matchDate && new Date(item.appointmentDate) <= end;
+      }
+
+      return matchSearch && matchStatus && matchService && matchDate;
     });
-  }, [appointments, search, status, serviceType]);
+  }, [appointments, search, status, serviceType, fromDate, toDate]);
 
   const upcomingAppointments = useMemo(() => filteredAppointments.filter(item => upcomingStatuses.includes(item.status)), [filteredAppointments]);
   const pastAppointments = useMemo(() => filteredAppointments.filter(item => pastStatuses.includes(item.status)), [filteredAppointments]);
@@ -176,7 +188,14 @@ export const MyAppointments: React.FC = () => {
           </div>
 
           {/* Filters */}
-          <div className="flex-1 w-full lg:w-auto flex justify-end">
+          <div className="flex-1 w-full lg:w-auto flex flex-col sm:flex-row justify-end items-center gap-3">
+            <DateFilter 
+              fromDate={fromDate}
+              toDate={toDate}
+              onFromDateChange={setFromDate}
+              onToDateChange={setToDate}
+              onClear={() => { setFromDate(''); setToDate(''); }}
+            />
             <AppointmentFilterBar 
               status={status as any} onStatusChange={setStatus} 
               serviceType={serviceType as any} onServiceTypeChange={setServiceType}

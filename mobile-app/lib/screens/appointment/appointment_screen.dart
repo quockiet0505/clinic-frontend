@@ -8,6 +8,8 @@ import 'package:clinic_management_system/models/appointment_model.dart';
 import 'package:clinic_management_system/screens/appointment/appointment_detail_screen.dart';
 import 'package:intl/intl.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:clinic_management_system/widgets/common/clinic_list_toolbar.dart';
+import 'package:clinic_management_system/widgets/common/clinic_segmented_tabs.dart';
 
 class AppointmentScreen extends StatefulWidget {
   const AppointmentScreen({super.key});
@@ -18,8 +20,15 @@ class AppointmentScreen extends StatefulWidget {
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
   String _searchQuery = '';
-  int _selectedTabIndex = 0;
-  final List<String> _tabs = ['Tất cả', 'Sắp tới', 'Hoàn thành', 'Đã hủy'];
+  String _selectedTab = 'ALL';
+  DateTime? _filterDate;
+
+  static const _tabs = [
+    ClinicTabItem(value: 'ALL', label: 'Tất cả'),
+    ClinicTabItem(value: 'UPCOMING', label: 'Sắp tới'),
+    ClinicTabItem(value: 'COMPLETED', label: 'Hoàn thành'),
+    ClinicTabItem(value: 'CANCELLED', label: 'Đã hủy'),
+  ];
 
   @override
   void initState() {
@@ -92,63 +101,38 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     ],
                   ),
                   const SizedBox(height: 14),
-                  // Search bar
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+                  ClinicListToolbar(
+                    searchHint: 'Tìm bác sĩ, chuyên khoa...',
+                    onSearchChanged: (v) => setState(() => _searchQuery = v.trim()),
+                    onDateFilterTap: () async {
+                      final date = await showDatePicker(
+                        context: context,
+                        initialDate: _filterDate ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+                      if (date != null) setState(() => _filterDate = date);
+                    },
+                    dateFilterActive: _filterDate != null,
+                    tabs: _tabs,
+                    selectedTab: _selectedTab,
+                    onTabChanged: (v) => setState(() => _selectedTab = v),
+                    padding: EdgeInsets.zero,
+                  ),
+                  if (_filterDate != null) ...[
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: InputChip(
+                        label: Text(
+                          'Ngày: ${DateFormat('dd/MM/yyyy').format(_filterDate!)}',
+                          style: const TextStyle(fontSize: 12),
                         ),
-                      ],
-                    ),
-                    child: TextField(
-                      onChanged: (v) => setState(() => _searchQuery = v),
-                      decoration: InputDecoration(
-                        hintText: 'Tìm bác sĩ, chuyên khoa...',
-                        hintStyle: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
-                        prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF9CA3AF), size: 20),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 13),
+                        onDeleted: () => setState(() => _filterDate = null),
+                        deleteIconColor: AppColors.primary,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  // Tab bar
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: List.generate(_tabs.length, (index) {
-                          final tab = _tabs[index];
-                          final isSelected = _selectedTabIndex == index;
-                          return GestureDetector(
-                            onTap: () => setState(() => _selectedTabIndex = index),
-                            child: Container(
-                              margin: const EdgeInsets.only(right: 8),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : Colors.transparent,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                tab,
-                                style: TextStyle(
-                                  color: isSelected ? AppColors.primary : const Color(0xFF9CA3AF),
-                                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      ),
-                    ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -161,31 +145,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     return const Center(child: CircularProgressIndicator(color: AppColors.primary));
                   }
 
-                  final allAppointments = provider.myAppointments;
-
-                  List<AppointmentModel> _filter(List<AppointmentModel> source, int tabIndex) {
-                    List<AppointmentModel> result;
-                    if (tabIndex == 0) {
-                      result = source;
-                    } else if (tabIndex == 1) {
-                      result = source.where((a) => a.status == 'SCHEDULED' || a.status == 'CONFIRMED' || a.status == 'PENDING').toList();
-                    } else if (tabIndex == 2) {
-                      result = source.where((a) => a.status == 'COMPLETED').toList();
-                    } else {
-                      result = source.where((a) => a.status == 'CANCELLED').toList();
-                    }
-                    if (_searchQuery.isNotEmpty) {
-                      final q = _searchQuery.toLowerCase();
-                      result = result.where((a) =>
-                        (a.doctorName ?? '').toLowerCase().contains(q) ||
-                        (a.specialty ?? '').toLowerCase().contains(q)
-                      ).toList();
-                    }
-                    return result;
-                  }
-
-                  final filtered = _filter(allAppointments, _selectedTabIndex);
-                  return _buildList(filtered, allAppointments.isNotEmpty, context.read<HomeProvider>());
+                  final filtered = _filterAppointments(provider.myAppointments);
+                  return _buildList(filtered, provider.myAppointments.isNotEmpty, context.read<HomeProvider>());
                 },
               ),
             ),
@@ -193,6 +154,42 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         ),
       ),
     );
+  }
+
+  List<AppointmentModel> _filterAppointments(List<AppointmentModel> source) {
+    List<AppointmentModel> result;
+    switch (_selectedTab) {
+      case 'UPCOMING':
+        result = source.where((a) => a.status == 'SCHEDULED' || a.status == 'CONFIRMED' || a.status == 'PENDING').toList();
+        break;
+      case 'COMPLETED':
+        result = source.where((a) => a.status == 'COMPLETED').toList();
+        break;
+      case 'CANCELLED':
+        result = source.where((a) => a.status == 'CANCELLED').toList();
+        break;
+      default:
+        result = List.from(source);
+    }
+
+    if (_filterDate != null) {
+      result = result.where((a) {
+        try {
+          final d = DateTime.parse(a.appointmentDate);
+          return d.year == _filterDate!.year && d.month == _filterDate!.month && d.day == _filterDate!.day;
+        } catch (_) {
+          return false;
+        }
+      }).toList();
+    }
+
+    if (_searchQuery.isNotEmpty) {
+      final q = _searchQuery.toLowerCase();
+      result = result.where((a) =>
+          (a.doctorName ?? '').toLowerCase().contains(q) ||
+          (a.specialty ?? '').toLowerCase().contains(q)).toList();
+    }
+    return result;
   }
 
   Widget _buildList(List<AppointmentModel> appointments, bool hasAny, HomeProvider homeProvider) {

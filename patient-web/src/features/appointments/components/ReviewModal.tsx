@@ -5,16 +5,18 @@ import { reviewApi } from '@/features/profile/api/reviewApi';
 import { toast } from 'sonner';
 
 interface ReviewModalProps {
-  appointment: any;
+  appointment?: any;
+  existingReview?: any;
+  defaultTab?: 'doctor' | 'clinic';
   onSuccess: () => void;
 }
 
-export const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onSuccess }) => {
-  const [tab, setTab] = useState<'doctor' | 'clinic'>('doctor');
-  const [rating, setRating] = useState<number>(0);
+export const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, existingReview, defaultTab, onSuccess }) => {
+  const [tab, setTab] = useState<'doctor' | 'clinic'>(defaultTab || 'doctor');
+  const [rating, setRating] = useState<number>(existingReview?.rating || 0);
   const [hoverRating, setHoverRating] = useState<number>(0);
-  const [comment, setComment] = useState('');
-  const [isAnonymous, setIsAnonymous] = useState(false);
+  const [comment, setComment] = useState(existingReview?.comment || '');
+  const [isAnonymous, setIsAnonymous] = useState(existingReview?.isAnonymous || false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
@@ -26,26 +28,39 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onSuccess
     setIsSubmitting(true);
     try {
       if (tab === 'doctor') {
-        await reviewApi.submitDoctorReview({
-          doctorId: appointment.mainDoctorId || appointment.mainDoctor?.staffId,
-          appointmentId: appointment.appointmentId || appointment.id,
+        const payload = {
+          doctorId: existingReview ? existingReview.doctorId : (appointment?.mainDoctorId || appointment?.mainDoctor?.staffId),
+          appointmentId: appointment?.appointmentId || appointment?.id || 0,
           rating,
           comment,
           isAnonymous
-        });
-        toast.success('Đã gửi đánh giá bác sĩ thành công!');
-      } else {
-        if (!appointment.recordId) {
-          toast.error('Không tìm thấy hồ sơ y tế để đánh giá phòng khám');
-          return;
+        };
+        if (existingReview) {
+          await reviewApi.updateDoctorReview(existingReview.reviewId, payload);
+          toast.success('Đã sửa đánh giá bác sĩ thành công!');
+        } else {
+          await reviewApi.submitDoctorReview(payload);
+          toast.success('Đã gửi đánh giá bác sĩ thành công!');
         }
-        await reviewApi.submitClinicReview({
-          recordId: appointment.recordId,
+      } else {
+        const payload = {
+          recordId: appointment?.recordId || 0,
           rating,
           comment,
           isAnonymous
-        });
-        toast.success('Đã gửi đánh giá phòng khám thành công!');
+        };
+        if (existingReview) {
+          await reviewApi.updateClinicReview(existingReview.feedbackId, payload);
+          toast.success('Đã sửa đánh giá phòng khám thành công!');
+        } else {
+          if (!payload.recordId && !existingReview) {
+            toast.error('Không tìm thấy hồ sơ y tế để đánh giá phòng khám');
+            setIsSubmitting(false);
+            return;
+          }
+          await reviewApi.submitClinicReview(payload);
+          toast.success('Đã gửi đánh giá phòng khám thành công!');
+        }
       }
       onSuccess();
     } catch (error: any) {
@@ -60,34 +75,36 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onSuccess
       <DialogHeader className="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
         <DialogTitle className="text-xl font-black text-brand-dark flex items-center gap-2">
           <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
-          Đánh giá Dịch vụ
+          {existingReview ? 'Sửa Đánh giá Dịch vụ' : 'Đánh giá Dịch vụ'}
         </DialogTitle>
       </DialogHeader>
 
       <div className="p-6">
         {/* Tabs */}
-        <div className="flex gap-2 p-1 bg-slate-100 rounded-2xl mb-6">
-          <button
-            onClick={() => { setTab('doctor'); setRating(0); setComment(''); }}
-            className={`cursor-pointer flex-1 py-2.5 rounded-xl font-bold text-[14px] transition-all flex items-center justify-center gap-2 ${
-              tab === 'doctor' ? 'bg-white text-primary-600 shadow-sm hover:bg-slate-50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
-            }`}
-          >
-            <Stethoscope className="w-4 h-4" /> Bác sĩ
-          </button>
-          <button
-            onClick={() => { setTab('clinic'); setRating(0); setComment(''); }}
-            className={`cursor-pointer flex-1 py-2.5 rounded-xl font-bold text-[14px] transition-all flex items-center justify-center gap-2 ${
-              tab === 'clinic' ? 'bg-white text-primary-600 shadow-sm hover:bg-slate-50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
-            }`}
-          >
-            <Hospital className="w-4 h-4" /> Phòng khám
-          </button>
-        </div>
+        {!existingReview && (
+          <div className="flex gap-2 p-1 bg-slate-100 rounded-2xl mb-6">
+            <button
+              onClick={() => { setTab('doctor'); setRating(0); setComment(''); }}
+              className={`cursor-pointer flex-1 py-2.5 rounded-xl font-bold text-[14px] transition-all flex items-center justify-center gap-2 ${
+                tab === 'doctor' ? 'bg-white text-primary-600 shadow-sm hover:bg-slate-50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+              }`}
+            >
+              <Stethoscope className="w-4 h-4" /> Bác sĩ
+            </button>
+            <button
+              onClick={() => { setTab('clinic'); setRating(0); setComment(''); }}
+              className={`cursor-pointer flex-1 py-2.5 rounded-xl font-bold text-[14px] transition-all flex items-center justify-center gap-2 ${
+                tab === 'clinic' ? 'bg-white text-primary-600 shadow-sm hover:bg-slate-50' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-200/50'
+              }`}
+            >
+              <Hospital className="w-4 h-4" /> Phòng khám
+            </button>
+          </div>
+        )}
 
         <div className="mb-6 text-center">
           <h3 className="font-bold text-slate-800 text-[16px] mb-2">
-            {tab === 'doctor' ? `Bạn đánh giá thế nào về BS. ${appointment.doctorName || appointment.mainDoctor?.fullName}?` : 'Bạn cảm thấy hài lòng với dịch vụ phòng khám chứ?'}
+            {tab === 'doctor' ? `Bạn đánh giá thế nào về BS. ${existingReview?.doctorName || appointment?.doctorName || appointment?.mainDoctor?.fullName}?` : 'Bạn cảm thấy hài lòng với dịch vụ phòng khám chứ?'}
           </h3>
           <div className="flex items-center justify-center gap-2 mt-4">
             {[1, 2, 3, 4, 5].map((star) => (
@@ -153,7 +170,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, onSuccess
             disabled={isSubmitting || rating === 0}
             className="cursor-pointer flex-1 px-5 py-3 rounded-xl font-bold text-white bg-primary-500 hover:bg-primary-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-primary-200"
           >
-            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Gửi đánh giá'}
+            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : (existingReview ? 'Cập nhật' : 'Gửi đánh giá')}
           </button>
         </div>
       </div>

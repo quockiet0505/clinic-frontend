@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { FlaskConical, UserRound, ChevronRight, Download, Stethoscope } from 'lucide-react';
 import { SearchInput } from '@/components/common/SearchInput';
-import { SectionContainer } from '@/components/common';
+import { SectionContainer, DateFilter } from '@/components/common';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { LabResultModalContent } from '../components/LabResultModalContent';
 import { ClinicPdfLayout } from '@/components/common/ClinicPdfLayout';
@@ -16,6 +16,8 @@ export const LabResults: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('ALL');
   const [patientProfile, setPatientProfile] = useState<PatientProfile | null>(null);
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
 
   useEffect(() => {
     profileApi.getMyProfile()
@@ -27,20 +29,29 @@ export const LabResults: React.FC = () => {
     const fetchResults = async () => {
       try {
         const { recordApi } = await import('../api/recordApi');
-        const [labData, recordsData] = await Promise.all([
-          recordApi.getLabResults(),
-          recordApi.getMedicalHistory().catch(() => [])
-        ]);
-        const recordsMap = new Map<any, any>(recordsData.map((r: any) => [r.recordId, r] as [any, any]));
-        const enriched = labData.map((r: any) => ({
+        const labData = await recordApi.getLabResults();
+        
+        // Initial map with fallback
+        const initialEnriched = labData.map((r: any) => ({
           ...r,
-          doctorName: recordsMap.get(r.recordId)?.mainDoctorName || 'Bác sĩ chỉ định',
-          diagnosis: recordsMap.get(r.recordId)?.diagnosis || 'Chưa cập nhật chẩn đoán',
+          doctorName: 'Bác sĩ chỉ định',
+          diagnosis: 'Chưa cập nhật chẩn đoán',
         }));
-        setResults(enriched);
+        setResults(initialEnriched);
+        setLoading(false); // Stop loading early
+
+        // Fetch records asynchronously
+        recordApi.getMedicalHistory().then(recordsData => {
+          const recordsMap = new Map<any, any>(recordsData.map((r: any) => [r.recordId, r] as [any, any]));
+          setResults(prev => prev.map(r => ({
+            ...r,
+            doctorName: recordsMap.get(r.recordId)?.mainDoctorName || r.doctorName,
+            diagnosis: recordsMap.get(r.recordId)?.diagnosis || r.diagnosis,
+          })));
+        }).catch(() => {});
+
       } catch (error) {
         console.error('Failed to fetch lab results:', error);
-      } finally {
         setLoading(false);
       }
     };
@@ -56,7 +67,18 @@ export const LabResults: React.FC = () => {
       r.conclusion?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       r.doctorName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sName.includes(searchQuery.toLowerCase());
-    if (!matchSearch) return false;
+
+    let matchDate = true;
+    if (fromDate) {
+      matchDate = matchDate && new Date(r.enteredAt) >= new Date(fromDate);
+    }
+    if (toDate) {
+      const end = new Date(toDate);
+      end.setHours(23, 59, 59, 999);
+      matchDate = matchDate && new Date(r.enteredAt) <= end;
+    }
+
+    if (!matchSearch || !matchDate) return false;
     switch (filterType) {
       case 'COMPLETED': return isCompleted;
       case 'PROCESSING': return !isCompleted;
@@ -107,8 +129,17 @@ export const LabResults: React.FC = () => {
                 <p className="text-white/90 text-sm drop-shadow-sm">Xem và tải kết quả chẩn đoán cận lâm sàng</p>
               </div>
             </div>
-            <div className="w-full md:w-80 shrink-0">
-              <SearchInput value={searchQuery} onSearch={setSearchQuery} placeholder="Tìm xét nghiệm, kết luận..." className="h-11 shadow-md border-transparent bg-white text-slate-700 placeholder:text-slate-400 focus-within:ring-4 focus-within:ring-white/20" />
+            <div className="w-full md:w-auto flex flex-col sm:flex-row items-center gap-3 shrink-0">
+              <div className="w-full sm:w-72 shrink-0">
+                <SearchInput value={searchQuery} onSearch={setSearchQuery} placeholder="Tìm xét nghiệm, kết luận..." className="h-11 shadow-md border-transparent bg-white text-slate-700 placeholder:text-slate-400 focus-within:ring-4 focus-within:ring-white/20" />
+              </div>
+              <DateFilter 
+                fromDate={fromDate}
+                toDate={toDate}
+                onFromDateChange={setFromDate}
+                onToDateChange={setToDate}
+                onClear={() => { setFromDate(''); setToDate(''); }}
+              />
             </div>
           </div>
         </SectionContainer>
@@ -117,26 +148,26 @@ export const LabResults: React.FC = () => {
       <SectionContainer className="max-w-4xl py-8 flex flex-col gap-6">
         {/* Filters */}
         <div className="bg-slate-100/80 p-1 rounded-[14px] border border-slate-200/60 shadow-sm flex items-center gap-1 overflow-x-auto hide-scrollbar w-full md:w-fit">
-          {[
-            { id: 'ALL', label: `Tất cả (${results.length})` },
-            { id: 'COMPLETED', label: 'Đã có kết quả' },
-            { id: 'PROCESSING', label: 'Đang xử lý' },
-            { id: 'ABNORMAL', label: 'Bất thường' },
-            { id: 'CLS', label: 'Chẩn đoán hình ảnh' },
-            { id: 'XN', label: 'Xét nghiệm' },
-          ].map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setFilterType(tab.id)}
-              className={`px-4 py-2 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
-                filterType === tab.id
-                  ? 'bg-white text-cyan-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] border border-slate-200/50'
-                  : 'bg-transparent text-slate-500 border border-transparent hover:text-slate-700'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+            {[
+              { id: 'ALL', label: `Tất cả (${results.length})` },
+              { id: 'COMPLETED', label: 'Đã có kết quả' },
+              { id: 'PROCESSING', label: 'Đang xử lý' },
+              { id: 'ABNORMAL', label: 'Bất thường' },
+              { id: 'CLS', label: 'Chẩn đoán hình ảnh' },
+              { id: 'XN', label: 'Xét nghiệm' },
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setFilterType(tab.id)}
+                className={`px-4 py-2 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
+                  filterType === tab.id
+                    ? 'bg-white text-cyan-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] border border-slate-200/50'
+                    : 'bg-transparent text-slate-500 border border-transparent hover:text-slate-700'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
         </div>
 
         <div className="flex flex-col gap-4">

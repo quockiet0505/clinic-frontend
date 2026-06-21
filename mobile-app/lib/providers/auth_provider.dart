@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:clinic_management_system/services/auth_service.dart';
 import 'package:clinic_management_system/models/user_model.dart';
+import 'dart:io';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -73,12 +74,16 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateProfile(Map<String, dynamic> data) async {
+  Future<bool> updateProfile(Map<String, dynamic> data, {File? avatarFile}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
+      if (avatarFile != null) {
+        final avatarUrl = await _authService.uploadAvatar(avatarFile.path);
+        data['avatarUrl'] = avatarUrl;
+      }
       final updatedUser = await _authService.updateProfile(data);
       _user = updatedUser;
       _isLoading = false;
