@@ -1,34 +1,40 @@
-# 🚀 Setup Guide - Patient Web
+# 🚀 Hướng dẫn Cài đặt & Khởi chạy (Setup Guide) - Patient Web
 
-Hướng dẫn cài đặt và chạy môi trường phát triển cho giao diện Web dành cho bệnh nhân.
+## 1. Yêu cầu hệ thống
+- **Node.js:** Bắt buộc từ phiên bản `18.17.0` trở lên (Khuyến nghị dùng NVM để quản lý).
+- **Trình quản lý gói:** `npm` (tích hợp sẵn) hoặc `pnpm` (nhanh hơn).
+- **Trình duyệt:** Chrome/Edge/Firefox bản mới nhất hỗ trợ ES Module.
 
-## Yêu cầu hệ thống
-- Node.js >= 18.x
-- npm >= 9.x hoặc pnpm/yarn
+## 2. Quy trình Cài đặt Môi trường
+Mở Terminal và thực hiện các bước sau:
 
-## Các bước cài đặt
+**Bước 1: Clone và truy cập dự án**
+```bash
+cd core_code/clinic-frontend/patient-web
+```
 
-1. **Clone dự án & Di chuyển vào thư mục:**
-   ```bash
-   cd core_code/clinic-frontend/patient-web
-   ```
+**Bước 2: Cài đặt thư viện (Dependencies)**
+Cài đặt chính xác các package có trong `package-lock.json`:
+```bash
+npm ci  # Clean install - khuyến nghị để tránh sai lệch phiên bản
+# Hoặc
+npm install
+```
 
-2. **Cài đặt dependencies:**
-   ```bash
-   npm install
-   ```
+**Bước 3: Cấu hình biến môi trường**
+Hệ thống sử dụng các biến bảo mật không được push lên Git.
+Copy file mẫu:
+```bash
+cp .env.example .env.local
+```
+Chỉnh sửa `.env.local` theo cấu hình máy bạn:
+```env
+VITE_API_BASE_URL=http://localhost:8080/api/v1
+VITE_APP_ENV=development
+```
 
-3. **Cấu hình môi trường:**
-   - Tạo file `.env` dựa trên file mẫu (nếu có).
-   - Đảm bảo biến `VITE_API_URL` trỏ tới hệ thống backend.
-
-4. **Khởi chạy Development Server:**
-   ```bash
-   npm run dev
-   ```
-   Server mặc định chạy tại `http://localhost:5173`. Trình duyệt sẽ tự động tải lại khi có thay đổi trong code.
-
-## Các lệnh thường dùng
-- `npm run dev`: Chạy server dev local.
-- `npm run build`: Đóng gói ứng dụng để deploy.
-- `npm run lint`: Chạy trình kiểm tra lỗi cú pháp.
+**Bước 4: Khởi chạy Dev Server**
+```bash
+npm run dev
+```
+Trình duyệt sẽ tự mở tại `http://localhost:5173`. Tính năng HMR (Hot Module Replacement) đã kích hoạt, bạn sửa code giao diện sẽ tự reload ngay lập tức.

@@ -1,35 +1,40 @@
-# 🚀 Setup Guide - Admin Web
+# 🚀 Hướng dẫn Cài đặt & Khởi chạy (Setup Guide) - Admin Web
 
-Hướng dẫn cài đặt và chạy môi trường phát triển cho dự án Admin Web.
+## 1. Yêu cầu hệ thống
+- **Node.js:** Bắt buộc từ phiên bản `18.17.0` trở lên (Khuyến nghị dùng NVM để quản lý).
+- **Trình quản lý gói:** `npm` (tích hợp sẵn) hoặc `pnpm` (nhanh hơn).
+- **Trình duyệt:** Chrome/Edge/Firefox bản mới nhất hỗ trợ ES Module.
 
-## Yêu cầu hệ thống
-- Node.js >= 18.x
-- npm >= 9.x hoặc pnpm/yarn
+## 2. Quy trình Cài đặt Môi trường
+Mở Terminal và thực hiện các bước sau:
 
-## Các bước cài đặt
+**Bước 1: Clone và truy cập dự án**
+```bash
+cd core_code/clinic-frontend/admin-web
+```
 
-1. **Clone dự án & Di chuyển vào thư mục:**
-   ```bash
-   cd core_code/clinic-frontend/admin-web
-   ```
+**Bước 2: Cài đặt thư viện (Dependencies)**
+Cài đặt chính xác các package có trong `package-lock.json`:
+```bash
+npm ci  # Clean install - khuyến nghị để tránh sai lệch phiên bản
+# Hoặc
+npm install
+```
 
-2. **Cài đặt dependencies:**
-   ```bash
-   npm install
-   ```
+**Bước 3: Cấu hình biến môi trường**
+Hệ thống sử dụng các biến bảo mật không được push lên Git.
+Copy file mẫu:
+```bash
+cp .env.example .env.local
+```
+Chỉnh sửa `.env.local` theo cấu hình máy bạn:
+```env
+VITE_API_BASE_URL=http://localhost:8080/api/v1
+VITE_APP_ENV=development
+```
 
-3. **Cấu hình môi trường:**
-   - Copy file `.env.example` thành `.env` (hoặc `.env.local`).
-   - Đảm bảo biến `VITE_API_URL` trỏ tới địa chỉ backend đang chạy (ví dụ: `http://localhost:8080/api/v1`).
-
-4. **Khởi chạy Development Server:**
-   ```bash
-   npm run dev
-   ```
-   Server sẽ mặc định chạy ở cổng `5173` (hoặc cổng trống tiếp theo). Truy cập trình duyệt tại `http://localhost:5173`.
-
-## Các lệnh thường dùng
-- `npm run dev`: Chạy server dev.
-- `npm run build`: Đóng gói dự án để deploy lên production.
-- `npm run preview`: Chạy thử bản build production local.
-- `npm run lint`: Kiểm tra lỗi ESLint/Prettier.
+**Bước 4: Khởi chạy Dev Server**
+```bash
+npm run dev
+```
+Trình duyệt sẽ tự mở tại `http://localhost:5173`. Tính năng HMR (Hot Module Replacement) đã kích hoạt, bạn sửa code giao diện sẽ tự reload ngay lập tức.

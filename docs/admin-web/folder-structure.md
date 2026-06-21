@@ -1,37 +1,35 @@
-# 📂 Folder Structure - Admin Web
+# 📂 Kiến trúc Thư mục (Folder Structure)
 
-Cấu trúc thư mục được tổ chức theo tính năng (Feature-based) để dễ dàng scale và quản lý.
+Dự án Admin Web áp dụng mô hình kiến trúc **Feature-Sliced Design (Biến thể)**. Mô hình này giúp code không bị rối khi dự án lớn lên, vì mọi logic liên quan đến một tính năng được gom lại vào một chỗ.
 
 ```text
-admin-web/
-├── public/                 # File tĩnh (assets, favicon, v.v.)
-├── src/
-│   ├── assets/             # Hình ảnh, fonts, icons nội bộ
-│   ├── components/         # Components dùng chung toàn app (UI, Layouts)
-│   ├── config/             # Cấu hình môi trường, constants
-│   ├── contexts/           # React Context (Auth, Theme)
-│   ├── features/           # Các module chức năng chính
-│   │   ├── auth/           # Đăng nhập, phân quyền
-│   │   ├── dashboard/      # Thống kê, biểu đồ
-│   │   ├── pharmacy/       # Quản lý kho thuốc
-│   │   └── ...
-│   ├── hooks/              # Custom hooks dùng chung (useDebounce, useAuth...)
-│   ├── layouts/            # Các layout bao ngoài (AdminLayout, AuthLayout)
-│   ├── pages/              # Khai báo các trang (kết nối với router)
-│   ├── routes/             # Cấu hình React Router
-│   ├── services/           # Gọi API, cấu hình Axios
-│   ├── types/              # Khai báo TypeScript Interfaces chung
-│   └── utils/              # Các hàm tiện ích (formatDate, validators)
-├── .env                    # Biến môi trường
-├── index.html              # Entry HTML
-├── package.json            # Quản lý dependencies
-├── tsconfig.json           # Cấu hình TypeScript
-└── vite.config.ts          # Cấu hình Vite
+src/
+├── assets/             # Hình ảnh (png, svg), fonts, lotties.
+├── components/         # Các thành phần UI dùng chung TOÀN CỤC (Shared).
+│   ├── ui/             # Các components cơ bản (Button, Input, Modal - thường từ Shadcn).
+│   └── layout/         # Header, Footer, Sidebar, PageContainer.
+│
+├── config/             # Cấu hình tĩnh: env, router paths, constants.
+├── contexts/           # React Context (AuthContext, ThemeContext).
+├── hooks/              # Custom hooks dùng chung (useWindowSize, useDebounce).
+│
+├── features/           # 🌟 TRÁI TIM CỦA DỰ ÁN 🌟 (Feature-based)
+│   ├── auth/           # Module Đăng nhập / Phân quyền
+│   │   ├── api/        # Các hàm gọi Axios riêng cho Auth
+│   │   ├── components/ # Các component chỉ dùng trong Auth (LoginForm)
+│   │   ├── hooks/      # Hooks nghiệp vụ (useLogin)
+│   │   └── types/      # Định nghĩa Type riêng cho Auth
+│   │
+│   ├── appointments/   # Module Quản lý Lịch hẹn
+│   └── users/          # Module Quản lý Người dùng
+│
+├── pages/              # Nơi ráp các Feature lại thành 1 trang hoàn chỉnh.
+├── routes/             # Cấu hình React Router (Public Route, Private Route).
+├── services/           # Cấu hình Axios Client, Interceptors.
+├── types/              # Type/Interface dùng chung toàn hệ thống.
+└── utils/              # Helper functions (formatCurrency, formatDate).
 ```
 
-## Giải thích chi tiết `features/`
-Mỗi tính năng trong `features/` hoạt động như một module độc lập, bao gồm:
-- `components/`: Component dành riêng cho feature này.
-- `hooks/`: Hooks nội bộ.
-- `api/`: Các hàm gọi API.
-- `types/`: Type definitions riêng.
+## Giải thích Triết lý: Tại sao lại có thư mục `features/`?
+Thay vì nhét mọi Component vào `src/components`, mọi API vào `src/api`, thì `features/` nhóm chúng theo Ngữ cảnh nghiệp vụ. 
+Ví dụ: Component `BookingForm` chỉ phục vụ việc Đặt lịch, nó sẽ nằm trong `src/features/appointments/components/BookingForm.tsx`, giúp dev mới vào dự án dễ dàng khoanh vùng để sửa lỗi mà không sợ side-effect.

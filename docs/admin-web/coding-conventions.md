@@ -1,31 +1,47 @@
-# 💻 Coding Conventions - Admin Web
+# 💻 Tiêu chuẩn viết Code (Coding Conventions)
 
-Tài liệu này định nghĩa các tiêu chuẩn viết code cho dự án Admin Web (React/Vite) nhằm đảm bảo tính đồng nhất, dễ đọc và dễ bảo trì.
+Để dự án dễ bảo trì và đọc hiểu bởi nhiều thành viên, toàn bộ code React/TypeScript phải tuân thủ chuẩn sau.
 
-## 1. Kiến trúc & Framework
-- **Core:** React 18+, TypeScript, Vite.
-- **Styling:** Tailwind CSS + Shadcn UI.
-- **State Management:** React Query (server state), Zustand/Context (client state).
+## 1. Quy tắc Đặt tên (Naming)
+- **Thư mục:** Đặt tên bằng `kebab-case`. Ví dụ: `patient-profile`, `components/ui`.
+- **Tên Component (File & Class):** Sử dụng `PascalCase`. VD: `DoctorList.tsx`, `AppointmentCard.tsx`.
+- **Hàm & Biến cục bộ:** Sử dụng `camelCase`. VD: `handleFormSubmit`, `isOpen`.
+- **Hằng số cục bộ/toàn cục:** Sử dụng `UPPER_SNAKE_CASE`. VD: `MAX_UPLOAD_SIZE_MB`, `API_ENDPOINTS`.
 
-## 2. Quy tắc Đặt tên (Naming Conventions)
-- **Thư mục & File logic:** `kebab-case` (vd: `user-service.ts`, `hooks/`).
-- **File Component:** `PascalCase` (vd: `DashboardLayout.tsx`, `UserTable.tsx`).
-- **Hằng số (Constants):** `UPPER_SNAKE_CASE` (vd: `MAX_PAGE_SIZE`, `API_URL`).
-- **Hàm & Biến:** `camelCase` (vd: `fetchUsers()`, `isLoggedIn`).
-- **Interfaces & Types:** `PascalCase` không có tiền tố "I" (vd: `User`, `ApiResponse`).
+## 2. TypeScript Best Practices
+- **Tuyệt đối cấm sử dụng `any`**. Mọi Props, State, API Response đều phải có `interface` hoặc `type` cụ thể.
+- Đặt tên Interface/Type: Không dùng tiền tố `I`.
+  - Sai: `interface IUser`
+  - Đúng: `interface User`
+- Ưu tiên `type` cho Union Types, `interface` cho Object Declarations.
 
-## 3. Quy tắc React Components
-- Chỉ sử dụng **Functional Components** với React Hooks. Không dùng Class Components.
-- Đặt các hooks ở trên cùng của component.
-- Tách logic phức tạp ra thành Custom Hooks (`useFetchUser.ts`).
-- Khai báo kiểu dữ liệu rõ ràng cho `props`. Không dùng `any` trừ trường hợp bất khả kháng.
-- Ưu tiên sử dụng `Destructuring` cho props.
+## 3. Kiến trúc Component
+- Một Component lý tưởng **không vượt quá 200 dòng**. Nếu dài hơn, hãy tách (Extract) thành các Sub-component.
+- **Tách biệt Logic và UI:** Đẩy các logic phức tạp (gọi API, tính toán) vào Custom Hooks. Component chỉ nên làm nhiệm vụ "Hứng data và render UI".
 
-## 4. Format & Linting
-- **Prettier & ESLint:** Bắt buộc tuân thủ quy tắc của ESLint/Prettier đã cấu hình.
-- **Dấu nháy:** Dùng nháy đơn (`'`) cho chuỗi TS/JS, nháy kép (`"`) cho thuộc tính JSX.
-- **Dấu phẩy (Trailing commas):** Bật trailing commas ở cuối đối tượng, mảng.
+*Ví dụ sai (Mớ bòng bong Logic & UI):*
+```tsx
+const UserProfile = () => {
+  const [data, setData] = useState();
+  useEffect(() => { fetch(...) }, []);
+  // ... 50 dòng logic
+  return <div>{data.name}</div>
+}
+```
 
-## 5. Comment & Document
-- Dùng `JSDoc` để ghi chú các hàm logic phức tạp, utils dùng chung.
-- Code phải tự giải thích (Self-documenting): Tên biến/hàm phải rõ nghĩa, hạn chế comment dư thừa cho những thứ hiển nhiên.
+*Ví dụ đúng (Sạch sẽ):*
+```tsx
+const UserProfile = () => {
+  const { data, isLoading, error } = useUserProfile();
+  if (isLoading) return <Spinner />;
+  return <ProfileCard user={data} />
+}
+```
+
+## 4. Linting & Formatting
+Dự án đã cấu hình sẵn ESLint và Prettier.
+Trước khi push code, bạn phải chạy lệnh:
+```bash
+npm run lint
+npm run format
+```

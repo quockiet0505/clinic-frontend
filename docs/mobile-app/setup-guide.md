@@ -1,38 +1,39 @@
-# 🚀 Setup Guide - Mobile App (Flutter)
+# 🚀 Hướng dẫn Cài đặt & Khởi chạy (Setup Guide) - Mobile App
 
-Hướng dẫn cài đặt môi trường và chạy ứng dụng Mobile trên thiết bị thật hoặc máy ảo.
+Tài liệu này giúp bạn thiết lập máy tính cá nhân để chạy và phát triển dự án Flutter.
 
-## Yêu cầu hệ thống
-- Flutter SDK >= 3.x
-- Dart SDK >= 3.x
-- Android Studio (Cho phát triển Android)
-- Xcode (Cho phát triển iOS - bắt buộc phải có máy Mac)
+## 1. Cài đặt Môi trường (Prerequisites)
+- Cài đặt **Flutter SDK** (Khuyến nghị bản Stable >= 3.19).
+- Thêm đường dẫn `flutter/bin` vào biến môi trường PATH.
+- Cài đặt **Android Studio** (Bắt buộc để cài Android SDK, Emulator).
+- Nếu xài Mac: Cài đặt **Xcode** (Để chạy iOS Simulator).
+- Chạy lệnh `flutter doctor` trong terminal để kiểm tra xem máy tính đã đáp ứng đủ yêu cầu chưa.
 
-## Các bước cài đặt
+## 2. Chuẩn bị Dự án
+Mở terminal, điều hướng vào thư mục mobile app:
+```bash
+cd core_code/clinic-frontend/mobile-app
+```
+Kéo các gói thư viện (Packages) về máy:
+```bash
+flutter pub get
+```
 
-1. **Clone dự án & Di chuyển vào thư mục:**
-   ```bash
-   cd core_code/clinic-frontend/mobile-app
-   ```
+## 3. Cấu hình Kết nối với API Backend
+Do Emulator là một cỗ máy ảo riêng biệt, khái niệm `localhost` của nó trỏ về chính nó, chứ không phải máy tính của bạn.
+- Mở file `lib/core/constants/api_constants.dart`.
+- Nếu bạn chạy **Android Emulator**, đổi URL thành: `http://10.0.2.2:8080/api/v1`
+- Nếu bạn cắm cáp **điện thoại thật**, đổi URL thành IP mạng LAN của máy tính (VD: `http://192.168.1.15:8080/api/v1`).
+- Nếu test bằng **iOS Simulator**, vẫn dùng `http://127.0.0.1:8080/api/v1`.
 
-2. **Lấy các thư viện dependencies:**
-   ```bash
-   flutter pub get
-   ```
-
-3. **Cấu hình môi trường / API:**
-   - Mở file `lib/core/constants/api_constants.dart` (hoặc file cấu hình tương đương).
-   - Kiểm tra Base URL. Nếu đang chạy API backend local với Android Emulator, hãy đổi localhost thành `http://10.0.2.2:8080/api/v1`. Đối với iOS Simulator, vẫn dùng `http://localhost:8080/api/v1`.
-   - Nếu chạy trên điện thoại thật cắm cáp, thay IP thành địa chỉ IP mạng LAN của máy tính đang chạy server (VD: `http://192.168.1.5:8080/api/v1`).
-
-4. **Khởi chạy ứng dụng:**
-   - Đảm bảo thiết bị / máy ảo đã được nhận diện (chạy lệnh `flutter devices`).
-   - Khởi chạy app:
-     ```bash
-     flutter run
-     ```
-
-## Các lệnh thường dùng
-- `flutter clean`: Xóa thư mục build và cache (cần thiết khi gặp lỗi xung đột phiên bản).
-- `flutter build apk`: Đóng gói file cài đặt `.apk` cho Android.
-- `flutter analyze`: Quét toàn bộ lỗi và cảnh báo cú pháp code.
+## 4. Build và Chạy App
+Khởi động máy ảo (Emulator/Simulator) hoặc cắm điện thoại.
+Kiểm tra thiết bị nhận diện:
+```bash
+flutter devices
+```
+Chạy ứng dụng:
+```bash
+flutter run
+```
+Sử dụng phím `r` trong terminal để **Hot Reload** (Cập nhật UI trong chưa tới 1s), và `R` để **Hot Restart**.
