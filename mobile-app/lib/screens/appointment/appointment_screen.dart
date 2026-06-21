@@ -20,15 +20,24 @@ class AppointmentScreen extends StatefulWidget {
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
   String _searchQuery = '';
-  String _selectedTab = 'ALL';
+  String _selectedStatus = 'ALL';
+  String _selectedType = 'ALL';
   DateTime? _filterDate;
 
-  static const _tabs = [
-    ClinicTabItem(value: 'ALL', label: 'Tất cả'),
-    ClinicTabItem(value: 'UPCOMING', label: 'Sắp tới'),
-    ClinicTabItem(value: 'COMPLETED', label: 'Hoàn thành'),
-    ClinicTabItem(value: 'CANCELLED', label: 'Đã hủy'),
-  ];
+  String _statusLabel(String val) {
+    switch (val) {
+      case 'PENDING': return 'Chờ xác nhận';
+      case 'CONFIRMED': return 'Đã xác nhận';
+      case 'CHECKED_IN': return 'Đã check-in';
+      case 'IN_PROGRESS': return 'Đang khám';
+      case 'WAITING_RESULT': return 'Chờ kết quả';
+      case 'COMPLETED': return 'Hoàn thành';
+      case 'CANCELLED': return 'Đã huỷ';
+      case 'SKIPPED': return 'Bị qua lượt';
+      case 'NO_SHOW': return 'Không đến khám';
+      default: return 'Tất cả trạng thái';
+    }
+  }
 
   @override
   void initState() {
@@ -50,10 +59,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFFDBEAFE), // Blue-100
-                  Color(0xFFF8FAFF),
-                ],
+                colors: [Color(0xFFDBEAFE), Color(0xFFF8FAFF)],
                 stops: [0.0, 1.0],
               ),
             ),
@@ -77,20 +83,32 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         child: const Icon(Icons.calendar_month_rounded, color: AppColors.primary, size: 20),
                       ),
                       const SizedBox(width: 10),
-                      const Text(
-                        'Lịch hẹn',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1F2937),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'Lịch hẹn',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF1F2937),
+                              ),
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              'Quản lý lịch khám',
+                              style: TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
                       ),
-                      const Spacer(),
                       GestureDetector(
-                        onTap: () => Navigator.push(context,
-                            MaterialPageRoute(builder: (_) => const SelectDoctorScreen())),
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SelectDoctorScreen())),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
                               colors: [Color(0xFF2DD4BF), Color(0xFF0EA5E9)],
@@ -105,9 +123,93 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           child: const Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.add_rounded, color: Colors.white, size: 18),
+                              Icon(Icons.add_rounded, color: Colors.white, size: 16),
                               SizedBox(width: 4),
                               Text('Đặt lịch', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Lọc theo trạng thái:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF6B7280))),
+                      GestureDetector(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            backgroundColor: Colors.transparent,
+                            isScrollControlled: true,
+                            builder: (BuildContext context) {
+                              final statuses = [
+                                'ALL', 'PENDING', 'CONFIRMED', 'CHECKED_IN', 'IN_PROGRESS', 
+                                'WAITING_RESULT', 'COMPLETED', 'CANCELLED', 'SKIPPED', 'NO_SHOW'
+                              ];
+                              return Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                                ),
+                                padding: const EdgeInsets.fromLTRB(0, 12, 0, 24),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(width: 40, height: 4, decoration: BoxDecoration(color: const Color(0xFFE2E8F0), borderRadius: BorderRadius.circular(2))),
+                                    const SizedBox(height: 20),
+                                    const Text('Lọc theo trạng thái', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                                    const SizedBox(height: 16),
+                                    ...statuses.map((item) {
+                                      final isSelected = item == _selectedStatus;
+                                      return InkWell(
+                                        onTap: () {
+                                          setState(() => _selectedStatus = item);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                          color: isSelected ? const Color(0xFFEFF6FF) : Colors.transparent,
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                _statusLabel(item),
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                                  color: isSelected ? const Color(0xFF2563EB) : const Color(0xFF334155),
+                                                ),
+                                              ),
+                                              const Spacer(),
+                                              if (isSelected) const Icon(Icons.check_circle_rounded, color: Color(0xFF2563EB), size: 20),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                    const SizedBox(height: 16), // SafeArea support
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: const Color(0xFFE5E7EB)),
+                            boxShadow: [
+                              BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Text(_statusLabel(_selectedStatus), style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: AppColors.primary),
                             ],
                           ),
                         ),
@@ -128,9 +230,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       if (date != null) setState(() => _filterDate = date);
                     },
                     dateFilterActive: _filterDate != null,
-                    tabs: _tabs,
-                    selectedTab: _selectedTab,
-                    onTabChanged: (v) => setState(() => _selectedTab = v),
+                    tabs: const [
+                      ClinicTabItem(value: 'ALL', label: 'Tất cả'),
+                      ClinicTabItem(value: 'ONLINE', label: 'Đặt Online'),
+                      ClinicTabItem(value: 'WALK_IN', label: 'Walk-in'),
+                    ],
+                    selectedTab: _selectedType,
+                    onTabChanged: (v) => setState(() => _selectedType = v),
                     padding: EdgeInsets.zero,
                   ),
                   if (_filterDate != null) ...[
@@ -171,18 +277,18 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   List<AppointmentModel> _filterAppointments(List<AppointmentModel> source) {
     List<AppointmentModel> result;
-    switch (_selectedTab) {
-      case 'UPCOMING':
-        result = source.where((a) => a.status == 'SCHEDULED' || a.status == 'CONFIRMED' || a.status == 'PENDING').toList();
-        break;
-      case 'COMPLETED':
-        result = source.where((a) => a.status == 'COMPLETED').toList();
-        break;
-      case 'CANCELLED':
-        result = source.where((a) => a.status == 'CANCELLED').toList();
-        break;
-      default:
-        result = List.from(source);
+    if (_selectedStatus != 'ALL') {
+      if (_selectedStatus == 'CONFIRMED') {
+        result = source.where((a) => a.status == 'CONFIRMED' || a.status == 'SCHEDULED').toList();
+      } else {
+        result = source.where((a) => a.status == _selectedStatus).toList();
+      }
+    } else {
+      result = List.from(source);
+    }
+
+    if (_selectedType != 'ALL') {
+      result = result.where((a) => a.appointmentType == _selectedType).toList();
     }
 
     if (_filterDate != null) {
@@ -240,7 +346,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     appointments.sort((a, b) => b.appointmentDate.compareTo(a.appointmentDate));
 
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 120),
       itemCount: appointments.length,
       itemBuilder: (context, index) => _buildCard(appointments[index], homeProvider),
     );
@@ -265,22 +371,51 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     String statusText;
     IconData statusIcon;
     switch (apt.status) {
-      case 'SCHEDULED':
-      case 'CONFIRMED':
       case 'PENDING':
+        statusColor = const Color(0xFFF59E0B);
+        statusText = 'Chờ xác nhận';
+        statusIcon = Icons.help_outline_rounded;
+        break;
+      case 'CONFIRMED':
+      case 'SCHEDULED':
         statusColor = const Color(0xFF10B981);
-        statusText = 'Sắp tới';
+        statusText = 'Đã xác nhận';
         statusIcon = Icons.event_available_rounded;
+        break;
+      case 'CHECKED_IN':
+        statusColor = const Color(0xFF3B82F6);
+        statusText = 'Đã check-in';
+        statusIcon = Icons.how_to_reg_rounded;
+        break;
+      case 'IN_PROGRESS':
+        statusColor = const Color(0xFF6366F1);
+        statusText = 'Đang khám';
+        statusIcon = Icons.health_and_safety_rounded;
+        break;
+      case 'WAITING_RESULT':
+        statusColor = const Color(0xFF8B5CF6);
+        statusText = 'Chờ kết quả';
+        statusIcon = Icons.science_rounded;
+        break;
+      case 'SKIPPED':
+        statusColor = const Color(0xFFF97316);
+        statusText = 'Bị qua lượt';
+        statusIcon = Icons.access_time_rounded;
+        break;
+      case 'COMPLETED':
+        statusColor = const Color(0xFF64748B);
+        statusText = 'Hoàn thành';
+        statusIcon = Icons.check_circle_rounded;
         break;
       case 'CANCELLED':
         statusColor = const Color(0xFFEF4444);
-        statusText = 'Đã hủy';
+        statusText = 'Đã huỷ';
         statusIcon = Icons.cancel_rounded;
         break;
-      case 'COMPLETED':
-        statusColor = const Color(0xFF6366F1);
-        statusText = 'Hoàn thành';
-        statusIcon = Icons.check_circle_rounded;
+      case 'NO_SHOW':
+        statusColor = const Color(0xFFDC2626);
+        statusText = 'Không đến khám';
+        statusIcon = Icons.event_busy_rounded;
         break;
       default:
         statusColor = const Color(0xFF9CA3AF);
@@ -296,102 +431,148 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       )),
       child: Container(
         margin: const EdgeInsets.only(bottom: 14),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
-            BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 6)),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 16, offset: const Offset(0, 4)),
           ],
         ),
-        child: Column(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Top strip
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
-                color: statusColor.withValues(alpha: 0.08),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFE5E7EB), width: 1.5),
               ),
-              child: Row(
+              child: CircleAvatar(
+                radius: 26,
+                backgroundColor: Colors.grey[100],
+                backgroundImage: NetworkImage(avatarUrl),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(statusIcon, color: statusColor, size: 16),
-                  const SizedBox(width: 6),
-                  Text(statusText, style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: 13)),
-                  const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: (isOnline ? const Color(0xFF3B82F6) : const Color(0xFFF59E0B)).withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          isOnline ? Icons.smartphone_rounded : Icons.directions_walk_rounded,
-                          size: 12,
-                          color: isOnline ? const Color(0xFF3B82F6) : const Color(0xFFF59E0B),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              doctorName, 
+                              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Color(0xFF1F2937), letterSpacing: -0.3),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(expertise, style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280))),
+                          ],
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          isOnline ? 'Đặt online' : 'Walk-in',
+                      ),
+                      const SizedBox(width: 8),
+                      // Type Badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: (isOnline ? const Color(0xFFEFF6FF) : const Color(0xFFFFFBEB)),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: (isOnline ? const Color(0xFFBFDBFE) : const Color(0xFFFEF3C7))),
+                        ),
+                        child: Text(
+                          isOnline ? 'Online' : 'Walk-in',
                           style: TextStyle(
-                            fontSize: 11,
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            color: isOnline ? const Color(0xFF3B82F6) : const Color(0xFFF59E0B),
+                            color: isOnline ? const Color(0xFF2563EB) : const Color(0xFFD97706),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Status Badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: statusColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: statusColor.withValues(alpha: 0.2)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(statusIcon, color: statusColor, size: 12),
+                            const SizedBox(width: 4),
+                            Text(statusText, style: TextStyle(color: statusColor, fontSize: 11, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Date and Time
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.schedule_rounded, size: 14, color: Color(0xFF9CA3AF)),
+                              const SizedBox(width: 4),
+                              Text(formattedTime, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF374151))),
+                              const SizedBox(width: 8),
+                              const Icon(Icons.calendar_month_rounded, size: 14, color: Color(0xFF9CA3AF)),
+                              const SizedBox(width: 4),
+                              Text(formattedDate, style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [statusColor.withValues(alpha: 0.6), statusColor],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: CircleAvatar(
-                      radius: 26,
-                      backgroundColor: Colors.grey[200],
-                      backgroundImage: NetworkImage(avatarUrl),
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(doctorName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF1F2937))),
-                        const SizedBox(height: 2),
-                        Text(expertise, style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            const Icon(Icons.schedule_rounded, size: 14, color: Color(0xFF9CA3AF)),
-                            const SizedBox(width: 4),
-                            Text(formattedTime, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF374151))),
-                            const SizedBox(width: 12),
-                            const Icon(Icons.calendar_month_rounded, size: 14, color: Color(0xFF9CA3AF)),
-                            const SizedBox(width: 4),
-                            Text(formattedDate, style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(Icons.chevron_right_rounded, color: Color(0xFFD1D5DB), size: 22),
-                ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTypeChip(String value, String label, IconData? icon) {
+    final isSelected = _selectedType == value;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedType = value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primary : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: isSelected ? AppColors.primary : const Color(0xFFE5E7EB)),
+          boxShadow: isSelected ? [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 2))] : null,
+        ),
+        child: Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 14, color: isSelected ? Colors.white : const Color(0xFF6B7280)),
+              const SizedBox(width: 6),
+            ],
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected ? Colors.white : const Color(0xFF4B5563),
               ),
             ),
           ],

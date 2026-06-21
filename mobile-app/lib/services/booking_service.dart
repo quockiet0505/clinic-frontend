@@ -48,14 +48,16 @@ class BookingService {
     required String note,
   }) async {
     try {
-      final response = await _dioClient.dio.post('/appointments/book', data: {
-        if (doctorId != null && doctorId > 0) 'doctorId': doctorId,
+      final response = await _dioClient.dio.post('/appointments', data: {
+        if (doctorId != null && doctorId > 0) 'mainDoctorId': doctorId,
         if (serviceId != null) 'serviceId': serviceId,
         if (expertiseId != null) 'expertiseId': expertiseId,
         'appointmentDate': date,
         'timeStart': timeStart,
         'timeEnd': timeEnd,
-        'notes': note,
+        'appointmentType': 'ONLINE',
+        'createdBy': 'PATIENT',
+        'note': note,
       });
       if (response.statusCode != 200 && response.statusCode != 201) {
         throw Exception(response.data['message'] ?? 'Failed to book appointment');

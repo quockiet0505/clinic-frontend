@@ -4,6 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
 import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
+import 'package:clinic_management_system/widgets/common/clinic_dropdown_field.dart';
+import 'package:clinic_management_system/widgets/common/clinic_date_field.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -218,54 +220,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập số điện thoại' : null,
               ),
               _buildDivider(),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDropdownField(
-                      label: 'Giới tính',
-                      value: _selectedGender,
-                      items: _genderOptions.map((e) => e['value']!).toList(),
-                      displayMap: {for (var e in _genderOptions) e['value']!: e['label']!},
-                      icon: Icons.person_outline_rounded,
-                      onChanged: (val) => setState(() => _selectedGender = val),
-                    ),
-                  ),
-                  Container(width: 1, height: 60, color: const Color(0xFFF1F5F9)),
-                  Expanded(
-                    child: InkWell(
-                      onTap: _pickDate,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Ngày sinh', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF94A3B8))),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                const Icon(Icons.cake_outlined, size: 20, color: Color(0xFF64748B)),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    _selectedDob != null
-                                        ? '${_selectedDob!.day.toString().padLeft(2, '0')}/${_selectedDob!.month.toString().padLeft(2, '0')}/${_selectedDob!.year}'
-                                        : 'Chọn',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: _selectedDob != null ? const Color(0xFF0F172A) : const Color(0xFF94A3B8),
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              ClinicDropdownField<String>(
+                label: 'Giới tính',
+                value: _selectedGender,
+                items: _genderOptions.map((e) => e['value']!).toList(),
+                displayMap: {for (var e in _genderOptions) e['value']!: e['label']!},
+                icon: Icons.person_outline_rounded,
+                onChanged: (val) => setState(() => _selectedGender = val),
+              ),
+              _buildDivider(),
+              ClinicDateField(
+                label: 'Ngày sinh',
+                value: _selectedDob,
+                onTap: _pickDate,
               ),
               _buildDivider(),
               _buildTextField(
@@ -403,105 +370,5 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildDropdownField({
-    required String label,
-    required String? value,
-    required List<String> items,
-    required IconData icon,
-    required void Function(String?) onChanged,
-    Map<String, String>? displayMap,
-  }) {
-    final displayValue = value != null ? (displayMap != null ? (displayMap[value] ?? value) : value) : 'Chọn';
-    
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF94A3B8))),
-          const SizedBox(height: 8),
-          GestureDetector(
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                backgroundColor: Colors.transparent,
-                isScrollControlled: true,
-                builder: (BuildContext context) {
-                  return Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                    ),
-                    padding: const EdgeInsets.fromLTRB(0, 12, 0, 24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(width: 40, height: 4, decoration: BoxDecoration(color: const Color(0xFFE2E8F0), borderRadius: BorderRadius.circular(2))),
-                        const SizedBox(height: 20),
-                        Text('Chọn $label', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
-                        const SizedBox(height: 16),
-                        ...items.map((item) {
-                          final isSelected = item == value;
-                          return InkWell(
-                            onTap: () {
-                              onChanged(item);
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                              color: isSelected ? const Color(0xFFEFF6FF) : Colors.transparent,
-                              child: Row(
-                                children: [
-                                  Text(
-                                    displayMap != null ? (displayMap[item] ?? item) : item,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                                      color: isSelected ? const Color(0xFF2563EB) : const Color(0xFF334155),
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  if (isSelected) const Icon(Icons.check_circle_rounded, color: Color(0xFF2563EB), size: 20),
-                                ],
-                              ),
-                            ),
-                          );
-                        }),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFC),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: const Color(0xFFE2E8F0)),
-              ),
-              child: Row(
-                children: [
-                  Icon(icon, size: 20, color: const Color(0xFF64748B)),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      displayValue,
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: value != null ? const Color(0xFF0F172A) : const Color(0xFF94A3B8),
-                        fontWeight: FontWeight.w500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF64748B), size: 20),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 }

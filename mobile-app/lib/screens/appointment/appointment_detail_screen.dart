@@ -39,11 +39,15 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
     
     try {
       final feedbackService = FeedbackService();
-      final reviews = await feedbackService.getMyDoctorFeedbacks();
-      final hasReviewed = reviews.any((r) => r['appointmentId'] == widget.appointment.appointmentId);
+      final doctorReviews = await feedbackService.getMyDoctorFeedbacks();
+      final clinicReviews = await feedbackService.getMyClinicFeedbacks();
+      
+      final hasReviewedDoctor = doctorReviews.any((r) => r['appointmentId'] == widget.appointment.appointmentId);
+      final hasReviewedClinic = clinicReviews.any((r) => r['appointmentId'] == widget.appointment.appointmentId);
+      
       if (mounted) {
         setState(() {
-          _hasReviewed = hasReviewed;
+          _hasReviewed = hasReviewedDoctor || hasReviewedClinic;
           _isLoadingReviewStatus = false;
         });
       }
@@ -82,6 +86,32 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
           children: [
             // Status Banner
             _buildStatusBanner(),
+            if (appointment.status == 'NO_SHOW')
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF2F2),
+                  border: Border.all(color: const Color(0xFFFEE2E2)),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2),
+                      child: Icon(Icons.error_outline_rounded, color: Color(0xFFEF4444), size: 20),
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Text(
+                        'Cảnh báo: Bạn đã vắng mặt. Nếu không đến khám quá 3 lần, tài khoản của bạn sẽ bị khoá tự động.',
+                        style: TextStyle(fontSize: 13, color: Color(0xFFB91C1C), fontWeight: FontWeight.bold, height: 1.5),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             const SizedBox(height: 20),
 
             // Doctor Info Card
@@ -170,9 +200,9 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                   _buildDetailRow(Icons.medical_services_rounded, 'Dịch vụ', appointment.serviceName ?? 'Khám chuyên khoa', const Color(0xFF3B82F6)),
                   const Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Divider(height: 1, color: Color(0xFFF3F4F6))),
                   _buildDetailRow(
-                    appointment.appointmentType == 'ONLINE' ? Icons.videocam_rounded : Icons.location_on_rounded, 
-                    'Hình thức', 
-                    appointment.appointmentType == 'ONLINE' ? 'Khám trực tuyến (Video call)' : 'Khám trực tiếp tại phòng khám', 
+                    appointment.appointmentType == 'ONLINE' ? Icons.smartphone_rounded : Icons.directions_walk_rounded, 
+                    'Hình thức tạo lịch', 
+                    appointment.appointmentType == 'ONLINE' ? 'Đặt lịch qua ứng dụng' : 'Tạo trực tiếp tại quầy', 
                     const Color(0xFF10B981)
                   ),
                   const Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Divider(height: 1, color: Color(0xFFF3F4F6))),
@@ -189,12 +219,15 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoadingReviewStatus ? null : () async {
                       if (_hasReviewed) {
-                        Navigator.push(
+                        final result = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => const ReviewHistoryScreen(),
+                            builder: (context) => ReviewScreen(appointment: appointment),
                           ),
                         );
+                        if (result == true && mounted) {
+                          _checkReviewStatus();
+                        }
                       } else {
                         final result = await Navigator.push(
                           context,
@@ -238,22 +271,51 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
     String statusText;
     IconData statusIcon;
     switch (widget.appointment.status) {
-      case 'SCHEDULED':
-      case 'CONFIRMED':
       case 'PENDING':
+        statusColor = const Color(0xFFF59E0B);
+        statusText = 'Chờ xác nhận';
+        statusIcon = Icons.help_outline_rounded;
+        break;
+      case 'CONFIRMED':
+      case 'SCHEDULED':
         statusColor = const Color(0xFF10B981);
-        statusText = 'Lịch hẹn sắp tới';
+        statusText = 'Đã xác nhận';
         statusIcon = Icons.event_available_rounded;
+        break;
+      case 'CHECKED_IN':
+        statusColor = const Color(0xFF3B82F6);
+        statusText = 'Đã check-in';
+        statusIcon = Icons.how_to_reg_rounded;
+        break;
+      case 'IN_PROGRESS':
+        statusColor = const Color(0xFF6366F1);
+        statusText = 'Đang khám';
+        statusIcon = Icons.health_and_safety_rounded;
+        break;
+      case 'WAITING_RESULT':
+        statusColor = const Color(0xFF8B5CF6);
+        statusText = 'Chờ kết quả';
+        statusIcon = Icons.science_rounded;
+        break;
+      case 'SKIPPED':
+        statusColor = const Color(0xFFF97316);
+        statusText = 'Bị qua lượt';
+        statusIcon = Icons.access_time_rounded;
+        break;
+      case 'COMPLETED':
+        statusColor = const Color(0xFF64748B);
+        statusText = 'Hoàn thành';
+        statusIcon = Icons.check_circle_rounded;
         break;
       case 'CANCELLED':
         statusColor = const Color(0xFFEF4444);
-        statusText = 'Lịch hẹn đã hủy';
+        statusText = 'Đã huỷ';
         statusIcon = Icons.cancel_rounded;
         break;
-      case 'COMPLETED':
-        statusColor = const Color(0xFF6366F1);
-        statusText = 'Đã hoàn thành';
-        statusIcon = Icons.check_circle_rounded;
+      case 'NO_SHOW':
+        statusColor = const Color(0xFFDC2626);
+        statusText = 'Không đến khám';
+        statusIcon = Icons.event_busy_rounded;
         break;
       default:
         statusColor = const Color(0xFF9CA3AF);

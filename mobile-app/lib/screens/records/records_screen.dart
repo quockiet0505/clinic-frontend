@@ -25,6 +25,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
     ClinicTabItem(value: 'ALL', label: 'Tất cả'),
     ClinicTabItem(value: 'MEDICAL', label: 'Khám bệnh'),
     ClinicTabItem(value: 'LAB', label: 'Xét nghiệm'),
+    ClinicTabItem(value: 'XRAY', label: 'X-quang'),
   ];
 
   @override
@@ -75,7 +76,9 @@ class _RecordsScreenState extends State<RecordsScreen> {
           if (_selectedTab == 'MEDICAL') {
             allRecords = medicalRecords;
           } else if (_selectedTab == 'LAB') {
-            allRecords = labResults;
+            allRecords = labResults.where((r) => !(r.serviceName ?? '').toLowerCase().contains('x-quang') && !(r.serviceName ?? '').toLowerCase().contains('siêu âm') && !(r.serviceName ?? '').toLowerCase().contains('ct ')).toList();
+          } else if (_selectedTab == 'XRAY') {
+            allRecords = labResults.where((r) => (r.serviceName ?? '').toLowerCase().contains('x-quang') || (r.serviceName ?? '').toLowerCase().contains('siêu âm') || (r.serviceName ?? '').toLowerCase().contains('ct ')).toList();
           } else {
             allRecords = [...medicalRecords, ...labResults];
             allRecords.sort((a, b) {
@@ -142,17 +145,13 @@ class _RecordsScreenState extends State<RecordsScreen> {
                           child: const Icon(Icons.folder_shared_rounded, color: AppColors.primary, size: 20),
                         ),
                         const SizedBox(width: 10),
-                        const Text('Hồ sơ y tế', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1F2937))),
-                        const Spacer(),
-                        Consumer<RecordProvider>(
-                          builder: (_, p, __) => Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.08),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text('${p.myRecords.length} bản ghi', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 12)),
-                          ),
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Hồ sơ y tế', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF1F2937))),
+                            SizedBox(height: 2),
+                            Text('Khám bệnh, xét nghiệm, X-quang', style: TextStyle(fontSize: 13, color: Color(0xFF6B7280))),
+                          ],
                         ),
                       ],
                     ),
@@ -200,7 +199,7 @@ class _RecordsScreenState extends State<RecordsScreen> {
                 child: records.isEmpty
                     ? _buildEmptyState(isSearchEmpty: allRecords.isNotEmpty)
                     : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
                         itemCount: records.length,
                         itemBuilder: (context, index) => _buildRecordCard(records[index]),
                       ),
@@ -214,49 +213,63 @@ class _RecordsScreenState extends State<RecordsScreen> {
 
   Widget _buildRecordCard(dynamic record) {
     if (record is LabResultModel) {
+      bool isXRay = (record.serviceName ?? '').toLowerCase().contains('x-quang') || 
+                    (record.serviceName ?? '').toLowerCase().contains('siêu âm') || 
+                    (record.serviceName ?? '').toLowerCase().contains('ct ');
+      
+      String typeText = isXRay ? 'X-quang' : 'Xét nghiệm';
+      Color typeColor = isXRay ? const Color(0xFF9333EA) : const Color(0xFFEA580C);
+      IconData typeIcon = isXRay ? Icons.monitor_heart_rounded : Icons.science_rounded;
+      
+      String resultStatus = record.conclusion ?? record.resultData ?? 'Đã có';
+      Widget statusBadge;
+      if (resultStatus.toLowerCase().contains('bình thường')) {
+         statusBadge = _buildStatusBadge('Bình thường', Icons.check_circle_rounded, const Color(0xFF10B981));
+      } else if (resultStatus.toLowerCase().contains('bất thường') || resultStatus.toLowerCase().contains('nguy hiểm')) {
+         statusBadge = _buildStatusBadge('Bất thường', Icons.warning_rounded, const Color(0xFFEF4444));
+      } else if (resultStatus.toLowerCase().contains('theo dõi')) {
+         statusBadge = _buildStatusBadge('Theo dõi', Icons.info_rounded, const Color(0xFFF59E0B));
+      } else {
+         statusBadge = Text('KQ: $resultStatus', style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280), fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis);
+      }
+
       return GestureDetector(
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => LabResultScreen(results: [record]))),
         child: Container(
-          margin: const EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: 14),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 3))],
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 16, offset: const Offset(0, 4))],
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Container(
-                  width: 4, height: 52,
-                  decoration: BoxDecoration(color: Colors.orange, borderRadius: BorderRadius.circular(4)),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        record.serviceName ?? 'Xét nghiệm',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF1F2937)),
-                        maxLines: 1, overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text('Kết quả: ${record.conclusion ?? record.resultData ?? 'Đã có'}', style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280))),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          const Icon(Icons.calendar_today_outlined, size: 12, color: Color(0xFF6B7280)),
-                          const SizedBox(width: 4),
-                          Text(DateFormatter.formatDateTime(record.date), style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280), fontWeight: FontWeight.w500)),
-                        ],
-                      ),
-                    ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      record.serviceName ?? 'Dịch vụ xét nghiệm',
+                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Color(0xFF1F2937), letterSpacing: -0.3),
+                      maxLines: 1, overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-                const Icon(Icons.chevron_right_rounded, color: Color(0xFFD1D5DB), size: 22),
-              ],
-            ),
+                  const SizedBox(width: 8),
+                  _buildTypeBadge(typeText, typeColor),
+                ],
+              ),
+              const SizedBox(height: 12),
+              statusBadge,
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  _buildDateRow(record.date),
+                ],
+              ),
+            ],
           ),
         ),
       );
@@ -270,53 +283,98 @@ class _RecordsScreenState extends State<RecordsScreen> {
       return GestureDetector(
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => RecordDetailScreen(record: record))),
         child: Container(
-          margin: const EdgeInsets.only(bottom: 12),
+          margin: const EdgeInsets.only(bottom: 14),
+          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 3))],
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 16, offset: const Offset(0, 4))],
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Container(
-                  width: 4, height: 52,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      record.diagnosis ?? 'Chưa có chẩn đoán',
+                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Color(0xFF1F2937), letterSpacing: -0.3),
+                      maxLines: 1, overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        record.diagnosis ?? 'Chưa có chẩn đoán',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Color(0xFF1F2937)),
-                        maxLines: 1, overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(doctorName, style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280))),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          const Icon(Icons.calendar_today_outlined, size: 12, color: Color(0xFF6B7280)),
-                          const SizedBox(width: 4),
-                          Text(DateFormatter.formatDateTime(record.createdAt), style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280), fontWeight: FontWeight.w500)),
-                        ],
-                      ),
-                    ],
+                  const SizedBox(width: 8),
+                  _buildTypeBadge('Khám bệnh', const Color(0xFF2563EB)),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.medical_information_rounded, size: 14, color: Color(0xFF9CA3AF)),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(doctorName, style: const TextStyle(fontSize: 13, color: Color(0xFF4B5563), fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis),
                   ),
-                ),
-                const Icon(Icons.chevron_right_rounded, color: Color(0xFFD1D5DB), size: 22),
-              ],
-            ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  _buildDateRow(record.createdAt),
+                ],
+              ),
+            ],
           ),
         ),
       );
     }
+  }
+
+  Widget _buildTypeBadge(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color),
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(String text, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 12),
+          const SizedBox(width: 4),
+          Text(text, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateRow(String? dateString) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(Icons.calendar_month_rounded, size: 14, color: Color(0xFF9CA3AF)),
+        const SizedBox(width: 4),
+        Text(DateFormatter.formatDateTime(dateString), style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
+      ],
+    );
   }
 
   Widget _buildEmptyState({required bool isSearchEmpty}) {

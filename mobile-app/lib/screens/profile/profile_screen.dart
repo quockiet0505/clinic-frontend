@@ -3,6 +3,7 @@ import 'package:clinic_management_system/screens/profile/edit_profile_screen.dar
 import 'package:clinic_management_system/screens/profile/edit_medical_profile_screen.dart';
 import 'package:clinic_management_system/screens/profile/feedback_screen.dart';
 import 'package:clinic_management_system/screens/profile/review_history_screen.dart';
+import 'package:clinic_management_system/screens/profile/faq_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -281,7 +282,7 @@ class ProfileScreen extends StatelessWidget {
                       iconBg: const Color(0xFFF0F9FF),
                       title: 'Trung tâm hỗ trợ',
                       subtitle: 'Câu hỏi thường gặp, liên hệ',
-                      onTap: () {},
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FAQScreen())),
                     ),
                   ]),
                 ),
@@ -295,7 +296,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
               ),
 
-              const SliverToBoxAdapter(child: SizedBox(height: 100)),
+              const SliverToBoxAdapter(child: SizedBox(height: 140)),
             ],
           );
         },

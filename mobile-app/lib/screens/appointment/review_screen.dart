@@ -29,6 +29,8 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
 
   int? _doctorReviewId;
   int? _clinicReviewId;
+  String? _doctorCreatedAt;
+  String? _clinicCreatedAt;
 
   @override
   void initState() {
@@ -50,6 +52,7 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
           _doctorRating = existingDoctor['rating'] ?? 0;
           _doctorComment = existingDoctor['comment'] ?? '';
           _doctorIsAnonymous = existingDoctor['isAnonymous'] ?? false;
+          _doctorCreatedAt = existingDoctor['createdAt'];
         });
       }
 
@@ -64,6 +67,7 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
           _clinicRating = existingClinic['rating'] ?? 0;
           _clinicComment = existingClinic['comment'] ?? '';
           _clinicIsAnonymous = existingClinic['isAnonymous'] ?? false;
+          _clinicCreatedAt = existingClinic['createdAt'];
         });
       }
     } catch (e) {
@@ -147,7 +151,7 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
     }
   }
 
-  Widget _buildRatingStars(int rating, Function(int) onRatingChanged) {
+  Widget _buildRatingStars(int rating, Function(int) onRatingChanged, bool isEditable) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(5, (index) {
@@ -157,7 +161,7 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
             size: 40,
             color: index < rating ? Colors.amber : AppColors.textSubLight.withOpacity(0.3),
           ),
-          onPressed: () => onRatingChanged(index + 1),
+          onPressed: isEditable ? () => onRatingChanged(index + 1) : null,
         );
       }),
     );
@@ -169,17 +173,51 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
     required String comment,
     required bool isAnonymous,
     required bool isSubmitting,
+    required String? createdAt,
+    required bool isEditMode,
     required Function(int) onRatingChanged,
     required Function(String) onCommentChanged,
     required Function(bool?) onAnonymousChanged,
     required VoidCallback onSubmit,
   }) {
+    bool isEditable = true;
+    if (createdAt != null) {
+      final createdDate = DateTime.tryParse(createdAt);
+      if (createdDate != null) {
+        isEditable = DateTime.now().difference(createdDate).inHours < 24;
+      }
+    }
+
+    final commentController = TextEditingController(text: comment);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 20),
+          if (!isEditable)
+            Container(
+              margin: const EdgeInsets.only(bottom: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF3F4F6),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFE5E7EB)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline_rounded, color: Color(0xFF6B7280), size: 20),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'Đánh giá này đã quá 24 giờ và không thể chỉnh sửa.',
+                      style: AppStyles.caption.copyWith(color: const Color(0xFF4B5563)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -192,7 +230,7 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
           Text(title, style: AppStyles.heading2.copyWith(fontSize: 18), textAlign: TextAlign.center),
           
           const SizedBox(height: 30),
-          _buildRatingStars(rating, onRatingChanged),
+          _buildRatingStars(rating, onRatingChanged, isEditable),
           
           const SizedBox(height: 40),
           Align(
@@ -201,39 +239,45 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
           ),
           const SizedBox(height: 8),
           TextField(
+            controller: commentController,
             onChanged: onCommentChanged,
             maxLines: 4,
+            readOnly: !isEditable,
             decoration: InputDecoration(
-              hintText: 'Nhập trải nghiệm của bạn...',
+              hintText: isEditable ? 'Nhập trải nghiệm của bạn...' : 'Không có nhận xét.',
               hintStyle: AppStyles.bodyMedium.copyWith(color: AppColors.textSubLight.withOpacity(0.5)),
               filled: true,
-              fillColor: AppColors.primary.withOpacity(0.03),
+              fillColor: isEditable ? AppColors.primary.withOpacity(0.03) : const Color(0xFFF9FAFB),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-              focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: AppColors.primary, width: 1.5)),
+              focusedBorder: isEditable 
+                  ? OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: AppColors.primary, width: 1.5))
+                  : OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
             ),
           ),
           
           const SizedBox(height: 16),
           CheckboxListTile(
             value: isAnonymous,
-            onChanged: onAnonymousChanged,
+            onChanged: isEditable ? onAnonymousChanged : null,
             title: Text('Đánh giá ẩn danh', style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMainLight)),
             controlAffinity: ListTileControlAffinity.leading,
             contentPadding: EdgeInsets.zero,
             activeColor: AppColors.primary,
           ),
           
-          const SizedBox(height: 40),
-          SizedBox(
-            width: double.infinity,
-            height: 56,
-            child: isSubmitting 
-                ? const Center(child: CircularProgressIndicator())
-                : GradientButton(
-                    text: 'Gửi Đánh Giá',
-                    onPressed: rating > 0 ? onSubmit : () {},
-                  ),
-          ),
+          if (isEditable) ...[
+            const SizedBox(height: 40),
+            SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: isSubmitting 
+                  ? const Center(child: CircularProgressIndicator())
+                  : GradientButton(
+                      text: isEditMode ? 'Cập nhật đánh giá' : 'Gửi Đánh Giá',
+                      onPressed: rating > 0 ? onSubmit : () {},
+                    ),
+            ),
+          ],
         ],
       ),
     );
@@ -265,6 +309,8 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
             comment: _doctorComment,
             isAnonymous: _doctorIsAnonymous,
             isSubmitting: _doctorSubmitting,
+            createdAt: _doctorCreatedAt,
+            isEditMode: _doctorReviewId != null,
             onRatingChanged: (r) => setState(() => _doctorRating = r),
             onCommentChanged: (c) => setState(() => _doctorComment = c),
             onAnonymousChanged: (v) => setState(() => _doctorIsAnonymous = v ?? false),
@@ -276,6 +322,8 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
             comment: _clinicComment,
             isAnonymous: _clinicIsAnonymous,
             isSubmitting: _clinicSubmitting,
+            createdAt: _clinicCreatedAt,
+            isEditMode: _clinicReviewId != null,
             onRatingChanged: (r) => setState(() => _clinicRating = r),
             onCommentChanged: (c) => setState(() => _clinicComment = c),
             onAnonymousChanged: (v) => setState(() => _clinicIsAnonymous = v ?? false),
