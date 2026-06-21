@@ -1,28 +1,35 @@
-# Hướng dẫn cài đặt Admin Web
+# 🚀 Setup Guide - Admin Web
 
-## Yêu cầu môi trường
-- Node.js 18+
-- npm hoặc yarn
+Hướng dẫn cài đặt và chạy môi trường phát triển cho dự án Admin Web.
 
-## Các bước chạy dự án
+## Yêu cầu hệ thống
+- Node.js >= 18.x
+- npm >= 9.x hoặc pnpm/yarn
 
-1. **Cài đặt thư viện**:
-   - Mở terminal tại thư mục `admin-web`.
-   - Chạy lệnh:
-     ```bash
-     npm install
-     ```
+## Các bước cài đặt
 
-2. **Cấu hình biến môi trường**:
-   - Copy file `.env.example` thành `.env` (nếu dự án có sẵn).
-   - Đảm bảo biến `VITE_API_BASE_URL` trỏ đúng về backend. Ví dụ:
-     ```env
-     VITE_API_BASE_URL=http://localhost:8080/api/v1
-     ```
+1. **Clone dự án & Di chuyển vào thư mục:**
+   ```bash
+   cd core_code/clinic-frontend/admin-web
+   ```
 
-3. **Chạy dự án**:
-   - Chạy lệnh khởi động môi trường dev:
-     ```bash
-     npm run dev
-     ```
-   - Truy cập vào link hiển thị trên terminal (thường là `http://localhost:5173`).
+2. **Cài đặt dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Cấu hình môi trường:**
+   - Copy file `.env.example` thành `.env` (hoặc `.env.local`).
+   - Đảm bảo biến `VITE_API_URL` trỏ tới địa chỉ backend đang chạy (ví dụ: `http://localhost:8080/api/v1`).
+
+4. **Khởi chạy Development Server:**
+   ```bash
+   npm run dev
+   ```
+   Server sẽ mặc định chạy ở cổng `5173` (hoặc cổng trống tiếp theo). Truy cập trình duyệt tại `http://localhost:5173`.
+
+## Các lệnh thường dùng
+- `npm run dev`: Chạy server dev.
+- `npm run build`: Đóng gói dự án để deploy lên production.
+- `npm run preview`: Chạy thử bản build production local.
+- `npm run lint`: Kiểm tra lỗi ESLint/Prettier.

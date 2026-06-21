@@ -1,21 +1,37 @@
-# Cấu trúc thư mục Admin Web
+# 📂 Folder Structure - Admin Web
 
-Dự án áp dụng kiến trúc **Feature-Sliced Design** (chia theo tính năng) để code dễ quản lý, dễ mở rộng và không bị rối khi dự án lớn lên.
+Cấu trúc thư mục được tổ chức theo tính năng (Feature-based) để dễ dàng scale và quản lý.
 
-## Cấu trúc chính (`src/`)
+```text
+admin-web/
+├── public/                 # File tĩnh (assets, favicon, v.v.)
+├── src/
+│   ├── assets/             # Hình ảnh, fonts, icons nội bộ
+│   ├── components/         # Components dùng chung toàn app (UI, Layouts)
+│   ├── config/             # Cấu hình môi trường, constants
+│   ├── contexts/           # React Context (Auth, Theme)
+│   ├── features/           # Các module chức năng chính
+│   │   ├── auth/           # Đăng nhập, phân quyền
+│   │   ├── dashboard/      # Thống kê, biểu đồ
+│   │   ├── pharmacy/       # Quản lý kho thuốc
+│   │   └── ...
+│   ├── hooks/              # Custom hooks dùng chung (useDebounce, useAuth...)
+│   ├── layouts/            # Các layout bao ngoài (AdminLayout, AuthLayout)
+│   ├── pages/              # Khai báo các trang (kết nối với router)
+│   ├── routes/             # Cấu hình React Router
+│   ├── services/           # Gọi API, cấu hình Axios
+│   ├── types/              # Khai báo TypeScript Interfaces chung
+│   └── utils/              # Các hàm tiện ích (formatDate, validators)
+├── .env                    # Biến môi trường
+├── index.html              # Entry HTML
+├── package.json            # Quản lý dependencies
+├── tsconfig.json           # Cấu hình TypeScript
+└── vite.config.ts          # Cấu hình Vite
+```
 
-- `assets/`: Hình ảnh, icon tĩnh.
-- `components/`: Các UI component dùng chung toàn dự án.
-  - `common/`: Button, Modal, FormDialog, EntityAvatar, CustomSelect...
-  - `tables/`: Component Table dùng chung.
-  - `ui/`: Các component cơ bản (thường dùng shadcn/ui).
-- `config/`: Cấu hình hệ thống (Axios, cấu hình theme...).
-- `features/`: Chứa các module tính năng chính (dashboard, staffs, patients, settings...). Mỗi feature có cấu trúc nội bộ riêng biệt:
-  - `api/`: Các hàm gọi API (ví dụ: `staffApi.ts`).
-  - `components/`: Component chỉ dùng riêng cho feature này.
-  - `pages/`: Các trang giao diện chính của feature.
-  - `types/`: Định nghĩa TypeScript interfaces cho feature.
-  - `utils/`: Các hàm helper xử lý logic riêng.
-- `layouts/`: Các layout bọc ngoài page (ví dụ: `AdminLayout` gồm Sidebar + Header).
-- `routes/`: Cấu hình routing bằng `react-router-dom`.
-- `utils/`: Các hàm tiện ích dùng chung toàn dự án (format tiền, format ngày tháng, xử lý ảnh...).
+## Giải thích chi tiết `features/`
+Mỗi tính năng trong `features/` hoạt động như một module độc lập, bao gồm:
+- `components/`: Component dành riêng cho feature này.
+- `hooks/`: Hooks nội bộ.
+- `api/`: Các hàm gọi API.
+- `types/`: Type definitions riêng.

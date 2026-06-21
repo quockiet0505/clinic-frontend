@@ -1,22 +1,31 @@
-# Quy tắc Code (Coding Conventions)
+# 💻 Coding Conventions - Admin Web
 
-Để đảm bảo tính đồng nhất của dự án Admin Web, vui lòng tuân thủ các quy tắc sau:
+Tài liệu này định nghĩa các tiêu chuẩn viết code cho dự án Admin Web (React/Vite) nhằm đảm bảo tính đồng nhất, dễ đọc và dễ bảo trì.
 
-## 1. UI & Styling
-- Sử dụng **Tailwind CSS** cho toàn bộ styling.
-- Hạn chế tối đa viết CSS thuần ra file riêng trừ khi thực sự cần thiết.
-- Tái sử dụng các component có sẵn trong `src/components/common` (ví dụ: `FormDialog`, `CustomSelect`, `EntityAvatar`, `AvatarPicker`).
+## 1. Kiến trúc & Framework
+- **Core:** React 18+, TypeScript, Vite.
+- **Styling:** Tailwind CSS + Shadcn UI.
+- **State Management:** React Query (server state), Zustand/Context (client state).
 
-## 2. Gọi API
-- Mọi API call phải thông qua `axiosInstance` được cấu hình sẵn tại `src/config/axios.ts` (đã gắn sẵn token và xử lý lỗi cơ bản).
-- Phân tách API theo từng feature (ví dụ: `staffApi.ts` nằm trong `features/staffs/api/`).
-- Các API trả về danh sách phân trang từ Backend nên dùng hàm `parsePagedResponse` trong `src/utils/pagedApi.ts` để chuẩn hóa dữ liệu trước khi đưa vào Table.
+## 2. Quy tắc Đặt tên (Naming Conventions)
+- **Thư mục & File logic:** `kebab-case` (vd: `user-service.ts`, `hooks/`).
+- **File Component:** `PascalCase` (vd: `DashboardLayout.tsx`, `UserTable.tsx`).
+- **Hằng số (Constants):** `UPPER_SNAKE_CASE` (vd: `MAX_PAGE_SIZE`, `API_URL`).
+- **Hàm & Biến:** `camelCase` (vd: `fetchUsers()`, `isLoggedIn`).
+- **Interfaces & Types:** `PascalCase` không có tiền tố "I" (vd: `User`, `ApiResponse`).
 
-## 3. Form & Table
-- **Bảng dữ liệu (Table)**: Sử dụng component `<Table />` trong `src/components/tables/Table.tsx`. Component này đã hỗ trợ sẵn loading, empty state và phân trang đồng bộ.
-- **Form thêm/sửa**: Sử dụng `<FormDialog />` trong `src/components/common/FormDialog.tsx` để tạo các popup nhập liệu nhanh chóng, chuẩn form và đồng nhất về giao diện.
-- **Dropdown/Select**: Sử dụng `<CustomSelect />` để tránh các lỗi liên quan đến Radix UI khi giá trị rỗng.
+## 3. Quy tắc React Components
+- Chỉ sử dụng **Functional Components** với React Hooks. Không dùng Class Components.
+- Đặt các hooks ở trên cùng của component.
+- Tách logic phức tạp ra thành Custom Hooks (`useFetchUser.ts`).
+- Khai báo kiểu dữ liệu rõ ràng cho `props`. Không dùng `any` trừ trường hợp bất khả kháng.
+- Ưu tiên sử dụng `Destructuring` cho props.
 
-## 4. Xử lý Ảnh
-- Mọi URL ảnh trả về từ backend chỉ là đường dẫn tương đối (ví dụ: `/images/...`).
-- Khi hiển thị ảnh, luôn dùng hàm `getImageUrl(url)` trong `src/utils/image.ts` hoặc dùng component `<EntityAvatar />` để tự động nối domain backend và có fallback khi ảnh lỗi.
+## 4. Format & Linting
+- **Prettier & ESLint:** Bắt buộc tuân thủ quy tắc của ESLint/Prettier đã cấu hình.
+- **Dấu nháy:** Dùng nháy đơn (`'`) cho chuỗi TS/JS, nháy kép (`"`) cho thuộc tính JSX.
+- **Dấu phẩy (Trailing commas):** Bật trailing commas ở cuối đối tượng, mảng.
+
+## 5. Comment & Document
+- Dùng `JSDoc` để ghi chú các hàm logic phức tạp, utils dùng chung.
+- Code phải tự giải thích (Self-documenting): Tên biến/hàm phải rõ nghĩa, hạn chế comment dư thừa cho những thứ hiển nhiên.
