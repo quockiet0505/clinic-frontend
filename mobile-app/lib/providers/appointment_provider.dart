@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../core/network/dio_client.dart';
-import 'package:dio/dio.dart';
 import '../models/appointment_model.dart';
 import '../models/doctor_model.dart';
 import '../models/service_model.dart';
@@ -15,7 +14,10 @@ class AppointmentProvider extends ChangeNotifier {
   String? selectedDate;
   Map<String, dynamic>? selectedTimeSlot;
   int? selectedExpertiseId;
+  int? suggestedExpertiseId;
   String note = '';
+  String bookingMode = 'DOCTOR';
+  bool isAiSuggested = false;
 
   bool isLoading = false;
   String? error;
@@ -29,6 +31,7 @@ class AppointmentProvider extends ChangeNotifier {
     selectedService = null;
     selectedSpecialty = null;
     selectedExpertiseId = doctor.expertiseId;
+    bookingMode = 'DOCTOR';
     selectedDate = null;
     selectedTimeSlot = null;
     note = '';
@@ -41,6 +44,7 @@ class AppointmentProvider extends ChangeNotifier {
     selectedDoctor = null;
     selectedSpecialty = null;
     selectedExpertiseId = null;
+    bookingMode = 'SERVICE';
     selectedDate = null;
     selectedTimeSlot = null;
     note = '';
@@ -53,10 +57,28 @@ class AppointmentProvider extends ChangeNotifier {
     selectedDoctor = null;
     selectedService = null;
     selectedExpertiseId = specialty['expertiseId'];
+    bookingMode = 'EXPERTISE';
     selectedDate = null;
     selectedTimeSlot = null;
     note = '';
     availableSlots = [];
+    notifyListeners();
+  }
+
+  void applyAiSuggestion({
+    required int suggestedExpertiseId,
+    int? selectedExpertiseId,
+    String? symptomNote,
+  }) {
+    this.suggestedExpertiseId = suggestedExpertiseId;
+    isAiSuggested = true;
+    if (selectedExpertiseId != null) {
+      this.selectedExpertiseId = selectedExpertiseId;
+      bookingMode = 'EXPERTISE';
+    }
+    if (symptomNote != null && symptomNote.isNotEmpty) {
+      note = symptomNote;
+    }
     notifyListeners();
   }
 
@@ -72,9 +94,7 @@ class AppointmentProvider extends ChangeNotifier {
 
     try {
       final data = await _bookingService.getMyAppointments();
-      myAppointments = data
-              .map((e) => AppointmentModel.fromJson(e))
-              .toList();
+      myAppointments = data.map((e) => AppointmentModel.fromJson(e)).toList();
     } catch (e) {
       error = e.toString().replaceAll('Exception: ', '');
     } finally {
@@ -91,25 +111,36 @@ class AppointmentProvider extends ChangeNotifier {
 
   void selectTimeSlot(Map<String, dynamic> slot) {
     selectedTimeSlot = slot;
+    final doctorId = slot['doctorId'];
+    if (doctorId != null && selectedDoctor == null && bookingMode == 'EXPERTISE') {
+      // Slot từ chuyên khoa có gán bác sĩ
+    }
     notifyListeners();
   }
 
   Future<void> fetchAvailableSlots() async {
     if (selectedDate == null) return;
-    final targetDoctorId = selectedDoctor?.id ?? 0; // 0 if service booking or any doctor
-    
+
     isLoading = true;
     error = null;
     notifyListeners();
 
     try {
-      final data = await _bookingService.getAvailableSlots(targetDoctorId, selectedDate!);
-      
+      final data = await _bookingService.getAvailableSlots(
+        doctorId: selectedDoctor?.id,
+        expertiseId: bookingMode == 'EXPERTISE' ? selectedExpertiseId : null,
+        serviceId: bookingMode == 'SERVICE' ? selectedService?.serviceId : null,
+        date: selectedDate!,
+      );
+
       availableSlots = data.map((e) {
-        if (e is String) return {'timeStart': e, 'timeEnd': ''};
+        if (e is String) return {'timeStart': e, 'timeEnd': '', 'isAvailable': true};
         return {
-          'timeStart': e['timeStart'] ?? e['time'] ?? e['startTime'].toString(),
+          'timeStart': e['timeStart'] ?? e['time'] ?? e['startTime']?.toString() ?? '',
           'timeEnd': e['timeEnd'] ?? '',
+          'isAvailable': e['isAvailable'] ?? true,
+          'doctorId': e['doctorId'],
+          'doctorName': e['doctorName'],
         };
       }).toList();
     } catch (e) {
@@ -122,19 +153,27 @@ class AppointmentProvider extends ChangeNotifier {
 
   Future<bool> confirmBooking() async {
     if (selectedDate == null || selectedTimeSlot == null) return false;
-    
+
     isLoading = true;
     notifyListeners();
 
     try {
+      int? doctorId = selectedDoctor?.id;
+      if (doctorId == null && selectedTimeSlot?['doctorId'] != null) {
+        doctorId = selectedTimeSlot!['doctorId'] as int?;
+      }
+
       await _bookingService.confirmBooking(
-        doctorId: selectedDoctor?.id, 
+        doctorId: doctorId,
         serviceId: selectedService?.serviceId,
         expertiseId: selectedExpertiseId,
-        date: selectedDate!, 
+        suggestedExpertiseId: suggestedExpertiseId,
+        bookingMode: bookingMode,
+        date: selectedDate!,
         timeStart: selectedTimeSlot!['timeStart'],
-        timeEnd: selectedTimeSlot!['timeEnd'],
+        timeEnd: selectedTimeSlot!['timeEnd'] ?? selectedTimeSlot!['timeStart'],
         note: note,
+        isAiSuggested: isAiSuggested,
       );
       return true;
     } catch (e) {

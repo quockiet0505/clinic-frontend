@@ -11,3 +11,16 @@ Tài liệu này bao quát các thông tin tổng quan, công nghệ và tiêu c
 - **Styling:** Tailwind CSS v3 kết hợp với Shadcn UI (Radix Primitives).
 - **State Management:** React Query (cho API State), Context API (cho Global State cục bộ).
 - **Form & Validation:** React Hook Form + Zod.
+
+## 📋 Quản lý lịch hẹn
+
+Bảng lịch (`AppointmentTable`) hiển thị thêm:
+
+| Field | Ý nghĩa |
+|-------|---------|
+| `bookingMode` | DOCTOR / EXPERTISE / SERVICE / DIRECT |
+| `isAiSuggested` | Badge "AI gợi ý" |
+| `expertiseName` | Chuyên khoa bệnh nhân chọn |
+| `suggestedExpertiseName` | Chuyên khoa AI gợi ý (nếu khác khoa chọn) |
+
+API backend trả đủ field qua `AppointmentResponse`.

@@ -12,7 +12,7 @@ const STEPS = [
 
 const RULES = [
   { icon: <CalendarClock className="w-4 h-4" />, text: 'Đặt trước tối đa <strong>14 ngày</strong>' },
-  { icon: <Clock className="w-4 h-4" />, text: 'Cần đặt trước ít nhất <strong>12 tiếng</strong>' },
+  { icon: <Clock className="w-4 h-4" />, text: 'Cần đặt trước ít nhất <strong>24 giờ</strong>' },
   { icon: <AlertCircle className="w-4 h-4" />, text: 'Huỷ miễn phí trước <strong>3 tiếng</strong>' },
 ];
 
@@ -28,6 +28,8 @@ export const BookAppointment: React.FC = () => {
   const doctorId = Number(searchParams.get('doctorId')) || undefined;
   const expertiseId = Number(searchParams.get('expertiseId')) || undefined;
   const serviceId = Number(searchParams.get('serviceId')) || undefined;
+  const suggestedExpertiseId = Number(searchParams.get('suggestedExpertiseId')) || undefined;
+  const isAiSuggested = searchParams.get('isAiSuggested') === '1';
   const mode = searchParams.get('mode');
 
   const isDoctorBooking = !!doctorId;
@@ -196,6 +198,8 @@ export const BookAppointment: React.FC = () => {
                 preselectedExpertiseId={expertiseId}
                 preselectedDoctorId={doctorId}
                 preselectedServiceId={serviceId}
+                preselectedSuggestedExpertiseId={suggestedExpertiseId}
+                isAiSuggested={isAiSuggested}
                 isDoctorBooking={isDoctorBooking}
                 isExpertiseBooking={isExpertiseBooking}
                 isServiceBooking={isServiceBooking}

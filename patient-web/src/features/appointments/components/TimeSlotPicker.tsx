@@ -16,12 +16,13 @@ interface TimeSlotPickerProps {
   updateForm: (data: Partial<BookingFormState>) => void;
   dates: AvailableDate[];
   timeSlots: TimeSlot[];
+  onSlotSelect?: (slot: TimeSlot) => void;
 }
 
 // Giả sử bạn có danh sách ngày nghỉ lễ (có thể lấy từ API, ở đây tôi tạo mẫu)
 const holidayDates = ['2026-05-01', '2026-05-02', '2026-04-30']; // ví dụ
 
-export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, updateForm, dates, timeSlots }) => {
+export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, updateForm, dates, timeSlots, onSlotSelect }) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   
@@ -233,7 +234,10 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, update
                     <button
                       key={slot.timeStart}
                       disabled={!slot.isAvailable}
-                      onClick={() => updateForm({ timeStart: slot.timeStart, timeEnd: slot.timeEnd })}
+                      onClick={() => {
+                        if (onSlotSelect) onSlotSelect(slot);
+                        else updateForm({ timeStart: slot.timeStart, timeEnd: slot.timeEnd });
+                      }}
                       className={`rounded-2xl border py-3 px-1 text-[14px] font-bold transition-all duration-300 cursor-pointer shadow-sm ${
                         !slot.isAvailable 
                           ? 'border-slate-100 bg-slate-50/50 text-slate-300 line-through cursor-not-allowed shadow-none' 
@@ -256,7 +260,10 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, update
                     <button
                       key={slot.timeStart}
                       disabled={!slot.isAvailable}
-                      onClick={() => updateForm({ timeStart: slot.timeStart, timeEnd: slot.timeEnd })}
+                      onClick={() => {
+                        if (onSlotSelect) onSlotSelect(slot);
+                        else updateForm({ timeStart: slot.timeStart, timeEnd: slot.timeEnd });
+                      }}
                       className={`rounded-2xl border py-3 px-1 text-[14px] font-bold transition-all duration-300 cursor-pointer shadow-sm ${
                         !slot.isAvailable 
                           ? 'border-slate-100 bg-slate-50/50 text-slate-300 line-through cursor-not-allowed shadow-none' 

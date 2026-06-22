@@ -1,8 +1,8 @@
 import React from 'react';
-import { Clock, Globe, UserRound, Calendar } from 'lucide-react';
+import { Clock, Globe, UserRound, Calendar, Sparkles } from 'lucide-react';
 import Table, { Column } from '@/components/tables/Table';
 import StatusBadge from '@/components/common/StatusBadge';
-import { Appointment } from '../types/appointment';
+import { Appointment, getBookingModeLabel } from '../types/appointment';
 import { formatDateTime } from '@/utils/formatters';
 import { CheckInButton, CancelButton } from '@/components/common/ActionButtons';
 
@@ -58,9 +58,24 @@ export default function AppointmentTable({ data, onCheckIn, onCancel, loading = 
       ),
     },
     {
+      key: 'bookingMode',
+      label: 'Loại đặt',
+      className: 'w-[10%]',
+      render: (item) => (
+        <div className="text-xs">
+          <p className="font-semibold text-slate-700">{getBookingModeLabel(item.bookingMode)}</p>
+          {item.isAiSuggested && (
+            <p className="text-violet-600 flex items-center gap-1 mt-0.5">
+              <Sparkles size={12} /> AI gợi ý
+            </p>
+          )}
+        </div>
+      ),
+    },
+    {
       key: 'timeStart',
       label: 'Lịch khám & Bác sĩ',
-      className: 'w-[25%]',
+      className: 'w-[22%]',
       render: (item) => (
         <div>
           <div className="flex items-center gap-1 text-sm text-slate-700">
@@ -69,7 +84,16 @@ export default function AppointmentTable({ data, onCheckIn, onCancel, loading = 
               {item.appointmentDate} • {item.timeStart?.substring(0, 5)}
             </span>
           </div>
-          <p className="text-sm text-slate-600 mt-1">{item.doctorName}</p>
+          <p className="text-sm text-slate-600 mt-1">{item.doctorName || 'Chưa gán bác sĩ'}</p>
+          {item.expertiseName && (
+            <p className="text-xs text-slate-500 mt-0.5">Khoa: {item.expertiseName}</p>
+          )}
+          {item.suggestedExpertiseName && item.suggestedExpertiseName !== item.expertiseName && (
+            <p className="text-xs text-violet-600 mt-0.5">AI gợi ý: {item.suggestedExpertiseName}</p>
+          )}
+          {item.serviceName && (
+            <p className="text-xs text-slate-500 mt-0.5">DV: {item.serviceName}</p>
+          )}
         </div>
       ),
     },

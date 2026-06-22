@@ -1,28 +1,45 @@
 import type { ChatMessage } from '../types/chatbot';
+import { getAiChatBaseUrl, getOrCreateSessionId } from '@/config/aiChat';
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
+interface AiChatResponse {
+  reply: string;
+  session_id: string;
+}
+
+function getAccessToken(): string | null {
+  return localStorage.getItem('token');
+}
+
 export const chatbotApi = {
   sendMessage: async (message: string): Promise<ChatMessage> => {
-    // Delay rất ngắn để tạo cảm giác tự nhiên như đang chat
-    await new Promise(resolve => setTimeout(resolve, 600));
+    const baseUrl = getAiChatBaseUrl();
+    const sessionId = getOrCreateSessionId();
+    const accessToken = getAccessToken();
 
-    const lowerMsg = message.toLowerCase();
-    let replyText = "Xin lỗi, tôi chưa hiểu rõ câu hỏi của bạn. Bạn có thể nói rõ hơn về triệu chứng hoặc dịch vụ bạn đang tìm kiếm không?";
+    const response = await fetch(`${baseUrl}/api/v1/chat/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message,
+        session_id: sessionId,
+        ...(accessToken ? { access_token: accessToken } : {}),
+      }),
+    });
 
-    if (lowerMsg.includes('đau đầu') || lowerMsg.includes('chóng mặt')) {
-      replyText = "Triệu chứng đau đầu và chóng mặt có thể liên quan đến khoa Nội Thần Kinh hoặc Tim Mạch. Bạn có muốn tôi hướng dẫn đặt lịch khám với BS. Trần Thị Mây không?";
-    } else if (lowerMsg.includes('giá') || lowerMsg.includes('chi phí')) {
-      replyText = "Chi phí khám dịch vụ thường tại ClinicPro là 200.000đ, và khám chuyên gia VIP là 500.000đ ạ. Chi phí xét nghiệm sẽ được báo chi tiết khi bác sĩ chỉ định.";
-    } else if (lowerMsg.includes('xin chào') || lowerMsg.includes('hi')) {
-      replyText = "Chào bạn! Tôi là Trợ lý AI của ClinicPro. Tôi có thể giúp bạn tra cứu chuyên khoa, tìm bác sĩ hoặc hướng dẫn đặt lịch khám.";
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || 'Không thể kết nối tới AI Chat service');
     }
+
+    const data = (await response.json()) as AiChatResponse;
 
     return {
       id: generateId(),
-      text: replyText,
+      text: data.reply || 'Xin lỗi, tôi chưa thể trả lời ngay lúc này.',
       sender: 'AI',
-      timestamp: new Date()
+      timestamp: new Date(),
     };
-  }
+  },
 };

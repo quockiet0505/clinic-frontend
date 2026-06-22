@@ -19,10 +19,17 @@ class BookingService {
     }
   }
 
-  Future<List<dynamic>> getAvailableSlots(int doctorId, String date) async {
+  Future<List<dynamic>> getAvailableSlots({
+    int? doctorId,
+    int? expertiseId,
+    int? serviceId,
+    required String date,
+  }) async {
     try {
-      final response = await _dioClient.dio.get('/appointments/available-time', queryParameters: {
-        'doctorId': doctorId > 0 ? doctorId : null,
+      final response = await _dioClient.dio.get('/appointments/slots', queryParameters: {
+        if (doctorId != null && doctorId > 0) 'doctorId': doctorId,
+        if (expertiseId != null && expertiseId > 0) 'expertiseId': expertiseId,
+        if (serviceId != null && serviceId > 0) 'serviceId': serviceId,
         'date': date,
       });
       if (response.statusCode == 200) {
@@ -42,16 +49,22 @@ class BookingService {
     int? doctorId,
     int? serviceId,
     int? expertiseId,
+    int? suggestedExpertiseId,
+    required String bookingMode,
     required String date,
     required String timeStart,
     required String timeEnd,
     required String note,
+    bool isAiSuggested = false,
   }) async {
     try {
       final response = await _dioClient.dio.post('/appointments', data: {
         if (doctorId != null && doctorId > 0) 'mainDoctorId': doctorId,
         if (serviceId != null) 'serviceId': serviceId,
         if (expertiseId != null) 'expertiseId': expertiseId,
+        if (suggestedExpertiseId != null) 'suggestedExpertiseId': suggestedExpertiseId,
+        'bookingMode': bookingMode,
+        'isAiSuggested': isAiSuggested,
         'appointmentDate': date,
         'timeStart': timeStart,
         'timeEnd': timeEnd,

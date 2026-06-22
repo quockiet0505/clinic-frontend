@@ -1,4 +1,6 @@
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:clinic_management_system/providers/chat_provider.dart';
+import 'package:provider/provider.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -10,31 +12,12 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  final List<Map<String, dynamic>> _messages = [
-    {
-      'text': 'Xin chào! Tôi là trợ lý y tế ảo. Tôi có thể giúp gì cho bạn?',
-      'isUser': false,
-    }
-  ];
 
-  void _sendMessage() {
-    if (_messageController.text.trim().isEmpty) return;
-    setState(() {
-      _messages.add({'text': _messageController.text.trim(), 'isUser': true});
-    });
-    _messageController.clear();
-    _scrollToBottom();
-
-    Future.delayed(const Duration(milliseconds: 800), () {
-      if (!mounted) return;
-      setState(() {
-        _messages.add({
-          'text': 'Đây là tính năng AI đang trong giai đoạn phát triển. Cảm ơn bạn đã phản hồi!',
-          'isUser': false,
-        });
-      });
-      _scrollToBottom();
-    });
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void _scrollToBottom() {
@@ -49,95 +32,162 @@ class _ChatScreenState extends State<ChatScreen> {
     });
   }
 
+  Future<void> _sendMessage() async {
+    final text = _messageController.text.trim();
+    if (text.isEmpty) return;
+
+    _messageController.clear();
+    await context.read<ChatProvider>().sendMessage(text);
+    _scrollToBottom();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFF),
-      body: Column(
-        children: [
-          // ─── Unified Header ───
-          Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFFDBEAFE), // Blue-100
-                  Color(0xFFF8FAFF),
-                ],
-                stops: [0.0, 1.0],
-              ),
-            ),
-            padding: EdgeInsets.only(
-              top: MediaQuery.of(context).padding.top + 16,
-              left: 20,
-              right: 20,
-              bottom: 12,
-            ),
-            child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.smart_toy_rounded, color: AppColors.primary, size: 20),
-                  ),
-                  const SizedBox(width: 10),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Trợ lý AI',
-                            style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xFF1F2937))),
-                        Text('Luôn sẵn sàng hỗ trợ bạn',
-                            style: TextStyle(fontSize: 11, color: Color(0xFF9CA3AF))),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF10B981).withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircleAvatar(radius: 3, backgroundColor: Color(0xFF10B981)),
-                        SizedBox(width: 5),
-                        Text('Online',
-                            style: TextStyle(
-                                color: Color(0xFF10B981),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 11)),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(height: 1, color: const Color(0xFFE5E7EB).withValues(alpha: 0.5)),
+      body: Consumer<ChatProvider>(
+        builder: (context, chatProvider, _) {
+          WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
 
-            // ─── Messages ───
-            Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                itemCount: _messages.length,
-                itemBuilder: (context, index) {
-                  final message = _messages[index];
-                  return _buildMessageBubble(message['text'], message['isUser']);
-                },
+          return Column(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Color(0xFFDBEAFE),
+                      Color(0xFFF8FAFF),
+                    ],
+                    stops: [0.0, 1.0],
+                  ),
+                ),
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).padding.top + 16,
+                  left: 20,
+                  right: 20,
+                  bottom: 12,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.smart_toy_rounded, color: AppColors.primary, size: 20),
+                    ),
+                    const SizedBox(width: 10),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Trợ lý AI',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1F2937),
+                            ),
+                          ),
+                          Text(
+                            'Luôn sẵn sàng hỗ trợ bạn',
+                            style: TextStyle(fontSize: 11, color: Color(0xFF9CA3AF)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircleAvatar(radius: 3, backgroundColor: Color(0xFF10B981)),
+                          SizedBox(width: 5),
+                          Text(
+                            'Online',
+                            style: TextStyle(
+                              color: Color(0xFF10B981),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              Container(height: 1, color: const Color(0xFFE5E7EB).withValues(alpha: 0.5)),
+              Expanded(
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  itemCount: chatProvider.messages.length + (chatProvider.isLoading ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (chatProvider.isLoading && index == chatProvider.messages.length) {
+                      return _buildTypingBubble();
+                    }
+
+                    final message = chatProvider.messages[index];
+                    return _buildMessageBubble(
+                      message.messageContent,
+                      message.isUser,
+                    );
+                  },
+                ),
+              ),
+              _buildInputArea(chatProvider.isLoading),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildTypingBubble() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Row(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            margin: const EdgeInsets.only(right: 8, bottom: 4),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
             ),
-            _buildInputArea(),
-          ],
-        ),
+            child: const Icon(Icons.smart_toy_rounded, color: AppColors.primary, size: 16),
+          ),
+          Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -174,9 +224,10 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               boxShadow: [
                 BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3))
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
               ],
             ),
             child: Text(
@@ -193,16 +244,17 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buildInputArea() {
+  Widget _buildInputArea(bool isLoading) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 116),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 20,
-              offset: const Offset(0, -4))
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, -4),
+          ),
         ],
       ),
       child: Row(
@@ -215,6 +267,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               child: TextField(
                 controller: _messageController,
+                enabled: !isLoading,
                 decoration: const InputDecoration(
                   hintText: 'Hỏi trợ lý AI...',
                   hintStyle: TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
@@ -227,11 +280,13 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           const SizedBox(width: 10),
           GestureDetector(
-            onTap: _sendMessage,
+            onTap: isLoading ? null : _sendMessage,
             child: Container(
               padding: const EdgeInsets.all(13),
-              decoration: const BoxDecoration(
-                  color: AppColors.primary, shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                color: isLoading ? AppColors.primary.withValues(alpha: 0.5) : AppColors.primary,
+                shape: BoxShape.circle,
+              ),
               child: const Icon(Icons.send_rounded, color: Colors.white, size: 18),
             ),
           ),

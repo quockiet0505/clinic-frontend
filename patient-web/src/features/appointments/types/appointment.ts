@@ -28,18 +28,23 @@ export interface AvailableDate {
 
 // Backend returns only timeStart, timeEnd, isAvailable
 export interface TimeSlotRaw {
-  timeStart: string;   // "08:00:00"
-  timeEnd: string;     // "08:30:00"
+  timeStart: string;
+  timeEnd: string;
   isAvailable: boolean;
+  doctorId?: number;
+  doctorName?: string;
 }
 
 // Frontend computed fields
 export interface TimeSlot extends TimeSlotRaw {
-  displayTime: string;       // "08:00 - 08:30"
+  displayTime: string;
   period: 'morning' | 'afternoon';
 }
 
+export type BookingMode = 'DOCTOR' | 'EXPERTISE' | 'SERVICE' | 'DIRECT';
+
 export interface BookingFormState {
+  bookingMode: BookingMode;
   expertiseId: number | '';
   serviceId: number | '';
   doctorId: number | '';
@@ -47,6 +52,8 @@ export interface BookingFormState {
   timeStart: string;
   timeEnd: string;
   description: string;
+  suggestedExpertiseId?: number | '';
+  isAiSuggested?: boolean;
 }
 
 export type AppointmentStatus = 'PENDING' | 'CONFIRMED' | 'CHECKED_IN' | 'IN_PROGRESS' | 'WAITING_RESULT' | 'COMPLETED' | 'CANCELLED' | 'NO_SHOW' | 'SKIPPED';

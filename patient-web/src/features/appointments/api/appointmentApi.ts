@@ -56,8 +56,17 @@ export const appointmentApi = {
     return dates;
   },
 
-  getTimeSlots: async (appointmentDate: string, doctorId: number): Promise<TimeSlot[]> => {
-    const res = await axiosInstance.get<ApiResponse<TimeSlotRaw[]>>(`/appointments/slots?doctorId=${doctorId}&date=${appointmentDate}`);
+  getTimeSlots: async (
+    appointmentDate: string,
+    options: { doctorId?: number; expertiseId?: number; serviceId?: number }
+  ): Promise<TimeSlot[]> => {
+    const params = new URLSearchParams({ date: appointmentDate });
+    if (options.doctorId) params.set('doctorId', String(options.doctorId));
+    if (options.expertiseId) params.set('expertiseId', String(options.expertiseId));
+    if (options.serviceId) params.set('serviceId', String(options.serviceId));
+    const res = await axiosInstance.get<ApiResponse<TimeSlotRaw[]>>(
+      `/appointments/slots?${params.toString()}`
+    );
     return res.data.data.map(enrichTimeSlot);
   },
 
@@ -73,20 +82,14 @@ export const appointmentApi = {
       appointmentDate: data.appointmentDate,
       timeStart: data.timeStart,
       timeEnd: data.timeEnd,
-  
-      mainDoctorId:
-        data.doctorId || null,
-  
-      expertiseId:
-        data.expertiseId || null,
-  
-      serviceId:
-        data.serviceId || null,
-  
+      mainDoctorId: data.doctorId || null,
+      expertiseId: data.expertiseId || null,
+      suggestedExpertiseId: data.suggestedExpertiseId || null,
+      serviceId: data.serviceId || null,
+      bookingMode: data.bookingMode,
+      isAiSuggested: data.isAiSuggested ?? false,
       appointmentType: 'ONLINE',
-  
       createdBy: 'PATIENT',
-  
       note: data.description,
     };
   

@@ -49,6 +49,15 @@ export const ChatWindow: React.FC<Props> = ({ onClose }) => {
       setMessages(prev => [...prev, aiReply]);
     } catch (error) {
       console.error(error);
+      setMessages(prev => [
+        ...prev,
+        {
+          id: Math.random().toString(),
+          text: 'Không thể kết nối tới trợ lý AI. Vui lòng kiểm tra AI service (port 8000) và thử lại.',
+          sender: 'AI',
+          timestamp: new Date(),
+        },
+      ]);
     } finally {
       setIsTyping(false);
     }
