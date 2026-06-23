@@ -43,10 +43,11 @@ export const LabResultViewerModal: React.FC<LabResultViewerModalProps> = ({ serv
           <table className="w-full text-left text-[14.5px] text-slate-600">
             <thead className="bg-background-light text-slate-500 font-bold border-b border-border-default sticky top-0 z-10 shadow-sm">
               <tr>
-                <th className="px-8 py-5 w-[30%]">Xét nghiệm</th>
-                <th className="px-8 py-5 w-[25%]">Kết quả</th>
-                <th className="px-8 py-5 w-[30%]">Kết luận</th>
+                <th className="px-8 py-5 w-[25%]">Xét nghiệm</th>
+                <th className="px-8 py-5 w-[20%]">Kết quả</th>
+                <th className="px-8 py-5 w-[25%]">Kết luận</th>
                 <th className="px-8 py-5 w-[15%]">Đánh giá</th>
+                <th className="px-8 py-5 w-[15%] text-right">Chi phí</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border-default">
@@ -67,6 +68,9 @@ export const LabResultViewerModal: React.FC<LabResultViewerModalProps> = ({ serv
                           <AlertCircle className="w-4 h-4" /> Bất thường
                         </span>
                       )}
+                    </td>
+                    <td className="px-8 py-5 text-right font-black text-slate-800">
+                      {order.price != null ? `${order.price.toLocaleString('vi-VN')} ₫` : 'Miễn phí'}
                     </td>
                   </tr>
                 );

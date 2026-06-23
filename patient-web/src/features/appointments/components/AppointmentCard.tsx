@@ -23,6 +23,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(false);
   const [loadingModal, setLoadingModal] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const [prescriptionData, setPrescriptionData] = useState<any>(null);
   const [labResultData, setLabResultData] = useState<any>(null);
   const { status } = appointment;
@@ -214,14 +215,15 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
 
             <div className="flex gap-4">
               <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${avatarGradient} flex items-center justify-center shrink-0 shadow-inner text-white font-black text-2xl overflow-hidden`}>
-                {appointment.doctorImageUrl ? (
-                  <img src={appointment.doctorImageUrl} onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); }} alt="Bác sĩ" className="w-full h-full object-cover" />
-                ) : null}
-                <span className={appointment.doctorImageUrl ? 'hidden' : ''}>{initial}</span>
+                {appointment.doctorImageUrl && !imgError ? (
+                  <img src={appointment.doctorImageUrl} onError={() => setImgError(true)} alt="Bác sĩ" className="w-full h-full object-cover" />
+                ) : (
+                  <span>{initial}</span>
+                )}
               </div>
               <div className="flex flex-col justify-center">
                 <h3 className="font-black text-slate-800 text-[18px] leading-tight mb-1">
-                  BS. {appointment.doctorName}
+                  {appointment.doctorName}
                 </h3>
                 <p className="text-primary-600 text-[14.5px] font-bold">{appointment.specialty}</p>
                 {appointment.serviceName && appointment.serviceType !== 'EXAM' && (
@@ -283,19 +285,21 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
             <div className="flex flex-wrap gap-2 mt-auto">
               {status === 'COMPLETED' && (
                 <>
-                  <button onClick={handleOpenPrescription} disabled={loadingModal} className="cursor-pointer flex-1 min-w-[120px] justify-center px-4 py-2.5 rounded-xl border border-transparent bg-emerald-500 font-bold text-white hover:bg-emerald-600 transition-colors flex items-center gap-2 text-[13px] shadow-sm shadow-emerald-200 disabled:opacity-50">
-                    {loadingModal && !prescriptionData ? <Loader2 className="w-4 h-4 animate-spin" /> : <Pill className="w-4 h-4" />} Đơn thuốc
-                  </button>
-                  <button onClick={handleOpenLabResult} disabled={loadingModal} className="cursor-pointer flex-1 min-w-[120px] justify-center px-4 py-2.5 rounded-xl border border-transparent bg-blue-500 font-bold text-white hover:bg-blue-600 transition-colors flex items-center gap-2 text-[13px] shadow-sm shadow-blue-200 disabled:opacity-50">
-                    {loadingModal && !labResultData ? <Loader2 className="w-4 h-4 animate-spin" /> : <FlaskConical className="w-4 h-4" />} Xét nghiệm
+                  <button
+                    onClick={handleOpenRecord}
+                    disabled={loadingModal}
+                    className="cursor-pointer w-full justify-center px-4 py-2.5 rounded-xl border border-transparent bg-indigo-500 font-bold text-white hover:bg-indigo-600 transition-colors flex items-center gap-2 text-[13px] shadow-sm shadow-indigo-200 disabled:opacity-50"
+                  >
+                    {loadingModal ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
+                    Xem chi tiết bệnh án
                   </button>
                   {!hasReviewed && (
-                    <button onClick={() => setReviewModalOpen(true)} className="cursor-pointer flex-1 min-w-[120px] justify-center px-4 py-2.5 rounded-xl border border-yellow-500 bg-yellow-50 font-bold text-yellow-600 hover:bg-yellow-100 transition-colors flex items-center gap-2 text-[13px] shadow-sm">
-                      <Star className="w-4 h-4 fill-yellow-500" /> Đánh giá
+                    <button onClick={() => setReviewModalOpen(true)} className="cursor-pointer w-full justify-center px-4 py-2.5 rounded-xl border border-yellow-400 bg-yellow-50 font-bold text-yellow-600 hover:bg-yellow-100 transition-colors flex items-center gap-2 text-[13px] shadow-sm">
+                      <Star className="w-4 h-4 fill-yellow-500" /> Đánh giá bác sĩ
                     </button>
                   )}
                   {hasReviewed && (
-                    <button disabled className="cursor-not-allowed flex-1 min-w-[120px] justify-center px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-100 font-bold text-slate-500 flex items-center gap-2 text-[13px]">
+                    <button disabled className="cursor-not-allowed w-full justify-center px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-100 font-bold text-slate-500 flex items-center gap-2 text-[13px]">
                       <Star className="w-4 h-4" /> Đã đánh giá
                     </button>
                   )}

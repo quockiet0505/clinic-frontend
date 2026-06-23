@@ -13,6 +13,8 @@ interface ApiMedicalRecordResponse {
   status: string;
   createdAt: string;
   updatedAt: string;
+  consultationFee?: number;
+  serviceFee?: number;
 }
 
 interface ApiPrescriptionItem {
@@ -43,6 +45,7 @@ interface ApiServiceOrder {
   orderId: number;
   serviceId: number;
   serviceName: string;
+  price?: number;
   status: string;
   orderedBy: string;
   createdAt: string;
@@ -76,6 +79,8 @@ function transformMedicalRecord(item: ApiMedicalRecordResponse): MedicalRecord {
     status: item.status as MedicalRecord['status'],
     createdAt: item.createdAt,
     updatedAt: item.updatedAt,
+    consultationFee: item.consultationFee,
+    serviceFee: item.serviceFee,
   };
 }
 
@@ -99,6 +104,7 @@ function transformServiceOrder(order: ApiServiceOrder): ServiceOrder {
     orderId: order.orderId,
     serviceId: order.serviceId,
     serviceName: order.serviceName,
+    price: order.price,
     status: order.status,
     orderedBy: order.orderedBy,
     createdAt: order.createdAt,

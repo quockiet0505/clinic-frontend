@@ -9,6 +9,7 @@ import { Appointment, AppointmentStatus } from '../types/appointment';
 import { appointmentApi } from '../api/appointmentApi';
 import AppointmentTable from '../components/AppointmentTable';
 import PageHeader from '@/components/common/PageHeader';
+import { toast } from 'sonner';
 
 export default function AppointmentList() {
   // ---- Data & Pagination ----
@@ -74,6 +75,24 @@ export default function AppointmentList() {
   const handleCancel = async (id: number, reason: string) => {
     await appointmentApi.cancel(id, reason);
     fetchData();
+  };
+
+  const handleBookWalkIn = async (data: any) => {
+    try {
+      await appointmentApi.createWalkIn({
+        patientId: Number(data.patientId),
+        mainDoctorId: Number(data.mainDoctorId),
+        appointmentDate: data.appointmentDate,
+        timeStart: data.timeStart + ':00',
+        timeEnd: data.timeStart + ':00', // Time end is required by backend, just send start time
+      });
+      toast.success('Tạo lịch khám Walk-in thành công!');
+      fetchData();
+      setIsBookOpen(false);
+    } catch (error) {
+      console.error('Failed to create walk-in appointment:', error);
+      toast.error('Lỗi khi tạo lịch khám');
+    }
   };
 
   // ---- Render ----
@@ -145,10 +164,7 @@ export default function AppointmentList() {
       <AppointmentFormDialog
         isOpen={isBookOpen}
         onClose={() => setIsBookOpen(false)}
-        onBook={() => {
-          fetchData();
-          setIsBookOpen(false);
-        }}
+        onBook={handleBookWalkIn}
       />
 
       <ActionReasonDialog

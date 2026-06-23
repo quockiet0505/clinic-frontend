@@ -124,7 +124,7 @@ export const HealthProfile: React.FC = () => {
                 <Heart className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight drop-shadow-sm">Hồ Sơ Sức Khoẻ</h1>
+                <h1 className="text-2xl font-black text-white tracking-tight drop-shadow-sm">Hồ Sơ Sức Khoẻ</h1>
                 <p className="text-white/90 text-sm drop-shadow-sm mt-0.5">Chỉ số thể chất, nhóm máu và tiền sử bệnh lý</p>
               </div>
             </div>

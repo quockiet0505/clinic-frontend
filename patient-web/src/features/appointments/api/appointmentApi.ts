@@ -115,6 +115,7 @@ export const appointmentApi = {
       status: item.status,
       mainDoctorId: item.mainDoctorId,
       doctorName: item.doctorName || 'Chưa xếp bác sĩ',
+      doctorImageUrl: item.doctorImageUrl?.startsWith('/') ? `http://localhost:8080${item.doctorImageUrl}` : item.doctorImageUrl,
       specialty: item.expertiseName || item.specialty || 'Chưa xác định',
       serviceName: item.serviceName || 'Khám chuyên khoa',
       facility: 'Phòng khám Đa khoa',
@@ -132,12 +133,12 @@ export const appointmentApi = {
   getDoctorById: async (
     doctorId: number
   ): Promise<Doctor> => {
-    const res =
-      await axiosInstance.get<
-        ApiResponse<Doctor>
-      >(`/staffs/${doctorId}`);
-  
-    return res.data.data;
+    const res = await axiosInstance.get<ApiResponse<Doctor>>(`/staffs/${doctorId}`);
+    const doc = res.data.data;
+    if (doc.imageUrl && doc.imageUrl.startsWith('/')) {
+      doc.imageUrl = `http://localhost:8080${doc.imageUrl}`;
+    }
+    return doc;
   },
 
   getDoctors: async (): Promise<Doctor[]> => {

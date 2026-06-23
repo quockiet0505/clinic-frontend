@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { Star, Loader2, EyeOff, Hospital, Stethoscope } from 'lucide-react';
 import { reviewApi } from '@/features/profile/api/reviewApi';
+import { formatDoctorName } from '@/utils/generatePdf';
 import { toast } from 'sonner';
 
 interface ReviewModalProps {
@@ -104,7 +105,7 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, existingR
 
         <div className="mb-6 text-center">
           <h3 className="font-bold text-slate-800 text-[16px] mb-2">
-            {tab === 'doctor' ? `Bạn đánh giá thế nào về BS. ${existingReview?.doctorName || appointment?.doctorName || appointment?.mainDoctor?.fullName}?` : 'Bạn cảm thấy hài lòng với dịch vụ phòng khám chứ?'}
+            {tab === 'doctor' ? `Bạn đánh giá thế nào về ${formatDoctorName(existingReview?.doctorName || appointment?.doctorName || appointment?.mainDoctor?.fullName)}?` : 'Bạn cảm thấy hài lòng với dịch vụ phòng khám chứ?'}
           </h3>
           <div className="flex items-center justify-center gap-2 mt-4">
             {[1, 2, 3, 4, 5].map((star) => (

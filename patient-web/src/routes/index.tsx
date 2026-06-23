@@ -26,6 +26,7 @@ import { MyRecords } from '@/features/records/pages/MyRecords';
 import { HealthProfile } from '@/features/records/pages/HealthProfile';
 import { Prescriptions } from '@/features/records/pages/Prescriptions';
 import { LabResults } from '@/features/records/pages/LabResults';
+import { RecordDetail } from '@/features/records/pages/RecordDetail';
 
 // // Chatbot (If you still want it as a separate page, though usually a floating widget)
 // import { FloatingChatbot } from '@/features/chatbot/components/FloatingChatbot';
@@ -58,6 +59,7 @@ export const router = createBrowserRouter([
       { path: 'profile/reviews', element: <MyReviews /> },
       { path: 'records', element: <HealthProfile /> },
       { path: 'records/history', element: <MyRecords /> },
+      { path: 'records/detail/:id', element: <RecordDetail /> },
       { path: 'records/prescriptions', element: <Prescriptions /> },
       { path: 'records/lab-results', element: <LabResults /> },
       // { path: 'chatbot', element: <FloatingChatbot /> },

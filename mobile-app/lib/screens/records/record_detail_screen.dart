@@ -60,6 +60,7 @@ class _RecordDetailScreenState extends State<RecordDetailScreen> {
                   status: e['result']?['conclusion']?.toString().toLowerCase().contains('bình thường') == true 
                           ? 'Bình thường' 
                           : (e['result']?['conclusion'] != null ? 'Bất thường' : 'Chờ KQ'),
+                  price: (e['price'] as num?)?.toDouble(),
                 );
               })
               .toList();

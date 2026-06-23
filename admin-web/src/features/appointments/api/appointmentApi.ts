@@ -56,4 +56,13 @@ export const appointmentApi = {
   checkIn: async (id: number): Promise<void> => {
     await axiosInstance.patch(`/appointments/${id}/status`, null, { params: { status: 'CHECKED_IN' } });
   },
+
+  createWalkIn: async (data: any): Promise<void> => {
+    await axiosInstance.post('/appointments', {
+      ...data,
+      appointmentType: 'WALK_IN',
+      bookingMode: 'DOCTOR',
+      createdBy: 'STAFF'
+    });
+  },
 };

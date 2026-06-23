@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Star, X } from 'lucide-react';
+import { formatDoctorName } from '@/utils/generatePdf';
 
 interface FeedbackModalProps {
   isOpen: boolean;
@@ -33,7 +34,7 @@ export const FeedbackModal: React.FC<FeedbackModalProps> = ({ isOpen, onClose, d
               <Star className="w-8 h-8 text-primary-500 fill-primary-500" />
             </div>
             <h3 className="text-slate-800 font-bold mb-1">Bạn cảm thấy thế nào về buổi khám?</h3>
-            <p className="text-sm text-slate-500 font-medium">Bác sĩ: {doctorName}</p>
+            <p className="text-sm text-slate-500 font-medium">Bác sĩ: {formatDoctorName(doctorName)}</p>
           </div>
 
           <div className="flex justify-center gap-2 mb-8">

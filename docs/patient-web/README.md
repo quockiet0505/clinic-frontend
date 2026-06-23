@@ -30,3 +30,9 @@ Tài liệu này bao quát các thông tin tổng quan, công nghệ và tiêu c
 - API: `src/features/chatbot/api/chatbotApi.ts` — gửi `access_token` từ `localStorage.token` khi đã đăng nhập
 
 Chi tiết: repo `clinic-ai-chat/docs/integration-guide.md`
+
+## 🏥 Hồ sơ y tế & Đánh giá (Patient Web)
+
+- **Chi tiết hồ sơ (`RecordDetail`)**: Tích hợp tính năng xuất PDF toàn bộ bệnh án (chẩn đoán, đơn thuốc, xét nghiệm, chi phí) bằng một nút duy nhất.
+- **Đơn thuốc & Xét nghiệm**: Giao diện thẻ (card) hiển thị trạng thái, loại dịch vụ, liên kết trực tiếp đến chi tiết bệnh án gốc.
+- **Đánh giá dịch vụ (`MyReviews`)**: Quản lý đánh giá bác sĩ và phòng khám, hiển thị phản hồi từ ban quản trị. Tên bác sĩ được chuẩn hóa tự động qua `formatDoctorName`.

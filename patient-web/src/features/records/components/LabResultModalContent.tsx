@@ -41,7 +41,7 @@ export const LabResultModalContent = ({ result }: { result: any }) => {
                     <span className="w-1 h-1 bg-slate-300 rounded-full" />
                     <span className="flex items-center gap-1.5">
                       <CalendarDays className="w-3.5 h-3.5" />
-                      {new Date(result.enteredAt || Date.now()).toLocaleString('vi-VN')}
+                      {new Date(result.enteredAt || new Date()).toLocaleDateString('vi-VN')}
                     </span>
                     <span className="w-1 h-1 bg-slate-300 rounded-full" />
                     <span>{formatDoctorName(result.doctorName)}</span>

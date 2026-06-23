@@ -54,6 +54,8 @@ export interface MedicalRecord {
   status: 'IN_PROGRESS' | 'WAITING_RESULT' | 'DONE' | 'CANCELLED';
   createdAt: string;
   updatedAt: string;
+  consultationFee?: number;
+  serviceFee?: number;
 }
 
 export interface MedicalRecordDetail extends MedicalRecord {

@@ -207,7 +207,12 @@ export default function PrescriptionDetail({ prescriptionId, onBack, onDispensed
                   prescription.serviceOrders.map((order: any, idx: number) => (
                     <div key={idx} className="border-b border-slate-100 last:border-b-0 pb-3 last:pb-0 space-y-1">
                       <div className="flex justify-between font-semibold text-sm text-slate-800">
-                        <span>{idx + 1}. {order.serviceName}</span>
+                        <div className="flex flex-col">
+                          <span>{idx + 1}. {order.serviceName}</span>
+                          <span className="text-xs font-bold text-slate-600 mt-1">
+                            {order.price != null ? `${order.price.toLocaleString('vi-VN')} ₫` : 'Miễn phí'}
+                          </span>
+                        </div>
                         <span className="text-xs text-slate-400 font-normal">
                           Trạng thái: {order.status === 'DONE' ? 'Đã có kết quả' : 'Chờ thực hiện'}
                         </span>

@@ -17,6 +17,20 @@ export interface MedicalRecord {
   queueNumber?: number;
   checkinTime?: string;
   vitalsTaken?: boolean;
+
+  consultationFee?: number;
+  serviceFee?: number;
+}
+
+export interface MedicalRecordDetail extends MedicalRecord {
+  patientFullName?: string;
+  patientGender?: string;
+  patientDob?: string;
+  patientPhone?: string;
+  patientAddress?: string;
+  prescription?: any;
+  serviceOrders?: any[];
+  followUps?: any[];
 }
 
 export interface VitalSigns {

@@ -7,6 +7,7 @@ import { SectionContainer, DateFilter } from '@/components/common';
 import { useNavigate } from 'react-router-dom';
 import { Dialog } from '@/components/ui/dialog';
 import { ReviewModal } from '../../appointments/components/ReviewModal';
+import { formatDoctorName } from '@/utils/generatePdf';
 
 export const MyReviews: React.FC = () => {
   const navigate = useNavigate();
@@ -158,10 +159,18 @@ export const MyReviews: React.FC = () => {
 
       <SectionContainer className="max-w-5xl py-8">
         <div className="max-w-4xl mx-auto space-y-6">
-          <div className="flex justify-between items-center mb-2">
-            <h2 className="text-[16px] font-bold text-slate-700">
-              {filteredReviews.length} đánh giá {tab !== 'all' ? (tab === 'doctor' ? 'bác sĩ' : 'phòng khám') : ''}
-            </h2>
+          <div className="flex justify-between items-center mb-2 flex-wrap gap-3">
+            <div className="inline-flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-50 border border-primary-100 text-primary-700 text-[13px] font-bold">
+                <Star className="w-3.5 h-3.5 fill-primary-500 text-primary-500" />
+                <span className="tabular-nums">{filteredReviews.length}</span> đánh giá
+              </span>
+              {tab !== 'all' && (
+                <span className="text-[12px] font-semibold text-slate-500">
+                  {tab === 'doctor' ? '• cho bác sĩ' : '• cho phòng khám'}
+                </span>
+              )}
+            </div>
             <DateFilter 
               fromDate={fromDate}
               toDate={toDate}
@@ -196,7 +205,9 @@ export const MyReviews: React.FC = () => {
                         )}
                       </div>
                       <h3 className="font-black text-lg text-brand-dark flex items-center gap-2">
-                        {review.type === 'doctor' ? `BS. ${(review as DoctorFeedbackResponse).doctorName}` : 'Phòng khám Đa Khoa CLINIQA'}
+                        {review.type === 'doctor'
+                          ? formatDoctorName((review as DoctorFeedbackResponse).doctorName)
+                          : 'Phòng khám Đa Khoa CLINIQA'}
                       </h3>
                       <p className="text-sm text-slate-500 mt-1 font-medium">{new Date(review.createdAt).toLocaleString('vi-VN')} {review.isAnonymous ? '• (Ẩn danh)' : ''}</p>
                       {isWithin24Hours(review.createdAt) && (
