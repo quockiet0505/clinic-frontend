@@ -48,9 +48,8 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = "http://local
     },
     {
       title: 'KHÁM BỆNH',
-      allowedRoles: ['ADMIN', 'DOCTOR', 'STAFF'],
+      allowedRoles: ['ADMIN', 'DOCTOR'],
       items: [
-        { name: 'Chuẩn bị khám', icon: ClipboardPlus, path: '/medical/triage' },
         { name: 'Đang khám', icon: Stethoscope, path: '/medical/active-visits' },
         { name: 'Hồ sơ bệnh án', icon: History, path: '/medical/records' }
       ]
@@ -68,7 +67,7 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = "http://local
       allowedRoles: ['ADMIN', 'DOCTOR', 'STAFF'],
       items: [
         { name: 'Danh mục thuốc', icon: Pill, path: '/pharmacy/inventory' },
-        { name: 'Phát thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions' }
+        { name: 'Đơn thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions' }
       ]
     },
     /*
@@ -152,7 +151,7 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = "http://local
           {!isCollapsed && (
             <div className="min-w-0">
               <h2 className="text-md font-black text-slate-800 leading-tight truncate">
-                TrustCare 
+                TrustCare
               </h2>
               <div className="flex items-center gap-1.5 mt-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -203,11 +202,10 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = "http://local
                     `}
                   >
                     {/* Icon size cố định, không đổi khi active */}
-                    <item.icon 
-                      size={isCollapsed ? 20 : 18} 
-                      className={`shrink-0 transition-colors duration-150 ${
-                        isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
-                      }`} 
+                    <item.icon
+                      size={isCollapsed ? 20 : 18}
+                      className={`shrink-0 transition-colors duration-150 ${isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
+                        }`}
                     />
                     {!isCollapsed && <span className="text-sm tracking-wide whitespace-nowrap">{item.name}</span>}
                   </Link>

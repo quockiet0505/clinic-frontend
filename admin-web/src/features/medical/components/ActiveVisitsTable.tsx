@@ -42,31 +42,28 @@ export default function ActiveVisitsTable({ data, onConsult, onTriage, loading =
       ),
     },
     {
-      key: 'patientName',
-      label: 'Bệnh nhân',
-      className: 'w-[15%]',
+      key: 'patientInfo',
+      label: 'Thông tin khám',
+      className: 'w-[30%]',
       render: (visit) => (
-        <div>
-          <p className="font-medium text-slate-800">{visit.patientName}</p>
-          <p className="text-xs text-slate-500">Vào lúc: {visit.checkinTime || '—'}</p>
-        </div>
-      ),
-    },
-    {
-      key: 'doctorName',
-      label: 'Bác sĩ',
-      className: 'w-[10%]',
-      render: (visit) => (
-        <div className="flex items-center gap-2">
-          <Stethoscope size={14} className="text-blue-500" />
-          <span className="text-slate-700">{visit.mainDoctorName || 'Chưa phân công'}</span>
+        <div className="flex flex-col gap-1.5">
+          <p className="font-bold text-slate-800 text-[14px]">{visit.patientName}</p>
+          <div className="flex items-center gap-4 text-xs text-slate-500 font-medium">
+            <span className="flex items-center gap-1.5 bg-slate-100 px-2 py-0.5 rounded-md">
+              <Stethoscope size={12} className="text-blue-600" />
+              {visit.mainDoctorName || 'Chưa phân công'}
+            </span>
+            <span className="flex items-center gap-1">
+              Vào lúc: {visit.checkinTime?.substring(0, 5) || '—'}
+            </span>
+          </div>
         </div>
       ),
     },
     {
       key: 'vitalsTaken',
       label: 'Sinh hiệu',
-      className: 'w-[10%]',
+      className: 'w-[13%]',
       render: (visit) =>
         visit.vitalsTaken ? (
           <Badge className="bg-emerald-100 text-emerald-700 border-0 px-2 py-0.5 text-xs font-medium">
@@ -79,28 +76,27 @@ export default function ActiveVisitsTable({ data, onConsult, onTriage, loading =
     {
       key: 'status',
       label: 'Trạng thái',
-      className: 'w-[15%]',
+      className: 'w-[13%]',
       render: (visit) => <StatusBadge status={visit.status} />,
     },
     {
       key: 'actions',
       label: 'Thao tác',
-      className: 'w-[10%]',
+      className: 'w-[15%]',
       render: (visit) => {
         if (onTriage) {
           return (
             <Button onClick={() => onTriage(visit.recordId)} size="sm" className="h-9 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm">
-              Đo sinh hiệu <ArrowRight size={14} className="ml-1.5" />
+              Đo hiệu sinh <ArrowRight size={14} className="ml-1.5" />
             </Button>
           );
         }
         if (onConsult) {
           return (
-            <Button 
-              onClick={() => onConsult(visit.recordId)} 
-              size="sm" 
-              disabled={!visit.vitalsTaken}
-              className={`h-9 px-4 rounded-xl font-medium text-sm ${visit.vitalsTaken ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
+            <Button
+              onClick={() => onConsult(visit.recordId)}
+              size="sm"
+              className="h-9 px-4 rounded-xl font-medium text-sm bg-blue-600 hover:bg-blue-700 text-white"
             >
               Khám <ArrowRight size={14} className="ml-1.5" />
             </Button>

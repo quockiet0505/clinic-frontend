@@ -43,7 +43,7 @@ export default function LabResultsTable({ data, onViewResult, loading = false, p
     {
       key: 'patientName',
       label: 'Bệnh nhân / Bác sĩ',
-      className: 'w-[22%]',
+      className: 'w-[25%]',
       render: (item) => (
         <div>
           <p className="font-medium text-slate-800">{item.patientName}</p>
@@ -55,7 +55,7 @@ export default function LabResultsTable({ data, onViewResult, loading = false, p
     {
       key: 'serviceName',
       label: 'Xét nghiệm & Kết luận',
-      className: 'w-[45%]',
+      className: 'w-[38%]',
       render: (item) => (
         <div>
           <div className="flex items-center gap-2">
@@ -63,9 +63,8 @@ export default function LabResultsTable({ data, onViewResult, loading = false, p
             <span className="text-slate-700 truncate" title={item.serviceName}>{item.serviceName}</span>
           </div>
           <div className="mt-2">
-            <Badge variant="outline" className={`border-0 px-2 py-0.5 text-xs font-semibold ${
-              item.conclusion.toLowerCase().includes('bất thường') ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'
-            }`}>
+            <Badge variant="outline" className={`border-0 px-2 py-0.5 text-xs font-semibold ${item.conclusion.toLowerCase().includes('bất thường') ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-700'
+              }`}>
               {item.conclusion}
             </Badge>
           </div>

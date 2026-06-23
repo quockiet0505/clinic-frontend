@@ -22,10 +22,23 @@ export default function StatusBadge({ status }: Props) {
     Icon = XCircle;
   }
 
+  const translateStatus = (s: string) => {
+    const map: Record<string, string> = {
+      DONE: 'Hoàn thành', COMPLETED: 'Hoàn thành',
+      IN_PROGRESS: 'Đang khám', PROCESSING: 'Đang xử lý',
+      WAITING_RESULT: 'Chờ kết quả',
+      PENDING: 'Chờ khám', ORDERED: 'Đã đặt',
+      CANCELLED: 'Đã huỷ', REJECTED: 'Từ chối', REFUNDED: 'Hoàn tiền',
+      CHECKED_IN: 'Đã điểm danh',
+      ACTIVE: 'Đang h.động'
+    };
+    return map[s] || s;
+  };
+
   return (
-    <Badge variant="outline" className={`font-bold px-2.5 py-1 rounded-lg border text-xs whitespace-nowrap ${color}`}>
+    <Badge variant="outline" className={`font-bold px-2.5 py-1 rounded-lg border text-[11px] whitespace-nowrap ${color}`}>
       {Icon && <Icon size={12} className="mr-1.5 inline" />}
-      {status}
+      {translateStatus(s)}
     </Badge>
   );
 }

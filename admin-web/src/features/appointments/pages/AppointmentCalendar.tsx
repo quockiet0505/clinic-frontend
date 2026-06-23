@@ -34,61 +34,65 @@ export default function AppointmentCalendar() {
   const [toDate, setToDate] = useState('');
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(getStartOfWeek(new Date()));
 
-  // Cập nhật tuần khi từDate thay đổi hoặc appointments load
+  // Cập nhật tuần khi fromDate thay đổi
   useEffect(() => {
     if (fromDate) {
       const date = new Date(fromDate);
       if (!isNaN(date.getTime())) {
         setCurrentWeekStart(getStartOfWeek(date));
       }
-    } else if (appointments.length > 0) {
-      const firstAppDate = new Date(appointments[0].appointmentDate);
-      if (!isNaN(firstAppDate.getTime())) {
-        setCurrentWeekStart(getStartOfWeek(firstAppDate));
-      }
     } else {
       setCurrentWeekStart(getStartOfWeek(new Date()));
     }
-  }, [fromDate, appointments]);
+  }, [fromDate]);
 
-  // Fetch dữ liệu
+  // Fetch providers once
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchProviders = async () => {
+      try {
+        const staffData = await staffApi.getAll();
+        const docs = staffData
+          .filter((s: any) => s.staffType === 'DOCTOR' || s.staffType === 'NURSE' || s.staffType === 'STAFF')
+          .map((s: any) => ({
+            id: s.staffId.toString(),
+            name: s.fullName,
+          }));
+        setProviders(docs);
+      } catch (error) {
+        console.error('Lỗi tải danh sách bác sĩ:', error);
+      }
+    };
+    fetchProviders();
+  }, []);
+
+  // Fetch appointments when week changes
+  useEffect(() => {
+    const fetchAppointments = async () => {
       try {
         setLoading(true);
-        const appData = await appointmentApi.getAll();
-        setAppointments(appData || []);
+        const start = new Date(currentWeekStart);
+        const end = new Date(currentWeekStart);
+        end.setDate(end.getDate() + 6);
 
-        // Lấy danh sách bác sĩ từ staffApi
-        try {
-          const staffData = await staffApi.getAll();
-          const docs = staffData
-            .filter((s: any) => s.staffType === 'DOCTOR' || s.staffType === 'NURSE' || s.staffType === 'STAFF')
-            .map((s: any) => ({
-              id: s.staffId.toString(),
-              name: s.fullName,
-            }));
-          setProviders(docs);
-        } catch (e) {
-          // Fallback: lấy từ appointments
-          const uniqueDoctorIds = Array.from(new Set(appData.map((a: any) => a.mainDoctorId).filter(Boolean)));
-          const fetchedDocs = await Promise.all(
-            uniqueDoctorIds.map(async (id: any) => {
-              const doc = await staffApi.getById(Number(id));
-              return { id: String(id), name: doc?.fullName || 'BS' };
-            })
-          );
-          setProviders(fetchedDocs);
-        }
+        const fromDateStr = fromDate || start.toISOString().split('T')[0];
+        const toDateStr = toDate || end.toISOString().split('T')[0];
+
+        const res = await appointmentApi.getAllPaged({
+          fromDate: fromDateStr,
+          toDate: toDateStr,
+          size: 1000,
+        });
+        setAppointments(res.content || []);
+
       } catch (error) {
-        console.error('❌ Lỗi tải dữ liệu:', error);
+        console.error('❌ Lỗi tải dữ liệu lịch hẹn:', error);
         setAppointments([]);
       } finally {
         setLoading(false);
       }
     };
-    fetchData();
-  }, []);
+    fetchAppointments();
+  }, [currentWeekStart, fromDate, toDate]);
 
   // Lọc dữ liệu
   const baseFiltered = appointments.filter((app) => {

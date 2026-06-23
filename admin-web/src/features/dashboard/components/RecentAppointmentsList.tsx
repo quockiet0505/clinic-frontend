@@ -57,7 +57,7 @@ const statusConfig: Record<
 export default function RecentAppointmentsList({ appointments }: Props) {
   if (!appointments || appointments.length === 0) {
     return (
-      <div className="text-center py-6 text-sm text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+      <div className="text-center py-10 text-sm font-medium text-slate-400 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
         Không có lịch hẹn nào
       </div>
     );
@@ -76,22 +76,21 @@ export default function RecentAppointmentsList({ appointments }: Props) {
         return (
           <div
             key={apt.id}
-            className="flex items-center gap-3 p-3 rounded-xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-100 transition-all duration-200"
+            className="group flex items-center gap-3 py-3.5 px-2 border-b border-slate-100 last:border-0 hover:bg-slate-50/80 transition-colors rounded-xl"
           >
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 text-blue-700 flex items-center justify-center font-bold text-sm shrink-0">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm ring-2 ring-white">
               {apt.patientName.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-slate-800 truncate">
+              <p className="text-sm font-semibold text-slate-800 truncate group-hover:text-indigo-600 transition-colors">
                 {apt.patientName}
               </p>
-              <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-0.5">
-                <Clock size={12} />
+              <p className="text-[11px] font-medium text-slate-500 flex items-center gap-1.5 mt-0.5 tracking-wide uppercase">
                 {timeDisplay}
               </p>
             </div>
             <div
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${status.bg} ${status.text} shrink-0`}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-bold tracking-wide ${status.bg} ${status.text} shrink-0`}
             >
               {status.icon}
               {status.label}

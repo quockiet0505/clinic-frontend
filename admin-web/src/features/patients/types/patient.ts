@@ -13,4 +13,9 @@ export interface Patient {
      chronicDiseases?: string;
      recentVisits?: any[];
      emergencyContact?: string;
+     height?: number;
+     weight?: number;
+     bloodPressure?: string;
+     pulse?: number;
+     medicalHistory?: string;
    }

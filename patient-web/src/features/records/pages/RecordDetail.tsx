@@ -19,10 +19,11 @@ import {
   ExternalLink,
   Download,
   Loader2,
+  Printer,
 } from 'lucide-react';
 import { SectionContainer } from '@/components/common';
 import { ClinicPdfLayout } from '@/components/common/ClinicPdfLayout';
-import { generatePdf } from '@/utils/generatePdf';
+import { generatePdf, printPdfLayout } from '@/utils/generatePdf';
 import { profileApi } from '@/features/profile/api/profileApi';
 import type { PatientProfile } from '@/features/profile/types/profile';
 import { recordApi } from '../api/recordApi';
@@ -32,6 +33,15 @@ import type { AppointmentHistoryItem, Doctor } from '../../appointments/types/ap
 
 const formatPrice = (v: number) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v);
+
+function InlinePrice({ amount }: { amount?: number | null }) {
+  if (amount == null || amount <= 0) return null;
+  return (
+    <span className="ml-1.5 text-[11px] font-semibold text-slate-400 tabular-nums">
+      {formatPrice(amount)}
+    </span>
+  );
+}
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString('vi-VN', {
@@ -146,39 +156,6 @@ function EmptyBlock({ message }: { message: string }) {
   );
 }
 
-function PdfDownloadButton({
-  onClick,
-  loading,
-  disabled,
-  label,
-  variant = 'primary',
-  className = '',
-}: {
-  onClick: () => void;
-  loading: boolean;
-  disabled?: boolean;
-  label: string;
-  variant?: 'primary' | 'ghost' | 'hero';
-  className?: string;
-}) {
-  const styles = {
-    primary: 'bg-primary-500 hover:bg-primary-600 text-white border-transparent shadow-sm',
-    ghost: 'bg-white hover:bg-slate-50 text-primary-700 border-slate-200',
-    hero: 'bg-white/15 hover:bg-white/25 text-white border-white/25',
-  };
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled || loading}
-      className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-[13px] font-semibold transition-colors disabled:opacity-60 ${styles[variant]} ${className}`}
-    >
-      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-      {label}
-    </button>
-  );
-}
-
 export const RecordDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -266,10 +243,11 @@ export const RecordDetail: React.FC = () => {
 
   const hasPrescription = !!record.prescription?.items?.length;
   const activeOrders = record.serviceOrders?.filter((o) => o.status !== 'CANCELLED') ?? [];
+  const consultationFeeAmount = record.consultationFee ?? 0;
+  const orderFeesTotal = activeOrders.reduce((sum, o) => sum + (o.price ?? 0), 0);
   const hasBilling =
-    record.status === 'DONE' &&
-    ((record.consultationFee ?? 0) > 0 || (record.serviceFee ?? 0) > 0);
-  const totalFee = (record.consultationFee ?? 0) + (record.serviceFee ?? 0);
+    record.status === 'DONE' && (consultationFeeAmount > 0 || orderFeesTotal > 0);
+  const totalFee = consultationFeeAmount + orderFeesTotal;
 
   const serviceDisplayName =
     appointment?.serviceName && appointment.serviceName !== 'Khám chuyên khoa'
@@ -308,11 +286,23 @@ export const RecordDetail: React.FC = () => {
       title: o.serviceName,
       content: [
         o.result!.resultData,
-        o.result!.conclusion ? `\nKết luận: ${o.result!.conclusion}` : '',
+        o.result!.conclusion ? `Kết luận: ${o.result!.conclusion}` : '',
       ]
         .filter(Boolean)
         .join('\n'),
+      price: o.price,
     }));
+
+  const pdfFeeItems = [
+    ...(consultationFeeAmount > 0
+      ? [{ label: `Phí khám · ${serviceDisplayName}`, amount: consultationFeeAmount }]
+      : []),
+    ...activeOrders
+      .filter((o) => (o.price ?? 0) > 0)
+      .map((o) => ({ label: o.serviceName, amount: o.price! })),
+  ];
+  const hasPdfFees = pdfFeeItems.length > 0;
+  const pdfTotalFee = pdfFeeItems.reduce((sum, item) => sum + item.amount, 0);
 
   const handleDownloadFullRecord = async () => {
     setPdfLoading(true);
@@ -366,7 +356,27 @@ export const RecordDetail: React.FC = () => {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-              <StatusBadge status={record.status} />
+              <button
+                type="button"
+                onClick={() => printPdfLayout(`pdf-record-${record.recordId}`, 'Chi tiết bệnh án')}
+                className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border text-[13px] font-semibold transition-colors cursor-pointer bg-sky-50 text-sky-700 border-sky-200 hover:bg-sky-100 hover:border-sky-300"
+              >
+                <Printer className="w-4 h-4" />
+                In bệnh án
+              </button>
+              <button
+                type="button"
+                onClick={handleDownloadFullRecord}
+                disabled={pdfLoading}
+                className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg border text-[13px] font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer bg-emerald-600 text-white border-transparent hover:bg-emerald-700 shadow-sm shadow-emerald-600/15"
+              >
+                {pdfLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Download className="w-4 h-4" />
+                )}
+                Tải bệnh án
+              </button>
               <button
                 type="button"
                 onClick={() => navigate(-1)}
@@ -425,7 +435,10 @@ export const RecordDetail: React.FC = () => {
                 </div>
                 <div className="flex items-start gap-3 text-[13px]">
                   <Stethoscope className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                  <p className="font-medium text-slate-600">{serviceDisplayName}</p>
+                  <p className="font-medium text-slate-600">
+                    {serviceDisplayName}
+                    <InlinePrice amount={consultationFeeAmount} />
+                  </p>
                 </div>
               </div>
             </div>
@@ -449,22 +462,6 @@ export const RecordDetail: React.FC = () => {
               ))}
             </div>
 
-            {/* PDF export */}
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-3">
-                Xuất hồ sơ
-              </p>
-              <PdfDownloadButton
-                onClick={handleDownloadFullRecord}
-                loading={pdfLoading}
-                label="Tải PDF bệnh án"
-                className="w-full"
-              />
-              <p className="text-[11px] text-slate-500 mt-2 leading-relaxed">
-                Gồm chẩn đoán, xét nghiệm, đơn thuốc và chi phí (nếu có).
-              </p>
-            </div>
-
             {/* Billing */}
             {hasBilling && (
               <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
@@ -473,18 +470,24 @@ export const RecordDetail: React.FC = () => {
                   <h3 className="text-[14px] font-bold text-slate-800">Thanh toán</h3>
                 </div>
                 <div className="space-y-2.5 text-[13px]">
-                  <div className="flex justify-between gap-2">
-                    <span className="text-slate-500">Phí khám</span>
-                    <span className="font-semibold text-slate-800 tabular-nums">
-                      {formatPrice(record.consultationFee ?? 0)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between gap-2">
-                    <span className="text-slate-500">Cận lâm sàng</span>
-                    <span className="font-semibold text-slate-800 tabular-nums">
-                      {formatPrice(record.serviceFee ?? 0)}
-                    </span>
-                  </div>
+                  {consultationFeeAmount > 0 && (
+                    <div className="flex justify-between gap-2">
+                      <span className="text-slate-500 truncate pr-2">Phí khám · {serviceDisplayName}</span>
+                      <span className="font-semibold text-slate-800 tabular-nums shrink-0">
+                        {formatPrice(consultationFeeAmount)}
+                      </span>
+                    </div>
+                  )}
+                  {activeOrders
+                    .filter((o) => (o.price ?? 0) > 0)
+                    .map((order) => (
+                      <div key={order.orderId} className="flex justify-between gap-2">
+                        <span className="text-slate-500 truncate pr-2">{order.serviceName}</span>
+                        <span className="font-semibold text-slate-800 tabular-nums shrink-0">
+                          {formatPrice(order.price!)}
+                        </span>
+                      </div>
+                    ))}
                   <div className="border-t border-slate-100 pt-2.5 flex justify-between items-center">
                     <span className="font-bold text-slate-700">Tổng cộng</span>
                     <span className="text-[18px] font-black text-primary-700 tabular-nums">
@@ -512,9 +515,12 @@ export const RecordDetail: React.FC = () => {
           <div className="flex flex-col gap-5 min-w-0">
             {/* Diagnosis highlight */}
             <div className="rounded-2xl border border-slate-200/80 bg-white p-5 md:p-6 shadow-sm">
-              <div className="flex items-center gap-2 mb-4">
-                <Activity className="w-5 h-5 text-primary-600" />
-                <h2 className="text-[15px] font-bold text-slate-800">Chẩn đoán & điều trị</h2>
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Activity className="w-5 h-5 text-primary-600 shrink-0" />
+                  <h2 className="text-[15px] font-bold text-slate-800">Chẩn đoán & điều trị</h2>
+                </div>
+                <StatusBadge status={record.status} />
               </div>
 
               <div className="rounded-xl border border-violet-100 border-l-[3px] border-l-violet-400 bg-violet-50/30 p-4 md:p-5 mb-5">
@@ -573,23 +579,17 @@ export const RecordDetail: React.FC = () => {
                           key={order.orderId}
                           className={`rounded-xl border border-slate-200/80 border-l-4 ${labCfg.accent} ${labCfg.bg} p-4 md:p-5`}
                         >
-                          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
-                            <div className="min-w-0 flex-1">
-                              <h3 className="font-bold text-slate-900 text-[15px]">
-                                {order.serviceName}
-                              </h3>
-                              <p className="text-[12px] font-medium text-slate-500 mt-1">
-                                {labCfg.label}
-                                {hasResult && order.result?.conclusion
-                                  ? ` · ${order.result.conclusion}`
-                                  : ''}
-                              </p>
-                            </div>
-                            {order.price != null && order.price > 0 && (
-                              <span className="text-[13px] font-bold text-slate-600 tabular-nums shrink-0">
-                                {formatPrice(order.price)}
-                              </span>
-                            )}
+                          <div className="mb-3">
+                            <h3 className="font-bold text-slate-900 text-[15px]">
+                              {order.serviceName}
+                              <InlinePrice amount={order.price} />
+                            </h3>
+                            <p className="text-[12px] font-medium text-slate-500 mt-1">
+                              {labCfg.label}
+                              {hasResult && order.result?.conclusion
+                                ? ` · ${order.result.conclusion}`
+                                : ''}
+                            </p>
                           </div>
 
                           {hasResult ? (
@@ -673,7 +673,7 @@ export const RecordDetail: React.FC = () => {
       {/* Hidden PDF layouts */}
       <ClinicPdfLayout
         id={`pdf-record-${record.recordId}`}
-        documentTitle="PHIẾU KHÁM BỆNH ÁN"
+        documentTitle="CHI TIẾT BỆNH ÁN"
         documentCode={recordCode}
         issuedDate={issuedDate}
         patient={pdfPatient}
@@ -684,9 +684,9 @@ export const RecordDetail: React.FC = () => {
         tableRows={prescriptionTableRows}
         notes={record.treatment || record.note}
         extraSections={labExtraSections}
-        consultationFee={hasBilling ? record.consultationFee : undefined}
-        serviceFee={hasBilling ? record.serviceFee : undefined}
-        totalAmount={hasBilling ? totalFee : undefined}
+        consultationFee={hasPdfFees && consultationFeeAmount > 0 ? consultationFeeAmount : undefined}
+        feeItems={hasPdfFees ? pdfFeeItems : undefined}
+        totalAmount={hasPdfFees ? pdfTotalFee : undefined}
         footerNote="Phiếu khám bệnh điện tử — ClinicPro. Vui lòng mang theo khi tái khám."
       />
     </main>

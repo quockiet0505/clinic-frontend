@@ -11,6 +11,7 @@ export interface Medicine {
 export interface PrescriptionUI {
   prescriptionId: number;
   recordId: number;
+  patientId?: number;
   patientName: string;
   doctorName: string;
   createdAt: string;

@@ -1,5 +1,17 @@
 # Changelog — Clinic Frontend
 
+## [2026-06-24] - Hiện đại hóa UI các trang chi tiết (Admin Web)
+
+### Admin Web
+- `DetailPageHeader` (mới, `components/common`): Header chuẩn dùng chung — back button, tiêu đề, mã code badge, status badge, vùng action. Helper `IconAction` + `ActionButton` đã được nâng cấp hỗ trợ **7 tone màu**: `default`, `primary`, `sky`, `emerald`, `violet`, `amber`, `rose` (mỗi tone có màu nền + hover phù hợp).
+- `PatientSummaryBanner` (mới, `features/medical/components`): Banner thông tin BN gọn dùng chung giữa Triage và Consultation, hỗ trợ hiển thị sinh hiệu nhanh.
+- `TriageWorkspace` (Chuẩn bị khám / Đo sinh hiệu): Redesign — fix bug card `overflow-hidden` + `h-[calc...]` clip content. Đổi sang `min-h` để form trải tự nhiên. Header có icon section gradient indigo. Nút **Hủy** tone `rose`, **Lưu** tone `primary`.
+- `ConsultationWorkspace` (Đang khám bệnh): Bỏ 2 card sidebar lặp. Tabs Phiếu khám / Kê đơn full-width. Nút **Lưu nháp** tone `sky`, **Hoàn tất** tone `primary`.
+- `MedicalRecordDetail`: `DetailPageHeader` với icon **In phiếu** tone `sky` (xanh nhạt), **Tải PDF** tone `emerald` (xanh lá). Bỏ card "Xuất hồ sơ" sidebar trùng.
+- `LabResultDetail`: Redesign layout 2 cột **sidebar + paper-sheet** giống Medical Record. Sidebar có hero gradient blue + meta info + badge "Đã xác nhận hoàn tất" + trust badge. Main có document header với eyebrow + heading uppercase, các Section đánh dấu bằng icon màu (User=xanh, Beaker=tím, ClipboardCheck=xanh lá), kết quả + kết luận trong box accent màu.
+- `PrescriptionDetail`: Tương tự — sidebar gradient emerald + billing summary, paper-sheet với section icon màu, vital cards 4 màu (rose/amber/sky/violet), bảng thuốc với header gradient emerald, badge order status có dot màu.
+- `PatientDetails` (Hồ sơ bệnh nhân): Redesign hoàn toàn — `DetailPageHeader` + sidebar profile card có hero gradient + avatar nổi, pill giới tính/tuổi, quick stats (lượt khám, bệnh mãn tính). Main có 3 section: Tổng quan sức khỏe (6 health cards 6 màu khác nhau), Thông tin cá nhân, Lịch sử khám. Cảnh báo dị ứng box accent amber riêng. Nút **In hồ sơ** tone `sky`, **Chỉnh sửa** tone `emerald`.
+
 ## [2026-06-23] - Tối ưu UI Hồ sơ y tế & Đánh giá (Patient Web)
 
 ### Patient Web

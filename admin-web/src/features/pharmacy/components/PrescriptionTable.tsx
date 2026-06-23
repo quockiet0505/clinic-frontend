@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import Table, { Column } from '@/components/tables/Table';
 import { PrescriptionUI } from '../types/pharmacy';
 import { formatDateTime } from '@/utils/formatters';
+import { Badge } from '@/components/ui/badge';
 
 interface Props {
   data: PrescriptionUI[];
@@ -15,48 +16,79 @@ interface Props {
 export default function PrescriptionTable({ data, onViewDetails, loading = false, pagination }: Props) {
   const columns: Column<PrescriptionUI>[] = [
     {
-      key: 'prescriptionId',
-      label: 'Mã Đơn',
+      key: 'prescriptionInfo',
+      label: 'Mã đơn & Thời gian',
       className: 'w-[15%]',
       render: (rx) => (
         <div>
-          <p className="text-sm font-medium text-slate-700 flex items-center gap-1">
+          <p className="text-[13px] font-medium text-slate-700 flex items-center gap-1.5">
             <Calendar size={14} className="text-slate-400" />
             {formatDateTime(rx.createdAt)}
           </p>
-          <p className="text-xs text-slate-400 mt-0.5">#RX-{rx.prescriptionId}</p>
+          <p className="text-xs text-slate-500 mt-0.5">
+            #RX-{String(rx.prescriptionId).padStart(5, '0')}
+          </p>
         </div>
       ),
     },
     {
-      key: 'patientName',
-      label: 'Bệnh nhân',
-      className: 'w-[25%]',
+      key: 'patientInfo',
+      label: 'Bệnh nhân & Chẩn đoán',
+      className: 'w-[30%]',
       render: (rx) => (
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm">
             {rx.patientName.charAt(0).toUpperCase()}
           </div>
           <div>
-            <p className="font-semibold text-slate-800 text-sm">{rx.patientName}</p>
-            <p className="text-xs text-slate-500 mt-0.5">BA: #{rx.recordId}</p>
+            <p className="font-semibold text-slate-800 text-sm leading-tight">{rx.patientName}</p>
+            <p className="text-[12px] text-slate-500 mt-0.5 truncate max-w-[200px]" title={rx.diagnosis || 'Chưa có chẩn đoán'}>
+              {rx.diagnosis || 'Chưa ghi nhận chẩn đoán'}
+            </p>
           </div>
         </div>
       ),
     },
     {
-      key: 'doctorName',
-      label: 'Bác sĩ kê đơn',
+      key: 'doctorInfo',
+      label: 'Bác sĩ & Toa thuốc',
       className: 'w-[25%]',
-      render: (rx) => <p className="font-medium text-slate-700 text-sm">{rx.doctorName}</p>,
+      render: (rx) => (
+        <div>
+          <p className="font-medium text-slate-700 text-sm">{rx.doctorName}</p>
+          <p className="text-xs text-slate-500 mt-0.5 font-medium">
+            <span className="text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-md">{rx.items?.length || 0} loại thuốc</span>
+          </p>
+        </div>
+      ),
+    },
+    {
+      key: 'status',
+      label: 'Trạng thái',
+      className: 'w-[15%]',
+      render: (rx) => (
+        rx.status === 'DISPENSED' ? (
+          <Badge className="bg-emerald-100/80 text-emerald-700 border-0 px-2.5 py-1 text-[11px] font-bold">
+            Đã phát thuốc
+          </Badge>
+        ) : (
+          <Badge className="bg-amber-100/80 text-amber-700 border-0 px-2.5 py-1 text-[11px] font-bold">
+            Chờ phát thuốc
+          </Badge>
+        )
+      ),
     },
     {
       key: 'actions',
       label: 'Thao tác',
-      className: 'w-[20%]',
+      className: 'w-[15%] text-left',
       render: (rx) => (
-        <Button onClick={() => onViewDetails(rx.prescriptionId)} variant="outline" className="h-8 px-4 rounded-xl text-xs font-semibold border-blue-200 text-blue-600 hover:bg-blue-50">
-          <Eye size={14} className="mr-1.5" /> Xem chi tiết
+        <Button
+          onClick={() => onViewDetails(rx.prescriptionId)}
+          variant="ghost"
+          className="h-8 px-4 rounded-xl text-[13px] font-semibold text-violet-600 bg-violet-50/50 hover:bg-violet-100 hover:text-violet-700 transition-all hover:-translate-y-[1px]"
+        >
+          <Eye size={14} className="mr-1.5" /> Chi tiết
         </Button>
       ),
     },

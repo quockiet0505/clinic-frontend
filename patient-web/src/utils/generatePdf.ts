@@ -96,3 +96,57 @@ export function formatVND(amount?: number | null): string {
   if (!amount) return '---';
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 }
+
+/**
+ * Cleanly print a hidden HTML element using an iframe.
+ * Ensures the printed document is high quality (vector text) rather than an image.
+ */
+export async function printPdfLayout(elementId: string, title: string = 'In phiếu'): Promise<void> {
+  const source = document.getElementById(elementId);
+  if (!source) {
+    toast.error('Không tìm thấy nội dung để in');
+    return;
+  }
+
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'absolute';
+  iframe.style.width = '0px';
+  iframe.style.height = '0px';
+  iframe.style.border = 'none';
+  document.body.appendChild(iframe);
+
+  const doc = iframe.contentWindow?.document;
+  if (!doc) {
+    toast.error('Trình duyệt không hỗ trợ in qua iframe');
+    document.body.removeChild(iframe);
+    return;
+  }
+
+  const clone = source.cloneNode(true) as HTMLElement;
+  clone.style.display = 'block';
+
+  doc.open();
+  doc.write('<html><head><title>' + title + '</title>');
+  doc.write('<style>');
+  doc.write('@page { size: A4 portrait; margin: 15mm; }');
+  doc.write('body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }');
+  doc.write('</style>');
+  doc.write('</head><body>');
+  doc.write(clone.outerHTML);
+  doc.write('</body></html>');
+  doc.close();
+
+  await new Promise((r) => setTimeout(r, 250));
+
+  try {
+    iframe.contentWindow?.focus();
+    iframe.contentWindow?.print();
+  } catch (err) {
+    console.error('Print failed:', err);
+    toast.error('Đã xảy ra lỗi khi in.');
+  } finally {
+    setTimeout(() => {
+      document.body.removeChild(iframe);
+    }, 2000);
+  }
+}

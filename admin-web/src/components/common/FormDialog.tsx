@@ -36,7 +36,7 @@ interface FormDialogProps {
   wide?: boolean;
   renderBeforeFields?: (ctx: {
     formData: Record<string, any>;
-    onChange: (name: string, value: any) => void;
+    onChange: (name: string, value: any, setTouchedFlag?: boolean) => void;
   }) => React.ReactNode;
   renderFooter?: (formData: Record<string, any>) => React.ReactNode;
 }
@@ -81,11 +81,15 @@ export default function FormDialog({
       }
       setTouched({});
     }
-  }, [open, initialData, fields]);
+  }, [open, initialData]);
 
-  const handleChange = (name: string, value: any) => {
+  const handleChange = (name: string, value: any, setTouchedFlag: boolean = true) => {
     setFormData(prev => ({ ...prev, [name]: value }));
-    setTouched(prev => ({ ...prev, [name]: true }));
+    if (setTouchedFlag) {
+      setTouched(prev => ({ ...prev, [name]: true }));
+    } else {
+      setTouched(prev => ({ ...prev, [name]: false }));
+    }
   };
 
   const isRequiredMissing = () => {

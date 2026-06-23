@@ -131,9 +131,8 @@ export default function AdminDashboard() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${
-                  isActive ? 'bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-200/60' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
-                }`}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer ${isActive ? 'bg-blue-50 text-blue-700 shadow-sm ring-1 ring-blue-200/60' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                  }`}
               >
                 <Icon size={16} className={isActive ? 'text-blue-500' : 'text-slate-400'} />
                 {tab.label}

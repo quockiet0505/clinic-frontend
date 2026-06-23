@@ -27,9 +27,20 @@ export interface PdfTableRow {
   quantity: string;
 }
 
+export interface PdfExtraSection {
+  title: string;
+  content: string;
+  price?: number | null;
+}
+
+export interface PdfFeeItem {
+  label: string;
+  amount: number;
+}
+
 export interface ClinicPdfLayoutProps {
   id: string;
-  /** "ĐƠN THUỐC" | "KẾT QUẢ XÉT NGHIỆM" | … */
+  /** "CHI TIẾT ĐƠN THUỐC" | "KẾT QUẢ XÉT NGHIỆM" | "CHI TIẾT BỆNH ÁN" */
   documentTitle: string;
   documentCode: string;
   issuedDate: string;
@@ -51,15 +62,19 @@ export interface ClinicPdfLayoutProps {
   notes?: string | null;
 
   /* Nội dung chính (XN / CLS) */
-  extraSections?: Array<{ title: string; content: string }>;
+  extraSections?: PdfExtraSection[];
   conclusion?: string | null;
 
   /* Chi phí */
   consultationFee?: number | null;
   serviceFee?: number | null;
   totalAmount?: number | null;
+  /** Chi tiết từng khoản (ưu tiên hơn consultationFee/serviceFee gộp) */
+  feeItems?: PdfFeeItem[];
 
   footerNote?: string;
+  /** Ẩn khối chữ ký (dùng cho phiếu hồ sơ sức khoẻ) */
+  hideSignatures?: boolean;
 }
 
 /* ─── Constants ────────────────────────────────────────────────── */
@@ -72,23 +87,22 @@ const DEFAULT_LOGO   = `${STATIC_BASE}/images/logos/logo.png`;
 /* ─── Micro helpers ─────────────────────────────────────────────── */
 const cell = (label: string, value?: string | number | null, full = false) =>
   value != null && value !== '' ? (
-    <div style={{ marginBottom: '3px', ...(full ? { gridColumn: '1/-1' } : {}) }}>
-      <span style={{ display: 'inline-block', minWidth: '120px', fontWeight: 700, color: '#475569', fontSize: '11px' }}>{label}</span>
-      <span style={{ color: '#1e293b', fontSize: '11.5px' }}>{value}</span>
+    <div style={{ marginBottom: '4px', ...(full ? { gridColumn: '1/-1' } : {}) }}>
+      <span style={{ display: 'inline-block', minWidth: '120px', fontWeight: 600, color: '#000', fontSize: '12px' }}>{label}</span>
+      <span style={{ color: '#000', fontSize: '13px' }}>{value}</span>
     </div>
   ) : null;
 
-const sectionHeader = (num: string, title: string, color = '#0284c7') => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '7px' }}>
-    <span style={{ fontWeight: 900, fontSize: '11px', background: color, color: '#fff', borderRadius: '3px', padding: '1px 6px' }}>{num}</span>
-    <span style={{ fontWeight: 800, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.8px', color }}>
+const sectionHeader = (title: string) => (
+  <div style={{ borderBottom: '1px solid #000', marginBottom: '8px', paddingBottom: '4px' }}>
+    <span style={{ fontWeight: 'bold', fontSize: '14px', textTransform: 'uppercase', color: '#000' }}>
       {title}
     </span>
   </div>
 );
 
-const box = (children: React.ReactNode, bg = '#f8fafc', border = '#e2e8f0'): React.ReactNode => (
-  <div style={{ border: `1px solid ${border}`, borderRadius: '6px', padding: '10px 14px', marginBottom: '10px', background: bg }}>
+const box = (children: React.ReactNode): React.ReactNode => (
+  <div style={{ marginBottom: '16px' }}>
     {children}
   </div>
 );
@@ -100,51 +114,59 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
   tableHeaders = ['Tên', 'Chi tiết / Liều dùng', 'Số lượng'],
   tableRows = [], notes,
   extraSections = [], conclusion,
-  consultationFee, serviceFee, totalAmount,
-  footerNote,
+  consultationFee, serviceFee, totalAmount, feeItems = [],
+  footerNote, hideSignatures = false,
 }) => {
   const today = new Date();
   const dateStr = `TP. Hồ Chí Minh, ngày ${today.getDate()} tháng ${today.getMonth() + 1} năm ${today.getFullYear()}`;
-  const hasFee = consultationFee != null || serviceFee != null || totalAmount != null;
+  const hasItemizedFees = feeItems.length > 0;
+  const hasFee =
+    hasItemizedFees ||
+    consultationFee != null ||
+    serviceFee != null ||
+    totalAmount != null;
   const genderLabel = patient?.gender === 'MALE' ? 'Nam' : patient?.gender === 'FEMALE' ? 'Nữ' : (patient?.gender || undefined);
   const yearOfBirth = patient?.dob ? String(new Date(patient.dob).getFullYear()) : undefined;
   const hasVital = patient && (patient.bloodType || patient.height || patient.weight || patient.bloodPressure || patient.pulse || patient.allergies || patient.medicalHistory);
 
   return (
-    <div id={id} style={{ display: 'none', fontFamily: '"Arial","Helvetica Neue",Helvetica,sans-serif', color: '#1e293b', background: '#fff', padding: '26px 30px', fontSize: '12px', lineHeight: '1.55', width: '794px', boxSizing: 'border-box' }}>
+    <div id={id} style={{ display: 'none', fontFamily: '"Times New Roman", Times, serif', color: '#000', background: '#fff', padding: '30px 40px', fontSize: '13px', lineHeight: '1.5', width: '794px', boxSizing: 'border-box' }}>
 
       {/* ══ HEADER ═════════════════════════════════════════════ */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #0284c7', paddingBottom: '10px', marginBottom: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #0284c7', paddingBottom: '12px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <img
             src={logoSrc || DEFAULT_LOGO}
             crossOrigin="anonymous"
             alt="logo"
-            style={{ height: '46px', width: 'auto', objectFit: 'contain', borderRadius: '4px' }}
+            style={{ height: '50px', width: 'auto', objectFit: 'contain' }}
             onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
           />
           <div>
-            <div style={{ fontWeight: 900, fontSize: '13px', color: '#0284c7' }}>{CLINIC_NAME}</div>
-            <div style={{ fontSize: '10px', color: '#64748b', marginTop: '2px' }}>{CLINIC_ADDRESS}</div>
-            <div style={{ fontSize: '10px', color: '#64748b' }}>{CLINIC_HOTLINE}</div>
+            <div style={{ fontWeight: 'bold', fontSize: '15px', color: '#0284c7' }}>{CLINIC_NAME}</div>
+            <div style={{ fontSize: '11px', color: '#000', marginTop: '2px' }}>{CLINIC_ADDRESS}</div>
+            <div style={{ fontSize: '11px', color: '#000' }}>{CLINIC_HOTLINE}</div>
           </div>
         </div>
         <div style={{ textAlign: 'right' }}>
-          <div style={{ fontWeight: 900, fontSize: '17px', textTransform: 'uppercase', letterSpacing: '1.5px' }}>{documentTitle}</div>
-          <div style={{ fontSize: '10.5px', color: '#64748b', marginTop: '3px' }}>Mã phiếu: <strong style={{ color: '#1e293b' }}>{documentCode}</strong></div>
-          <div style={{ fontSize: '10.5px', color: '#64748b' }}>Ngày: <strong style={{ color: '#1e293b' }}>{issuedDate}</strong></div>
+          <div style={{ fontSize: '12px', color: '#000' }}>Mã phiếu: <strong>{documentCode}</strong></div>
+          <div style={{ fontSize: '12px', color: '#000' }}>Ngày: <strong>{issuedDate}</strong></div>
         </div>
+      </div>
+
+      <div style={{ textAlign: 'center', margin: '20px 0 24px' }}>
+        <div style={{ fontWeight: 'bold', fontSize: '20px', textTransform: 'uppercase' }}>{documentTitle}</div>
       </div>
 
       {/* ══ I. THÔNG TIN BỆNH NHÂN ════════════════════════════ */}
       {patient && box(
         <>
-          {sectionHeader('I', 'Thông tin bệnh nhân')}
+          {sectionHeader('I. THÔNG TIN BỆNH NHÂN')}
           {/* Basic info — 2 cols */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2px 16px', marginBottom: hasVital ? '8px' : 0 }}>
-            <div style={{ gridColumn: '1/-1', marginBottom: '4px' }}>
-              <span style={{ display: 'inline-block', minWidth: '120px', fontWeight: 700, color: '#475569', fontSize: '11px' }}>Họ và tên:</span>
-              <span style={{ fontWeight: 800, fontSize: '13px', textTransform: 'uppercase' }}>{patient.name || '---'}</span>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 16px', marginBottom: hasVital ? '12px' : 0 }}>
+            <div style={{ gridColumn: '1/-1', marginBottom: '6px' }}>
+              <span style={{ display: 'inline-block', minWidth: '120px', fontWeight: 'bold', color: '#000', fontSize: '13px' }}>Họ và tên:</span>
+              <span style={{ fontWeight: 'bold', fontSize: '15px', textTransform: 'uppercase' }}>{patient.name || '---'}</span>
             </div>
             {cell('Giới tính:', genderLabel)}
             {cell('Năm sinh:', yearOfBirth)}
@@ -155,9 +177,9 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
           {/* Health profile */}
           {hasVital && (
             <>
-              <div style={{ borderTop: '1px dashed #cbd5e1', marginBottom: '7px' }} />
-              <div style={{ fontWeight: 700, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.8px', color: '#64748b', marginBottom: '5px' }}>Hồ sơ sức khoẻ</div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '2px 16px' }}>
+              <div style={{ borderTop: '1px dashed #000', margin: '8px 0' }} />
+              <div style={{ fontWeight: 'bold', fontSize: '12px', textTransform: 'uppercase', marginBottom: '6px' }}>Hồ sơ sức khoẻ</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '4px 16px' }}>
                 {cell('Nhóm máu:', patient.bloodType || undefined)}
                 {patient.height && cell('Chiều cao:', `${patient.height} cm`)}
                 {patient.weight && cell('Cân nặng:', `${patient.weight} kg`)}
@@ -165,15 +187,15 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
                 {patient.pulse && cell('Mạch:', `${patient.pulse} lần/phút`)}
               </div>
               {patient.allergies && (
-                <div style={{ marginTop: '4px' }}>
-                  <span style={{ display: 'inline-block', minWidth: '120px', fontWeight: 700, color: '#475569', fontSize: '11px' }}>Dị ứng:</span>
-                  <span style={{ color: '#b45309', fontSize: '11.5px', fontWeight: 600 }}>{patient.allergies}</span>
+                <div style={{ marginTop: '6px' }}>
+                  <span style={{ display: 'inline-block', minWidth: '120px', fontWeight: 'bold', fontSize: '12px' }}>Dị ứng:</span>
+                  <span style={{ fontSize: '13px', fontWeight: 'bold' }}>{patient.allergies}</span>
                 </div>
               )}
               {patient.medicalHistory && (
-                <div style={{ marginTop: '4px' }}>
-                  <span style={{ display: 'inline-block', minWidth: '120px', fontWeight: 700, color: '#475569', fontSize: '11px' }}>Tiền sử bệnh:</span>
-                  <span style={{ color: '#1e293b', fontSize: '11.5px' }}>{patient.medicalHistory}</span>
+                <div style={{ marginTop: '6px' }}>
+                  <span style={{ display: 'inline-block', minWidth: '120px', fontWeight: 'bold', fontSize: '12px' }}>Tiền sử bệnh:</span>
+                  <span style={{ fontSize: '13px' }}>{patient.medicalHistory}</span>
                 </div>
               )}
             </>
@@ -184,23 +206,24 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
       {/* ══ II. THÔNG TIN BÁC SĨ / KHÁM ══════════════════════ */}
       {(doctorName || diagnosis || serviceName || technicianName) && box(
         <>
-          {sectionHeader('II', 'Thông tin khám bệnh')}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3px 16px' }}>
+          {sectionHeader('II. THÔNG TIN KHÁM BỆNH')}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 16px' }}>
             {cell('Bác sĩ điều trị:', formatDoctorName(doctorName))}
             {cell('Chuyên khoa:', doctorSpecialty || undefined)}
             {cell('Kỹ thuật viên:', technicianName || undefined)}
             {cell('Ngày khám:', issuedDate)}
           </div>
           {(diagnosis || serviceName || serviceDoctor) && (
-            <div style={{ borderTop: '1px dashed #cbd5e1', marginTop: '6px', paddingTop: '6px' }}>
+            <div style={{ borderTop: '1px dashed #000', margin: '8px 0', paddingTop: '8px' }}>
               {diagnosis && (
-                <div style={{ marginBottom: '3px' }}>
-                  <span style={{ display: 'inline-block', minWidth: '120px', fontWeight: 700, color: '#475569', fontSize: '11px' }}>Chẩn đoán:</span>
-                  <span style={{ color: '#1e293b', fontWeight: 700, fontSize: '12px' }}>{diagnosis}</span>
+                <div style={{ marginBottom: '4px' }}>
+                  <span style={{ display: 'inline-block', minWidth: '120px', fontWeight: 'bold', fontSize: '12px' }}>Chẩn đoán:</span>
+                  <span style={{ fontWeight: 'bold', fontSize: '13px' }}>{diagnosis}</span>
                 </div>
               )}
-              {serviceName && cell('Dịch vụ thực hiện:', serviceName)}
-              {serviceDoctor && cell('Bác sĩ thực hiện:', formatDoctorName(serviceDoctor))}
+              {serviceName && cell('Dịch vụ:', serviceName)}
+              {consultationFee != null && consultationFee > 0 && cell('Phí khám:', formatVND(consultationFee))}
+              {serviceDoctor && cell('BS thực hiện:', formatDoctorName(serviceDoctor))}
             </div>
           )}
         </>
@@ -209,26 +232,26 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
       {/* ══ III. NỘI DUNG CHI TIẾT ════════════════════════════ */}
       {(tableRows.length > 0 || extraSections.length > 0 || conclusion || notes) && box(
         <>
-          {sectionHeader('III', tableRows.length > 0 ? 'Đơn thuốc điều trị' : 'Kết quả & Kết luận')}
+          {sectionHeader(tableRows.length > 0 ? 'III. CHI TIẾT ĐƠN THUỐC' : 'III. KẾT QUẢ CẬN LÂM SÀNG')}
 
           {/* Medicine table */}
           {tableRows.length > 0 && (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '11px', marginBottom: notes ? '8px' : 0 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', marginBottom: notes ? '12px' : 0 }}>
               <thead>
-                <tr style={{ background: '#f1f5f9', borderBottom: '1.5px solid #cbd5e1' }}>
-                  <th style={{ padding: '5px 4px', textAlign: 'center', width: '28px', fontWeight: 700, fontSize: '9.5px' }}>STT</th>
-                  <th style={{ padding: '5px 4px', textAlign: 'left', fontWeight: 700, fontSize: '9.5px' }}>{tableHeaders[0]}</th>
-                  <th style={{ padding: '5px 4px', textAlign: 'left', fontWeight: 700, fontSize: '9.5px' }}>{tableHeaders[1]}</th>
-                  <th style={{ padding: '5px 4px', textAlign: 'right', fontWeight: 700, fontSize: '9.5px', width: '68px' }}>{tableHeaders[2]}</th>
+                <tr>
+                  <th style={{ border: '1px solid #000', padding: '6px', textAlign: 'center', width: '30px', fontWeight: 'bold' }}>STT</th>
+                  <th style={{ border: '1px solid #000', padding: '6px', textAlign: 'left', fontWeight: 'bold' }}>{tableHeaders[0]}</th>
+                  <th style={{ border: '1px solid #000', padding: '6px', textAlign: 'left', fontWeight: 'bold' }}>{tableHeaders[1]}</th>
+                  <th style={{ border: '1px solid #000', padding: '6px', textAlign: 'right', fontWeight: 'bold', width: '80px' }}>{tableHeaders[2]}</th>
                 </tr>
               </thead>
               <tbody>
                 {tableRows.map((row) => (
-                  <tr key={row.index} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '6px 4px', textAlign: 'center', color: '#64748b' }}>{row.index}</td>
-                    <td style={{ padding: '6px 4px', fontWeight: 700 }}>{row.name}</td>
-                    <td style={{ padding: '6px 4px', color: '#475569' }}>{row.detail}</td>
-                    <td style={{ padding: '6px 4px', textAlign: 'right', fontWeight: 700 }}>{row.quantity}</td>
+                  <tr key={row.index}>
+                    <td style={{ border: '1px solid #000', padding: '6px', textAlign: 'center' }}>{row.index}</td>
+                    <td style={{ border: '1px solid #000', padding: '6px', fontWeight: 'bold' }}>{row.name}</td>
+                    <td style={{ border: '1px solid #000', padding: '6px' }}>{row.detail}</td>
+                    <td style={{ border: '1px solid #000', padding: '6px', textAlign: 'right', fontWeight: 'bold' }}>{row.quantity}</td>
                   </tr>
                 ))}
               </tbody>
@@ -237,9 +260,9 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
 
           {/* Lời dặn (prescription) */}
           {notes && (
-            <div style={{ marginTop: tableRows.length ? '8px' : 0 }}>
-              <div style={{ fontWeight: 700, fontSize: '10.5px', color: '#92400e', marginBottom: '3px' }}>Lời dặn của bác sĩ</div>
-              <div style={{ background: '#fffbeb', borderLeft: '3px solid #f59e0b', padding: '7px 10px', borderRadius: '0 4px 4px 0', whiteSpace: 'pre-wrap', fontSize: '11px' }}>
+            <div style={{ marginTop: tableRows.length ? '12px' : 0 }}>
+              <div style={{ fontWeight: 'bold', fontSize: '13px', textDecoration: 'underline', marginBottom: '4px' }}>Lời dặn của bác sĩ:</div>
+              <div style={{ whiteSpace: 'pre-wrap', fontSize: '13px' }}>
                 {notes}
               </div>
             </div>
@@ -247,9 +270,14 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
 
           {/* Lab result sections */}
           {extraSections.map((sec, i) => (
-            <div key={i} style={{ marginBottom: i < extraSections.length - 1 || conclusion ? '8px' : 0 }}>
-              <div style={{ fontWeight: 700, fontSize: '10.5px', color: '#475569', marginBottom: '3px' }}>{sec.title}</div>
-              <div style={{ background: '#f8fafc', borderRadius: '4px', padding: '7px 10px', whiteSpace: 'pre-wrap', lineHeight: '1.6', fontSize: '11px' }}>
+            <div key={i} style={{ marginBottom: i < extraSections.length - 1 || conclusion ? '12px' : 0 }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
+                <span style={{ fontWeight: 'bold', fontSize: '13px' }}>{sec.title}</span>
+                {sec.price != null && sec.price > 0 && (
+                  <span style={{ fontSize: '11px', fontStyle: 'italic' }}>({formatVND(sec.price)})</span>
+                )}
+              </div>
+              <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6', fontSize: '13px', paddingLeft: '8px', borderLeft: '1px solid #000' }}>
                 {sec.content || 'Chưa có dữ liệu.'}
               </div>
             </div>
@@ -257,9 +285,9 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
 
           {/* Conclusion */}
           {conclusion && (
-            <div style={{ marginTop: extraSections.length ? '8px' : 0 }}>
-              <div style={{ fontWeight: 700, fontSize: '10.5px', color: '#1d4ed8', marginBottom: '3px' }}>Kết luận của bác sĩ</div>
-              <div style={{ background: '#eff6ff', borderLeft: '3px solid #3b82f6', padding: '7px 10px', borderRadius: '0 4px 4px 0', whiteSpace: 'pre-wrap', fontSize: '11px' }}>
+            <div style={{ marginTop: extraSections.length ? '12px' : 0 }}>
+              <div style={{ fontWeight: 'bold', fontSize: '13px', textDecoration: 'underline', marginBottom: '4px' }}>Kết luận:</div>
+              <div style={{ whiteSpace: 'pre-wrap', fontSize: '13px' }}>
                 {conclusion}
               </div>
             </div>
@@ -270,49 +298,69 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
       {/* ══ IV. CHI PHÍ ═══════════════════════════════════════ */}
       {hasFee && box(
         <>
-          {sectionHeader('IV', 'Chi phí khám bệnh', '#16a34a')}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', fontSize: '11.5px' }}>
-            {consultationFee != null && (
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: '#475569' }}>Tiền khám:</span>
-                <span style={{ fontWeight: 700 }}>{formatVND(consultationFee)}</span>
-              </div>
-            )}
-            {serviceFee != null && (
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: '#475569' }}>Tiền dịch vụ:</span>
-                <span style={{ fontWeight: 700 }}>{formatVND(serviceFee)}</span>
-              </div>
-            )}
-            {totalAmount != null && (
-              <div style={{ borderTop: '1px solid #86efac', marginTop: '4px', paddingTop: '5px', display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ fontWeight: 800, fontSize: '12px' }}>Tổng cộng:</span>
-                <span style={{ fontWeight: 900, fontSize: '14px', color: '#16a34a' }}>{formatVND(totalAmount)}</span>
-              </div>
+          {sectionHeader('IV. CHI PHÍ')}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '13px', maxWidth: '360px', marginLeft: 'auto' }}>
+            {hasItemizedFees ? (
+              <>
+                {feeItems.map((item, i) => (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: '12px' }}>
+                    <span style={{ flex: 1 }}>{item.label}</span>
+                    <span style={{ whiteSpace: 'nowrap' }}>{formatVND(item.amount)}</span>
+                  </div>
+                ))}
+                {totalAmount != null && (
+                  <div style={{ borderTop: '1px solid #000', paddingTop: '6px', display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontWeight: 'bold' }}>Tổng cộng:</span>
+                    <span style={{ fontWeight: 'bold' }}>{formatVND(totalAmount)}</span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                {consultationFee != null && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Phí khám:</span>
+                    <span>{formatVND(consultationFee)}</span>
+                  </div>
+                )}
+                {serviceFee != null && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>Phí cận lâm sàng:</span>
+                    <span>{formatVND(serviceFee)}</span>
+                  </div>
+                )}
+                {totalAmount != null && (
+                  <div style={{ borderTop: '1px solid #000', paddingTop: '6px', display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontWeight: 'bold' }}>Tổng cộng:</span>
+                    <span style={{ fontWeight: 'bold' }}>{formatVND(totalAmount)}</span>
+                  </div>
+                )}
+              </>
             )}
           </div>
-        </>,
-        '#f0fdf4', '#bbf7d0'
+        </>
       )}
 
       {/* ══ SIGNATURES ════════════════════════════════════════ */}
-      <div style={{ display: 'flex', justifyContent: technicianName ? 'space-between' : 'flex-end', textAlign: 'center', marginTop: '16px' }}>
+      {!hideSignatures && (
+      <div style={{ display: 'flex', justifyContent: technicianName ? 'space-between' : 'flex-end', textAlign: 'center', marginTop: '24px' }}>
         {technicianName && (
           <div>
-            <div style={{ fontSize: '10.5px', color: '#64748b', fontStyle: 'italic' }}>{dateStr}</div>
-            <div style={{ fontWeight: 700, fontSize: '11.5px', marginTop: '45px' }}>Kỹ thuật viên</div>
-            <div style={{ fontWeight: 700, fontSize: '11.5px', marginTop: '2px' }}>{technicianName}</div>
+            <div style={{ fontSize: '12px', fontStyle: 'italic' }}>{dateStr}</div>
+            <div style={{ fontWeight: 'bold', fontSize: '13px', marginTop: '40px' }}>Kỹ thuật viên</div>
+            <div style={{ fontWeight: 'bold', fontSize: '13px', marginTop: '4px' }}>{technicianName}</div>
           </div>
         )}
         <div>
-          <div style={{ fontSize: '10.5px', color: '#64748b', fontStyle: 'italic' }}>{dateStr}</div>
-          <div style={{ fontWeight: 700, fontSize: '11.5px', marginTop: '45px' }}>Bác sĩ điều trị</div>
-          <div style={{ fontWeight: 700, fontSize: '11.5px', marginTop: '2px' }}>{formatDoctorName(doctorName)}</div>
+          <div style={{ fontSize: '12px', fontStyle: 'italic' }}>{dateStr}</div>
+          <div style={{ fontWeight: 'bold', fontSize: '13px', marginTop: '40px' }}>Bác sĩ điều trị</div>
+          <div style={{ fontWeight: 'bold', fontSize: '13px', marginTop: '4px' }}>{formatDoctorName(doctorName)}</div>
         </div>
       </div>
+      )}
 
       {/* ══ FOOTER ════════════════════════════════════════════ */}
-      <div style={{ marginTop: '16px', borderTop: '1px solid #e2e8f0', paddingTop: '7px', textAlign: 'center', fontSize: '9.5px', color: '#94a3b8', fontStyle: 'italic' }}>
+      <div style={{ marginTop: '30px', borderTop: '1px solid #000', paddingTop: '10px', textAlign: 'center', fontSize: '11px', fontStyle: 'italic' }}>
         {footerNote || 'Phiếu này có giá trị lưu hành nội bộ phòng khám. Vui lòng mang theo khi tái khám.'}
       </div>
     </div>

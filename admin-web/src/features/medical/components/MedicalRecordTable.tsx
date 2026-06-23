@@ -38,7 +38,7 @@ export default function MedicalRecordTable({ data, onViewDetail, loading = false
     {
       key: 'diagnosis',
       label: 'Chẩn đoán & Bác sĩ',
-      className: 'w-[35%]',
+      className: 'w-[30%]',
       render: (rec) => (
         <div>
           <p className="text-slate-800 font-medium">{rec.diagnosis}</p>
@@ -52,7 +52,7 @@ export default function MedicalRecordTable({ data, onViewDetail, loading = false
     {
       key: 'status',
       label: 'Trạng thái',
-      className: 'w-[12%]',
+      className: 'w-[17%]',
       render: (rec) => <StatusBadge status={rec.status} />,
     },
     {

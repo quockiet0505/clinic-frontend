@@ -67,16 +67,7 @@ export default function ReportDialog({
         required: true,
         colSpan: 2,
       },
-      {
-        name: 'period',
-        label: 'Kỳ báo cáo',
-        type: 'select',
-        options: [
-          { value: 'month', label: 'Tháng' },
-          { value: 'quarter', label: 'Quý' },
-        ],
-        required: true,
-      },
+
       {
         name: 'periodValue',
         label: period === 'month' ? 'Tháng' : 'Quý',
@@ -110,13 +101,13 @@ export default function ReportDialog({
     ];
   }, [period, currentYear]);
 
-  const initialData = {
+  const initialData = useMemo(() => ({
     reportType: '',
-    period: '',
+    period: 'month',
     periodValue: '',
-    year: '',
-    format: '',
-  };
+    year: String(currentYear),
+    format: 'pdf',
+  }), [currentYear]);
 
   const handleFormSubmit = (data: Record<string, any>, isEdit: boolean) => {
     // Kiểm tra dữ liệu có đầy đủ không
@@ -164,14 +155,7 @@ export default function ReportDialog({
 
   // Custom footer
   const renderFooter = (formData: Record<string, any>) => {
-    // Đồng bộ period với formData.period
-    useEffect(() => {
-      if (formData.period && formData.period !== period) {
-        setPeriod(formData.period);
-      }
-    }, [formData.period]);
-
-    const isFormValid = formData.reportType && formData.period && formData.periodValue && formData.year && formData.format;
+    const isFormValid = formData.reportType && formData.periodValue && formData.year && formData.format;
 
     return (
       <div className="flex flex-col gap-3 p-4 pb-6 bg-slate-50 border-t border-slate-100 rounded-b-[24px]">
@@ -221,7 +205,6 @@ export default function ReportDialog({
 
   return (
     <FormDialog
-      key={period}
       open={isOpen}
       onClose={onClose}
       title="Xuất báo cáo"
@@ -234,6 +217,43 @@ export default function ReportDialog({
       cancelLabel="Hủy"
       compact={true}
       columns={2}
+      renderBeforeFields={(ctx) => (
+        <div className="col-span-2 flex justify-center mb-2">
+          <div className="relative grid grid-cols-2 bg-slate-100/80 p-1 rounded-[14px] w-full">
+            <div
+              className={`absolute top-1 bottom-1 w-[calc(50%-6px)] bg-white rounded-xl shadow-sm ring-1 ring-slate-900/5 transition-all duration-300 ease-out pointer-events-none ${
+                period === 'month' ? 'left-1' : 'left-[calc(50%+2px)]'
+              }`}
+            />
+            <button
+              type="button"
+              onClick={() => {
+                setPeriod('month');
+                ctx.onChange('period', 'month');
+                ctx.onChange('periodValue', '', false); 
+              }}
+              className={`relative z-10 flex items-center justify-center px-4 py-2.5 rounded-xl text-[13px] font-bold transition-colors duration-200 cursor-pointer ${
+                period === 'month' ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/50'
+              }`}
+            >
+              Theo tháng
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setPeriod('quarter');
+                ctx.onChange('period', 'quarter');
+                ctx.onChange('periodValue', '', false); 
+              }}
+              className={`relative z-10 flex items-center justify-center px-4 py-2.5 rounded-xl text-[13px] font-bold transition-colors duration-200 cursor-pointer ${
+                period === 'quarter' ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/50'
+              }`}
+            >
+              Theo quý
+            </button>
+          </div>
+        </div>
+      )}
       renderFooter={renderFooter}
     />
   );

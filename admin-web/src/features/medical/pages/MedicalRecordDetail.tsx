@@ -12,23 +12,33 @@ import {
   Clock,
   Ban,
   CreditCard,
-  FileBox,
   ShieldCheck,
   ChevronDown,
   ChevronUp,
-  ChevronLeft,
   ExternalLink,
   Download,
   Loader2,
+  Printer,
 } from 'lucide-react';
 import { SectionContainer } from '@/components/common/SectionContainer';
+import DetailPageHeader, { ActionButton } from '@/components/common/DetailPageHeader';
 import { ClinicPdfLayout } from '@/components/common/ClinicPdfLayout';
-import { generatePdf } from '@/utils/generatePdf';
+import { generatePdf, printPdfLayout } from '@/utils/generatePdf';
 import { medicalApi } from '../api/medicalApi';
 import { staffApi } from '../../staffs/api/staffApi';
+import { patientApi } from '../../patients/api/patientApi';
 import type { MedicalRecordDetail } from '../types/medical';
 const formatPrice = (v: number) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v);
+
+function InlinePrice({ amount }: { amount?: number | null }) {
+  if (amount == null || amount <= 0) return null;
+  return (
+    <span className="ml-1.5 text-[11px] font-semibold text-slate-400 tabular-nums">
+      {formatPrice(amount)}
+    </span>
+  );
+}
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString('vi-VN', {
@@ -143,38 +153,14 @@ function EmptyBlock({ message }: { message: string }) {
   );
 }
 
-function PdfDownloadButton({
-  onClick,
-  loading,
-  disabled,
-  label,
-  variant = 'primary',
-  className = '',
-}: {
-  onClick: () => void;
-  loading: boolean;
-  disabled?: boolean;
-  label: string;
-  variant?: 'primary' | 'ghost' | 'hero';
-  className?: string;
-}) {
-  const styles = {
-    primary: 'bg-primary-500 hover:bg-primary-600 text-white border-transparent shadow-sm',
-    ghost: 'bg-white hover:bg-slate-50 text-primary-700 border-slate-200',
-    hero: 'bg-white/15 hover:bg-white/25 text-white border-white/25',
-  };
+const InfoRow = ({ label, value }: { label: string; value?: string }) => {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled || loading}
-      className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-[13px] font-semibold transition-colors disabled:opacity-60 ${styles[variant]} ${className}`}
-    >
-      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-      {label}
-    </button>
+    <div>
+      <p className="text-[11px] font-medium text-slate-500 mb-0.5">{label}</p>
+      <p className="text-[13px] font-semibold text-slate-800">{value || '---'}</p>
+    </div>
   );
-}
+};
 
 export default function MedicalRecordDetail() {
   const { id } = useParams<{ id: string }>();
@@ -187,6 +173,7 @@ export default function MedicalRecordDetail() {
   const [isLabOpen, setIsLabOpen] = useState(true);
   const [imgError, setImgError] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
+  const [patientDetail, setPatientDetail] = useState<any>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -197,6 +184,10 @@ export default function MedicalRecordDetail() {
         setRecord(detail);
 
         if (detail) {
+          if (detail.patientId) {
+            patientApi.getById(detail.patientId).then(setPatientDetail).catch(console.error);
+          }
+
           if (detail.appointmentId) {
             // Note: admin-web does not have appointmentApi mapped yet for history,
             // so we skip fetching appointment for now.
@@ -222,17 +213,21 @@ export default function MedicalRecordDetail() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#f0f9ff]">
-        <div className="bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-primary-500 py-10 px-4">
-          <SectionContainer className="max-w-6xl">
-            <div className="h-4 bg-white/10 rounded w-40 mb-4 animate-pulse" />
-            <div className="h-8 bg-white/10 rounded w-64 animate-pulse" />
-          </SectionContainer>
-        </div>
-        <SectionContainer className="max-w-6xl py-8 px-4">
-          <div className="grid lg:grid-cols-[300px_1fr] gap-6">
-            <div className="h-72 bg-white/70 rounded-2xl animate-pulse" />
-            <div className="h-96 bg-white/70 rounded-2xl animate-pulse" />
+      <main className="min-h-screen bg-slate-50/40 pb-16">
+        <SectionContainer className="max-w-6xl px-4 pt-8">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-slate-200 animate-pulse shrink-0" />
+            <div className="space-y-2">
+              <div className="h-6 w-48 bg-slate-200 rounded animate-pulse" />
+              <div className="h-4 w-32 bg-slate-200 rounded animate-pulse" />
+            </div>
+            <div className="ml-auto w-24 h-8 bg-slate-200 rounded-full animate-pulse" />
+          </div>
+        </SectionContainer>
+        <SectionContainer className="max-w-6xl px-4 pt-8 pb-4 md:pt-10">
+          <div className="grid lg:grid-cols-[minmax(0,300px)_1fr] gap-6 items-start">
+            <div className="h-[500px] bg-white border border-slate-200/80 rounded-2xl animate-pulse shadow-sm" />
+            <div className="h-[700px] bg-white border border-slate-200/80 rounded-2xl animate-pulse shadow-sm" />
           </div>
         </SectionContainer>
       </main>
@@ -262,10 +257,11 @@ export default function MedicalRecordDetail() {
 
   const hasPrescription = !!record.prescription?.items?.length;
   const activeOrders = record.serviceOrders?.filter((o) => o.status !== 'CANCELLED') ?? [];
+  const consultationFeeAmount = record.consultationFee ?? 0;
+  const orderFeesTotal = activeOrders.reduce((sum, o) => sum + (o.price ?? 0), 0);
   const hasBilling =
-    record.status === 'DONE' &&
-    ((record.consultationFee ?? 0) > 0 || (record.serviceFee ?? 0) > 0);
-  const totalFee = (record.consultationFee ?? 0) + (record.serviceFee ?? 0);
+    record.status === 'DONE' && (consultationFeeAmount > 0 || orderFeesTotal > 0);
+  const totalFee = consultationFeeAmount + orderFeesTotal;
 
   const serviceDisplayName =
     appointment?.serviceName && appointment.serviceName !== 'Khám chuyên khoa'
@@ -273,18 +269,25 @@ export default function MedicalRecordDetail() {
       : 'Khám bệnh chuyên khoa';
 
   const pdfPatient = {
-    name: record.patientFullName,
-    gender: record.patientGender,
-    dob: record.patientDob,
-    phone: record.patientPhone,
-    address: record.patientAddress,
+    name: record.patientFullName || patientDetail?.fullName,
+    gender: record.patientGender || patientDetail?.gender,
+    dob: record.patientDob || patientDetail?.dateOfBirth,
+    phone: record.patientPhone || patientDetail?.phone,
+    address: record.patientAddress || patientDetail?.address,
+    bloodType: patientDetail?.bloodType,
+    height: patientDetail?.height,
+    weight: patientDetail?.weight,
+    bloodPressure: patientDetail?.bloodPressure,
+    pulse: patientDetail?.pulse,
+    allergies: patientDetail?.allergies,
+    medicalHistory: patientDetail?.medicalHistory || patientDetail?.chronicDiseases,
   };
 
   const issuedDate = new Date(record.createdAt).toLocaleDateString('vi-VN');
   const recordCode = `#${String(record.recordId).padStart(6, '0')}`;
 
   const prescriptionTableRows =
-    record.prescription?.items.map((item, idx) => ({
+    record.prescription?.items.map((item: any, idx: number) => ({
       index: idx + 1,
       name: item.medicineName,
       detail: item.dosage || '---',
@@ -297,11 +300,23 @@ export default function MedicalRecordDetail() {
       title: o.serviceName,
       content: [
         o.result!.resultData,
-        o.result!.conclusion ? `\nKết luận: ${o.result!.conclusion}` : '',
+        o.result!.conclusion ? `Kết luận: ${o.result!.conclusion}` : '',
       ]
         .filter(Boolean)
         .join('\n'),
+      price: o.price,
     }));
+
+  const pdfFeeItems = [
+    ...(consultationFeeAmount > 0
+      ? [{ label: `Phí khám · ${serviceDisplayName}`, amount: consultationFeeAmount }]
+      : []),
+    ...activeOrders
+      .filter((o) => (o.price ?? 0) > 0)
+      .map((o) => ({ label: o.serviceName, amount: o.price! })),
+  ];
+  const hasPdfFees = pdfFeeItems.length > 0;
+  const pdfTotalFee = pdfFeeItems.reduce((sum, item) => sum + item.amount, 0);
 
   const handleDownloadFullRecord = async () => {
     setPdfLoading(true);
@@ -320,24 +335,32 @@ export default function MedicalRecordDetail() {
 
   return (
     <main className="min-h-screen bg-slate-50/40 pb-16">
-      {/* Simple Header with Left Back Button */}
-      <SectionContainer className="max-w-6xl px-4 pt-8">
-        <div className="flex items-center gap-3">
-          <ChevronLeft 
-            size={28} 
-            className="cursor-pointer text-slate-400 hover:text-slate-600 transition-colors shrink-0" 
-            onClick={() => navigate(-1)} 
-          />
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-800">Chi tiết bệnh án</h1>
-            <p className="text-sm text-slate-500 mt-0.5">
-              Mã hồ sơ <span className="font-semibold text-slate-700">#{String(record.recordId).padStart(6, '0')}</span>
-            </p>
-          </div>
-          <div className="ml-auto flex items-center">
-             <StatusBadge status={record.status} />
-          </div>
-        </div>
+      <SectionContainer className="max-w-6xl px-4 pt-6">
+        <DetailPageHeader
+          title="Chi tiết bệnh án"
+          subtitle={`Bệnh nhân: ${record.patientFullName ?? '—'} • Khám ngày ${formatDate(record.createdAt)}`}
+          code={`#${String(record.recordId).padStart(6, '0')}`}
+          onBack={() => navigate(-1)}
+          backLabel="Về danh sách hồ sơ"
+          statusBadge={<StatusBadge status={record.status} />}
+          actions={
+            <div className="flex flex-wrap gap-2 justify-end">
+              <ActionButton
+                icon={<Printer size={14} />}
+                label="In bệnh án"
+                onClick={() => printPdfLayout(`pdf-record-${record.recordId}`, 'Chi tiết bệnh án')}
+                tone="sky"
+              />
+              <ActionButton
+                icon={pdfLoading ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+                label="Tải bệnh án"
+                onClick={handleDownloadFullRecord}
+                disabled={pdfLoading}
+                tone="emerald"
+              />
+            </div>
+          }
+        />
       </SectionContainer>
 
       <SectionContainer className="max-w-6xl px-4 pt-8 pb-4 md:pt-10">
@@ -385,7 +408,10 @@ export default function MedicalRecordDetail() {
                 </div>
                 <div className="flex items-start gap-3 text-[13px]">
                   <Stethoscope className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                  <p className="font-medium text-slate-600">{serviceDisplayName}</p>
+                  <p className="font-medium text-slate-600">
+                    {serviceDisplayName}
+                    <InlinePrice amount={consultationFeeAmount} />
+                  </p>
                 </div>
               </div>
             </div>
@@ -409,22 +435,6 @@ export default function MedicalRecordDetail() {
               ))}
             </div>
 
-            {/* PDF export */}
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-3">
-                Xuất hồ sơ
-              </p>
-              <PdfDownloadButton
-                onClick={handleDownloadFullRecord}
-                loading={pdfLoading}
-                label="Tải PDF bệnh án"
-                className="w-full"
-              />
-              <p className="text-[11px] text-slate-500 mt-2 leading-relaxed">
-                Gồm chẩn đoán, xét nghiệm, đơn thuốc và chi phí (nếu có).
-              </p>
-            </div>
-
             {/* Billing */}
             {hasBilling && (
               <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
@@ -433,18 +443,24 @@ export default function MedicalRecordDetail() {
                   <h3 className="text-[14px] font-bold text-slate-800">Thanh toán</h3>
                 </div>
                 <div className="space-y-2.5 text-[13px]">
-                  <div className="flex justify-between gap-2">
-                    <span className="text-slate-500">Phí khám</span>
-                    <span className="font-semibold text-slate-800 tabular-nums">
-                      {formatPrice(record.consultationFee ?? 0)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between gap-2">
-                    <span className="text-slate-500">Cận lâm sàng</span>
-                    <span className="font-semibold text-slate-800 tabular-nums">
-                      {formatPrice(record.serviceFee ?? 0)}
-                    </span>
-                  </div>
+                  {consultationFeeAmount > 0 && (
+                    <div className="flex justify-between gap-2">
+                      <span className="text-slate-500 truncate pr-2">Phí khám · {serviceDisplayName}</span>
+                      <span className="font-semibold text-slate-800 tabular-nums shrink-0">
+                        {formatPrice(consultationFeeAmount)}
+                      </span>
+                    </div>
+                  )}
+                  {activeOrders
+                    .filter((o) => (o.price ?? 0) > 0)
+                    .map((order) => (
+                      <div key={order.orderId} className="flex justify-between gap-2">
+                        <span className="text-slate-500 truncate pr-2">{order.serviceName}</span>
+                        <span className="font-semibold text-slate-800 tabular-nums shrink-0">
+                          {formatPrice(order.price!)}
+                        </span>
+                      </div>
+                    ))}
                   <div className="border-t border-slate-100 pt-2.5 flex justify-between items-center">
                     <span className="font-bold text-slate-700">Tổng cộng</span>
                     <span className="text-[18px] font-black text-primary-700 tabular-nums">
@@ -533,23 +549,17 @@ export default function MedicalRecordDetail() {
                           key={order.orderId}
                           className={`rounded-xl border border-slate-200/80 border-l-4 ${labCfg.accent} ${labCfg.bg} p-4 md:p-5`}
                         >
-                          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
-                            <div className="min-w-0 flex-1">
-                              <h3 className="font-bold text-slate-900 text-[15px]">
-                                {order.serviceName}
-                              </h3>
-                              <p className="text-[12px] font-medium text-slate-500 mt-1">
-                                {labCfg.label}
-                                {hasResult && order.result?.conclusion
-                                  ? ` · ${order.result.conclusion}`
-                                  : ''}
-                              </p>
-                            </div>
-                            {order.price != null && order.price > 0 && (
-                              <span className="text-[13px] font-bold text-slate-600 tabular-nums shrink-0">
-                                {formatPrice(order.price)}
-                              </span>
-                            )}
+                          <div className="mb-3">
+                            <h3 className="font-bold text-slate-900 text-[15px]">
+                              {order.serviceName}
+                              <InlinePrice amount={order.price} />
+                            </h3>
+                            <p className="text-[12px] font-medium text-slate-500 mt-1">
+                              {labCfg.label}
+                              {hasResult && order.result?.conclusion
+                                ? ` · ${order.result.conclusion}`
+                                : ''}
+                            </p>
                           </div>
 
                           {hasResult ? (
@@ -605,7 +615,7 @@ export default function MedicalRecordDetail() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                          {record.prescription!.items.map((item, i) => (
+                          {record.prescription!.items.map((item: any, i: number) => (
                             <tr key={i} className="hover:bg-slate-50/50 transition-colors">
                               <td className="px-4 py-3">
                                 <div className="flex items-center gap-2.5">
@@ -639,7 +649,7 @@ export default function MedicalRecordDetail() {
       {/* Hidden PDF layouts */}
       <ClinicPdfLayout
         id={`pdf-record-${record.recordId}`}
-        documentTitle="PHIẾU KHÁM BỆNH ÁN"
+        documentTitle="CHI TIẾT BỆNH ÁN"
         documentCode={recordCode}
         issuedDate={issuedDate}
         patient={pdfPatient}
@@ -650,11 +660,12 @@ export default function MedicalRecordDetail() {
         tableRows={prescriptionTableRows}
         notes={record.treatment || record.note}
         extraSections={labExtraSections}
-        consultationFee={hasBilling ? record.consultationFee : undefined}
-        serviceFee={hasBilling ? record.serviceFee : undefined}
-        totalAmount={hasBilling ? totalFee : undefined}
+        consultationFee={hasPdfFees && consultationFeeAmount > 0 ? consultationFeeAmount : undefined}
+        feeItems={hasPdfFees ? pdfFeeItems : undefined}
+        totalAmount={hasPdfFees ? pdfTotalFee : undefined}
         footerNote="Phiếu khám bệnh điện tử — ClinicPro. Vui lòng mang theo khi tái khám."
       />
+
     </main>
   );
 };
