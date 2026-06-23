@@ -14,12 +14,24 @@ interface ProfileInfoFormProps {
 }
 
 export const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, onSuccess }) => {
+  const formatDOB = (dob: any) => {
+    if (!dob) return '';
+    if (Array.isArray(dob)) {
+      const [y, m, d] = dob;
+      return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    }
+    if (typeof dob === 'string') {
+      return dob.split('T')[0];
+    }
+    return '';
+  };
+
   const [formData, setFormData] = useState<UpdateProfilePayload>({
     fullName: initialData.fullName,
     phone: initialData.phone || '',
     email: initialData.email || '',
     gender: initialData.gender || '',
-    dateOfBirth: initialData.dateOfBirth || '',
+    dateOfBirth: formatDOB(initialData.dateOfBirth),
     address: initialData.address || '',
     height: initialData.height ?? null,
     weight: initialData.weight ?? null,

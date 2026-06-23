@@ -8,6 +8,7 @@ interface AppointmentQueryParams {
   toDate?: string;
   tab?: string;          // 'today' | 'upcoming'
   source?: string;       // 'ONLINE' | 'WALK_IN'
+  serviceType?: string;  // 'EXAM' | 'LAB_TEST' | 'IMAGING'
   doctorId?: number;
   patientId?: number;
   page?: number;         // 0‑based
@@ -61,8 +62,6 @@ export const appointmentApi = {
     await axiosInstance.post('/appointments', {
       ...data,
       appointmentType: 'WALK_IN',
-      bookingMode: 'DOCTOR',
-      createdBy: 'STAFF'
     });
   },
 };

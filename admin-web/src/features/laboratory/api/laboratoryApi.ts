@@ -44,6 +44,10 @@ export const laboratoryApi = {
     await axiosInstance.patch(`/service-orders/${id}/status`, null, { params: { status, rejectionReason: reason } });
   },
 
+  createServiceOrder: async (data: { recordId: number; serviceId: number; orderedById: number }): Promise<void> => {
+    await axiosInstance.post('/service-orders', data);
+  },
+
   submitResult: async (data: unknown): Promise<void> => {
     await axiosInstance.post('/service-results', data);
   },

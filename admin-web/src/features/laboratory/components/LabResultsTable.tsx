@@ -47,7 +47,8 @@ export default function LabResultsTable({ data, onViewResult, loading = false, p
       render: (item) => (
         <div>
           <p className="font-medium text-slate-800">{item.patientName}</p>
-          <p className="text-xs text-slate-500">{formatDoctorName(item.doctorName)}</p>
+          <p className="text-xs text-slate-500">BS: {formatDoctorName(item.doctorName)}</p>
+          {item.enteredByName && <p className="text-xs text-primary-600 mt-0.5 font-medium">KTV: {item.enteredByName}</p>}
         </div>
       ),
     },

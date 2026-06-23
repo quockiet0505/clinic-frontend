@@ -48,13 +48,14 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
 
   const serviceOptions: FilterOption[] = [
     { value: 'ALL', label: 'Tất cả dịch vụ' },
-    { value: 'CONSULTATION', label: 'Khám bệnh' },
-    { value: 'TEST', label: 'Xét nghiệm' },
+    { value: 'EXAM', label: 'Khám bệnh' },
+    { value: 'LAB_TEST', label: 'Xét nghiệm' },
+    { value: 'IMAGING', label: 'Chẩn đoán hình ảnh' },
   ];
 
   const sourceOptions: FilterOption[] = [
     { value: 'ALL', label: 'Tất cả nguồn' },
-    { value: 'WALK_IN', label: 'Khách vãng lai' },
+    { value: 'WALK_IN', label: 'Đặt trực tiếp' },
     { value: 'ONLINE', label: 'Đặt online' },
   ];
 

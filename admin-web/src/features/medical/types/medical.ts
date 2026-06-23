@@ -1,25 +1,81 @@
-export type MedicalRecordStatus = 'IN_PROGRESS' | 'WAITING_RESULT' | 'DONE' | 'CANCELLED';
+export interface PrescriptionItem {
+  id?: number;
+  medicineId?: number;
+  medicineName: string;
+  unit: string;
+  quantity: number;
+  dosage: string;
+  price?: number;
+}
+
+export interface Prescription {
+  prescriptionId: number;
+  recordId: number;
+  items: PrescriptionItem[];
+  createdAt: string;
+}
+
+export interface ServiceResult {
+  resultId: number;
+  resultData: string;
+  conclusion: string;
+  attachmentUrl?: string;
+  enteredBy: string;
+  enteredAt: string;
+}
+
+export interface ServiceOrder {
+  orderId: number;
+  serviceId: number;
+  serviceName: string;
+  price?: number;
+  status: string;
+  orderedBy: string;
+  createdAt: string;
+  result?: ServiceResult;
+}
+
+export interface FollowUp {
+  followUpId: number;
+  doctorName: string;
+  scheduledDatetime: string;
+  note: string;
+  status: string;
+}
 
 export interface MedicalRecord {
   recordId: number;
   patientId: number;
   appointmentId?: number;
-  patientName: string; // Joined from patient
   mainDoctorId: number;
-  doctorName: string; // Joined from staff
+  mainDoctorName: string;
+  updatedByDoctorId?: number;
+  updatedByDoctorName?: string;
+  editReason?: string;
+  vitalsTaken?: boolean;
   diagnosis: string;
   treatment: string;
-  note: string;
-  status: MedicalRecordStatus;
+  note?: string;
+  status: 'IN_PROGRESS' | 'WAITING_RESULT' | 'DONE' | 'CANCELLED';
   createdAt: string;
-  
-  // Custom UI fields derived from appointment/vitals
-  queueNumber?: number;
-  checkinTime?: string;
-  vitalsTaken?: boolean;
-
+  updatedAt: string;
   consultationFee?: number;
   serviceFee?: number;
+  patientName?: string;
+  doctorName?: string;
+  queueNumber?: string;
+  checkinTime?: string;
+}
+
+export interface VitalSigns {
+  temperature?: number;
+  bloodPressure?: string;
+  pulse?: number;
+  weight?: number;
+  height?: number;
+  bloodType?: string;
+  allergies?: string;
+  chronicDiseases?: string;
 }
 
 export interface MedicalRecordDetail extends MedicalRecord {
@@ -31,19 +87,5 @@ export interface MedicalRecordDetail extends MedicalRecord {
   prescription?: any;
   serviceOrders?: any[];
   followUps?: any[];
-}
-
-export interface VitalSigns {
-  recordId: number;
-  weight: number;
-  bloodPressure: string;
-  pulse: number;
-}
-
-export interface PrescriptionItem {
-  id?: number; // UI only
-  medicineId: number;
-  medicationName: string;
-  dosage: string;
-  quantity: number;
+  vitalsTaken?: boolean;
 }

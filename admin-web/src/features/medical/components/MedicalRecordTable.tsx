@@ -44,7 +44,7 @@ export default function MedicalRecordTable({ data, onViewDetail, loading = false
           <p className="text-slate-800 font-medium">{rec.diagnosis}</p>
           <div className="flex items-center gap-2 mt-1">
             <Stethoscope size={12} className="text-blue-500" />
-            <span className="text-xs text-slate-500">{rec.doctorName}</span>
+            <span className="text-xs text-slate-500">{rec.mainDoctorName || 'Chưa phân công'}</span>
           </div>
         </div>
       ),

@@ -40,6 +40,7 @@ export default function AppointmentList() {
         toDate: toDate || undefined,
         tab: activeTab === 'all' ? undefined : activeTab,
         source: source === 'ALL' ? undefined : source,
+        serviceType: serviceAdvanced === 'ALL' ? undefined : serviceAdvanced,
         page: currentPage - 1,
         size: pageSize,
       });
@@ -79,13 +80,7 @@ export default function AppointmentList() {
 
   const handleBookWalkIn = async (data: any) => {
     try {
-      await appointmentApi.createWalkIn({
-        patientId: Number(data.patientId),
-        mainDoctorId: Number(data.mainDoctorId),
-        appointmentDate: data.appointmentDate,
-        timeStart: data.timeStart + ':00',
-        timeEnd: data.timeStart + ':00', // Time end is required by backend, just send start time
-      });
+      await appointmentApi.createWalkIn(data);
       toast.success('Tạo lịch khám Walk-in thành công!');
       fetchData();
       setIsBookOpen(false);

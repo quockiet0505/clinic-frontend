@@ -1,5 +1,5 @@
 import React from 'react';
-import { Eye, CheckCircle2, Clock, Calendar } from 'lucide-react';
+import { Eye, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Table, { Column } from '@/components/tables/Table';
 import { PrescriptionUI } from '../types/pharmacy';
@@ -48,22 +48,7 @@ export default function PrescriptionTable({ data, onViewDetails, loading = false
       key: 'doctorName',
       label: 'Bác sĩ kê đơn',
       className: 'w-[25%]',
-      render: (rx) => <p className="font-medium text-slate-700 text-sm">BS. {rx.doctorName}</p>,
-    },
-    {
-      key: 'status',
-      label: 'Trạng thái',
-      className: 'w-[15%]',
-      render: (rx) =>
-        rx.status === 'PENDING' ? (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-50 text-amber-600 border border-amber-200">
-            <Clock size={12} /> Chờ phát thuốc
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200">
-            <CheckCircle2 size={12} /> Đã phát
-          </span>
-        ),
+      render: (rx) => <p className="font-medium text-slate-700 text-sm">{rx.doctorName}</p>,
     },
     {
       key: 'actions',

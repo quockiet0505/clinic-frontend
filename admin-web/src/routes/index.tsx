@@ -22,6 +22,8 @@ import PatientDetails from '@/features/patients/pages/PatientDetails';
 
 // --- 3. CLINICAL & MEDICAL ---
 import ActiveVisits from '@/features/medical/pages/ActiveVisits';
+import TriageQueue from '@/features/medical/pages/TriageQueue';
+import TriageWorkspace from '@/features/medical/pages/TriageWorkspace';
 import ConsultationWorkspace from '@/features/medical/pages/ConsultationWorkspace';
 import MedicalRecordsList from '@/features/medical/pages/MedicalRecordsList';
 import MedicalRecordDetail from '@/features/medical/pages/MedicalRecordDetail';
@@ -165,6 +167,22 @@ export const router = createBrowserRouter([
       },
 
       // 3. CLINICAL
+      { 
+        path: 'medical/triage', 
+        element: (
+          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'STAFF']}>
+            <TriageQueue />
+          </RoleGuard>
+        ) 
+      },
+      { 
+        path: 'medical/triage/:id', 
+        element: (
+          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'STAFF']}>
+            <TriageWorkspace />
+          </RoleGuard>
+        ) 
+      },
       { 
         path: 'medical/active-visits', 
         element: (

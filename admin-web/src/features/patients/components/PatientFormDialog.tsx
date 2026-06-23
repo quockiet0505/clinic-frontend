@@ -10,9 +10,9 @@ const patientFields: FieldConfig[] = [
     { value: 'FEMALE', label: 'Nữ' },
     { value: 'OTHER', label: 'Khác' }
   ]},
-  { name: 'date_of_birth', label: 'Ngày sinh', type: 'date', required: true },
+  { name: 'dateOfBirth', label: 'Ngày sinh', type: 'date', required: true },
   { name: 'phone', label: 'Số điện thoại', type: 'text', required: true, placeholder: 'Ví dụ: 0901234567' },
-  { name: 'address', label: 'Địa chỉ', type: 'text', required: true, placeholder: 'Ví dụ: 123 Đường A, Quận 1, TP HCM' }
+  { name: 'address', label: 'Địa chỉ', type: 'text', required: true, placeholder: 'Ví dụ: 123 Đường A, Quận 1, TP HCM', colSpan: 2 }
 ];
 
 export default function PatientFormDialog({ isOpen, onClose, onSubmit, initialData }: any) {

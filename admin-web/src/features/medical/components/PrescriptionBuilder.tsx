@@ -12,7 +12,7 @@ export default function PrescriptionBuilder() {
 
   const handleAdd = () => {
     if (med && dosage && qty) {
-      setItems([...items, { id: Date.now(), medicineId: 1, medicationName: med, dosage, quantity: Number(qty) }]);
+      setItems([...items, { id: Date.now(), medicineId: 1, medicineName: med, dosage, quantity: Number(qty), unit: 'viên' }]);
       setMed(''); setDosage(''); setQty('');
     }
   };
@@ -84,7 +84,7 @@ export default function PrescriptionBuilder() {
                   <Pill size={18} />
                 </div>
                 <div>
-                  <p className="font-bold text-slate-900">{item.medicationName}</p>
+                  <div className="font-semibold text-slate-800">{item.medicineName}</div>
                   <p className="text-xs font-medium text-slate-500 mt-0.5">{item.dosage} • SL: {item.quantity}</p>
                 </div>
               </div>

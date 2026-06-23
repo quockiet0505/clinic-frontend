@@ -7,13 +7,11 @@ import toast from 'react-hot-toast';
 interface Props {
   prescriptionId: number;
   onBack: () => void;
-  onDispensed: () => void;
 }
 
-export default function PrescriptionDetail({ prescriptionId, onBack, onDispensed }: Props) {
+export default function PrescriptionDetail({ prescriptionId, onBack }: Props) {
   const [prescription, setPrescription] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [dispensing, setDispensing] = useState(false);
 
   const fetchDetail = () => {
     setLoading(true);
@@ -30,20 +28,6 @@ export default function PrescriptionDetail({ prescriptionId, onBack, onDispensed
   }, [prescriptionId]);
 
   const handlePrint = () => window.print();
-
-  const handleDispense = async () => {
-    setDispensing(true);
-    try {
-      await pharmacyApi.dispensePrescription(prescriptionId);
-      toast.success('Phát thuốc thành công');
-      fetchDetail();
-      onDispensed();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Lỗi phát thuốc');
-    } finally {
-      setDispensing(false);
-    }
-  };
 
   if (loading) return <div className="p-8 text-slate-500 font-medium text-center bg-white rounded-2xl border border-slate-200">Đang tải chi tiết đơn thuốc...</div>;
   if (!prescription) return <div className="p-8 text-rose-500 font-medium text-center bg-white rounded-2xl border border-rose-200">Không tìm thấy đơn thuốc.</div>;
@@ -84,17 +68,6 @@ export default function PrescriptionDetail({ prescriptionId, onBack, onDispensed
             <Printer size={14} className="mr-1.5" />
             In đơn
           </Button>
-
-          {prescription.status === 'PENDING' && (
-            <Button
-              onClick={handleDispense}
-              disabled={dispensing}
-              className="h-9 px-4 rounded-xl text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
-            >
-              <CheckCircle2 size={14} className="mr-1.5" />
-              {dispensing ? 'Đang xử lý...' : 'Phát thuốc'}
-            </Button>
-          )}
         </div>
       </div>
 
@@ -102,22 +75,10 @@ export default function PrescriptionDetail({ prescriptionId, onBack, onDispensed
       <div className="bg-white rounded-2xl shadow-sm border border-slate-200 flex-1 overflow-y-auto custom-scrollbar print:border-0 print:shadow-none print:rounded-none">
         <div className="max-w-3xl mx-auto p-8 print:p-0 space-y-6">
 
-          {/* TIÊU ĐỀ CHÍNH TRÊN CÙNG */}
           <div className="text-center">
             <h2 className="text-2xl font-bold tracking-tight text-slate-800 uppercase">
               ĐƠN THUỐC VÀ CHI PHÍ LÂM SÀNG
             </h2>
-            <div className="mt-2">
-              {prescription.status === 'PENDING' ? (
-                <span className="bg-amber-50 text-amber-600 px-3 py-0.5 rounded-full text-xs font-semibold border border-amber-200 print:hidden">
-                  Chờ phát thuốc
-                </span>
-              ) : (
-                <span className="bg-emerald-50 text-emerald-600 px-3 py-0.5 rounded-full text-xs font-semibold border border-emerald-200 print:hidden">
-                  Đã phát thuốc
-                </span>
-              )}
-            </div>
           </div>
 
           {/* CHẠY MẠCH NỘI DUNG TUẦN TỰ TRÊN MỘT MẶT PHẲNG NỀN TRẮNG */}
@@ -190,7 +151,7 @@ export default function PrescriptionDetail({ prescriptionId, onBack, onDispensed
               <div className="grid grid-cols-2 gap-x-8 gap-y-3 pl-2">
                 <div className="col-span-2">
                   <span className="text-slate-400 font-medium">Bác sĩ chỉ định khám:</span>
-                  <span className="ml-2 font-bold text-slate-800">BS. {prescription.doctorName || '—'}</span>
+                  <span className="ml-2 font-bold text-slate-800">{prescription.doctorName || '—'}</span>
                 </div>
                 <div className="col-span-2">
                   <span className="text-slate-400 font-medium">Chẩn đoán bệnh lý:</span>
@@ -302,7 +263,7 @@ export default function PrescriptionDetail({ prescriptionId, onBack, onDispensed
               </p>
               <div className="h-24" />
               <p className="font-semibold text-slate-800">
-                BS. {prescription.doctorName || '—'}
+                {prescription.doctorName || '—'}
               </p>
             </div>
           </div>

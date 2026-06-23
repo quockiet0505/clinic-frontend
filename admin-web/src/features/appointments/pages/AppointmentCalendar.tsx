@@ -71,9 +71,14 @@ export default function AppointmentCalendar() {
           setProviders(docs);
         } catch (e) {
           // Fallback: lấy từ appointments
-          const doctorNames = Array.from(new Set(appData.map(a => a.doctorName).filter(Boolean)));
-          const fallback = doctorNames.map((name, idx) => ({ id: `doc-${idx}`, name }));
-          setProviders(fallback);
+          const uniqueDoctorIds = Array.from(new Set(appData.map((a: any) => a.mainDoctorId).filter(Boolean)));
+          const fetchedDocs = await Promise.all(
+            uniqueDoctorIds.map(async (id: any) => {
+              const doc = await staffApi.getById(Number(id));
+              return { id: String(id), name: doc?.fullName || 'BS' };
+            })
+          );
+          setProviders(fetchedDocs);
         }
       } catch (error) {
         console.error('❌ Lỗi tải dữ liệu:', error);

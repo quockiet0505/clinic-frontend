@@ -13,7 +13,12 @@ export const patientApi = {
   getAllPaged: async (params?: PatientQueryParams): Promise<{ content: Patient[]; totalElements: number }> => {
     try {
       const res = await axiosInstance.get('/patients', { params });
-      return parsePagedResponse<Patient>(res.data);
+      const paged = parsePagedResponse<Patient>(res.data);
+      paged.content = paged.content.map(p => ({
+        ...p,
+        dateOfBirth: Array.isArray(p.dateOfBirth) ? p.dateOfBirth.map((n: number) => n.toString().padStart(2, '0')).join('-') : p.dateOfBirth
+      }));
+      return paged;
     } catch (e) {
       console.error(e);
       return { content: [], totalElements: 0 };
@@ -23,7 +28,11 @@ export const patientApi = {
   getById: async (id: number): Promise<Patient | null> => {
     try {
       const res = await axiosInstance.get(`/patients/${id}`);
-      return res.data.data;
+      const p = res.data.data;
+      if (p && Array.isArray(p.dateOfBirth)) {
+        p.dateOfBirth = p.dateOfBirth.map((n: number) => n.toString().padStart(2, '0')).join('-');
+      }
+      return p;
     } catch (e) {
       console.error(e);
       return null;

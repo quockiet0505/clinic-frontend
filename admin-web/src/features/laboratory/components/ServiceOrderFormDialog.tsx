@@ -3,6 +3,11 @@ import { FlaskConical } from 'lucide-react';
 import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
 import { settingsApi } from '@/features/settings/api/settingsApi';
 import { Service } from '@/features/settings/types/settings';
+import { medicalApi } from '@/features/medical/api/medicalApi';
+import { staffApi } from '@/features/staffs/api/staffApi';
+import { MedicalRecord } from '@/features/medical/types/medical';
+import { Staff } from '@/features/staffs/types/staff';
+import { useAuth } from '@/context/AuthContext';
 
 interface Props {
   isOpen: boolean;
@@ -11,7 +16,13 @@ interface Props {
 }
 
 export default function ServiceOrderFormDialog({ isOpen, onClose, onSubmit }: Props) {
+  const { user } = useAuth();
   const [services, setServices] = useState<Service[]>([]);
+  const [activeVisits, setActiveVisits] = useState<MedicalRecord[]>([]);
+  const [doctors, setDoctors] = useState<Staff[]>([]);
+
+  // Calculate default doctor ID
+  const defaultDoctorId = (user?.role === 'DOCTOR' && user?.id) ? String(user.id) : undefined;
 
   useEffect(() => {
     if (isOpen) {
@@ -22,28 +33,38 @@ export default function ServiceOrderFormDialog({ isOpen, onClose, onSubmit }: Pr
         );
         setServices(allowedServices);
       }).catch(console.error);
+
+      medicalApi.getActiveVisitsPaged({ size: 100 }).then((res) => {
+        setActiveVisits(res.content);
+      }).catch(console.error);
+
+      staffApi.getAllPaged({ size: 100, staffType: 'DOCTOR' }).then((res) => {
+        setDoctors(res.content);
+      }).catch(console.error);
     }
   }, [isOpen]);
 
   const fields: FieldConfig[] = [
     { 
-      name: 'patientName', 
-      label: 'Tên bệnh nhân / Mã bệnh án', 
-      type: 'text', 
+      name: 'recordId', 
+      label: 'Bệnh nhân (Hồ sơ đang khám)', 
+      type: 'combobox', 
       required: true, 
-      placeholder: 'Tìm kiếm bệnh nhân...',
+      options: activeVisits.map(v => ({ value: String(v.recordId), label: `${v.patientName} (#${v.recordId})` })),
+      placeholder: 'Tìm tên hoặc mã HS...',
     },
     { 
-      name: 'doctorName', 
+      name: 'orderedById', 
       label: 'Bác sĩ chỉ định', 
-      type: 'text', 
+      type: 'combobox', 
       required: true, 
-      placeholder: 'vd: BS. Nguyễn Văn A',
+      options: doctors.map(d => ({ value: String(d.staffId), label: d.fullName })),
+      placeholder: 'Tìm tên bác sĩ...',
     },
     { 
       name: 'serviceId', 
       label: 'Chọn dịch vụ (Xét nghiệm / CĐHA)', 
-      type: 'select', 
+      type: 'combobox', 
       required: true, 
       options: services.map(s => ({ value: String(s.serviceId), label: s.serviceName })),
       colSpan: 2,
@@ -51,8 +72,13 @@ export default function ServiceOrderFormDialog({ isOpen, onClose, onSubmit }: Pr
   ];
 
   const handleSubmit = (data: any) => {
-    // Chuyển serviceId thành number
-    onSubmit({ ...data, serviceId: Number(data.serviceId) });
+    // Chuyển string values thành number
+    onSubmit({
+      ...data,
+      recordId: Number(data.recordId),
+      orderedById: Number(data.orderedById),
+      serviceId: Number(data.serviceId),
+    });
   };
 
   return (
@@ -63,10 +89,11 @@ export default function ServiceOrderFormDialog({ isOpen, onClose, onSubmit }: Pr
       description="Chỉ định xét nghiệm hoặc chẩn đoán hình ảnh cho bệnh nhân."
       icon={<FlaskConical size={16} />}
       fields={fields}
+      initialData={defaultDoctorId ? { orderedById: defaultDoctorId } : undefined}
       onSubmit={handleSubmit}
       submitLabel="Tạo chỉ định"
       compact={true}
       columns={2}
     />
   );
-}
+}

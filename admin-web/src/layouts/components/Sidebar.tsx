@@ -48,8 +48,9 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = "http://local
     },
     {
       title: 'KHÁM BỆNH',
-      allowedRoles: ['ADMIN', 'DOCTOR'],
+      allowedRoles: ['ADMIN', 'DOCTOR', 'STAFF'],
       items: [
+        { name: 'Chuẩn bị khám', icon: ClipboardPlus, path: '/medical/triage' },
         { name: 'Đang khám', icon: Stethoscope, path: '/medical/active-visits' },
         { name: 'Hồ sơ bệnh án', icon: History, path: '/medical/records' }
       ]

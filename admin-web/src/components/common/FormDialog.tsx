@@ -4,8 +4,9 @@ import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import CustomSelect from './CustomSelect';
+import SelectReact from 'react-select';
 
-export type FieldType = 'text' | 'number' | 'date' | 'time' | 'textarea' | 'select' | 'password';
+export type FieldType = 'text' | 'number' | 'date' | 'time' | 'textarea' | 'select' | 'combobox' | 'password';
 
 export interface FieldConfig {
   name: string;
@@ -134,6 +135,34 @@ export default function FormDialog({
             ))}
           </CustomSelect>
         );
+      case 'combobox':
+        return (
+          <SelectReact
+            options={field.options}
+            value={field.options?.find(o => o.value === value) || null}
+            onChange={(selectedOption: any) => handleChange(field.name, selectedOption ? selectedOption.value : '')}
+            isSearchable
+            placeholder={field.placeholder || "Chọn hoặc gõ tìm kiếm..."}
+            classNamePrefix="react-select"
+            styles={{
+              control: (base) => ({
+                ...base,
+                height: compact ? '36px' : '44px',
+                minHeight: compact ? '36px' : '44px',
+                borderRadius: compact ? '0.75rem' : '1rem',
+                border: isInvalid ? '1px solid #ef4444' : '1px solid #e2e8f0',
+                boxShadow: 'none',
+                '&:hover': {
+                  borderColor: '#93c5fd'
+                }
+              }),
+              menu: (base) => ({
+                ...base,
+                zIndex: 9999
+              })
+            }}
+          />
+        );
       case 'textarea':
         return (
           <textarea
@@ -191,7 +220,7 @@ export default function FormDialog({
 
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={`${wide ? 'sm:max-w-[672px]' : 'sm:max-w-[500px]'} p-0 overflow-hidden border-0 rounded-[24px] shadow-2xl ${compact ? 'max-w-[480px]' : ''}`}>
+      <DialogContent className={`${wide ? 'sm:max-w-[672px]' : 'sm:max-w-[500px]'} p-0 border-0 rounded-[24px] shadow-2xl ${compact ? 'max-w-[480px]' : ''}`}>
         {/* ✅ TĂNG FONT CHO HEADER */}
         <div className={`${compact ? 'p-5' : 'p-6'} bg-primary-50 border-b border-primary-100 rounded-t-[24px]`}>
           {icon && <div className={`flex items-center gap-2 mb-2 text-primary-600 ${compact ? 'text-sm' : ''}`}>{icon}</div>}
@@ -201,7 +230,7 @@ export default function FormDialog({
           </DialogDescription>
         </div>
 
-        <div className={`${compact ? 'p-5' : 'p-6'} bg-white max-h-[60vh] overflow-y-auto custom-scrollbar`}>
+        <div className={`${compact ? 'p-5' : 'p-6'} bg-white custom-scrollbar ${fields.length > 5 ? 'max-h-[60vh] overflow-y-auto' : 'overflow-visible'}`}>
           <div className={`grid ${gridCols} gap-4`}>
             {renderBeforeFields?.({ formData, onChange: handleChange })}
             {fields.map(field => {

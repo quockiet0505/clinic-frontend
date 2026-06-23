@@ -9,12 +9,13 @@ import { formatDateTime } from '@/utils/formatters';
 
 interface Props {
   data: MedicalRecord[];
-  onConsult: (id: number) => void;
+  onConsult?: (id: number) => void;
+  onTriage?: (id: number) => void;
   loading?: boolean;
   pagination?: { page: number; size: number; total: number; onPageChange: (page: number) => void };
 }
 
-export default function ActiveVisitsTable({ data, onConsult, loading = false, pagination }: Props) {
+export default function ActiveVisitsTable({ data, onConsult, onTriage, loading = false, pagination }: Props) {
   const columns: Column<MedicalRecord>[] = [
     {
       key: 'queueNumber',
@@ -58,7 +59,7 @@ export default function ActiveVisitsTable({ data, onConsult, loading = false, pa
       render: (visit) => (
         <div className="flex items-center gap-2">
           <Stethoscope size={14} className="text-blue-500" />
-          <span className="text-slate-700">{visit.doctorName}</span>
+          <span className="text-slate-700">{visit.mainDoctorName || 'Chưa phân công'}</span>
         </div>
       ),
     },
@@ -85,11 +86,28 @@ export default function ActiveVisitsTable({ data, onConsult, loading = false, pa
       key: 'actions',
       label: 'Thao tác',
       className: 'w-[10%]',
-      render: (visit) => (
-        <Button onClick={() => onConsult(visit.recordId)} size="sm" className="h-9 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm">
-          Khám <ArrowRight size={14} className="ml-1.5" />
-        </Button>
-      ),
+      render: (visit) => {
+        if (onTriage) {
+          return (
+            <Button onClick={() => onTriage(visit.recordId)} size="sm" className="h-9 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm">
+              Đo sinh hiệu <ArrowRight size={14} className="ml-1.5" />
+            </Button>
+          );
+        }
+        if (onConsult) {
+          return (
+            <Button 
+              onClick={() => onConsult(visit.recordId)} 
+              size="sm" 
+              disabled={!visit.vitalsTaken}
+              className={`h-9 px-4 rounded-xl font-medium text-sm ${visit.vitalsTaken ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-slate-100 text-slate-400 cursor-not-allowed'}`}
+            >
+              Khám <ArrowRight size={14} className="ml-1.5" />
+            </Button>
+          );
+        }
+        return null;
+      },
     },
   ];
 

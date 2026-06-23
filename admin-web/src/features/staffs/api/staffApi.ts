@@ -24,7 +24,25 @@ interface LeaveRequestQueryParams extends BaseFilterParams {
 export const staffApi = {
   getAll: async (): Promise<Staff[]> => {
     const res = await axiosInstance.get('/staffs/all');
-    return res.data.data;
+    return res.data.data.map((doc: any) => {
+      if (doc && doc.imageUrl && doc.imageUrl.startsWith('/')) {
+        doc.imageUrl = `http://localhost:8080${doc.imageUrl}`;
+      }
+      return doc;
+    });
+  },
+
+  getById: async (id: number): Promise<Staff | null> => {
+    try {
+      const res = await axiosInstance.get(`/staffs/${id}`);
+      const doc = res.data.data;
+      if (doc && doc.imageUrl && doc.imageUrl.startsWith('/')) {
+        doc.imageUrl = `http://localhost:8080${doc.imageUrl}`;
+      }
+      return doc;
+    } catch {
+      return null;
+    }
   },
 
   getAllPaged: async (params?: StaffQueryParams): Promise<{ content: Staff[]; totalElements: number }> => {
@@ -33,6 +51,12 @@ export const staffApi = {
     if (!parsed.content.length && parsed.totalElements === 0 && res.data?.success === false) {
       console.error('getAllPaged staffs failed:', res.data?.message);
     }
+    parsed.content = parsed.content.map((doc: any) => {
+      if (doc && doc.imageUrl && doc.imageUrl.startsWith('/')) {
+        doc.imageUrl = `http://localhost:8080${doc.imageUrl}`;
+      }
+      return doc;
+    });
     return parsed;
   },
 

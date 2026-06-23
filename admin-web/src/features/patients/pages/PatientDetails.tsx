@@ -107,7 +107,7 @@ export default function PatientDetails() {
         </div>
 
         {/* MAIN CARD */}
-        <div className="overflow-hidden rounded-3xl bg-white shadow-xl shadow-slate-200/60 ring-1 ring-slate-200/50">
+        <div className="overflow-hidden rounded-3xl bg-white shadow-sm border border-slate-200/80">
           {/* Profile Header - MÀU NHẠT */}
           <div className="relative bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 px-8 py-7 text-slate-800">
             <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
@@ -216,7 +216,7 @@ export default function PatientDetails() {
         </div>
 
         {/* HISTORY TIMELINE CARD */}
-        <div className="overflow-hidden rounded-3xl bg-white shadow-lg shadow-slate-200/60 ring-1 ring-slate-200/50">
+        <div className="overflow-hidden rounded-3xl bg-white shadow-sm border border-slate-200/80">
           <div className="flex items-center gap-3 border-b border-slate-100 px-7 py-4">
             <BriefcaseMedical size={20} className="text-indigo-500" />
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-600">Lịch sử khám bệnh</h2>

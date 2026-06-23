@@ -39,4 +39,14 @@ export const medicalApi = {
       return null;
     }
   },
+
+  updateTriage: async (id: number, data: any): Promise<boolean> => {
+    try {
+      await axiosInstance.post(`/medical-records/${id}/triage`, data);
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  },
 };

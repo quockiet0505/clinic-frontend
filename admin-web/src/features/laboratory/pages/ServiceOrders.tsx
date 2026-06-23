@@ -126,9 +126,18 @@ export default function ServiceOrders() {
       <ServiceOrderFormDialog
         isOpen={isAddOpen}
         onClose={() => setIsAddOpen(false)}
-        onSubmit={() => {
-          fetchOrders();
-          setIsAddOpen(false);
+        onSubmit={async (data) => {
+          try {
+            await laboratoryApi.createServiceOrder({
+              recordId: data.recordId,
+              serviceId: data.serviceId,
+              orderedById: data.orderedById
+            });
+            await fetchOrders();
+            setIsAddOpen(false);
+          } catch (e) {
+            console.error(e);
+          }
         }}
       />
 

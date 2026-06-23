@@ -6,10 +6,50 @@ import VitalSignsForm from '../components/VitalSignsForm';
 import ConsultationForm from '../components/ConsultationForm';
 import PrescriptionBuilder from '../components/PrescriptionBuilder';
 
+import { medicalApi } from '../api/medicalApi';
+import { MedicalRecordDetail } from '../types/medical';
+
 export default function ConsultationWorkspace() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'notes' | 'prescriptions'>('notes');
+  const [record, setRecord] = useState<MedicalRecordDetail | null>(null);
+  const [patientVitals, setPatientVitals] = useState<VitalSigns | null>(null);
+
+  React.useEffect(() => {
+    if (id) {
+      medicalApi.getRecordDetail(Number(id)).then(res => {
+        if (res) {
+          setRecord(res);
+          // Fetch vitals
+          import('@/features/patients/api/patientApi').then(({ patientApi }) => {
+            patientApi.getById(res.patientId).then(p => {
+              if (p) {
+                setPatientVitals({
+                  height: p.height,
+                  weight: p.weight ? Number(p.weight) : undefined,
+                  bloodPressure: p.bloodPressure,
+                  pulse: p.pulse,
+                  bloodType: p.bloodType,
+                  allergies: p.allergies,
+                  chronicDiseases: p.medicalHistory,
+                });
+              }
+            });
+          });
+        }
+      });
+    }
+  }, [id]);
+
+  const patientInitials = record?.patientFullName ? record.patientFullName.charAt(0).toUpperCase() : 'U';
+  
+  const calculateAge = (dob?: string) => {
+    if (!dob) return '?';
+    const birthYear = new Date(dob).getFullYear();
+    const currentYear = new Date().getFullYear();
+    return currentYear - birthYear;
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
@@ -45,11 +85,11 @@ export default function ConsultationWorkspace() {
                 <h2 className="font-semibold text-slate-600 text-sm uppercase tracking-wider">Thông tin bệnh nhân</h2>
               </div>
               <div className="p-6 flex flex-col items-center text-center">
-                <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-2xl mb-3">L</div>
-                <h3 className="font-bold text-lg text-slate-800">Liam Anderson</h3>
+                <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-2xl mb-3">{patientInitials}</div>
+                <h3 className="font-bold text-lg text-slate-800">{record?.patientFullName || 'Đang tải...'}</h3>
                 <p className="text-sm text-slate-500">Hồ sơ #{id}</p>
                 <div className="flex gap-2 mt-3 text-xs font-medium text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-                  <span>Nam, 41</span> | <span className="text-rose-500">Nhóm máu: O+</span>
+                  <span>{record?.patientGender === 'MALE' ? 'Nam' : record?.patientGender === 'FEMALE' ? 'Nữ' : 'Khác'}, {calculateAge(record?.patientDob)} tuổi</span>
                 </div>
               </div>
             </div>
@@ -57,9 +97,49 @@ export default function ConsultationWorkspace() {
             <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm shrink-0">
               <div className="p-4 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
                 <Activity size={18} className="text-rose-600" />
-                <h2 className="font-semibold text-slate-600 text-sm uppercase tracking-wider">Chỉ số sinh tồn</h2>
+                <h2 className="font-semibold text-slate-600 text-sm uppercase tracking-wider">Sức khoẻ & Sinh tồn</h2>
               </div>
-              <div className="p-5"><VitalSignsForm /></div>
+              <div className="p-5">
+                {patientVitals ? (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-white p-3 rounded-xl border border-slate-100 flex items-center justify-between shadow-sm">
+                        <span className="text-sm font-medium text-slate-500">Huyết áp</span>
+                        <span className="font-bold text-slate-700">{patientVitals.bloodPressure || '--'}</span>
+                      </div>
+                      <div className="bg-white p-3 rounded-xl border border-slate-100 flex items-center justify-between shadow-sm">
+                        <span className="text-sm font-medium text-slate-500">Nhịp tim</span>
+                        <span className="font-bold text-slate-700">{patientVitals.pulse ? `${patientVitals.pulse} bpm` : '--'}</span>
+                      </div>
+                      <div className="bg-white p-3 rounded-xl border border-slate-100 flex items-center justify-between shadow-sm">
+                        <span className="text-sm font-medium text-slate-500">Cân nặng</span>
+                        <span className="font-bold text-slate-700">{patientVitals.weight ? `${patientVitals.weight} kg` : '--'}</span>
+                      </div>
+                      <div className="bg-white p-3 rounded-xl border border-slate-100 flex items-center justify-between shadow-sm">
+                        <span className="text-sm font-medium text-slate-500">Chiều cao</span>
+                        <span className="font-bold text-slate-700">{patientVitals.height ? `${patientVitals.height} cm` : '--'}</span>
+                      </div>
+                    </div>
+                    
+                    <div className="pt-3 border-t border-slate-100 space-y-3 mt-4">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs font-semibold uppercase text-slate-400">Nhóm máu</span>
+                        <span className="text-sm font-medium text-rose-600 bg-rose-50 w-fit px-2 py-0.5 rounded-md">{patientVitals.bloodType || 'Chưa có'}</span>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs font-semibold uppercase text-slate-400">Dị ứng</span>
+                        <span className="text-sm font-medium text-amber-700">{patientVitals.allergies || 'Không'}</span>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-xs font-semibold uppercase text-slate-400">Bệnh mãn tính</span>
+                        <span className="text-sm font-medium text-slate-700">{patientVitals.chronicDiseases || 'Không'}</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-500 text-center py-4">Đang tải thông tin...</p>
+                )}
+              </div>
             </div>
           </div>
 
