@@ -118,10 +118,14 @@ export const appointmentApi = {
       doctorImageUrl: item.doctorImageUrl?.startsWith('/') ? `http://localhost:8080${item.doctorImageUrl}` : item.doctorImageUrl,
       specialty: item.expertiseName || item.specialty || 'Chưa xác định',
       serviceName: item.serviceName || 'Khám chuyên khoa',
+      serviceType: item.serviceType,
       facility: 'Phòng khám Đa khoa',
       symptoms: item.note || item.symptoms || 'Không có triệu chứng',
       queueNumber: item.queueNumber,
       createdAt: item.createdAt || item.appointmentDate,
+      bookingMode: item.bookingMode,
+      isAiSuggested: item.isAiSuggested,
+      suggestedExpertiseId: item.suggestedExpertiseId,
     }));
   },
 

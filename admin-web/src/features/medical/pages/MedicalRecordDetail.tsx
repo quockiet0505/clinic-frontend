@@ -212,7 +212,7 @@ export default function MedicalRecordDetail() {
   }, [id]);
 
   if (loading) {
-    return (
+  return (
       <main className="min-h-screen bg-slate-50/40 pb-16">
         <SectionContainer className="max-w-6xl px-4 pt-8">
           <div className="flex items-center gap-3">
@@ -635,7 +635,7 @@ export default function MedicalRecordDetail() {
                           ))}
                         </tbody>
                       </table>
-                    </div>
+          </div>
                   </>
                 ) : (
                   <EmptyBlock message="Bác sĩ không kê đơn thuốc cho lần khám này." />

@@ -7,7 +7,7 @@ import {
   Settings, CircleDollarSign, Award, Building2, ChevronLeft,
   UserCircle, ReceiptText, CalendarOff, MessageSquareHeart, Bell,
   Truck, Bot, ShieldCheck, Layers,
-  TrendingDown, Tags, Undo2
+  TrendingDown, Tags, Undo2, HeartPulse,
 } from 'lucide-react';
 
 // 1. ĐỊNH NGHĨA PROPS CHO SIDEBAR
@@ -50,6 +50,7 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = "http://local
       title: 'KHÁM BỆNH',
       allowedRoles: ['ADMIN', 'DOCTOR'],
       items: [
+        { name: 'Chuẩn bị khám', icon: HeartPulse, path: '/medical/triage' },
         { name: 'Đang khám', icon: Stethoscope, path: '/medical/active-visits' },
         { name: 'Hồ sơ bệnh án', icon: History, path: '/medical/records' }
       ]

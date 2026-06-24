@@ -1,7 +1,7 @@
 import React from 'react';
-import { Eye, Calendar } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Calendar } from 'lucide-react';
 import Table, { Column } from '@/components/tables/Table';
+import { ViewButton } from '@/components/common/ActionButtons';
 import { PrescriptionUI } from '../types/pharmacy';
 import { formatDateTime } from '@/utils/formatters';
 import { Badge } from '@/components/ui/badge';
@@ -83,13 +83,7 @@ export default function PrescriptionTable({ data, onViewDetails, loading = false
       label: 'Thao tác',
       className: 'w-[15%] text-left',
       render: (rx) => (
-        <Button
-          onClick={() => onViewDetails(rx.prescriptionId)}
-          variant="ghost"
-          className="h-8 px-4 rounded-xl text-[13px] font-semibold text-violet-600 bg-violet-50/50 hover:bg-violet-100 hover:text-violet-700 transition-all hover:-translate-y-[1px]"
-        >
-          <Eye size={14} className="mr-1.5" /> Chi tiết
-        </Button>
+        <ViewButton onClick={() => onViewDetails(rx.prescriptionId)} />
       ),
     },
   ];

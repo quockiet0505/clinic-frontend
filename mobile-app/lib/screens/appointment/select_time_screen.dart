@@ -15,13 +15,6 @@ class SelectTimeScreen extends StatefulWidget {
 class _SelectTimeScreenState extends State<SelectTimeScreen> {
   int _selectedDateIndex = 0;
 
-  final List<String> _fixedMorningSlots = [
-    '08:00:00', '08:30:00', '09:00:00', '09:30:00', '10:00:00', '10:30:00', '11:00:00', '11:30:00'
-  ];
-  final List<String> _fixedAfternoonSlots = [
-    '13:30:00', '14:00:00', '14:30:00', '15:00:00', '15:30:00', '16:00:00', '16:30:00', '17:00:00'
-  ];
-
   List<Map<String, String>> _generateDates() {
     final List<Map<String, String>> dates = [];
     final now = DateTime.now();
@@ -342,18 +335,46 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
   }
 
   Widget _buildTimeGrid(AppointmentProvider provider) {
+    if (provider.availableSlots.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 20),
+        child: Center(
+          child: Text(
+            'Không có lịch trống trong ngày này',
+            style: TextStyle(color: Color(0xFF6B7280), fontSize: 14),
+          ),
+        ),
+      );
+    }
+
+    final morningSlots = provider.availableSlots.where((slot) {
+      final timeStr = slot['timeStart'] as String;
+      if (timeStr.isEmpty) return false;
+      final hour = int.tryParse(timeStr.split(':')[0]) ?? 0;
+      return hour < 12;
+    }).toList();
+
+    final afternoonSlots = provider.availableSlots.where((slot) {
+      final timeStr = slot['timeStart'] as String;
+      if (timeStr.isEmpty) return false;
+      final hour = int.tryParse(timeStr.split(':')[0]) ?? 0;
+      return hour >= 12;
+    }).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Morning
-        _buildSessionHeader(Icons.wb_sunny_rounded, 'Buổi sáng', const Color(0xFFFF8008)),
-        const SizedBox(height: 10),
-        _buildTimeGridView(_fixedMorningSlots, provider),
-        const SizedBox(height: 20),
-        // Afternoon
-        _buildSessionHeader(Icons.nights_stay_rounded, 'Buổi chiều', const Color(0xFF6366F1)),
-        const SizedBox(height: 10),
-        _buildTimeGridView(_fixedAfternoonSlots, provider),
+        if (morningSlots.isNotEmpty) ...[
+          _buildSessionHeader(Icons.wb_sunny_rounded, 'Buổi sáng', const Color(0xFFFF8008)),
+          const SizedBox(height: 10),
+          _buildTimeGridView(morningSlots, provider),
+          const SizedBox(height: 20),
+        ],
+        if (afternoonSlots.isNotEmpty) ...[
+          _buildSessionHeader(Icons.nights_stay_rounded, 'Buổi chiều', const Color(0xFF6366F1)),
+          const SizedBox(height: 10),
+          _buildTimeGridView(afternoonSlots, provider),
+        ],
       ],
     );
   }
@@ -372,46 +393,32 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     );
   }
 
-  Widget _buildTimeGridView(List<String> timeStrings, AppointmentProvider provider) {
-    final bool isMockMode = provider.availableSlots.isEmpty;
-    final displaySlots = isMockMode
-        ? [timeStrings[0], timeStrings[2], timeStrings[4], timeStrings[6]]
-        : timeStrings;
-
+  Widget _buildTimeGridView(List<Map<String, dynamic>> slots, AppointmentProvider provider) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
+        crossAxisCount: 3,
         childAspectRatio: 2.2,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
-      itemCount: displaySlots.length,
+      itemCount: slots.length,
       itemBuilder: (context, index) {
-        final timeStr = displaySlots[index];
-        bool isAvailable = false;
-        Map<String, dynamic> availableSlot = {};
-
-        if (!isMockMode) {
-          availableSlot = provider.availableSlots.firstWhere(
-            (slot) => (slot['timeStart'] as String).startsWith(timeStr),
-            orElse: () => <String, dynamic>{},
-          );
-          isAvailable = availableSlot.isNotEmpty;
-        } else {
-          isAvailable = false;
-        }
+        final slot = slots[index];
+        final timeStr = slot['timeStart'] as String;
+        final isAvailable = slot['isAvailable'] == true;
+        final doctorName = slot['doctorName'] as String?;
 
         final isSelected = isAvailable &&
             provider.selectedTimeSlot != null &&
-            provider.selectedTimeSlot!['timeStart'] == availableSlot['timeStart'];
+            provider.selectedTimeSlot!['timeStart'] == timeStr;
 
         return GestureDetector(
-          onTap: isAvailable ? () => provider.selectTimeSlot(availableSlot) : null,
+          onTap: isAvailable ? () => provider.selectTimeSlot(slot) : null,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
-            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
             decoration: BoxDecoration(
               gradient: isSelected
                   ? const LinearGradient(
@@ -434,15 +441,34 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                   ? [BoxShadow(color: const Color(0xFFFF8008).withValues(alpha: 0.4), blurRadius: 8, offset: const Offset(0, 3))]
                   : (isAvailable ? [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 4)] : []),
             ),
-            child: Text(
-              timeStr.substring(0, 5),
-              style: TextStyle(
-                fontSize: 13,
-                color: isSelected
-                    ? Colors.white
-                    : (isAvailable ? const Color(0xFF1F2937) : const Color(0xFFD1D5DB)),
-                fontWeight: isSelected ? FontWeight.bold : (isAvailable ? FontWeight.w600 : FontWeight.normal),
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  timeStr.length >= 5 ? timeStr.substring(0, 5) : timeStr,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isSelected
+                        ? Colors.white
+                        : (isAvailable ? const Color(0xFF1F2937) : const Color(0xFFD1D5DB)),
+                    fontWeight: isSelected ? FontWeight.bold : (isAvailable ? FontWeight.w600 : FontWeight.normal),
+                  ),
+                ),
+                if (provider.bookingMode == 'EXPERTISE' && doctorName != null && doctorName.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      doctorName,
+                      style: TextStyle(
+                        fontSize: 9,
+                        color: isSelected ? Colors.white.withValues(alpha: 0.9) : const Color(0xFF6B7280),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+              ],
             ),
           ),
         );

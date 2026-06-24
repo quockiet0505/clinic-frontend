@@ -214,19 +214,27 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
             </div>
 
             <div className="flex gap-4">
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${avatarGradient} flex items-center justify-center shrink-0 shadow-inner text-white font-black text-2xl overflow-hidden`}>
-                {appointment.doctorImageUrl && !imgError ? (
-                  <img src={appointment.doctorImageUrl} onError={() => setImgError(true)} alt="Bác sĩ" className="w-full h-full object-cover" />
-                ) : (
-                  <span>{initial}</span>
-                )}
-              </div>
+              {appointment.bookingMode === 'SERVICE' ? (
+                <div className="w-16 h-16 rounded-2xl bg-primary-50 border border-primary-100 flex items-center justify-center shrink-0 shadow-inner">
+                  <Activity className="w-8 h-8 text-primary-500" />
+                </div>
+              ) : (
+                <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${avatarGradient} flex items-center justify-center shrink-0 shadow-inner text-white font-black text-2xl overflow-hidden`}>
+                  {appointment.doctorImageUrl && !imgError ? (
+                    <img src={appointment.doctorImageUrl} onError={() => setImgError(true)} alt="Bác sĩ" className="w-full h-full object-cover" />
+                  ) : (
+                    <span>{initial}</span>
+                  )}
+                </div>
+              )}
               <div className="flex flex-col justify-center">
                 <h3 className="font-black text-slate-800 text-[18px] leading-tight mb-1">
-                  {appointment.doctorName}
+                  {appointment.bookingMode === 'SERVICE' ? (appointment.serviceName || 'Dịch vụ y tế') : (appointment.doctorName || 'Chưa gán bác sĩ')}
                 </h3>
-                <p className="text-primary-600 text-[14.5px] font-bold">{appointment.specialty}</p>
-                {appointment.serviceName && appointment.serviceType !== 'EXAM' && (
+                <p className="text-primary-600 text-[14.5px] font-bold">
+                  {appointment.bookingMode === 'SERVICE' ? 'Xét nghiệm / Chụp chiếu' : (appointment.specialty || 'Chuyên khoa')}
+                </p>
+                {appointment.bookingMode !== 'SERVICE' && appointment.serviceName && appointment.serviceType !== 'EXAM' && (
                    <p className="text-slate-500 text-[13px] font-medium mt-0.5">{appointment.serviceName}</p>
                 )}
               </div>

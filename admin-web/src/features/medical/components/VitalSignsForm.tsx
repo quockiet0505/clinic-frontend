@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
+import BloodTypeSelect from '@/components/common/BloodTypeSelect';
 import { VitalSigns } from '../types/medical';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function VitalSignsForm({ initialData, onChange }: { initialData?: VitalSigns, onChange?: (v: Partial<VitalSigns>) => void }) {
   const [vitals, setVitals] = useState<Partial<VitalSigns>>(initialData || { weight: undefined, bloodPressure: '', pulse: undefined, height: undefined, temperature: undefined } as any);
@@ -41,21 +41,10 @@ export default function VitalSignsForm({ initialData, onChange }: { initialData?
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="block mb-2 text-sm font-medium text-slate-700">Nhóm máu</label>
-            <select
+            <BloodTypeSelect
               value={vitals.bloodType || ''}
-              onChange={(e) => setVitals({...vitals, bloodType: e.target.value})}
-              className="w-full h-11 px-3 rounded-[16px] border border-slate-200 bg-white text-[14px] font-medium focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-colors"
-            >
-              <option value="">Chưa cập nhật</option>
-              <option value="A+">A+</option>
-              <option value="A-">A-</option>
-              <option value="B+">B+</option>
-              <option value="B-">B-</option>
-              <option value="AB+">AB+</option>
-              <option value="AB-">AB-</option>
-              <option value="O+">O+</option>
-              <option value="O-">O-</option>
-            </select>
+              onChange={(bloodType) => setVitals({ ...vitals, bloodType })}
+            />
           </div>
           <div className="space-y-2">
             <label className="block mb-2 text-sm font-medium text-slate-700">Dị ứng</label>

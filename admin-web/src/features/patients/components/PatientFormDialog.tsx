@@ -2,6 +2,7 @@
 import React from 'react';
 import { UserRound } from 'lucide-react';
 import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
+import { BLOOD_TYPE_OPTIONS } from '@/constants/bloodTypes';
 
 const patientFields: FieldConfig[] = [
   { name: 'fullName', label: 'Họ và tên', type: 'text', required: true, placeholder: 'Ví dụ: Nguyễn Văn A' },
@@ -19,13 +20,7 @@ const patientFields: FieldConfig[] = [
   { name: 'weight', label: 'Cân nặng (kg)', type: 'text', required: false, placeholder: 'Ví dụ: 65' },
   { name: 'bloodPressure', label: 'Huyết áp (mmHg)', type: 'text', required: false, placeholder: 'Ví dụ: 120/80' },
   { name: 'pulse', label: 'Nhịp tim (bpm)', type: 'text', required: false, placeholder: 'Ví dụ: 80' },
-  { name: 'bloodType', label: 'Nhóm máu', type: 'select', required: false, options: [
-    { value: '', label: 'Chưa rõ' },
-    { value: 'A', label: 'A' },
-    { value: 'B', label: 'B' },
-    { value: 'AB', label: 'AB' },
-    { value: 'O', label: 'O' }
-  ]},
+  { name: 'bloodType', label: 'Nhóm máu', type: 'select', required: false, placeholder: 'Chọn nhóm máu', options: BLOOD_TYPE_OPTIONS },
   { name: 'allergies', label: 'Dị ứng', type: 'textarea', required: false, placeholder: 'Ví dụ: Dị ứng Penicillin...', colSpan: 2 },
   { name: 'medicalHistory', label: 'Tiền sử bệnh lý', type: 'textarea', required: false, placeholder: 'Ví dụ: Tiểu đường, Cao huyết áp...', colSpan: 2 }
 ];

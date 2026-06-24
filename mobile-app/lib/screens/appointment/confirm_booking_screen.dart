@@ -2,6 +2,7 @@ import 'package:clinic_management_system/app_exports.dart';
 import 'package:clinic_management_system/utils/image_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
+import 'package:clinic_management_system/providers/home_provider.dart';
 import 'package:clinic_management_system/models/doctor_model.dart';
 import 'package:clinic_management_system/models/service_model.dart';
 import 'package:clinic_management_system/utils/currency_formatter.dart';
@@ -89,8 +90,8 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
       appBar: const GradientAppBar(
         title: 'Xác nhận Đặt lịch',
       ),
-      body: Consumer<AppointmentProvider>(
-        builder: (context, provider, child) {
+      body: Consumer2<AppointmentProvider, HomeProvider>(
+        builder: (context, provider, homeProvider, child) {
           final doctor = provider.selectedDoctor;
           final service = provider.selectedService;
           final specialty = provider.selectedSpecialty;
@@ -110,7 +111,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                       const SizedBox(height: 12),
                       if (doctor != null) _buildDoctorCard(doctor)
                       else if (service != null) _buildServiceCard(service)
-                      else if (specialty != null) _buildSpecialtyCard(specialty),
+                      else if (specialty != null) _buildSpecialtyCard(specialty, provider, homeProvider),
                       const SizedBox(height: 32),
 
                       // 2. Appointment Schedule Card
@@ -143,7 +144,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
                       // 4. Payment Summary Card
                       _buildSectionTitle('Thanh toán'),
                       const SizedBox(height: 12),
-                      _buildPaymentSummaryCard(doctor, service, specialty),
+                      _buildPaymentSummaryCard(doctor, service, specialty, provider, homeProvider),
                     ],
                   ),
                 ),
@@ -233,7 +234,16 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
     );
   }
 
-  Widget _buildSpecialtyCard(Map<String, dynamic> specialty) {
+  Widget _buildSpecialtyCard(Map<String, dynamic> specialty, AppointmentProvider provider, HomeProvider homeProvider) {
+    String subtitle = 'Khám chuyên khoa';
+    if (provider.selectedTimeSlot != null && provider.selectedTimeSlot!['doctorId'] != null) {
+      final doctorId = provider.selectedTimeSlot!['doctorId'];
+      final doctor = homeProvider.doctors.where((d) => d.id == doctorId).firstOrNull;
+      if (doctor != null) {
+        subtitle = 'BS. ${doctor.name}';
+      }
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -262,7 +272,7 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Khám chuyên khoa', style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
+                Text(subtitle, style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
                 const SizedBox(height: 4),
                 Text(specialty['expertiseName'] ?? '', style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold)),
               ],
@@ -306,11 +316,25 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
     );
   }
 
-  Widget _buildPaymentSummaryCard(DoctorModel? doctor, ServiceModel? service, Map<String, dynamic>? specialty) {
+  Widget _buildPaymentSummaryCard(DoctorModel? doctor, ServiceModel? service, Map<String, dynamic>? specialty, AppointmentProvider provider, HomeProvider homeProvider) {
     double fee = 0;
-    if (doctor != null) fee = doctor.consultationFee;
-    else if (service != null) fee = service.discountPrice ?? service.originalPrice;
-    else if (specialty != null) fee = 150000; // Default consultation fee if no doctor selected
+    if (doctor != null) {
+      fee = doctor.consultationFee;
+    } else if (service != null) {
+      fee = service.discountPrice ?? service.originalPrice;
+    } else if (specialty != null) {
+      if (provider.selectedTimeSlot != null && provider.selectedTimeSlot!['doctorId'] != null) {
+        final doctorId = provider.selectedTimeSlot!['doctorId'];
+        final doc = homeProvider.doctors.where((d) => d.id == doctorId).firstOrNull;
+        if (doc != null) {
+          fee = doc.consultationFee;
+        } else {
+          fee = 150000;
+        }
+      } else {
+        fee = 150000;
+      }
+    }
 
     return Container(
       padding: const EdgeInsets.all(20),

@@ -14,6 +14,10 @@ class AppointmentModel {
   final String? cancelReason;
   final String? appointmentType;
   final String? serviceName;
+  final String? bookingMode;
+  final bool? isAiSuggested;
+  final int? suggestedExpertiseId;
+  final String? serviceType;
 
   AppointmentModel({
     required this.appointmentId,
@@ -31,6 +35,10 @@ class AppointmentModel {
     this.cancelReason,
     this.appointmentType,
     this.serviceName,
+    this.bookingMode,
+    this.isAiSuggested,
+    this.suggestedExpertiseId,
+    this.serviceType,
   });
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
@@ -50,6 +58,10 @@ class AppointmentModel {
       cancelReason: json['cancelReason'],
       appointmentType: json['appointmentType'] ?? 'OFFLINE',
       serviceName: json['serviceName'],
+      bookingMode: json['bookingMode'],
+      isAiSuggested: json['isAiSuggested'],
+      suggestedExpertiseId: json['suggestedExpertiseId'],
+      serviceType: json['serviceType'],
     );
   }
 }

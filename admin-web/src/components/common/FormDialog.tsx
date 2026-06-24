@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import CustomSelect from './CustomSelect';
 import SelectReact from 'react-select';
 
-export type FieldType = 'text' | 'number' | 'date' | 'time' | 'textarea' | 'select' | 'combobox' | 'password';
+export type FieldType = 'text' | 'number' | 'date' | 'time' | 'textarea' | 'select' | 'combobox' | 'password' | 'checkbox';
 
 export interface FieldConfig {
   name: string;
@@ -133,6 +133,7 @@ export default function FormDialog({
             onChange={(e) => handleChange(field.name, e.target.value)}
             className="w-full"
             compact={compact}
+            placeholder={field.placeholder || 'Chọn...'}
           >
             {field.options?.map(opt => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -207,6 +208,21 @@ export default function FormDialog({
             placeholder={field.placeholder}
           />
         );
+      case 'checkbox':
+        return (
+          <div className="flex items-center gap-2 mt-2">
+            <input
+              type="checkbox"
+              id={field.name}
+              checked={!!value}
+              onChange={(e) => handleChange(field.name, e.target.checked)}
+              className="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
+            />
+            <label htmlFor={field.name} className="text-sm font-medium text-slate-700 cursor-pointer">
+              {field.label}
+            </label>
+          </div>
+        );
       default: // text
         return (
           <Input
@@ -241,9 +257,11 @@ export default function FormDialog({
               const colSpan = field.colSpan === 2 ? 'col-span-2' : 'col-span-1';
               return (
                 <div key={field.name} className={`space-y-1.5 ${colSpan}`}>
-                  <label className={`block ${compact ? 'text-sm font-semibold' : 'text-sm font-medium'} text-slate-700`}>
-                    {field.label} {field.required && <span className="text-red-500">*</span>}
-                  </label>
+                  {field.type !== 'checkbox' && (
+                    <label className={`block ${compact ? 'text-sm font-semibold' : 'text-sm font-medium'} text-slate-700`}>
+                      {field.label} {field.required && <span className="text-red-500">*</span>}
+                    </label>
+                  )}
                   {renderField(field)}
                   {field.required && touched[field.name] && !formData[field.name] && (
                     <p className={`text-red-500 mt-1 ${compact ? 'text-xs' : 'text-xs'}`}>

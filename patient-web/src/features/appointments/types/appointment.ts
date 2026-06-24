@@ -76,4 +76,7 @@ export interface AppointmentHistoryItem {
   symptoms: string; // note
   queueNumber?: number;
   createdAt: string;
+  bookingMode?: BookingMode;
+  isAiSuggested?: boolean;
+  suggestedExpertiseId?: number;
 }

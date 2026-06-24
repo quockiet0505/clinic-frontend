@@ -25,6 +25,8 @@ export interface Appointment {
   cancelReason?: string;
   cancelledBy?: 'PATIENT' | 'CLINIC';
   note?: string;
+  isDoctorBusy?: boolean;
+  queueNumber?: number;
 }
 
 export interface FollowUp {

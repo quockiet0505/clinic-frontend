@@ -64,7 +64,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
     final homeProvider = context.watch<HomeProvider>();
     final doctor = homeProvider.doctors.where((d) => d.id == appointment.mainDoctorId).firstOrNull;
     final avatarUrl = ImageUtils.fixImageUrl(appointment.doctorAvatar ?? doctor?.imageUrl);
-    final doctorName = appointment.doctorName ?? 'Bác sĩ';
+    final doctorName = appointment.doctorName ?? 'Chưa gán bác sĩ';
     final expertise = appointment.specialty ?? 'Chuyên khoa';
 
     String formattedDate = '';
@@ -114,7 +114,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
               ),
             const SizedBox(height: 20),
 
-            // Doctor Info Card
+            // Doctor/Service Info Card
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -128,24 +128,38 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.primary.withOpacity(0.2), width: 2),
+                      if (widget.appointment.bookingMode == 'SERVICE')
+                        Container(
+                          height: 70, width: 70,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppColors.primary.withOpacity(0.2), width: 2),
+                          ),
+                          child: const Icon(Icons.medical_services_outlined, color: AppColors.primary, size: 32),
+                        )
+                      else
+                        Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(color: AppColors.primary.withOpacity(0.2), width: 2),
+                          ),
+                          child: CircleAvatar(
+                            radius: 32,
+                            backgroundColor: Colors.grey[200],
+                            backgroundImage: NetworkImage(avatarUrl),
+                          ),
                         ),
-                        child: CircleAvatar(
-                          radius: 32,
-                          backgroundColor: Colors.grey[200],
-                          backgroundImage: NetworkImage(avatarUrl),
-                        ),
-                      ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(doctorName, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF1F2937))),
+                            Text(
+                              widget.appointment.bookingMode == 'SERVICE' ? (widget.appointment.serviceName ?? 'Dịch vụ') : doctorName, 
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF1F2937))
+                            ),
                             const SizedBox(height: 4),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -153,7 +167,10 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                                 color: const Color(0xFFF3F4F6),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Text(expertise, style: const TextStyle(fontSize: 13, color: Color(0xFF4B5563), fontWeight: FontWeight.w600)),
+                              child: Text(
+                                widget.appointment.bookingMode == 'SERVICE' ? 'Xét nghiệm / Chụp chiếu' : expertise, 
+                                style: const TextStyle(fontSize: 13, color: Color(0xFF4B5563), fontWeight: FontWeight.w600)
+                              ),
                             ),
                           ],
                         ),

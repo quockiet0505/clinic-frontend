@@ -81,6 +81,12 @@ export default function AppointmentFormDialog({ isOpen, onClose, onBook }: Props
       required: true,
       placeholder: 'Ví dụ: Đau đầu, chóng mặt, sốt cao... (Bắt buộc)',
       colSpan: 2,
+    },
+    {
+      name: 'isPriority',
+      label: 'Khách ưu tiên (Cấp cứu / Người già / VIP)',
+      type: 'checkbox',
+      colSpan: 2,
     }
   ];
 
@@ -101,6 +107,7 @@ export default function AppointmentFormDialog({ isOpen, onClose, onBook }: Props
       expertiseId: data.expertiseId ? Number(data.expertiseId) : undefined,
       serviceId: data.serviceId ? Number(data.serviceId) : undefined,
       mainDoctorId: data.mainDoctorId ? Number(data.mainDoctorId) : undefined,
+      isPriority: data.isPriority === true,
       appointmentType: 'WALK_IN',
       createdBy: user?.role === 'DOCTOR' ? 'DOCTOR' : 'STAFF',
       // We pass the current date and time so the backend accepts it.

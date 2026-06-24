@@ -54,8 +54,8 @@ export const appointmentApi = {
     await axiosInstance.patch(`/appointments/${id}/cancel`, null, { params: { reason } });
   },
 
-  checkIn: async (id: number): Promise<void> => {
-    await axiosInstance.patch(`/appointments/${id}/status`, null, { params: { status: 'CHECKED_IN' } });
+  checkIn: async (id: number, isPriority: boolean = false): Promise<void> => {
+    await axiosInstance.patch(`/appointments/${id}/status`, null, { params: { status: 'CHECKED_IN', isPriority } });
   },
 
   createWalkIn: async (data: any): Promise<void> => {
@@ -63,5 +63,29 @@ export const appointmentApi = {
       ...data,
       appointmentType: 'WALK_IN',
     });
+  },
+
+  transfer: async (id: number, newDoctorId: number): Promise<void> => {
+    await axiosInstance.patch(`/appointments/${id}/transfer`, null, { params: { newDoctorId } });
+  },
+
+  // ---- Queue Management (Doctor Workflow) ----
+  callPatient: async (id: number): Promise<void> => {
+    await axiosInstance.patch(`/appointments/${id}/queue/call`);
+  },
+  skipPatient: async (id: number): Promise<void> => {
+    await axiosInstance.patch(`/appointments/${id}/queue/skip`);
+  },
+  returnToQueue: async (id: number): Promise<void> => {
+    await axiosInstance.patch(`/appointments/${id}/queue/return`);
+  },
+  sendToLab: async (id: number): Promise<void> => {
+    await axiosInstance.patch(`/appointments/${id}/queue/send-to-lab`);
+  },
+  returnFromLab: async (id: number): Promise<void> => {
+    await axiosInstance.patch(`/appointments/${id}/queue/return-from-lab`);
+  },
+  complete: async (id: number): Promise<void> => {
+    await axiosInstance.patch(`/appointments/${id}/status`, null, { params: { status: 'COMPLETED' } });
   },
 };

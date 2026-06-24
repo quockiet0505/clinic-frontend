@@ -2,7 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Clock, Activity } from 'lucide-react';
 import { AppointmentFilterBar } from '../components/AppointmentFilterBar';
 import AppointmentFormDialog from '../components/AppointmentFormDialog';
+import TransferDoctorDialog from '../components/TransferDoctorDialog';
 import ActionReasonDialog from '@/components/common/ActionReasonDialog';
+import FormDialog from '@/components/common/FormDialog';
 import GradientButton from '@/components/common/GradientButton';
 import { Plus } from 'lucide-react';
 import { Appointment, AppointmentStatus } from '../types/appointment';
@@ -29,6 +31,8 @@ export default function AppointmentList() {
 
   const [isBookOpen, setIsBookOpen] = useState(false);
   const [cancelApt, setCancelApt] = useState<Appointment | null>(null);
+  const [transferApt, setTransferApt] = useState<Appointment | null>(null);
+  const [checkInAptId, setCheckInAptId] = useState<number | null>(null);
 
   // ---- Fetch data ----
   const fetchData = useCallback(async () => {
@@ -68,9 +72,17 @@ export default function AppointmentList() {
   const inProgressCount = (appointments || []).filter(a => a.status === 'IN_PROGRESS').length;
 
   // ---- Handlers ----
-  const handleCheckIn = async (id: number) => {
-    await appointmentApi.checkIn(id);
-    fetchData();
+  const handleCheckIn = async (data: any) => {
+    if (!checkInAptId) return;
+    try {
+      const isPriority = data.isPriority === true;
+      await appointmentApi.checkIn(checkInAptId, isPriority);
+      toast.success(isPriority ? 'Check-in ưu tiên thành công' : 'Check-in thành công');
+      fetchData();
+      setCheckInAptId(null);
+    } catch (error) {
+      toast.error('Có lỗi xảy ra khi Check-in');
+    }
   };
 
   const handleCancel = async (id: number, reason: string) => {
@@ -87,6 +99,79 @@ export default function AppointmentList() {
     } catch (error) {
       console.error('Failed to create walk-in appointment:', error);
       toast.error('Lỗi khi tạo lịch khám');
+    }
+  };
+
+  const handleTransfer = async (data: any) => {
+    if (!transferApt || !data.newDoctorId) return;
+    try {
+      await appointmentApi.transfer(transferApt.appointmentId, Number(data.newDoctorId));
+      toast.success('Chuyển bác sĩ thành công!');
+      fetchData();
+      setTransferApt(null);
+    } catch (error) {
+      toast.error('Có lỗi xảy ra khi chuyển bác sĩ');
+    }
+  };
+
+  // ---- Doctor Workflow Handlers ----
+  const handleCallPatient = async (id: number) => {
+    try {
+      await appointmentApi.callPatient(id);
+      toast.success('Đã gọi bệnh nhân vào khám');
+      fetchData();
+    } catch (error) {
+      toast.error('Lỗi khi gọi bệnh nhân');
+    }
+  };
+
+  const handleSkipPatient = async (id: number) => {
+    try {
+      await appointmentApi.skipPatient(id);
+      toast.success('Đã bỏ qua bệnh nhân này');
+      fetchData();
+    } catch (error) {
+      toast.error('Lỗi khi bỏ qua bệnh nhân');
+    }
+  };
+
+  const handleReturnToQueue = async (id: number) => {
+    try {
+      await appointmentApi.returnToQueue(id);
+      toast.success('Đã trả bệnh nhân về hàng đợi');
+      fetchData();
+    } catch (error) {
+      toast.error('Lỗi khi trả về hàng đợi');
+    }
+  };
+
+  const handleSendToLab = async (id: number) => {
+    try {
+      await appointmentApi.sendToLab(id);
+      toast.success('Đã chuyển bệnh nhân đi cận lâm sàng');
+      fetchData();
+    } catch (error) {
+      toast.error('Lỗi khi chuyển cận lâm sàng');
+    }
+  };
+
+  const handleReturnFromLab = async (id: number) => {
+    try {
+      await appointmentApi.returnFromLab(id);
+      toast.success('Đã xếp bệnh nhân vào lại hàng đợi ưu tiên');
+      fetchData();
+    } catch (error) {
+      toast.error('Lỗi khi xác nhận có kết quả');
+    }
+  };
+
+  const handleComplete = async (id: number) => {
+    try {
+      await appointmentApi.complete(id);
+      toast.success('Đã hoàn thành lượt khám');
+      fetchData();
+    } catch (error) {
+      toast.error('Lỗi khi hoàn thành lượt khám');
     }
   };
 
@@ -143,8 +228,15 @@ export default function AppointmentList() {
       <div className="flex-1 min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <AppointmentTable
           data={appointments}
-          onCheckIn={handleCheckIn}
+          onCheckIn={setCheckInAptId}
           onCancel={setCancelApt}
+          onTransfer={setTransferApt}
+          onCall={handleCallPatient}
+          onSkip={handleSkipPatient}
+          onReturnToQueue={handleReturnToQueue}
+          onSendToLab={handleSendToLab}
+          onReturnFromLab={handleReturnFromLab}
+          onComplete={handleComplete}
           loading={false}
           pagination={{
             page: currentPage,
@@ -162,6 +254,13 @@ export default function AppointmentList() {
         onBook={handleBookWalkIn}
       />
 
+      <TransferDoctorDialog
+        isOpen={!!transferApt}
+        onClose={() => setTransferApt(null)}
+        onTransfer={handleTransfer}
+        appointment={transferApt}
+      />
+
       <ActionReasonDialog
         isOpen={!!cancelApt}
         onClose={() => setCancelApt(null)}
@@ -176,6 +275,23 @@ export default function AppointmentList() {
         reasonLabel="Lý do hủy"
         confirmText="Xác nhận hủy"
         confirmColor="rose"
+      />
+
+      <FormDialog
+        open={!!checkInAptId}
+        onClose={() => setCheckInAptId(null)}
+        title="Check-in Bệnh nhân"
+        description="Xác nhận bệnh nhân đã đến phòng khám."
+        fields={[
+          {
+            name: 'isPriority',
+            label: 'Khách ưu tiên (Cấp cứu / Người già / VIP)',
+            type: 'checkbox'
+          }
+        ]}
+        onSubmit={handleCheckIn}
+        submitLabel="Xác nhận Check-in"
+        compact
       />
     </div>
   );

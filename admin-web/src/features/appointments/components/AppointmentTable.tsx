@@ -1,15 +1,23 @@
 import React from 'react';
-import { Clock, Globe, UserRound, Calendar, Sparkles } from 'lucide-react';
+import { Clock, Globe, UserRound, Calendar, Sparkles, AlertTriangle } from 'lucide-react';
 import Table, { Column } from '@/components/tables/Table';
 import StatusBadge from '@/components/common/StatusBadge';
 import { Appointment, getBookingModeLabel } from '../types/appointment';
 import { formatDateTime } from '@/utils/formatters';
-import { CheckInButton, CancelButton } from '@/components/common/ActionButtons';
+import { CheckInButton, CancelButton, TransferButton, CallPatientButton, SkipPatientButton, SendToLabButton, ReturnFromLabButton, CompleteButton, ReturnToQueueButton } from '@/components/common/ActionButtons';
+import { useAuth } from '@/context/AuthContext';
 
 interface Props {
   data: Appointment[];
   onCheckIn: (id: number) => void;
   onCancel: (apt: Appointment) => void;
+  onTransfer?: (apt: Appointment) => void;
+  onCall?: (id: number) => void;
+  onSkip?: (id: number) => void;
+  onReturnToQueue?: (id: number) => void;
+  onSendToLab?: (id: number) => void;
+  onReturnFromLab?: (id: number) => void;
+  onComplete?: (id: number) => void;
   loading?: boolean;
   pagination?: {
     page: number;
@@ -19,18 +27,49 @@ interface Props {
   };
 }
 
-export default function AppointmentTable({ data, onCheckIn, onCancel, loading = false, pagination }: Props) {
+export default function AppointmentTable({ 
+  data, onCheckIn, onCancel, onTransfer, 
+  onCall, onSkip, onReturnToQueue, onSendToLab, onReturnFromLab, onComplete,
+  loading = false, pagination 
+}: Props) {
+  const { user } = useAuth();
+  const isDoctor = user?.role === 'DOCTOR';
+  const isStaffOrAdmin = user?.role === 'STAFF' || user?.role === 'ADMIN';
   const columns: Column<Appointment>[] = [
     {
       key: 'appointmentType',
       label: 'Nguồn',
-      className: 'w-[8%]',
+      className: 'w-[10%]',
       render: (item) =>
         item.appointmentType === 'ONLINE' ? (
-          <Globe size={20} className="text-indigo-600" />
+          <div className="flex items-center gap-1.5 text-indigo-600">
+            <Globe size={16} />
+            <span className="text-xs font-semibold">Online</span>
+          </div>
         ) : (
-          <UserRound size={20} className="text-slate-400" />
+          <div className="flex items-center gap-1.5 text-slate-500">
+            <UserRound size={16} />
+            <span className="text-xs font-semibold">Trực tiếp</span>
+          </div>
         ),
+    },
+    {
+      key: 'queueNumber',
+      label: 'STT',
+      className: 'w-[8%]',
+      render: (item) => (
+        <div className="font-bold text-lg text-slate-700">
+          {item.queueNumber !== null && item.queueNumber !== undefined ? (
+            item.queueNumber === 0 ? (
+              <span className="text-amber-600 flex items-center gap-1 text-sm"><AlertTriangle size={14}/> Ưu tiên</span>
+            ) : (
+              `#${item.queueNumber}`
+            )
+          ) : (
+            <span className="text-slate-300 text-sm">—</span>
+          )}
+        </div>
+      ),
     },
     {
       key: 'appointmentDate',
@@ -54,21 +93,16 @@ export default function AppointmentTable({ data, onCheckIn, onCancel, loading = 
         <div>
           <p className="font-medium text-slate-800">{item.patientName}</p>
           <p className="text-xs text-slate-500 mt-0.5">ID: PAT-{item.patientId}</p>
-        </div>
-      ),
-    },
-    {
-      key: 'bookingMode',
-      label: 'Loại đặt',
-      className: 'w-[10%]',
-      render: (item) => (
-        <div className="text-xs">
-          <p className="font-semibold text-slate-700">{getBookingModeLabel(item.bookingMode)}</p>
-          {item.isAiSuggested && (
-            <p className="text-violet-600 flex items-center gap-1 mt-0.5">
-              <Sparkles size={12} /> AI gợi ý
-            </p>
-          )}
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+              {getBookingModeLabel(item.bookingMode)}
+            </span>
+            {item.isAiSuggested && (
+              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-violet-50 text-violet-600 flex items-center gap-0.5">
+                <Sparkles size={10} /> AI gợi ý
+              </span>
+            )}
+          </div>
         </div>
       ),
     },
@@ -84,7 +118,14 @@ export default function AppointmentTable({ data, onCheckIn, onCancel, loading = 
               {item.appointmentDate} • {item.timeStart?.substring(0, 5)}
             </span>
           </div>
-          <p className="text-sm text-slate-600 mt-1">{item.doctorName || 'Chưa gán bác sĩ'}</p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-sm text-slate-600">{item.doctorName || 'Chưa gán bác sĩ'}</p>
+            {item.isDoctorBusy && (
+              <span className="flex items-center gap-1 text-[10px] font-bold text-rose-600 bg-rose-50 px-1.5 py-0.5 rounded" title="Bác sĩ có lịch nghỉ bận vào ngày này">
+                <AlertTriangle size={12} /> Bận
+              </span>
+            )}
+          </div>
           {item.expertiseName && (
             <p className="text-xs text-slate-500 mt-0.5">Khoa: {item.expertiseName}</p>
           )}
@@ -117,12 +158,36 @@ export default function AppointmentTable({ data, onCheckIn, onCancel, loading = 
       label: 'Thao tác',
       className: 'w-[20%]',
       render: (item) => (
-        <div className="flex gap-2">
-          {['PENDING', 'CONFIRMED'].includes(item.status) && (
+        <div className="flex flex-wrap gap-2">
+          {/* Staff/Admin Actions */}
+          {isStaffOrAdmin && ['PENDING', 'CONFIRMED'].includes(item.status) && (
             <CheckInButton onClick={() => onCheckIn(item.appointmentId)} />
           )}
-          {!['COMPLETED', 'CANCELLED', 'NO_SHOW'].includes(item.status) && (
+          {isStaffOrAdmin && ['PENDING', 'CONFIRMED', 'CHECKED_IN'].includes(item.status) && onTransfer && (
+            <TransferButton onClick={() => onTransfer(item)} />
+          )}
+          {isStaffOrAdmin && ['SKIPPED'].includes(item.status) && onReturnToQueue && (
+            <ReturnToQueueButton onClick={() => onReturnToQueue(item.appointmentId)} />
+          )}
+          {isStaffOrAdmin && ['WAITING_RESULT'].includes(item.status) && onReturnFromLab && (
+            <ReturnFromLabButton onClick={() => onReturnFromLab(item.appointmentId)} />
+          )}
+          {isStaffOrAdmin && !['COMPLETED', 'CANCELLED', 'NO_SHOW'].includes(item.status) && (
             <CancelButton onClick={() => onCancel(item)} />
+          )}
+
+          {/* Doctor Actions */}
+          {isDoctor && ['CHECKED_IN', 'SKIPPED'].includes(item.status) && onCall && (
+            <CallPatientButton onClick={() => onCall(item.appointmentId)} />
+          )}
+          {isDoctor && ['CHECKED_IN', 'IN_PROGRESS'].includes(item.status) && onSkip && (
+            <SkipPatientButton onClick={() => onSkip(item.appointmentId)} />
+          )}
+          {isDoctor && ['IN_PROGRESS'].includes(item.status) && onSendToLab && (
+            <SendToLabButton onClick={() => onSendToLab(item.appointmentId)} />
+          )}
+          {isDoctor && ['IN_PROGRESS'].includes(item.status) && onComplete && (
+            <CompleteButton onClick={() => onComplete(item.appointmentId)} />
           )}
         </div>
       ),

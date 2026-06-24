@@ -15,9 +15,12 @@ export default function StatusBadge({ status }: Props) {
   } else if (['PENDING', 'ORDERED', 'UNPAID'].includes(s)) {
     color = 'bg-amber-100 text-amber-700 border-amber-200';
     Icon = Clock;
-  } else if (['IN_PROGRESS', 'PROCESSING', 'CHECKED_IN'].includes(s)) {
+  } else if (['CONFIRMED'].includes(s)) {
+    color = 'bg-indigo-100 text-indigo-700 border-indigo-200';
+    Icon = CheckCircle2;
+  } else if (['IN_PROGRESS', 'PROCESSING', 'CHECKED_IN', 'WAITING_RESULT'].includes(s)) {
     color = 'bg-blue-100 text-blue-700 border-blue-200';
-  } else if (['CANCELLED', 'REJECTED', 'NO_SHOW', 'MISSED', 'REFUNDED'].includes(s)) {
+  } else if (['CANCELLED', 'REJECTED', 'NO_SHOW', 'MISSED', 'REFUNDED', 'SKIPPED'].includes(s)) {
     color = 'bg-rose-100 text-rose-700 border-rose-200';
     Icon = XCircle;
   }
@@ -27,9 +30,12 @@ export default function StatusBadge({ status }: Props) {
       DONE: 'Hoàn thành', COMPLETED: 'Hoàn thành',
       IN_PROGRESS: 'Đang khám', PROCESSING: 'Đang xử lý',
       WAITING_RESULT: 'Chờ kết quả',
-      PENDING: 'Chờ khám', ORDERED: 'Đã đặt',
+      PENDING: 'Chờ xác nhận', ORDERED: 'Đã đặt',
+      CONFIRMED: 'Đã xác nhận',
       CANCELLED: 'Đã huỷ', REJECTED: 'Từ chối', REFUNDED: 'Hoàn tiền',
-      CHECKED_IN: 'Đã điểm danh',
+      CHECKED_IN: 'Đã Check-in',
+      NO_SHOW: 'Vắng mặt',
+      SKIPPED: 'Bị bỏ qua',
       ACTIVE: 'Đang h.động'
     };
     return map[s] || s;

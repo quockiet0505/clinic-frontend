@@ -355,8 +355,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   Widget _buildCard(AppointmentModel apt, HomeProvider homeProvider) {
     final doctor = homeProvider.doctors.where((d) => d.id == apt.mainDoctorId).firstOrNull;
     final avatarUrl = ImageUtils.fixImageUrl(apt.doctorAvatar ?? doctor?.imageUrl);
-    final doctorName = apt.doctorName ?? 'Bác sĩ';
+    final doctorName = apt.doctorName ?? 'Chưa gán bác sĩ';
     final expertise = apt.specialty ?? 'Chuyên khoa';
+    final isService = apt.bookingMode == 'SERVICE';
 
     String formattedDate = '';
     try {
@@ -442,18 +443,29 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFFE5E7EB), width: 1.5),
+            if (isService)
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFE5E7EB), width: 1.5),
+                ),
+                child: const Icon(Icons.medical_services_outlined, color: AppColors.primary, size: 28),
+              )
+            else
+              Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFE5E7EB), width: 1.5),
+                ),
+                child: CircleAvatar(
+                  radius: 26,
+                  backgroundColor: Colors.grey[100],
+                  backgroundImage: NetworkImage(avatarUrl),
+                ),
               ),
-              child: CircleAvatar(
-                radius: 26,
-                backgroundColor: Colors.grey[100],
-                backgroundImage: NetworkImage(avatarUrl),
-              ),
-            ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
@@ -467,13 +479,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              doctorName, 
+                              isService ? (apt.serviceName ?? 'Dịch vụ') : doctorName, 
                               style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Color(0xFF1F2937), letterSpacing: -0.3),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 2),
-                            Text(expertise, style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280))),
+                            Text(isService ? 'Xét nghiệm / Chụp chiếu' : expertise, style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280))),
                           ],
                         ),
                       ),

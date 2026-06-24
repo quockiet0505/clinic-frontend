@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Activity, Stethoscope, BriefcaseMedical, FileText } from 'lucide-react';
+import { Activity, Stethoscope, BriefcaseMedical, FileText, Sparkles } from 'lucide-react';
 import { FormSearchModal, FormTextarea } from '@/components/common';
 import { TimeSlotPicker } from './TimeSlotPicker';
 import { appointmentApi } from '../api/appointmentApi';
@@ -304,6 +304,18 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
 
   return (
     <div className="flex flex-col gap-8">
+      {formData.isAiSuggested && formData.suggestedExpertiseId && (
+        <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 flex items-start gap-3">
+          <Sparkles className="w-5 h-5 text-violet-600 mt-0.5 shrink-0" />
+          <div>
+            <h4 className="text-sm font-bold text-violet-900">Gợi ý từ Trợ lý AI</h4>
+            <p className="text-xs text-violet-700 mt-1 leading-relaxed">
+              Dựa trên triệu chứng của bạn, AI đã tự động chọn chuyên khoa phù hợp. Bạn có thể thay đổi nếu muốn.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col gap-7">
         {showExpertise && (
           <FormSearchModal

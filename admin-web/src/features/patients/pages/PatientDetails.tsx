@@ -25,6 +25,7 @@ import PatientHistoryTimeline from '../components/PatientHistoryTimeline';
 import PatientFormDialog from '../components/PatientFormDialog';
 import { patientApi } from '../api/patientApi';
 import DetailPageHeader, { IconAction } from '@/components/common/DetailPageHeader';
+import { formatBloodType } from '@/constants/bloodTypes';
 
 export default function PatientDetails() {
   const { id } = useParams();
@@ -41,7 +42,7 @@ export default function PatientDetails() {
         if (data) {
           setPatient({
             ...data,
-            bloodType: data.bloodType || 'Chưa cập nhật',
+            bloodType: data.bloodType || '',
             allergies: data.allergies || 'Chưa cập nhật',
             chronicDiseases: data.chronicDiseases || 'Chưa cập nhật',
             recentVisits: data.recentVisits || [],
@@ -240,7 +241,7 @@ export default function PatientDetails() {
                   <HealthCard
                     icon={<Droplet className="w-4 h-4" />}
                     label="Nhóm máu"
-                    value={patient.bloodType}
+                    value={formatBloodType(patient.bloodType)}
                     tone="rose"
                   />
                   <HealthCard
