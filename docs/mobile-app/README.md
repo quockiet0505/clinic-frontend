@@ -11,7 +11,7 @@ Tài liệu dự án Ứng dụng Di động dành cho hệ sinh thái Clinic Ma
 - **Local Database:** SharedPreferences / Hive (cho caching).
 - **Network:** Http / Dio.
 
-## 📅 Đặt lịch khám
+## 📅 Đặt lịch khám & Quản lý lịch hẹn
 
 | Luồng | `bookingMode` | Slot API |
 |-------|---------------|----------|
@@ -19,9 +19,12 @@ Tài liệu dự án Ứng dụng Di động dành cho hệ sinh thái Clinic Ma
 | Chọn chuyên khoa | `EXPERTISE` | `expertiseId` + `date` (slot có `doctorId`) |
 | Chọn dịch vụ | `SERVICE` | `serviceId` + `date` |
 
-- Provider: `lib/providers/appointment_provider.dart`
-- Service: `lib/services/booking_service.dart` → `POST /appointments` với `suggestedExpertiseId`, `isAiSuggested`
-- AI gợi ý: `applyAiSuggestion()` trên provider
+- **Provider:** `lib/providers/appointment_provider.dart`
+- **Service:** `lib/services/booking_service.dart` → `POST /appointments` với `suggestedExpertiseId`, `isAiSuggested`.
+- **AI gợi ý:** `applyAiSuggestion()` trên provider.
+- **Slot động:** Màn hình `select_time_screen.dart` đã loại bỏ dữ liệu mock, sử dụng hoàn toàn danh sách slot trả về từ API. Đối với luồng `EXPERTISE`, slot sẽ hiển thị kèm tên bác sĩ được hệ thống tự động gán.
+- **Tính phí động:** Màn hình `confirm_booking_screen.dart` tự động lấy `consultationFee` của bác sĩ được gán (nếu có) thay vì dùng giá cứng.
+- **Hiển thị lịch sử:** `AppointmentModel` được cập nhật thêm các trường `bookingMode`, `isAiSuggested`, `suggestedExpertiseId`, `serviceType`. Trong màn hình danh sách và chi tiết lịch sử, nếu là lịch `SERVICE`, ứng dụng sẽ hiển thị icon dịch vụ thay vì avatar bác sĩ.
 
 ## 🤖 AI Chat
 

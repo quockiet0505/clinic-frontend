@@ -21,8 +21,11 @@ Tài liệu này bao quát các thông tin tổng quan, công nghệ và tiêu c
 | Theo dịch vụ | `/appointments/book?serviceId=&mode=service` | `SERVICE` |
 | Từ AI (gợi ý khoa) | `?expertiseId=&suggestedExpertiseId=&isAiSuggested=1` | `EXPERTISE` |
 
-- Slot: `GET /appointments/slots?date=&doctorId|expertiseId|serviceId=`
-- Tạo lịch: `POST /appointments` với `bookingMode`, `suggestedExpertiseId`, `isAiSuggested`
+- **Slot động:** Sử dụng API `GET /appointments/slots?date=&doctorId|expertiseId|serviceId=` để lấy danh sách khung giờ trống (đã loại trừ lịch nghỉ lễ, lịch nghỉ phép của bác sĩ và các lịch đã đặt).
+- **Tạo lịch:** `POST /appointments` truyền các trường `bookingMode`, `suggestedExpertiseId`, `isAiSuggested`.
+- **UI/UX:**
+  - Hiển thị Badge **"✨ AI Gợi ý"** trên form đặt lịch nếu bệnh nhân đi từ luồng Chatbot.
+  - Trong lịch sử khám (`AppointmentCard`), phân biệt hiển thị: nếu là `SERVICE` sẽ hiển thị icon dịch vụ thay vì avatar bác sĩ.
 
 ## 🤖 AI Chatbot
 

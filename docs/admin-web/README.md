@@ -12,14 +12,34 @@ Tài liệu này bao quát các thông tin tổng quan, công nghệ và tiêu c
 - **State Management:** React Query (cho API State), Context API (cho Global State cục bộ).
 - **Form & Validation:** React Hook Form + Zod.
 
-## 📋 Quản lý lịch hẹn
+## 📋 Quản lý lịch hẹn & Hàng đợi (Doctor Workflow)
+
+Hệ thống cung cấp luồng làm việc toàn diện cho Lễ tân và Bác sĩ:
+
+1. **Quản lý Hàng đợi (Queue Management):**
+   - Hỗ trợ số thứ tự (`queueNumber`), phân loại khách Ưu tiên (Cấp cứu/VIP).
+   - Cảnh báo "Bác sĩ Bận" (`isDoctorBusy`) dựa trên lịch nghỉ phép đã được duyệt.
+
+2. **Thao tác của Bác sĩ (Doctor Actions):**
+   - **Gọi khám (Call):** Chuyển từ `CHECKED_IN` sang `IN_PROGRESS`.
+   - **Bỏ qua (Skip):** Chuyển sang `SKIPPED` nếu bệnh nhân vắng mặt.
+   - **Cận lâm sàng (Send to Lab):** Chuyển sang `WAITING_RESULT` khi chỉ định xét nghiệm.
+   - **Hoàn thành (Complete):** Kết thúc ca khám (`COMPLETED`).
+
+3. **Thao tác của Lễ tân (Staff Actions):**
+   - **Check-in Ưu tiên:** Đẩy bệnh nhân lên đầu hàng đợi (`isPriority=true`).
+   - **Chuyển Bác sĩ (Transfer):** Chuyển ca khám sang bác sĩ khác (kèm bộ lọc chuyên khoa).
+   - **Trả về hàng đợi (Return to Queue):** Khôi phục bệnh nhân bị `SKIPPED`.
+   - **Đã có kết quả (Return from Lab):** Đưa bệnh nhân từ phòng Lab về lại hàng đợi ưu tiên của bác sĩ.
 
 Bảng lịch (`AppointmentTable`) hiển thị thêm:
 
 | Field | Ý nghĩa |
 |-------|---------|
+| `queueNumber` | Số thứ tự xếp hàng (0 = Ưu tiên) |
 | `bookingMode` | DOCTOR / EXPERTISE / SERVICE / DIRECT |
 | `isAiSuggested` | Badge "AI gợi ý" |
+| `isDoctorBusy` | Badge "Bận" (Cảnh báo lịch nghỉ) |
 | `expertiseName` | Chuyên khoa bệnh nhân chọn |
 | `suggestedExpertiseName` | Chuyên khoa AI gợi ý (nếu khác khoa chọn) |
 
