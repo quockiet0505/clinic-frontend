@@ -15,10 +15,8 @@ export const authApi = {
 
     const response = await axiosInstance.post<ApiResponse<AuthResponse>>(
       '/auth/patient/login',
-      {
-        email,
-        password,
-      }
+      { email, password },
+      { toastSuccess: 'Đăng nhập thành công' }
     );
 
     const apiResponse = response.data;
@@ -37,7 +35,8 @@ export const authApi = {
 
     const response = await axiosInstance.post<ApiResponse<AuthResponse>>(
       '/auth/patient/register',
-      data
+      data,
+      { toastSuccess: 'Đăng ký tài khoản thành công' }
     );
 
     return response.data.data;

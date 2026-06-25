@@ -1,4 +1,5 @@
 import axiosInstance from '@/config/axios';
+import type { ApiResponse } from '@/config/api';
 
 export interface NotificationItem {
   id: number;
@@ -10,7 +11,9 @@ export interface NotificationItem {
 
 export const notificationApi = {
   getMyNotifications: async (): Promise<NotificationItem[]> => {
-    const response = await axiosInstance.get<{ data: NotificationItem[] }>('/notifications/my');
-    return response.data.data;
+    const response = await axiosInstance.get<ApiResponse<NotificationItem[]>>('/notifications/my', {
+      skipToast: true,
+    });
+    return response.data.data ?? [];
   },
 };

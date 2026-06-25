@@ -10,8 +10,6 @@ import { StatsCard } from '@/components/common/StatsCard';
 import GradientButton from '@/components/common/GradientButton';
 import { Expertise } from '../types/settings';
 import { settingsApi } from '../api/settingsApi';
-import toast from 'react-hot-toast';
-
 export default function ExpertiseSettings() {
   const [data, setData] = useState<Expertise[]>([]);
   const [totalElements, setTotalElements] = useState(0);
@@ -106,11 +104,10 @@ export default function ExpertiseSettings() {
             } else {
               await settingsApi.updateExpertise(id, updated);
             }
-            toast.success(id === 0 ? 'Thêm chuyên khoa thành công' : 'Cập nhật chuyên khoa thành công');
             await fetchData();
             setEditing(null);
-          } catch (err: any) {
-            toast.error(err.response?.data?.message || 'Có lỗi xảy ra');
+          } catch {
+            /* toast: axios interceptor */
           }
         }} 
       />
@@ -122,10 +119,9 @@ export default function ExpertiseSettings() {
           if (deleting) {
             try {
               await settingsApi.deleteExpertise(deleting.expertiseId);
-              toast.success('Xóa chuyên khoa thành công');
               await fetchData();
-            } catch (err: any) {
-              toast.error(err.response?.data?.message || 'Xóa chuyên khoa thất bại');
+            } catch {
+              /* toast: axios interceptor */
             }
           }
           setDeleting(null);

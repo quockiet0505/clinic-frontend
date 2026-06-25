@@ -38,15 +38,15 @@ export const pharmacyApi = {
   },
 
   createMedicine: async (data: Omit<Medicine, 'medicineId' | 'quantity'>): Promise<void> => {
-    await axiosInstance.post('/medicines', data);
+    await axiosInstance.post('/medicines', data, { toastSuccess: 'Thêm thuốc mới thành công' });
   },
 
   updateMedicine: async (id: number, data: Partial<Medicine>): Promise<void> => {
-    await axiosInstance.put(`/medicines/${id}`, data);
+    await axiosInstance.put(`/medicines/${id}`, data, { toastSuccess: 'Cập nhật thuốc thành công' });
   },
 
   deleteMedicine: async (id: number): Promise<void> => {
-    await axiosInstance.delete(`/medicines/${id}`);
+    await axiosInstance.delete(`/medicines/${id}`, { toastSuccess: 'Xóa thuốc thành công' });
   },
 
   getPrescriptionsPaged: async (
@@ -67,6 +67,8 @@ export const pharmacyApi = {
   },
 
   dispensePrescription: async (id: number): Promise<void> => {
-    await axiosInstance.put(`/prescriptions/${id}/dispense`);
+    await axiosInstance.put(`/prescriptions/${id}/dispense`, undefined, {
+      toastSuccess: 'Đã cấp phát thuốc thành công',
+    });
   },
 };

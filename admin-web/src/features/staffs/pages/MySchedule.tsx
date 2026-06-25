@@ -9,8 +9,6 @@ import { MyScheduleFilterBar } from '../components/MyScheduleFilterBar';
 import MyScheduleTable from '../components/MyScheduleTable';
 import LeaveApplicationDialog from '../components/LeaveApplicationDialog';
 import { staffApi } from '../api/staffApi';
-import { toast } from 'react-hot-toast';
-
 export default function MySchedule() {
   const [leaves, setLeaves] = useState<any[]>([]);
   const [totalElements, setTotalElements] = useState(0);
@@ -53,7 +51,6 @@ export default function MySchedule() {
       setTotalElements(res.totalElements);
     } catch (error) {
       console.error('Lỗi tải đơn nghỉ:', error);
-      toast.error('Không thể tải danh sách nghỉ phép');
       setLeaves([]);
       setTotalElements(0);
     } finally {
@@ -73,11 +70,9 @@ export default function MySchedule() {
     if (cancelId) {
       try {
         await staffApi.cancelLeaveRequest(cancelId);
-        toast.success('Đã hủy đơn nghỉ phép');
         await fetchLeaveRequests();
-      } catch (error: unknown) {
-        const err = error as { response?: { data?: { message?: string } } };
-        toast.error(err.response?.data?.message || 'Hủy đơn thất bại');
+      } catch {
+        /* toast: axios interceptor */
       } finally {
         setCancelId(null);
       }

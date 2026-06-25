@@ -52,7 +52,7 @@ export const crmApi = {
     params?: NotificationQueryParams
   ): Promise<{ content: AppNotification[]; totalElements: number }> => {
     try {
-      const res = await axiosInstance.get('/notifications', { params });
+      const res = await axiosInstance.get('/notifications', { params, skipToast: true });
       return parsePagedResponse<AppNotification>(res.data);
     } catch (error) {
       console.error('Lỗi lấy notification:', error);
@@ -71,6 +71,6 @@ export const crmApi = {
   },
 
   createNotification: async (data: { type: 'EMAIL' | 'SYSTEM'; content: string; accountId?: number }): Promise<void> => {
-    await axiosInstance.post('/notifications', data);
+    await axiosInstance.post('/notifications', data, { toastSuccess: 'Đã gửi thông báo cho bệnh nhân' });
   },
 };

@@ -50,7 +50,9 @@ export const homeApi = {
   },
 
   submitContactMessage: async (data: { fullName: string; phone: string; email?: string; subject?: string; content: string }) => {
-    const res = await axiosInstance.post('/contact-messages', data);
+    const res = await axiosInstance.post('/contact-messages', data, {
+      toastSuccess: 'Đã gửi tin nhắn liên hệ thành công',
+    });
     return res.data;
   },
 

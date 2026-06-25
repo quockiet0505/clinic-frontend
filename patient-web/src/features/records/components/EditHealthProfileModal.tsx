@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Activity } from 'lucide-react';
 import { FormModal, type FormFieldConfig } from '@/components/common/FormModal';
 import { profileApi } from '@/features/profile/api/profileApi';
-import { toast } from 'sonner';
 import type { PatientProfile } from '@/features/profile/types/profile';
 
 interface EditHealthProfileModalProps {
@@ -69,11 +68,10 @@ export const EditHealthProfileModal: React.FC<EditHealthProfileModalProps> = ({
         allergies: formData.allergies?.trim() || null,
         medicalHistory: formData.medicalHistory?.trim() || null,
       });
-      toast.success('Cập nhật hồ sơ sức khoẻ thành công');
       onOpenChange(false);
       onSuccess();
     } catch {
-      toast.error('Không thể cập nhật hồ sơ sức khoẻ');
+      /* toast: axios interceptor */
     } finally {
       setIsSubmitting(false);
     }

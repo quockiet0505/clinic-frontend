@@ -220,14 +220,10 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
       return;
     }
     try {
-      const result = await appointmentApi.createAppointment(formData);
-      if (result.success) {
-        onSubmit(formData);
-      } else {
-        toast({ title: 'Lỗi', description: result.message, variant: 'destructive' });
-      }
+      await appointmentApi.createAppointment(formData);
+      onSubmit(formData);
     } catch {
-      toast({ title: 'Lỗi', description: 'Không thể tạo lịch hẹn', variant: 'destructive' });
+      /* toast: axios interceptor */
     }
   };
 

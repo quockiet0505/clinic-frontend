@@ -61,15 +61,15 @@ export const staffApi = {
   },
 
   create: async (data: Omit<Staff, 'staffId'> | Record<string, unknown>): Promise<void> => {
-    await axiosInstance.post('/staffs', data);
+    await axiosInstance.post('/staffs', data, { toastSuccess: 'Thêm nhân viên thành công' });
   },
 
   update: async (id: number, data: Partial<Staff> | Record<string, unknown>): Promise<void> => {
-    await axiosInstance.put(`/staffs/${id}`, data);
+    await axiosInstance.put(`/staffs/${id}`, data, { toastSuccess: 'Cập nhật nhân viên thành công' });
   },
 
   delete: async (id: number): Promise<void> => {
-    await axiosInstance.delete(`/staffs/${id}`);
+    await axiosInstance.delete(`/staffs/${id}`, { toastSuccess: 'Xóa nhân viên thành công' });
   },
 
   getLeaveRequestsPaged: async (
@@ -90,6 +90,6 @@ export const staffApi = {
   },
 
   cancelLeaveRequest: async (leaveId: number): Promise<void> => {
-    await axiosInstance.delete(`/leave-requests/${leaveId}`);
+    await axiosInstance.delete(`/leave-requests/${leaveId}`, { toastSuccess: 'Đã hủy đơn nghỉ phép' });
   },
 };

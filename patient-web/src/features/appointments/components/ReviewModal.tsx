@@ -38,10 +38,8 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, existingR
         };
         if (existingReview) {
           await reviewApi.updateDoctorReview(existingReview.reviewId, payload);
-          toast.success('Đã sửa đánh giá bác sĩ thành công!');
         } else {
           await reviewApi.submitDoctorReview(payload);
-          toast.success('Đã gửi đánh giá bác sĩ thành công!');
         }
       } else {
         const payload = {
@@ -52,7 +50,6 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, existingR
         };
         if (existingReview) {
           await reviewApi.updateClinicReview(existingReview.feedbackId, payload);
-          toast.success('Đã sửa đánh giá phòng khám thành công!');
         } else {
           if (!payload.recordId && !existingReview) {
             toast.error('Không tìm thấy hồ sơ y tế để đánh giá phòng khám');
@@ -60,12 +57,11 @@ export const ReviewModal: React.FC<ReviewModalProps> = ({ appointment, existingR
             return;
           }
           await reviewApi.submitClinicReview(payload);
-          toast.success('Đã gửi đánh giá phòng khám thành công!');
         }
       }
       onSuccess();
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Có lỗi xảy ra khi gửi đánh giá');
+    } catch {
+      /* toast: axios interceptor */
     } finally {
       setIsSubmitting(false);
     }

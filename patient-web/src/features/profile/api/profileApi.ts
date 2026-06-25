@@ -16,9 +16,9 @@ export const profileApi = {
 
   getMyProfile: async (): Promise<PatientProfile> => {
 
-    const response = await axiosInstance.get<
-      ApiResponse<PatientProfile>
-    >('/patients/profile');
+    const response = await axiosInstance.get<ApiResponse<PatientProfile>>('/patients/profile', {
+      skipToast: true,
+    });
 
     return response.data.data;
   },
@@ -27,9 +27,9 @@ export const profileApi = {
     data: UpdateProfilePayload,
   ): Promise<{ message: string }> => {
 
-    const response = await axiosInstance.put<
-      ApiResponse<unknown>
-    >('/patients/profile', data);
+    const response = await axiosInstance.put<ApiResponse<unknown>>('/patients/profile', data, {
+      toastSuccess: 'Cập nhật thông tin thành công',
+    });
 
     return {
       message: response.data.message,
@@ -40,9 +40,9 @@ export const profileApi = {
     data: ChangePasswordRequest,
   ): Promise<{ message: string }> => {
 
-    const response = await axiosInstance.put<
-      ApiResponse<unknown>
-    >('/auth/change-password', data);
+    const response = await axiosInstance.put<ApiResponse<unknown>>('/auth/change-password', data, {
+      toastSuccess: 'Đổi mật khẩu thành công',
+    });
 
     return {
       message: response.data.message,

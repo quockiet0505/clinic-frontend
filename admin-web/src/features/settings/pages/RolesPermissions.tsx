@@ -11,8 +11,6 @@ import SharedTable from '@/components/tables/Table';
 import { EditButton, DeleteButton } from '@/components/common/ActionButtons';
 import { Role } from '../types/settings';
 import { settingsApi } from '../api/settingsApi';
-import toast from 'react-hot-toast';
-
 const roleColorMap: Record<string, { iconBg: string; iconColor: string; codeBg: string; codeText: string }> = {
   ADMIN: { iconBg: 'bg-rose-50', iconColor: 'text-rose-600', codeBg: 'bg-rose-50', codeText: 'text-rose-700 border-rose-200' },
   DOCTOR: { iconBg: 'bg-blue-50', iconColor: 'text-blue-600', codeBg: 'bg-blue-50', codeText: 'text-blue-700 border-blue-200' },
@@ -180,11 +178,10 @@ export default function RolesPermissions() {
             } else {
               await settingsApi.updateRole(id, data);
             }
-            toast.success(id === 0 ? 'Thêm vai trò thành công' : 'Cập nhật vai trò thành công');
             await fetchData();
             setEditingRole(null);
-          } catch (err: any) {
-            toast.error(err.response?.data?.message || 'Có lỗi xảy ra');
+          } catch {
+            /* toast: axios interceptor */
           }
         }}
       />
@@ -199,10 +196,9 @@ export default function RolesPermissions() {
           if (deletingRole) {
             try {
               await settingsApi.deleteRole(deletingRole.roleId);
-              toast.success('Xóa vai trò thành công');
               await fetchData();
-            } catch (err: any) {
-              toast.error(err.response?.data?.message || 'Xóa vai trò thất bại');
+            } catch {
+              /* toast: axios interceptor */
             }
           }
           setDeletingRole(null);

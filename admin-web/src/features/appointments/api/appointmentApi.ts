@@ -6,13 +6,15 @@ interface AppointmentQueryParams {
   status?: string;
   fromDate?: string;
   toDate?: string;
-  tab?: string;          // 'today' | 'upcoming'
+  tab?: string;          // 'today' | 'upcoming' | 'queue'
   source?: string;       // 'ONLINE' | 'WALK_IN'
   serviceType?: string;  // 'EXAM' | 'LAB_TEST' | 'IMAGING'
   doctorId?: number;
   patientId?: number;
   page?: number;         // 0‑based
   size?: number;
+  sortBy?: string;
+  sortDir?: 'ASC' | 'DESC';
 }
 
 export const appointmentApi = {
@@ -51,22 +53,32 @@ export const appointmentApi = {
   },
 
   cancel: async (id: number, reason: string): Promise<void> => {
-    await axiosInstance.patch(`/appointments/${id}/cancel`, null, { params: { reason } });
-  },
-
-  checkIn: async (id: number, isPriority: boolean = false): Promise<void> => {
-    await axiosInstance.patch(`/appointments/${id}/status`, null, { params: { status: 'CHECKED_IN', isPriority } });
-  },
-
-  createWalkIn: async (data: any): Promise<void> => {
-    await axiosInstance.post('/appointments', {
-      ...data,
-      appointmentType: 'WALK_IN',
+    await axiosInstance.patch(`/appointments/${id}/cancel`, null, {
+      params: { reason },
+      toastSuccess: 'Đã hủy lịch hẹn',
     });
   },
 
+  checkIn: async (id: number, isPriority: boolean = false): Promise<void> => {
+    await axiosInstance.patch(`/appointments/${id}/status`, null, {
+      params: { status: 'CHECKED_IN', isPriority },
+      toastSuccess: 'Đã check-in bệnh nhân',
+    });
+  },
+
+  createWalkIn: async (data: any): Promise<void> => {
+    await axiosInstance.post(
+      '/appointments',
+      { ...data, appointmentType: 'WALK_IN' },
+      { toastSuccess: 'Đã tạo lịch hẹn walk-in' }
+    );
+  },
+
   transfer: async (id: number, newDoctorId: number): Promise<void> => {
-    await axiosInstance.patch(`/appointments/${id}/transfer`, null, { params: { newDoctorId } });
+    await axiosInstance.patch(`/appointments/${id}/transfer`, null, {
+      params: { newDoctorId },
+      toastSuccess: 'Đã chuyển bác sĩ',
+    });
   },
 
   // ---- Queue Management (Doctor Workflow) ----

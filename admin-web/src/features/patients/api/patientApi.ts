@@ -12,7 +12,7 @@ interface PatientQueryParams extends BaseFilterParams {
 export const patientApi = {
   getAllPaged: async (params?: PatientQueryParams): Promise<{ content: Patient[]; totalElements: number }> => {
     try {
-      const res = await axiosInstance.get('/patients', { params });
+      const res = await axiosInstance.get('/patients', { params, skipToast: true });
       const paged = parsePagedResponse<Patient>(res.data);
       paged.content = paged.content.map(p => ({
         ...p,
@@ -27,7 +27,7 @@ export const patientApi = {
 
   getById: async (id: number): Promise<Patient | null> => {
     try {
-      const res = await axiosInstance.get(`/patients/${id}`);
+      const res = await axiosInstance.get(`/patients/${id}`, { skipToast: true });
       const p = res.data.data;
       if (p && Array.isArray(p.dateOfBirth)) {
         p.dateOfBirth = p.dateOfBirth.map((n: number) => n.toString().padStart(2, '0')).join('-');
@@ -40,14 +40,14 @@ export const patientApi = {
   },
 
   create: async (data: Omit<Patient, 'patientId'>): Promise<void> => {
-    await axiosInstance.post('/patients', data);
+    await axiosInstance.post('/patients', data, { toastSuccess: 'Thêm bệnh nhân thành công' });
   },
 
   update: async (id: number, data: Partial<Patient>): Promise<void> => {
-    await axiosInstance.put(`/patients/${id}`, data);
+    await axiosInstance.put(`/patients/${id}`, data, { toastSuccess: 'Cập nhật bệnh nhân thành công' });
   },
 
   delete: async (id: number): Promise<void> => {
-    await axiosInstance.delete(`/patients/${id}`);
+    await axiosInstance.delete(`/patients/${id}`, { toastSuccess: 'Xóa bệnh nhân thành công' });
   },
 };

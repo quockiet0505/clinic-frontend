@@ -26,9 +26,12 @@ export const settingsApi = {
     }
   },
 
-  createExpertise: async (data: unknown) => axiosInstance.post('/expertise', data),
-  updateExpertise: async (id: number, data: unknown) => axiosInstance.put(`/expertise/${id}`, data),
-  deleteExpertise: async (id: number) => axiosInstance.delete(`/expertise/${id}`),
+  createExpertise: async (data: unknown) =>
+    axiosInstance.post('/expertise', data, { toastSuccess: 'Thêm chuyên khoa thành công' }),
+  updateExpertise: async (id: number, data: unknown) =>
+    axiosInstance.put(`/expertise/${id}`, data, { toastSuccess: 'Cập nhật chuyên khoa thành công' }),
+  deleteExpertise: async (id: number) =>
+    axiosInstance.delete(`/expertise/${id}`, { toastSuccess: 'Xóa chuyên khoa thành công' }),
 
   getServicesPaged: async (params?: SettingsQueryParams) => {
     try {
@@ -44,9 +47,12 @@ export const settingsApi = {
     }
   },
 
-  createService: async (data: unknown) => axiosInstance.post('/services', data),
-  updateService: async (id: number, data: unknown) => axiosInstance.put(`/services/${id}`, data),
-  deleteService: async (id: number) => axiosInstance.delete(`/services/${id}`),
+  createService: async (data: unknown) =>
+    axiosInstance.post('/services', data, { toastSuccess: 'Thêm dịch vụ thành công' }),
+  updateService: async (id: number, data: unknown) =>
+    axiosInstance.put(`/services/${id}`, data, { toastSuccess: 'Cập nhật dịch vụ thành công' }),
+  deleteService: async (id: number) =>
+    axiosInstance.delete(`/services/${id}`, { toastSuccess: 'Xóa dịch vụ thành công' }),
 
   getDoctorPricesPaged: async (params?: SettingsQueryParams) => {
     try {
@@ -58,8 +64,10 @@ export const settingsApi = {
     }
   },
 
-  createOrUpdateDoctorPrice: async (data: unknown) => axiosInstance.post('/doctor-prices', data),
-  deleteDoctorPrice: async (id: number) => axiosInstance.delete(`/doctor-prices/${id}`),
+  createOrUpdateDoctorPrice: async (data: unknown) =>
+    axiosInstance.post('/doctor-prices', data, { toastSuccess: 'Lưu phí khám thành công' }),
+  deleteDoctorPrice: async (id: number) =>
+    axiosInstance.delete(`/doctor-prices/${id}`, { toastSuccess: 'Xóa phí khám thành công' }),
 
   getRolesPaged: async (params?: SettingsQueryParams) => {
     try {
@@ -81,9 +89,12 @@ export const settingsApi = {
     }
   },
 
-  createRole: async (data: unknown) => axiosInstance.post('/roles', data),
-  updateRole: async (id: number, data: unknown) => axiosInstance.put(`/roles/${id}`, data),
-  deleteRole: async (id: number) => axiosInstance.delete(`/roles/${id}`),
+  createRole: async (data: unknown) =>
+    axiosInstance.post('/roles', data, { toastSuccess: 'Thêm vai trò thành công' }),
+  updateRole: async (id: number, data: unknown) =>
+    axiosInstance.put(`/roles/${id}`, data, { toastSuccess: 'Cập nhật vai trò thành công' }),
+  deleteRole: async (id: number) =>
+    axiosInstance.delete(`/roles/${id}`, { toastSuccess: 'Xóa vai trò thành công' }),
 
   getGeneralSettings: async () => {
     try {
@@ -95,5 +106,6 @@ export const settingsApi = {
     }
   },
 
-  updateGeneralSettings: async (data: unknown) => axiosInstance.post('/settings', data),
+  updateGeneralSettings: async (data: unknown) =>
+    axiosInstance.post('/settings', data, { toastSuccess: 'Đã lưu cấu hình chung thành công' }),
 };

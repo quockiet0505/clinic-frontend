@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Save, Activity, Loader2, X } from 'lucide-react';
-import { toast } from 'sonner';
 
 import { medicalApi } from '../api/medicalApi';
 import type { MedicalRecordDetail, VitalSigns } from '../types/medical';
@@ -45,15 +44,10 @@ export default function TriageWorkspace() {
     if (!id) return;
     setSaving(true);
     try {
-      const res = await medicalApi.updateTriage(Number(id), vitalsRef.current);
-      if (res) {
-        toast.success('Đã lưu sinh hiệu thành công!');
-        navigate(-1);
-      } else {
-        toast.error('Có lỗi xảy ra khi lưu sinh hiệu.');
-      }
-    } catch (e) {
-      toast.error('Không thể kết nối đến máy chủ.');
+      await medicalApi.updateTriage(Number(id), vitalsRef.current);
+      navigate(-1);
+    } catch {
+      /* toast: axios interceptor */
     } finally {
       setSaving(false);
     }

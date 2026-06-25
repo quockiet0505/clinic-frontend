@@ -27,15 +27,14 @@ export const PasswordChangeForm: React.FC = () => {
     }
 
     try {
-      const res = await profileApi.changePassword({
+      await profileApi.changePassword({
         old_password: passwords.oldPass,
         new_password: passwords.newPass,
         confirm_password: passwords.confirmPass,
       });
-      toast.success(res.message || 'Đổi mật khẩu thành công!');
       setPasswords({ oldPass: '', newPass: '', confirmPass: '' });
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Đổi mật khẩu thất bại');
+    } catch {
+      /* toast: axios interceptor */
     } finally {
       setIsLoading(false);
     }

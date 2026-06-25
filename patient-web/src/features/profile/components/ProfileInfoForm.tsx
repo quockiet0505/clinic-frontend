@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FormTextarea } from '@/components/common/FormTextarea';
 import { profileApi } from '../api/profileApi';
-import { toast } from 'sonner';
 import type { PatientProfile, UpdateProfilePayload } from '../types/profile';
 
 interface ProfileInfoFormProps {
@@ -64,11 +63,10 @@ export const ProfileInfoForm: React.FC<ProfileInfoFormProps> = ({ initialData, o
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await profileApi.updateMyProfile(formData);
-      toast.success(res?.message || 'Cập nhật thông tin thành công!');
+      await profileApi.updateMyProfile(formData);
       if (onSuccess) onSuccess();
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Cập nhật thông tin thất bại');
+    } catch {
+      /* toast: axios interceptor */
     } finally {
       setIsLoading(false);
     }

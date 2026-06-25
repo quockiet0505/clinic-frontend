@@ -94,11 +94,14 @@ export const appointmentApi = {
     };
   
     const res =
-      await axiosInstance.post(
-        '/appointments',
-        payload
-      );
-  
+      await axiosInstance.post('/appointments', payload, {
+        toastSuccess: 'Lịch khám đã được đặt thành công',
+      });
+
+    if (!res.data.success) {
+      throw new Error(res.data.message || 'Không thể tạo lịch hẹn');
+    }
+
     return {
       success: res.data.success,
       message: res.data.message,
@@ -130,7 +133,14 @@ export const appointmentApi = {
   },
 
   cancelAppointment: async (id: string, reason: string): Promise<{ success: boolean; message: string }> => {
-    const res = await axiosInstance.patch<ApiResponse<unknown>>(`/appointments/${id}/cancel?reason=${encodeURIComponent(reason)}`);
+    const res = await axiosInstance.patch<ApiResponse<unknown>>(
+      `/appointments/${id}/cancel?reason=${encodeURIComponent(reason)}`,
+      undefined,
+      { toastSuccess: 'Đã hủy lịch hẹn thành công' }
+    );
+    if (!res.data.success) {
+      throw new Error(res.data.message || 'Không thể hủy lịch hẹn');
+    }
     return { success: res.data.success, message: res.data.message };
   },
 

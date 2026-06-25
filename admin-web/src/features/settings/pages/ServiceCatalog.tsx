@@ -10,8 +10,6 @@ import { StatsCard } from '@/components/common/StatsCard';
 import GradientButton from '@/components/common/GradientButton';
 import { Service } from '../types/settings';
 import { settingsApi } from '../api/settingsApi';
-import toast from 'react-hot-toast';
-
 export default function ServiceCatalog() {
   const [data, setData] = useState<Service[]>([]);
   const [totalElements, setTotalElements] = useState(0);
@@ -112,11 +110,10 @@ export default function ServiceCatalog() {
             } else {
               await settingsApi.updateService(id, updated);
             }
-            toast.success(id === 0 ? 'Thêm dịch vụ thành công' : 'Cập nhật dịch vụ thành công');
             await fetchData();
             setEditing(null);
-          } catch (err: any) {
-            toast.error(err.response?.data?.message || 'Có lỗi xảy ra');
+          } catch {
+            /* toast: axios interceptor */
           }
         }}
       />
@@ -128,10 +125,9 @@ export default function ServiceCatalog() {
           if (deleting) {
             try {
               await settingsApi.deleteService(deleting.serviceId);
-              toast.success('Xóa dịch vụ thành công');
               await fetchData();
-            } catch (err: any) {
-              toast.error(err.response?.data?.message || 'Xóa dịch vụ thất bại');
+            } catch {
+              /* toast: axios interceptor */
             }
           }
           setDeleting(null);

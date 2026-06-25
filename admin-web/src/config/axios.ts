@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { handleApiErrorToast, handleApiSuccessToast } from '@/utils/apiToast';
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1',
@@ -6,7 +7,6 @@ const axiosInstance = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Request interceptor: gắn token
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('clinic_token');
@@ -18,14 +18,18 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor: xử lý 401
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    handleApiSuccessToast(response);
+    return response;
+  },
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('clinic_token');
       localStorage.removeItem('clinic_user');
       window.location.href = '/login';
+    } else {
+      handleApiErrorToast(error);
     }
     return Promise.reject(error);
   }

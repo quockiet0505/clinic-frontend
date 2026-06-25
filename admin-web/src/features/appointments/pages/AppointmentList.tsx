@@ -11,7 +11,6 @@ import { Appointment, AppointmentStatus } from '../types/appointment';
 import { appointmentApi } from '../api/appointmentApi';
 import AppointmentTable from '../components/AppointmentTable';
 import PageHeader from '@/components/common/PageHeader';
-import { toast } from 'sonner';
 
 export default function AppointmentList() {
   // ---- Data & Pagination ----
@@ -47,6 +46,9 @@ export default function AppointmentList() {
         serviceType: serviceAdvanced === 'ALL' ? undefined : serviceAdvanced,
         page: currentPage - 1,
         size: pageSize,
+        ...(activeTab === 'queue'
+          ? { sortBy: 'queueNumber', sortDir: 'ASC' as const }
+          : {}),
       });
       setAppointments(Array.isArray(res.content) ? res.content : []);
       setTotalElements(res.totalElements ?? 0);
@@ -77,28 +79,29 @@ export default function AppointmentList() {
     try {
       const isPriority = data.isPriority === true;
       await appointmentApi.checkIn(checkInAptId, isPriority);
-      toast.success(isPriority ? 'Check-in ưu tiên thành công' : 'Check-in thành công');
       fetchData();
       setCheckInAptId(null);
-    } catch (error) {
-      toast.error('Có lỗi xảy ra khi Check-in');
+    } catch {
+      /* toast: axios interceptor */
     }
   };
 
   const handleCancel = async (id: number, reason: string) => {
-    await appointmentApi.cancel(id, reason);
-    fetchData();
+    try {
+      await appointmentApi.cancel(id, reason);
+      fetchData();
+    } catch {
+      /* toast: axios interceptor */
+    }
   };
 
   const handleBookWalkIn = async (data: any) => {
     try {
       await appointmentApi.createWalkIn(data);
-      toast.success('Tạo lịch khám Walk-in thành công!');
       fetchData();
       setIsBookOpen(false);
-    } catch (error) {
-      console.error('Failed to create walk-in appointment:', error);
-      toast.error('Lỗi khi tạo lịch khám');
+    } catch {
+      /* toast: axios interceptor */
     }
   };
 
@@ -106,72 +109,64 @@ export default function AppointmentList() {
     if (!transferApt || !data.newDoctorId) return;
     try {
       await appointmentApi.transfer(transferApt.appointmentId, Number(data.newDoctorId));
-      toast.success('Chuyển bác sĩ thành công!');
       fetchData();
       setTransferApt(null);
-    } catch (error) {
-      toast.error('Có lỗi xảy ra khi chuyển bác sĩ');
+    } catch {
+      /* toast: axios interceptor */
     }
   };
 
-  // ---- Doctor Workflow Handlers ----
   const handleCallPatient = async (id: number) => {
     try {
       await appointmentApi.callPatient(id);
-      toast.success('Đã gọi bệnh nhân vào khám');
       fetchData();
-    } catch (error) {
-      toast.error('Lỗi khi gọi bệnh nhân');
+    } catch {
+      /* toast: axios interceptor */
     }
   };
 
   const handleSkipPatient = async (id: number) => {
     try {
       await appointmentApi.skipPatient(id);
-      toast.success('Đã bỏ qua bệnh nhân này');
       fetchData();
-    } catch (error) {
-      toast.error('Lỗi khi bỏ qua bệnh nhân');
+    } catch {
+      /* toast: axios interceptor */
     }
   };
 
   const handleReturnToQueue = async (id: number) => {
     try {
       await appointmentApi.returnToQueue(id);
-      toast.success('Đã trả bệnh nhân về hàng đợi');
       fetchData();
-    } catch (error) {
-      toast.error('Lỗi khi trả về hàng đợi');
+    } catch {
+      /* toast: axios interceptor */
     }
   };
 
   const handleSendToLab = async (id: number) => {
     try {
       await appointmentApi.sendToLab(id);
-      toast.success('Đã chuyển bệnh nhân đi cận lâm sàng');
       fetchData();
-    } catch (error) {
-      toast.error('Lỗi khi chuyển cận lâm sàng');
+    } catch {
+      /* toast: axios interceptor */
     }
   };
 
   const handleReturnFromLab = async (id: number) => {
     try {
       await appointmentApi.returnFromLab(id);
-      toast.success('Đã xếp bệnh nhân vào lại hàng đợi ưu tiên');
       fetchData();
-    } catch (error) {
-      toast.error('Lỗi khi xác nhận có kết quả');
+    } catch {
+      /* toast: axios interceptor */
     }
   };
 
   const handleComplete = async (id: number) => {
     try {
       await appointmentApi.complete(id);
-      toast.success('Đã hoàn thành lượt khám');
       fetchData();
-    } catch (error) {
-      toast.error('Lỗi khi hoàn thành lượt khám');
+    } catch {
+      /* toast: axios interceptor */
     }
   };
 

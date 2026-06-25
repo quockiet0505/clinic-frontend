@@ -68,9 +68,8 @@ export default function MyProfile() {
     try {
       const updated = await profileApi.updateProfile(userData);
       setUserData(updated);
-      toast.success('Cập nhật thông tin thành công');
-    } catch (error) {
-      toast.error('Cập nhật thất bại');
+    } catch {
+      /* toast: axios interceptor */
     } finally {
       setSaving(false);
     }
@@ -88,10 +87,9 @@ export default function MyProfile() {
     setSaving(true);
     try {
       await profileApi.changePassword(passwordData.current, passwordData.new);
-      toast.success('Đổi mật khẩu thành công');
       setPasswordData({ current: '', new: '', confirm: '' });
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Đổi mật khẩu thất bại');
+    } catch {
+      /* toast: axios interceptor */
     } finally {
       setSaving(false);
     }

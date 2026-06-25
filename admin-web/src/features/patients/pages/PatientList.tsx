@@ -10,7 +10,6 @@ import PatientFormDialog from '../components/PatientFormDialog';
 import GradientButton from '@/components/common/GradientButton';
 import { Patient } from '../types/patient';
 import { patientApi } from '../api/patientApi';
-import toast from 'react-hot-toast';
 
 export default function PatientList() {
   const navigate = useNavigate();
@@ -61,11 +60,10 @@ export default function PatientList() {
       } else {
         await patientApi.create(formData as Omit<Patient, 'patientId'>);
       }
-      toast.success(isEdit ? 'Cập nhật bệnh nhân thành công' : 'Thêm bệnh nhân thành công');
       await fetchPatients();
       setIsFormOpen(false);
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Có lỗi xảy ra');
+    } catch {
+      /* toast: axios interceptor */
     }
   };
 
@@ -111,10 +109,9 @@ export default function PatientList() {
           if (deletingPatient) {
             try {
               await patientApi.delete(deletingPatient.patientId);
-              toast.success('Xóa bệnh nhân thành công');
               await fetchPatients();
-            } catch (err: any) {
-              toast.error(err.response?.data?.message || 'Xóa bệnh nhân thất bại');
+            } catch {
+              /* toast: axios interceptor */
             }
           }
           setDeletingPatient(null);

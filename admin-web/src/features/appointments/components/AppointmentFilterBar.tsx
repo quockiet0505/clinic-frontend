@@ -62,6 +62,7 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
   const tabs: TabOption[] = [
     { value: 'all', label: 'Tất cả' },
     { value: 'today', label: 'Hôm nay' },
+    { value: 'queue', label: 'Hàng đợi STT' },
     { value: 'upcoming', label: 'Sắp tới' },
   ];
 

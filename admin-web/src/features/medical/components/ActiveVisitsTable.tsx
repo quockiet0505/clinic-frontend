@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Table, { Column } from '@/components/tables/Table';
 import StatusBadge from '@/components/common/StatusBadge';
+import QueueNumberCell from '@/components/common/QueueNumberCell';
 import { MedicalRecord } from '../types/medical';
 import { formatDateTime } from '@/utils/formatters';
 
@@ -19,13 +20,9 @@ export default function ActiveVisitsTable({ data, onConsult, onTriage, loading =
   const columns: Column<MedicalRecord>[] = [
     {
       key: 'queueNumber',
-      label: 'Số thứ tự',
-      className: 'w-[10%]',
-      render: (visit) => (
-        <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-base">
-          {visit.queueNumber?.toString().padStart(2, '0') || '--'}
-        </div>
-      ),
+      label: 'STT',
+      className: 'w-[8%]',
+      render: (visit) => <QueueNumberCell queueNumber={visit.queueNumber} />,
     },
     {
       key: 'createdAt',
@@ -50,11 +47,8 @@ export default function ActiveVisitsTable({ data, onConsult, onTriage, loading =
           <p className="font-bold text-slate-800 text-[14px]">{visit.patientName}</p>
           <div className="flex items-center gap-4 text-xs text-slate-500 font-medium">
             <span className="flex items-center gap-1.5 bg-slate-100 px-2 py-0.5 rounded-md">
-              <Stethoscope size={12} className="text-blue-600" />
-              {visit.mainDoctorName || 'Chưa phân công'}
-            </span>
-            <span className="flex items-center gap-1">
-              Vào lúc: {visit.checkinTime?.substring(0, 5) || '—'}
+              <Stethoscope size={12} className="text-blue-600 shrink-0" />
+              <span className="truncate">{visit.mainDoctorName || 'Chưa phân công'}</span>
             </span>
           </div>
         </div>
@@ -76,7 +70,7 @@ export default function ActiveVisitsTable({ data, onConsult, onTriage, loading =
     {
       key: 'status',
       label: 'Trạng thái',
-      className: 'w-[13%]',
+      className: 'w-[14%]',
       render: (visit) => <StatusBadge status={visit.status} />,
     },
     {

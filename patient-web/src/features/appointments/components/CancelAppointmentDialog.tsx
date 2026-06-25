@@ -30,17 +30,12 @@ export const CancelAppointmentDialog: React.FC<CancelAppointmentDialogProps> = (
     }
     setLoading(true);
     try {
-      const result = await appointmentApi.cancelAppointment(appointmentId, reason);
-      if (result.success) {
-        toast({ title: 'Success', description: result.message });
-        onSuccess();
-        onOpenChange(false);
-        setReason('');
-      } else {
-        toast({ title: 'Error', description: result.message, variant: 'destructive' });
-      }
-    } catch (error) {
-      toast({ title: 'Error', description: 'Failed to cancel appointment', variant: 'destructive' });
+      await appointmentApi.cancelAppointment(appointmentId, reason);
+      onSuccess();
+      onOpenChange(false);
+      setReason('');
+    } catch {
+      /* toast: axios interceptor */
     } finally {
       setLoading(false);
     }

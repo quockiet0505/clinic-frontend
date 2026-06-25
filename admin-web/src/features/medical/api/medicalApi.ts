@@ -40,13 +40,32 @@ export const medicalApi = {
     }
   },
 
-  updateTriage: async (id: number, data: any): Promise<boolean> => {
+  updateTriage: async (id: number, data: unknown): Promise<void> => {
+    await axiosInstance.post(`/medical-records/${id}/triage`, data, {
+      toastSuccess: 'Đã lưu sinh hiệu thành công',
+    });
+  },
+
+  updateRecord: async (
+    id: number,
+    data: {
+      patientId: number;
+      mainDoctorId: number;
+      appointmentId?: number;
+      diagnosis?: string;
+      treatment?: string;
+      note?: string;
+      status?: string;
+    }
+  ): Promise<MedicalRecord | null> => {
     try {
-      await axiosInstance.post(`/medical-records/${id}/triage`, data);
-      return true;
+      const res = await axiosInstance.put(`/medical-records/${id}`, data, {
+        toastSuccess: 'Đã lưu hồ sơ khám',
+      });
+      return res.data.data;
     } catch (e) {
       console.error(e);
-      return false;
+      throw e;
     }
   },
 };

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { keysToCamel } from '../utils/caseConverter';
+import { handleApiErrorToast, handleApiSuccessToast } from '@/utils/apiToast';
 
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8080/api/v1',
@@ -24,13 +25,14 @@ axiosInstance.interceptors.response.use(
     if (response.data) {
       response.data = keysToCamel(response.data);
     }
+    handleApiSuccessToast(response);
     return response;
   },
   (error) => {
-    // Also convert error response data if needed
     if (error.response && error.response.data) {
-       error.response.data = keysToCamel(error.response.data);
+      error.response.data = keysToCamel(error.response.data);
     }
+    handleApiErrorToast(error);
     return Promise.reject(error);
   }
 );

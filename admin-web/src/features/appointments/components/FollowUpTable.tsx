@@ -18,17 +18,19 @@ export default function FollowUpTable({ data, onLogCall, onSendReminder, loading
     {
       key: 'patientName',
       label: 'Thông tin bệnh nhân',
-      className: 'w-[25%]',
+      className: 'w-[28%] min-w-[200px]',
       render: (item) => (
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm uppercase">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-9 h-9 shrink-0 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm uppercase">
             {item.patientName.charAt(0)}
           </div>
-          <div>
-            <p className="font-medium text-slate-800">{item.patientName}</p>
+          <div className="min-w-0 flex-1">
+            <p className="font-medium text-slate-800 truncate" title={item.patientName}>
+              {item.patientName}
+            </p>
             <div className="flex items-center gap-1 text-xs text-slate-500 mt-0.5">
-              <Phone size={12} className="text-blue-500" />
-              <span>{item.phone}</span>
+              <Phone size={12} className="text-blue-500 shrink-0" />
+              <span className="truncate">{item.phone || '—'}</span>
             </div>
           </div>
         </div>
@@ -66,17 +68,29 @@ export default function FollowUpTable({ data, onLogCall, onSendReminder, loading
     {
       key: 'actions',
       label: 'Thao tác',
-      className: 'w-[25%]',
+      className: 'w-[22%] min-w-[160px]',
       render: (item) =>
         item.status === 'PENDING' ? (
-          <div className="flex gap-2">
-            <Button onClick={() => onSendReminder(item)} variant="outline" className="h-8 px-3 rounded-lg text-xs font-medium border-amber-200 text-amber-600 hover:bg-amber-50">
-              <BellRing size={14} className="mr-1.5" />
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={() => onSendReminder(item)}
+              variant="outline"
+              title="Gửi thông báo nhắc tái khám"
+              className="h-8 w-8 p-0 shrink-0 rounded-lg border-amber-200 text-amber-600 bg-amber-50/50 hover:bg-amber-100 hover:text-amber-700 hover:border-amber-300 focus-visible:ring-amber-200"
+            >
+              <BellRing size={15} />
             </Button>
-            <Button onClick={() => onLogCall(item)} className="h-8 px-3 rounded-lg text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white">
-              <Phone size={14} className="mr-1.5" /> Ghi nhận cuộc gọi
+            <Button
+              onClick={() => onLogCall(item)}
+              title="Ghi nhận cuộc gọi"
+              className="h-8 px-3 rounded-lg text-xs font-medium bg-blue-600 hover:bg-blue-700 text-white whitespace-nowrap"
+            >
+              <Phone size={14} className="mr-1.5 shrink-0" />
+              Ghi nhận gọi
             </Button>
           </div>
+        ) : item.status === 'CONFIRMED' ? (
+          <span className="text-xs text-emerald-600 font-medium">Đã xác nhận — chờ đặt lịch</span>
         ) : null,
     },
   ];

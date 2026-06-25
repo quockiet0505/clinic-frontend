@@ -35,12 +35,24 @@ export interface FollowUp {
   patientId: number;
   accountId?: number; 
   patientName: string;
-  phone: string;
+  phone?: string;
   doctorId: number;
   doctorName: string;
+  appointmentId?: number | null;
   scheduledDatetime: string;
   note: string;
   status: 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED' | 'MISSED';
+  confirmedAt?: string | null;
+  reminderSentAt?: string | null;
+  cancelReason?: string | null;
+}
+
+export interface FollowUpCreateRequest {
+  recordId: number;
+  patientId: number;
+  doctorId: number;
+  scheduledDatetime: string;
+  note?: string;
 }
 
 const BOOKING_MODE_LABEL: Record<BookingMode, string> = {

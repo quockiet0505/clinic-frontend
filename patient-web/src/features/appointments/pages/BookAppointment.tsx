@@ -3,7 +3,6 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { MapPin, CheckCircle, CalendarClock, ShieldCheck, Clock, AlertCircle } from 'lucide-react';
 import { SectionContainer } from '@/components/common';
 import { BookingForm } from '../components/BookingForm';
-import { toast } from 'sonner';
 const STEPS = [
   { label: 'Dịch vụ & Bác sĩ', icon: '01' },
   { label: 'Ngày & Giờ', icon: '02' },
@@ -38,7 +37,6 @@ export const BookAppointment: React.FC = () => {
   const bookingMode = mode === 'service' ? 'service' : 'doctor';
 
   const handleSubmit = () => {
-    toast.success('Lịch khám đã được đặt thành công!');
     navigate('/appointments/my');
   };
 

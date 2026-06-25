@@ -74,18 +74,26 @@ export default function ServiceOrdersTable({ data, onInputResult, onReject, load
     {
       key: 'actions',
       label: 'Thao tác',
-      className: 'w-[15%] text-right',
+      className: 'w-[18%] min-w-[130px]',
       render: (item) => (
-        <div className="flex justify-end gap-2">
+        <div className="flex flex-col items-stretch gap-1.5 max-w-[120px] ml-auto">
           {item.status === 'ORDERED' ? (
             <>
-              <InputResultButton onClick={() => onInputResult(item)} />
-              <CancelButton onClick={() => onReject(item)} label="Từ chối" />
+              <InputResultButton
+                onClick={() => onInputResult(item)}
+                label="Kết quả"
+                className="h-7 px-2 text-[11px] font-semibold w-full justify-center"
+              />
+              <CancelButton
+                onClick={() => onReject(item)}
+                label="Từ chối"
+                className="h-7 px-2 text-[11px] font-semibold w-full justify-center"
+              />
             </>
           ) : item.status === 'DONE' ? (
-            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">
-              <FileText size={12} className="text-slate-500" />
-              Đã nhập kết quả
+            <span className="inline-flex items-center justify-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium bg-slate-100 text-slate-600">
+              <FileText size={11} />
+              Đã nhập
             </span>
           ) : null}
         </div>

@@ -7,7 +7,9 @@ import FollowUpCallDialog from '../components/FollowUpCallDialog';
 import NotificationDialog from '../components/NotificationDialog';
 import { FollowUp } from '../types/appointment';
 import { followUpApi } from '../api/followUpApi';
+import { crmApi } from '@/features/crm/api/crmApi';
 import PageHeader from '@/components/common/PageHeader';
+import toast from 'react-hot-toast';
 
 export default function FollowUpList() {
   const [data, setData] = useState<FollowUp[]>([]);
@@ -56,26 +58,32 @@ export default function FollowUpList() {
 
   const pendingCount = data.filter((d) => d.status === 'PENDING').length;
 
-  const handleLogCall = (newStatus: string, callResult: string) => {
-    setData(
-      data.map((d) =>
-        d.followUpId === selectedCall?.followUpId
-          ? { ...d, status: newStatus as FollowUp['status'], note: `${d.note} | Log: ${callResult}` }
-          : d
-      )
-    );
-    setSelectedCall(null);
+  const handleLogCall = async (newStatus: string, callResult: string) => {
+    if (!selectedCall) return;
+    try {
+      await followUpApi.updateStatus(selectedCall.followUpId, newStatus, callResult);
+      setSelectedCall(null);
+      fetchData();
+    } catch {
+      /* toast handled by axios interceptor */
+    }
   };
 
-  const handleSendNotification = (type: string, content: string) => {
-    setData(
-      data.map((d) =>
-        d.followUpId === selectedNotify?.followUpId
-          ? { ...d, status: 'COMPLETED', note: `${d.note} | Log: Sent ${type} notification` }
-          : d
-      )
-    );
-    setSelectedNotify(null);
+  const handleSendNotification = async (type: string, content: string) => {
+    if (!selectedNotify?.accountId) {
+      toast.error('Bệnh nhân chưa có tài khoản app/web');
+      return;
+    }
+    try {
+      await crmApi.createNotification({
+        type: type as 'EMAIL' | 'SYSTEM',
+        content,
+        accountId: selectedNotify.accountId,
+      });
+      setSelectedNotify(null);
+    } catch {
+      /* toast handled by axios interceptor */
+    }
   };
 
   return (

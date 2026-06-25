@@ -1,5 +1,6 @@
 export interface Patient {
      patientId: number;
+     accountId?: number;
      fullName: string;
      gender: string;
      dateOfBirth: string;

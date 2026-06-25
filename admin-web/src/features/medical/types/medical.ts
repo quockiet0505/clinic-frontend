@@ -37,16 +37,25 @@ export interface ServiceOrder {
 
 export interface FollowUp {
   followUpId: number;
+  recordId?: number;
+  patientId?: number;
+  doctorId?: number;
   doctorName: string;
+  appointmentId?: number | null;
   scheduledDatetime: string;
   note: string;
   status: string;
+  confirmedAt?: string | null;
+  reminderSentAt?: string | null;
+  cancelReason?: string | null;
 }
 
 export interface MedicalRecord {
   recordId: number;
   patientId: number;
   appointmentId?: number;
+  appointmentStatus?: string;
+  queueNumber?: number;
   mainDoctorId: number;
   mainDoctorName: string;
   updatedByDoctorId?: number;
@@ -63,7 +72,6 @@ export interface MedicalRecord {
   serviceFee?: number;
   patientName?: string;
   doctorName?: string;
-  queueNumber?: string;
   checkinTime?: string;
 }
 
@@ -85,7 +93,7 @@ export interface MedicalRecordDetail extends MedicalRecord {
   patientPhone?: string;
   patientAddress?: string;
   prescription?: any;
-  serviceOrders?: any[];
+  serviceOrders?: ServiceOrder[];
   followUps?: any[];
   vitalsTaken?: boolean;
 }

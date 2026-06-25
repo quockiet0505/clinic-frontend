@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Bell, Mail, Plus } from 'lucide-react';
+import { Bell, Mail } from 'lucide-react';
 import PageHeader from '@/components/common/PageHeader';
 import { StatsCard } from '@/components/common/StatsCard';
 import { NotificationFilterBar } from '../components/NotificationFilterBar';
 import NotificationTable from '../components/NotificationTable';
-import CreateNotificationDialog from '../components/CreateNotificationDialog';
-import GradientButton from '@/components/common/GradientButton';
 import { AppNotification } from '../types/crm';
 import { crmApi } from '../api/crmApi';
 
@@ -20,7 +18,6 @@ export default function Notifications() {
   const [type, setType] = useState('ALL');
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -50,23 +47,17 @@ export default function Notifications() {
   const emails = notifications.filter((n) => n.type === 'EMAIL').length;
   const systems = notifications.filter((n) => n.type === 'SYSTEM').length;
 
-  const handleCreate = async (data: { type: 'EMAIL' | 'SYSTEM'; content: string; accountId?: number }) => {
-    await crmApi.createNotification(data);
-    await fetchData();
-    setIsCreateOpen(false);
-  };
-
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
-        <PageHeader title="Nhật ký thông báo" description="Xem lại lịch sử thông báo đã gửi đến bệnh nhân." />
+        <PageHeader
+          title="Nhật ký thông báo"
+          description="Xem lịch sử thông báo đã gửi. Gửi nhắc tái khám qua Nhắc nhở tái khám (nút chuông)."
+        />
         <div className="flex flex-wrap items-center gap-3">
           <StatsCard icon={<Bell size={16} />} label="Tổng thông báo" value={totalElements} />
           <StatsCard icon={<Mail size={16} />} label="Email (trang)" value={emails} bgColor="bg-amber-50" iconColor="text-amber-600" />
           <StatsCard icon={<Bell size={16} />} label="Hệ thống (trang)" value={systems} bgColor="bg-indigo-50" iconColor="text-indigo-600" />
-          <GradientButton onClick={() => setIsCreateOpen(true)} className="w-full sm:w-auto">
-            <Plus size={18} className="mr-2" /> Tạo thông báo
-          </GradientButton>
         </div>
       </div>
 
@@ -88,8 +79,6 @@ export default function Notifications() {
           pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
         />
       </div>
-
-      <CreateNotificationDialog isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} onCreate={handleCreate} />
     </div>
   );
 }
