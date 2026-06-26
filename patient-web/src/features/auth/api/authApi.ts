@@ -10,7 +10,8 @@ interface ApiResponse<T> {
 export const authApi = {
   login: async (
     email: string,
-    password: string
+    password: string,
+    rememberMe: boolean = true
   ): Promise<AuthResponse> => {
 
     const response = await axiosInstance.post<ApiResponse<AuthResponse>>(
@@ -21,7 +22,8 @@ export const authApi = {
 
     const apiResponse = response.data;
 
-    localStorage.setItem(
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem(
       'token',
       apiResponse.data.token
     );
@@ -49,7 +51,8 @@ export const authApi = {
   getCurrentUser: async () => {
 
     const response = await axiosInstance.get(
-      '/auth/me'
+      '/auth/me',
+      { skipToast: true }
     );
 
     return response.data.data;

@@ -23,5 +23,5 @@ export default function QueueNumberCell({ queueNumber }: Props) {
     );
   }
 
-  return <span className="text-sm text-slate-600">#{queueNumber}</span>;
+  return <span className="text-sm font-bold text-slate-800">#{queueNumber}</span>;
 }

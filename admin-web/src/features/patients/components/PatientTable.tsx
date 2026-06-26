@@ -51,17 +51,6 @@ export default function PatientTable({ data, onViewDetails, onEdit, onDelete, lo
       },
     },
     {
-      key: 'phone',
-      label: 'Số điện thoại',
-      className: 'w-[15%]',
-      render: (patient) => (
-        <div className="flex items-center gap-2 text-sm text-slate-700">
-          <Phone size={14} className="text-blue-500 shrink-0" />
-          <span className="font-medium">{patient.phone?.trim() || '—'}</span>
-        </div>
-      ),
-    },
-    {
       key: 'address',
       label: 'Địa chỉ',
       className: 'w-[30%]',
@@ -69,6 +58,17 @@ export default function PatientTable({ data, onViewDetails, onEdit, onDelete, lo
         <div className="flex items-start gap-2 text-sm text-slate-600 min-w-0">
           <MapPin size={14} className="text-rose-500 shrink-0 mt-0.5" />
           <span className="line-clamp-2" title={patient.address}>{patient.address?.trim() || '—'}</span>
+        </div>
+      ),
+    },
+    {
+      key: 'phone',
+      label: 'Số điện thoại',
+      className: 'w-[15%]',
+      render: (patient) => (
+        <div className="flex items-center gap-2 text-sm text-slate-700">
+          <Phone size={14} className="text-blue-500 shrink-0" />
+          <span className="font-medium">{patient.phone?.trim() || '—'}</span>
         </div>
       ),
     },

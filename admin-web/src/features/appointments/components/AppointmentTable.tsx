@@ -28,10 +28,10 @@ interface Props {
   };
 }
 
-export default function AppointmentTable({ 
-  data, onCheckIn, onCancel, onTransfer, 
+export default function AppointmentTable({
+  data, onCheckIn, onCancel, onTransfer,
   onCall, onSkip, onReturnToQueue, onSendToLab, onReturnFromLab, onComplete,
-  loading = false, pagination 
+  loading = false, pagination
 }: Props) {
   const { user } = useAuth();
   const isDoctor = user?.role === 'DOCTOR';
@@ -39,8 +39,8 @@ export default function AppointmentTable({
   const columns: Column<Appointment>[] = [
     {
       key: 'appointmentType',
-      label: '',
-      className: 'w-[4%] text-center',
+      label: 'Loại',
+      className: 'w-[7%] text-center',
       render: (item) =>
         item.appointmentType === 'ONLINE' ? (
           <span title="Đặt online" className="inline-flex justify-center text-indigo-500">
@@ -55,13 +55,13 @@ export default function AppointmentTable({
     {
       key: 'queueNumber',
       label: 'STT',
-      className: 'w-[9%]',
+      className: 'w-[10%]',
       render: (item) => <QueueNumberCell queueNumber={item.queueNumber} />,
     },
     {
       key: 'appointmentDate',
       label: 'Ngày & ID',
-      className: 'w-[18%]',
+      className: 'w-[15%]',
       render: (item) => (
         <div>
           <p className="text-sm font-medium text-slate-700 flex items-center gap-1">
@@ -75,7 +75,7 @@ export default function AppointmentTable({
     {
       key: 'patientName',
       label: 'Bệnh nhân',
-      className: 'w-[20%]',
+      className: 'w-[22%]',
       render: (item) => (
         <div>
           <p className="font-medium text-slate-800">{item.patientName}</p>
@@ -96,7 +96,7 @@ export default function AppointmentTable({
     {
       key: 'timeStart',
       label: 'Lịch khám & Bác sĩ',
-      className: 'w-[22%]',
+      className: 'w-[19%]',
       render: (item) => (
         <div>
           <div className="flex items-center gap-1 text-sm text-slate-700">
@@ -128,7 +128,7 @@ export default function AppointmentTable({
     {
       key: 'status',
       label: 'Trạng thái',
-      className: 'w-[15%]',
+      className: 'w-[13%]',
       render: (item) => (
         <div>
           <StatusBadge status={item.status} />
@@ -143,40 +143,38 @@ export default function AppointmentTable({
     {
       key: 'actions',
       label: 'Thao tác',
-      className: 'w-[16%] min-w-[168px]',
+      className: 'w-[12%]',
       render: (item) => {
         const callLabel =
           item.status === 'CHECKED_IN' && item.queueNumber === 0 ? 'Đọc kết quả' : 'Gọi khám';
         return (
-          <div className="flex items-center gap-1 flex-nowrap">
+          <div className="flex items-center gap-1 flex-wrap">
             {isStaffOrAdmin && ['PENDING', 'CONFIRMED'].includes(item.status) && (
-              <CheckInButton onClick={() => onCheckIn(item.appointmentId)} iconOnly title="Check-in" />
+              <CheckInButton onClick={() => onCheckIn(item.appointmentId)} />
             )}
             {isStaffOrAdmin && ['PENDING', 'CONFIRMED', 'CHECKED_IN'].includes(item.status) && onTransfer && (
-              <TransferButton onClick={() => onTransfer(item)} iconOnly title="Chuyển bác sĩ" />
+              <TransferButton onClick={() => onTransfer(item)} />
             )}
             {isStaffOrAdmin && ['SKIPPED'].includes(item.status) && onReturnToQueue && (
-              <ReturnToQueueButton onClick={() => onReturnToQueue(item.appointmentId)} iconOnly title="Trả về hàng đợi" />
+              <ReturnToQueueButton onClick={() => onReturnToQueue(item.appointmentId)} />
             )}
             {isStaffOrAdmin && !['COMPLETED', 'CANCELLED', 'NO_SHOW'].includes(item.status) && (
-              <CancelButton onClick={() => onCancel(item)} iconOnly title="Hủy lịch" />
+              <CancelButton onClick={() => onCancel(item)} />
             )}
             {isDoctor && ['CHECKED_IN', 'SKIPPED'].includes(item.status) && onCall && (
               <CallPatientButton
                 label={callLabel}
                 onClick={() => onCall(item.appointmentId)}
-                iconOnly
-                title={callLabel}
               />
             )}
             {isDoctor && ['CHECKED_IN', 'IN_PROGRESS'].includes(item.status) && onSkip && (
-              <SkipPatientButton onClick={() => onSkip(item.appointmentId)} iconOnly title="Bỏ qua" />
+              <SkipPatientButton onClick={() => onSkip(item.appointmentId)} />
             )}
             {isDoctor && ['IN_PROGRESS'].includes(item.status) && onSendToLab && (
-              <SendToLabButton onClick={() => onSendToLab(item.appointmentId)} iconOnly title="Chuyển chờ kết quả" />
+              <SendToLabButton onClick={() => onSendToLab(item.appointmentId)} />
             )}
             {isDoctor && ['IN_PROGRESS'].includes(item.status) && onComplete && (
-              <CompleteButton onClick={() => onComplete(item.appointmentId)} iconOnly title="Hoàn thành" />
+              <CompleteButton onClick={() => onComplete(item.appointmentId)} />
             )}
           </div>
         );

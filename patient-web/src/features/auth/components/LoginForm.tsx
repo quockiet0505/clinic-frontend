@@ -12,6 +12,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -28,7 +29,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      await login(email, password, rememberMe);
       onSuccess();
     } catch (err: any) {
       const errorMessage =
@@ -87,6 +88,19 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
         </div>
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <input 
+          type="checkbox" 
+          id="rememberMe" 
+          checked={rememberMe}
+          onChange={(e) => setRememberMe(e.target.checked)}
+          className="h-4 w-4 rounded border-slate-300 text-primary-600 focus:ring-primary-600 cursor-pointer"
+        />
+        <label htmlFor="rememberMe" className="text-sm font-bold text-slate-600 cursor-pointer select-none">
+          Ghi nhớ đăng nhập
+        </label>
       </div>
 
       <Button

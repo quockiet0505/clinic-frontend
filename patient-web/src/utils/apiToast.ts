@@ -1,5 +1,5 @@
 import type { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
-import { toast } from 'sonner';
+import { toast } from 'react-hot-toast';
 
 declare module 'axios' {
   export interface AxiosRequestConfig {
@@ -34,7 +34,7 @@ export function handleApiErrorToast(error: AxiosError) {
   const config = error.config as InternalAxiosRequestConfig | undefined;
   if (config?.skipToast) return;
 
-  if (error.response?.status === 401) return;
+  if (error.response?.status === 401 || error.response?.status === 403) return;
 
   const msg =
     extractApiMessage(error.response?.data) ||

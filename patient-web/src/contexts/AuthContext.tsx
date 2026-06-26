@@ -7,7 +7,7 @@ import { profileApi } from '@/features/profile/api/profileApi';
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
   register: (data: RegisterRequest) => Promise<void>;
   logout: () => Promise<void>;
   loading: boolean;
@@ -58,10 +58,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     initAuth();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, rememberMe: boolean = true) => {
     setLoading(true);
     try {
-      await authApi.login(email, password);
+      await authApi.login(email, password, rememberMe);
       const account = await authApi.getCurrentUser();
       await fetchFullUser(account);
     } finally {
@@ -82,6 +82,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     await authApi.logout();
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     setUser(null);
   };
 

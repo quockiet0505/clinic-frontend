@@ -16,6 +16,7 @@ const loginSchema = z.object({
     .email('Invalid email format'),
   password: z.string({ message: 'Please enter your password' })
     .min(6, 'Password must contain at least 6 characters'),
+  rememberMe: z.boolean(),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -28,13 +29,13 @@ export default function LoginForm() {
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: '', password: '', rememberMe: true },
   });
 
   async function onSubmit(values: LoginFormValues) {
     setServerError(null);
     try {
-      await login(values.email, values.password);
+      await login(values.email, values.password, values.rememberMe);
       navigate('/dashboard');
     } catch (error: any) {
       setServerError(error.response?.data?.message || 'Authentication failed. Please check your credentials.');
@@ -84,6 +85,18 @@ export default function LoginForm() {
         </div>
         {errors.password && <FieldError className="text-xs font-bold text-red-500">{errors.password.message}</FieldError>}
       </Field>
+
+      <div className="flex items-center space-x-2">
+        <input 
+          type="checkbox" 
+          id="rememberMe" 
+          {...register('rememberMe')} 
+          className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-600 cursor-pointer"
+        />
+        <label htmlFor="rememberMe" className="text-sm font-bold text-slate-600 cursor-pointer select-none">
+          Remember me for 30 days
+        </label>
+      </div>
 
       <Button 
         type="submit" 

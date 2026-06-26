@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('clinic_token');
+    const token = localStorage.getItem('clinic_token') || sessionStorage.getItem('clinic_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -24,9 +24,11 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 || error.response?.status === 403) {
       localStorage.removeItem('clinic_token');
       localStorage.removeItem('clinic_user');
+      sessionStorage.removeItem('clinic_token');
+      sessionStorage.removeItem('clinic_user');
       window.location.href = '/login';
     } else {
       handleApiErrorToast(error);

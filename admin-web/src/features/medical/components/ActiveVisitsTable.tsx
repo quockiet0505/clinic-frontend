@@ -21,13 +21,13 @@ export default function ActiveVisitsTable({ data, onConsult, onTriage, loading =
     {
       key: 'queueNumber',
       label: 'STT',
-      className: 'w-[8%]',
+      className: 'w-[12%]',
       render: (visit) => <QueueNumberCell queueNumber={visit.queueNumber} />,
     },
     {
       key: 'createdAt',
       label: 'Ngày & Mã HSBA',
-      className: 'w-[15%]',
+      className: 'w-[20%]',
       render: (visit) => (
         <div>
           <p className="text-sm font-medium text-slate-700 flex items-center gap-1">
@@ -41,7 +41,7 @@ export default function ActiveVisitsTable({ data, onConsult, onTriage, loading =
     {
       key: 'patientInfo',
       label: 'Thông tin khám',
-      className: 'w-[30%]',
+      className: 'w-[23%]',
       render: (visit) => (
         <div className="flex flex-col gap-1.5">
           <p className="font-bold text-slate-800 text-[14px]">{visit.patientName}</p>
@@ -57,7 +57,7 @@ export default function ActiveVisitsTable({ data, onConsult, onTriage, loading =
     {
       key: 'vitalsTaken',
       label: 'Sinh hiệu',
-      className: 'w-[13%]',
+      className: 'w-[14%]',
       render: (visit) =>
         visit.vitalsTaken ? (
           <Badge className="bg-emerald-100 text-emerald-700 border-0 px-2 py-0.5 text-xs font-medium">
@@ -76,7 +76,7 @@ export default function ActiveVisitsTable({ data, onConsult, onTriage, loading =
     {
       key: 'actions',
       label: 'Thao tác',
-      className: 'w-[15%]',
+      className: 'w-[17%]',
       render: (visit) => {
         if (onTriage) {
           return (
