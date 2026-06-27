@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { format } from 'date-fns';
 import { CalendarDays, Clock3, User, Activity, FileText, FlaskConical, HelpCircle, XCircle, FileSignature, Pill, Loader2, CalendarOff } from 'lucide-react';
 import { CancelAppointmentDialog } from './CancelAppointmentDialog';
+import { RescheduleAppointmentDialog } from './RescheduleAppointmentDialog';
 import type { AppointmentHistoryItem } from '../types/appointment';
 import { recordApi } from '../../records/api/recordApi';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +21,7 @@ interface AppointmentCardProps {
 
 export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, onCancelSuccess, isUpcoming }) => {
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+  const [rescheduleDialogOpen, setRescheduleDialogOpen] = useState(false);
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [hasReviewed, setHasReviewed] = useState(false);
   const [loadingModal, setLoadingModal] = useState(false);
@@ -101,6 +103,16 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
   const appointmentDate = new Date(appointment.appointmentDate);
   const timeStart = appointment.timeStart?.substring(0, 5) || '00:00';
   const timeEnd = appointment.timeEnd?.substring(0, 5) || '00:00';
+
+  // Check if within 3 hours
+  const isWithin3Hours = () => {
+    if (!appointment.appointmentDate || !appointment.timeStart) return false;
+    const aptDateTime = new Date(`${appointment.appointmentDate}T${appointment.timeStart}`);
+    const now = new Date();
+    const diffHours = (aptDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+    return diffHours < 3 && diffHours > 0;
+  };
+  const blockedByTime = isWithin3Hours();
 
   const handleOpenPrescription = async () => {
     setLoadingModal(true);
@@ -274,10 +286,28 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
               <p className="text-[13px] font-bold text-slate-600 leading-relaxed">
                 {config.message}
               </p>
+              {appointment.rescheduleCount && appointment.rescheduleCount > 0 ? (
+                <div className="mt-3">
+                  <span className="inline-block text-[11px] font-bold text-amber-500 uppercase tracking-wider mb-1 px-2 py-0.5 bg-amber-50 rounded">
+                    Đã dời lịch {appointment.rescheduleCount} lần
+                  </span>
+                  <p className="text-[12px] text-amber-600 font-medium bg-amber-50/50 p-2 rounded-lg border border-amber-100">
+                    Lý do: {appointment.rescheduleReason}
+                  </p>
+                </div>
+              ) : null}
               {appointment.symptoms && appointment.symptoms !== 'Không có triệu chứng' && (
                 <div className="mt-3">
                   <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Lý do khám / Triệu chứng</span>
                   <p className="text-[13px] font-medium text-slate-600 line-clamp-2">{appointment.symptoms}</p>
+                </div>
+              )}
+              {blockedByTime && (status === 'PENDING' || status === 'CONFIRMED') && (
+                <div className="mt-3 bg-red-50 p-2.5 rounded-xl border border-red-100 flex items-start gap-2">
+                  <Clock3 className="w-4 h-4 text-red-500 mt-0.5 shrink-0" />
+                  <p className="text-[12px] text-red-700 font-bold leading-snug">
+                    Đã quá hạn dời/huỷ lịch (chỉ cho phép trước giờ khám 3 tiếng). Vui lòng liên hệ quầy lễ tân nếu cần hỗ trợ.
+                  </p>
                 </div>
               )}
               {status === 'NO_SHOW' && (
@@ -317,8 +347,16 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
               {status === 'CONFIRMED' && (
                 <>
                   <button 
+                    onClick={() => setRescheduleDialogOpen(true)}
+                    disabled={blockedByTime}
+                    className="cursor-pointer flex-1 min-w-[100px] justify-center px-4 py-2.5 rounded-xl border border-amber-200 bg-amber-50 font-bold text-amber-600 hover:bg-amber-100 transition-colors flex items-center gap-2 text-[13px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Dời lịch
+                  </button>
+                  <button 
                     onClick={() => setCancelDialogOpen(true)}
-                    className="cursor-pointer flex-1 min-w-[100px] justify-center px-4 py-2.5 rounded-xl border border-transparent bg-rose-100 font-bold text-rose-600 hover:bg-rose-200 transition-colors flex items-center gap-2 text-[13px]"
+                    disabled={blockedByTime}
+                    className="cursor-pointer flex-1 min-w-[100px] justify-center px-4 py-2.5 rounded-xl border border-transparent bg-rose-100 font-bold text-rose-600 hover:bg-rose-200 transition-colors flex items-center gap-2 text-[13px] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Hủy lịch
                   </button>
@@ -326,12 +364,22 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
               )}
 
               {status === 'PENDING' && (
-                <button 
-                  onClick={() => setCancelDialogOpen(true)}
-                  className="cursor-pointer w-full justify-center px-4 py-2.5 rounded-xl border border-transparent bg-rose-50 font-bold text-rose-600 hover:bg-rose-100 transition-colors flex items-center gap-2 text-[13px]"
-                >
-                  <XCircle className="w-4 h-4" /> Huỷ lịch hẹn
-                </button>
+                <div className="flex w-full gap-2">
+                  <button 
+                    onClick={() => setRescheduleDialogOpen(true)}
+                    disabled={blockedByTime}
+                    className="cursor-pointer flex-1 justify-center px-4 py-2.5 rounded-xl border border-amber-200 bg-amber-50 font-bold text-amber-600 hover:bg-amber-100 transition-colors flex items-center gap-2 text-[13px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Dời lịch
+                  </button>
+                  <button 
+                    onClick={() => setCancelDialogOpen(true)}
+                    disabled={blockedByTime}
+                    className="cursor-pointer flex-1 justify-center px-4 py-2.5 rounded-xl border border-transparent bg-rose-50 font-bold text-rose-600 hover:bg-rose-100 transition-colors flex items-center gap-2 text-[13px] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Huỷ lịch
+                  </button>
+                </div>
               )}
               
               {(status === 'CHECKED_IN' || status === 'IN_PROGRESS' || status === 'WAITING_RESULT' || status === 'SKIPPED') && (
@@ -348,6 +396,13 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
         open={cancelDialogOpen}
         onOpenChange={setCancelDialogOpen}
         appointmentId={appointment.id}
+        onSuccess={onCancelSuccess}
+      />
+
+      <RescheduleAppointmentDialog
+        open={rescheduleDialogOpen}
+        onOpenChange={setRescheduleDialogOpen}
+        appointment={appointment}
         onSuccess={onCancelSuccess}
       />
 

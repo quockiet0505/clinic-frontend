@@ -5,7 +5,7 @@ import StatusBadge from '@/components/common/StatusBadge';
 import QueueNumberCell from '@/components/common/QueueNumberCell';
 import { Appointment, getBookingModeLabel } from '../types/appointment';
 import { formatDateTime } from '@/utils/formatters';
-import { CheckInButton, CancelButton, TransferButton, CallPatientButton, SkipPatientButton, SendToLabButton, CompleteButton, ReturnToQueueButton } from '@/components/common/ActionButtons';
+import { CheckInButton, CancelButton, TransferButton, CallPatientButton, SkipPatientButton, SendToLabButton, CompleteButton, ReturnToQueueButton, RescheduleButton } from '@/components/common/ActionButtons';
 import { useAuth } from '@/context/AuthContext';
 
 interface Props {
@@ -19,6 +19,7 @@ interface Props {
   onSendToLab?: (id: number) => void;
   onReturnFromLab?: (id: number) => void;
   onComplete?: (id: number) => void;
+  onReschedule?: (apt: Appointment) => void;
   loading?: boolean;
   pagination?: {
     page: number;
@@ -30,7 +31,7 @@ interface Props {
 
 export default function AppointmentTable({
   data, onCheckIn, onCancel, onTransfer,
-  onCall, onSkip, onReturnToQueue, onSendToLab, onReturnFromLab, onComplete,
+  onCall, onSkip, onReturnToQueue, onSendToLab, onReturnFromLab, onComplete, onReschedule,
   loading = false, pagination
 }: Props) {
   const { user } = useAuth();
@@ -137,6 +138,13 @@ export default function AppointmentTable({
               {item.cancelReason}
             </p>
           )}
+          {item.rescheduleCount && item.rescheduleCount > 0 ? (
+            <div className="mt-1" title={item.rescheduleReason}>
+              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-50 text-amber-600">
+                Đã dời lịch ({item.rescheduleCount} lần)
+              </span>
+            </div>
+          ) : null}
         </div>
       ),
     },
@@ -160,6 +168,9 @@ export default function AppointmentTable({
             )}
             {isStaffOrAdmin && !['COMPLETED', 'CANCELLED', 'NO_SHOW'].includes(item.status) && (
               <CancelButton onClick={() => onCancel(item)} />
+            )}
+            {isStaffOrAdmin && ['PENDING', 'CONFIRMED', 'CHECKED_IN'].includes(item.status) && onReschedule && (
+              <RescheduleButton onClick={() => onReschedule(item)} />
             )}
             {isDoctor && ['CHECKED_IN', 'SKIPPED'].includes(item.status) && onCall && (
               <CallPatientButton

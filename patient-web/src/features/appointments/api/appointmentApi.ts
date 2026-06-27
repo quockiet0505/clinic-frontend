@@ -13,11 +13,12 @@ import type {
 } from '../types/appointment';
 
 // Helper to compute displayTime and period from timeStart/timeEnd
-function enrichTimeSlot(slot: TimeSlotRaw): TimeSlot {
+function enrichTimeSlot(slot: any): TimeSlot {
   const displayTime = `${slot.timeStart.substring(0, 5)} - ${slot.timeEnd.substring(0, 5)}`;
   const hour = parseInt(slot.timeStart.split(':')[0], 10);
   const period = hour < 12 ? 'morning' : 'afternoon';
-  return { ...slot, displayTime, period };
+  const isAvailable = slot.isAvailable ?? slot.available ?? false;
+  return { ...slot, displayTime, period, isAvailable };
 }
 
 export const appointmentApi = {
@@ -42,9 +43,16 @@ export const appointmentApi = {
   getAvailableDates: async (): Promise<AvailableDate[]> => {
     const dates: AvailableDate[] = [];
     const today = new Date();
-    for (let i = 1; i <= 14; i++) {
+    let daysAdded = 0;
+    let offset = 1;
+
+    while (daysAdded < 7 && offset <= 14) {
       const nextDate = new Date(today);
-      nextDate.setDate(today.getDate() + i);
+      nextDate.setDate(today.getDate() + offset);
+      offset++;
+
+      if (nextDate.getDay() === 0) continue; // Skip Sunday
+
       const yyyy = nextDate.getFullYear();
       const mm = String(nextDate.getMonth() + 1).padStart(2, '0');
       const dd = String(nextDate.getDate()).padStart(2, '0');
@@ -54,6 +62,7 @@ export const appointmentApi = {
         displayDate: `${dd}/${mm}`,
         dayOfWeek: weekdays[nextDate.getDay()],
       });
+      daysAdded++;
     }
     return dates;
   },
@@ -122,6 +131,8 @@ export const appointmentApi = {
       doctorName: item.doctorName || 'Chưa xếp bác sĩ',
       doctorImageUrl: item.doctorImageUrl?.startsWith('/') ? `http://localhost:8080${item.doctorImageUrl}` : item.doctorImageUrl,
       specialty: item.expertiseName || item.specialty || 'Chưa xác định',
+      expertiseId: item.expertiseId,
+      serviceId: item.serviceId,
       serviceName: item.serviceName || 'Khám chuyên khoa',
       serviceType: item.serviceType,
       facility: 'Phòng khám Đa khoa',
@@ -131,7 +142,23 @@ export const appointmentApi = {
       bookingMode: item.bookingMode,
       isAiSuggested: item.isAiSuggested,
       suggestedExpertiseId: item.suggestedExpertiseId,
+      rescheduleCount: item.rescheduleCount,
+      rescheduleReason: item.rescheduleReason,
     }));
+  },
+
+  update: async (
+    id: string | number,
+    data: {
+      appointmentDate: string;
+      timeStart: string;
+      timeEnd: string;
+      mainDoctorId?: number;
+      rescheduleReason: string;
+    }
+  ) => {
+    const res = await axiosInstance.put(`/appointments/${id}`, data);
+    return res.data.data;
   },
 
   cancelAppointment: async (id: string, reason: string): Promise<{ success: boolean; message: string }> => {

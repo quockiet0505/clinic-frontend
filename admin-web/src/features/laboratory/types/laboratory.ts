@@ -9,6 +9,9 @@ export interface ServiceOrder {
   orderedBy: number;
   doctorName: string;  // Joined from staff
   status: OrderStatus;
+  appointmentDate?: string;
+  timeStart?: string;
+  timeEnd?: string;
   sample_collected_at?: string;
   createdAt: string;
 }

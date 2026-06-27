@@ -192,4 +192,35 @@ class AppointmentProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<bool> rescheduleAppointment({
+    required int appointmentId,
+    required String reason,
+  }) async {
+    if (selectedDate == null || selectedTimeSlot == null) {
+      error = 'Vui lòng chọn ngày và giờ.';
+      return false;
+    }
+
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      await _bookingService.rescheduleAppointment(
+        appointmentId: appointmentId,
+        doctorId: selectedDoctor?.id,
+        date: selectedDate!,
+        timeStart: selectedTimeSlot!['timeStart'],
+        timeEnd: selectedTimeSlot!['timeEnd'] ?? selectedTimeSlot!['timeStart'],
+        reason: reason,
+      );
+      return true;
+    } catch (e) {
+      error = e.toString().replaceAll('Exception: ', '');
+      return false;
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
 }

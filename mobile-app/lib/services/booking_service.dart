@@ -79,4 +79,28 @@ class BookingService {
       rethrow;
     }
   }
+
+  Future<void> rescheduleAppointment({
+    required int appointmentId,
+    required String date,
+    required String timeStart,
+    required String timeEnd,
+    required String reason,
+    int? doctorId,
+  }) async {
+    try {
+      final response = await _dioClient.dio.put('/appointments/$appointmentId', data: {
+        'appointmentDate': date,
+        'timeStart': timeStart,
+        'timeEnd': timeEnd,
+        'rescheduleReason': reason,
+        if (doctorId != null && doctorId > 0) 'mainDoctorId': doctorId,
+      });
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw Exception(response.data['message'] ?? 'Failed to reschedule appointment');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -300,6 +300,7 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
           <>
             <FormSearchModal
               label="Chuyên khoa"
+              required
               triggerIcon={Activity}
               modalTitle="Chọn Chuyên khoa"
               value={String(formData.expertiseId)}
@@ -319,6 +320,7 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
 
             <FormSearchModal
               label="Bác sĩ"
+              required
               triggerIcon={Stethoscope}
               modalTitle="Chọn Bác sĩ"
               value={String(formData.doctorId)}
@@ -340,6 +342,7 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
         {formData.bookingMode === 'SERVICE' && (
           <FormSearchModal
             label="Dịch vụ"
+            required
             triggerIcon={BriefcaseMedical}
             modalTitle="Chọn Dịch vụ"
             value={String(formData.serviceId)}

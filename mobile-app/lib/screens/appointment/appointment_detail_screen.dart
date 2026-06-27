@@ -9,6 +9,7 @@ import 'package:clinic_management_system/screens/appointment/review_screen.dart'
 import 'package:clinic_management_system/screens/profile/review_history_screen.dart';
 
 import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
+import 'package:clinic_management_system/screens/appointment/reschedule_dialog.dart';
 
 import 'package:clinic_management_system/services/feedback_service.dart';
 
@@ -76,6 +77,17 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
     }
     final formattedTime = (appointment.timeStart?.length ?? 0) >= 5 ? appointment.timeStart!.substring(0, 5) : (appointment.timeStart ?? '--:--');
 
+    bool blockedByTime = false;
+    try {
+      final aptDateTimeStr = '${appointment.appointmentDate} ${appointment.timeStart}';
+      final aptDateTime = DateFormat('yyyy-MM-dd HH:mm:ss').parse(aptDateTimeStr);
+      final now = DateTime.now();
+      final diff = aptDateTime.difference(now).inHours;
+      if (diff < 3 && diff > -24) {
+        blockedByTime = true;
+      }
+    } catch (_) {}
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFF),
       appBar: const GradientAppBar(title: 'Chi tiết lịch hẹn'),
@@ -106,6 +118,32 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                     const Expanded(
                       child: Text(
                         'Cảnh báo: Bạn đã vắng mặt. Nếu không đến khám quá 3 lần, tài khoản của bạn sẽ bị khoá tự động.',
+                        style: TextStyle(fontSize: 13, color: Color(0xFFB91C1C), fontWeight: FontWeight.bold, height: 1.5),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            if (blockedByTime && (appointment.status == 'PENDING' || appointment.status == 'CONFIRMED'))
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF2F2),
+                  border: Border.all(color: const Color(0xFFFEE2E2)),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2),
+                      child: Icon(Icons.access_time_filled_rounded, color: Color(0xFFEF4444), size: 20),
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Text(
+                        'Đã quá hạn dời/huỷ lịch (chỉ cho phép trước giờ khám 3 tiếng). Vui lòng liên hệ quầy lễ tân nếu cần hỗ trợ.',
                         style: TextStyle(fontSize: 13, color: Color(0xFFB91C1C), fontWeight: FontWeight.bold, height: 1.5),
                       ),
                     ),
@@ -224,6 +262,10 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                   ),
                   const Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Divider(height: 1, color: Color(0xFFF3F4F6))),
                   _buildDetailRow(Icons.edit_note_rounded, 'Ghi chú triệu chứng', appointment.note?.isNotEmpty == true ? appointment.note! : 'Không có ghi chú', const Color(0xFFF59E0B)),
+                  if ((appointment.rescheduleCount ?? 0) > 0) ...[
+                    const Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Divider(height: 1, color: Color(0xFFF3F4F6))),
+                    _buildDetailRow(Icons.edit_calendar_rounded, 'Đã dời lịch (${appointment.rescheduleCount} lần)', appointment.rescheduleReason ?? 'Không rõ lý do', Colors.amber),
+                  ],
                 ],
               ),
             ),
@@ -274,6 +316,33 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                           _hasReviewed ? 'Xem đánh giá' : 'Đánh giá Dịch vụ', 
                           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
+                  ),
+                ),
+              ],
+              
+              if (appointment.status == 'PENDING' || appointment.status == 'CONFIRMED') ...[
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: blockedByTime ? null : () async {
+                      final result = await showDialog(
+                        context: context,
+                        builder: (context) => RescheduleDialog(appointment: appointment),
+                      );
+                      if (result == true) {
+                        Navigator.pop(context, true); // Pop out to refresh list
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: blockedByTime ? Colors.grey[200] : Colors.amber[50],
+                      foregroundColor: blockedByTime ? Colors.grey[500] : Colors.amber[600],
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      elevation: 0,
+                      side: BorderSide(color: blockedByTime ? Colors.grey[300]! : Colors.amber[200]!),
+                    ),
+                    child: const Text('Dời lịch hẹn', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],

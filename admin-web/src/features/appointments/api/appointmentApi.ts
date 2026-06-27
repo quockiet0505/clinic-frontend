@@ -100,4 +100,20 @@ export const appointmentApi = {
   complete: async (id: number): Promise<void> => {
     await axiosInstance.patch(`/appointments/${id}/status`, null, { params: { status: 'COMPLETED' } });
   },
+
+  update: async (id: number, data: any): Promise<void> => {
+    await axiosInstance.put(`/appointments/${id}`, data);
+  },
+
+  getTimeSlots: async (
+    appointmentDate: string,
+    options: { doctorId?: number; expertiseId?: number; serviceId?: number }
+  ): Promise<any[]> => {
+    const params = new URLSearchParams({ date: appointmentDate });
+    if (options.doctorId) params.set('doctorId', String(options.doctorId));
+    if (options.expertiseId) params.set('expertiseId', String(options.expertiseId));
+    if (options.serviceId) params.set('serviceId', String(options.serviceId));
+    const response = await axiosInstance.get(`/appointments/slots?${params.toString()}`);
+    return response.data.data;
+  },
 };

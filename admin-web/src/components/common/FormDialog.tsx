@@ -17,6 +17,8 @@ export interface FieldConfig {
   options?: { value: string; label: string }[];
   rows?: number;
   colSpan?: 1 | 2;
+  min?: string | number;
+  step?: number;
 }
 
 interface FormDialogProps {
@@ -184,6 +186,8 @@ export default function FormDialog({
           <Input
             type={field.type}
             value={value}
+            min={field.min as string}
+            step={field.step}
             onChange={(e) => handleChange(field.name, e.target.value)}
             className={`${inputClassName} cursor-pointer ${compact ? 'w-full' : ''}`}
           />

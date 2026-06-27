@@ -18,6 +18,8 @@ class AppointmentModel {
   final bool? isAiSuggested;
   final int? suggestedExpertiseId;
   final String? serviceType;
+  final String? rescheduleReason;
+  final int? rescheduleCount;
 
   AppointmentModel({
     required this.appointmentId,
@@ -39,6 +41,8 @@ class AppointmentModel {
     this.isAiSuggested,
     this.suggestedExpertiseId,
     this.serviceType,
+    this.rescheduleReason,
+    this.rescheduleCount,
   });
 
   factory AppointmentModel.fromJson(Map<String, dynamic> json) {
@@ -62,6 +66,8 @@ class AppointmentModel {
       isAiSuggested: json['isAiSuggested'],
       suggestedExpertiseId: json['suggestedExpertiseId'],
       serviceType: json['serviceType'],
+      rescheduleReason: json['rescheduleReason'],
+      rescheduleCount: json['rescheduleCount'],
     );
   }
 }

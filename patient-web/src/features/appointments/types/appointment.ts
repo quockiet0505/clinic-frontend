@@ -71,6 +71,8 @@ export interface AppointmentHistoryItem {
   doctorName: string;
   doctorImageUrl?: string; // mapped from getDoctors API
   specialty: string; // expertiseName
+  expertiseId?: number;
+  serviceId?: number;
   serviceName: string; // newly added to distinguish consultation/test
   serviceType?: 'EXAM' | 'LAB_TEST' | 'X_RAY' | 'ULTRASOUND' | 'CT_SCAN' | 'MRI' | 'ENDOSCOPY' | 'OTHER';
   servicePrice?: number;
@@ -82,4 +84,6 @@ export interface AppointmentHistoryItem {
   bookingMode?: BookingMode;
   isAiSuggested?: boolean;
   suggestedExpertiseId?: number;
+  rescheduleReason?: string;
+  rescheduleCount?: number;
 }

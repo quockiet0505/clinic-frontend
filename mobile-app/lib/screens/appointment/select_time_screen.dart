@@ -20,14 +20,22 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
     final List<Map<String, String>> dates = [];
     final now = DateTime.now();
     final weekDays = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
-    for (int i = 0; i < 14; i++) {
-      final date = now.add(Duration(days: i));
+    int daysAdded = 0;
+    int offset = 1;
+    
+    while (daysAdded < 7 && offset <= 14) {
+      final date = now.add(Duration(days: offset));
+      offset++;
+      
+      if (date.weekday == 7) continue; // Skip Sunday
+
       dates.add({
         'day': weekDays[date.weekday - 1],
         'date': date.day.toString().padLeft(2, '0'),
         'month': '/${date.month}',
         'fullDate': "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}"
       });
+      daysAdded++;
     }
     return dates;
   }

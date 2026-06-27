@@ -102,3 +102,10 @@ export const ReturnToQueueButton = ({ onClick, label = 'Trả về hàng đợi'
     {icon}{!iconOnly && <span>{label}</span>}
   </Button>
 );
+
+import { CalendarClock } from 'lucide-react';
+export const RescheduleButton = ({ onClick, label = 'Dời lịch', icon = <CalendarClock size={14} />, disabled, className, iconOnly, title }: ActionButtonProps) => (
+  <Button onClick={onClick} disabled={disabled} variant="outline" size="sm" title={title || label} className={iconBtnClass('text-cyan-600 border-cyan-200 hover:bg-cyan-50 hover:text-cyan-700 hover:border-cyan-300', className, iconOnly)}>
+    {icon}{!iconOnly && <span>{label}</span>}
+  </Button>
+);

@@ -10,7 +10,7 @@ const STEPS = [
 ];
 
 const RULES = [
-  { icon: <CalendarClock className="w-4 h-4" />, text: 'Đặt trước tối đa <strong>14 ngày</strong>' },
+  { icon: <CalendarClock className="w-4 h-4" />, text: 'Đặt trước tối đa <strong>7 ngày</strong>' },
   { icon: <Clock className="w-4 h-4" />, text: 'Cần đặt trước ít nhất <strong>24 giờ</strong>' },
   { icon: <AlertCircle className="w-4 h-4" />, text: 'Huỷ miễn phí trước <strong>3 tiếng</strong>' },
 ];
@@ -73,12 +73,10 @@ export const BookAppointment: React.FC = () => {
             <div className="hidden md:flex items-center gap-0 shrink-0">
               {STEPS.map((step, i) => (
                 <React.Fragment key={i}>
-                  <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold transition-all ${
-                    i === 0 ? 'bg-white text-primary-600 shadow-md' : 'bg-white/10 text-white/80 border border-white/20'
-                  }`}>
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black ${
-                      i === 0 ? 'bg-primary-100 text-primary-600' : 'bg-white/20'
-                    }`}>{step.icon}</span>
+                  <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-[12px] font-bold transition-all ${i === 0 ? 'bg-white text-primary-600 shadow-md' : 'bg-white/10 text-white/80 border border-white/20'
+                    }`}>
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black ${i === 0 ? 'bg-primary-100 text-primary-600' : 'bg-white/20'
+                      }`}>{step.icon}</span>
                     {step.label}
                   </div>
                   {i < STEPS.length - 1 && (
@@ -179,9 +177,8 @@ export const BookAppointment: React.FC = () => {
             <div className="md:hidden px-7 pt-4 flex items-center gap-1.5 overflow-x-auto">
               {STEPS.map((step, i) => (
                 <React.Fragment key={i}>
-                  <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap ${
-                    i === 0 ? 'bg-primary-500 text-white' : 'bg-slate-100 text-slate-400'
-                  }`}>
+                  <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold whitespace-nowrap ${i === 0 ? 'bg-primary-500 text-white' : 'bg-slate-100 text-slate-400'
+                    }`}>
                     <span>{step.icon}</span>
                     {step.label}
                   </div>

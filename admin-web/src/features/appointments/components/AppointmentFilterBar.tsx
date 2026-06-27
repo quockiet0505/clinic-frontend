@@ -63,11 +63,12 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
     { value: 'ONLINE', label: 'Đặt online' },
   ];
 
-  const tabs: TabOption[] = [
+    const tabs: TabOption[] = [
     { value: 'all', label: 'Tất cả' },
     { value: 'today', label: 'Hôm nay' },
     { value: 'queue', label: 'Hàng đợi STT' },
     { value: 'upcoming', label: 'Sắp tới' },
+    { value: 'service', label: 'Dịch vụ' },
   ];
 
   return (

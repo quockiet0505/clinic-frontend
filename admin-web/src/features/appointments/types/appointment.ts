@@ -27,6 +27,8 @@ export interface Appointment {
   note?: string;
   isDoctorBusy?: boolean;
   queueNumber?: number;
+  rescheduleReason?: string;
+  rescheduleCount?: number;
 }
 
 export interface FollowUp {

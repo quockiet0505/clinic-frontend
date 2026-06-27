@@ -4,6 +4,7 @@ import { AppointmentFilterBar } from '../components/AppointmentFilterBar';
 import AppointmentFormDialog from '../components/AppointmentFormDialog';
 import TransferDoctorDialog from '../components/TransferDoctorDialog';
 import ActionReasonDialog from '@/components/common/ActionReasonDialog';
+import AppointmentRescheduleDialog from '../components/AppointmentRescheduleDialog';
 import FormDialog from '@/components/common/FormDialog';
 import GradientButton from '@/components/common/GradientButton';
 import { Plus } from 'lucide-react';
@@ -31,6 +32,7 @@ export default function AppointmentList() {
   const [isBookOpen, setIsBookOpen] = useState(false);
   const [cancelApt, setCancelApt] = useState<Appointment | null>(null);
   const [transferApt, setTransferApt] = useState<Appointment | null>(null);
+  const [rescheduleApt, setRescheduleApt] = useState<Appointment | null>(null);
   const [checkInAptId, setCheckInAptId] = useState<number | null>(null);
 
   // ---- Fetch data ----
@@ -226,6 +228,7 @@ export default function AppointmentList() {
           onCheckIn={setCheckInAptId}
           onCancel={setCancelApt}
           onTransfer={setTransferApt}
+          onReschedule={setRescheduleApt}
           onCall={handleCallPatient}
           onSkip={handleSkipPatient}
           onReturnToQueue={handleReturnToQueue}
@@ -254,6 +257,13 @@ export default function AppointmentList() {
         onClose={() => setTransferApt(null)}
         onTransfer={handleTransfer}
         appointment={transferApt}
+      />
+
+      <AppointmentRescheduleDialog
+        isOpen={!!rescheduleApt}
+        onClose={() => setRescheduleApt(null)}
+        appointment={rescheduleApt}
+        onRescheduled={() => fetchData()}
       />
 
       <ActionReasonDialog

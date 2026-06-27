@@ -30,7 +30,14 @@ export default function ServiceOrdersTable({ data, onInputResult, onReject, load
         <div>
           <p className="text-sm font-medium text-slate-700 flex items-center gap-1">
             <Calendar size={14} className="text-slate-400" />
-            {formatDateTime(item.createdAt)}
+            {item.appointmentDate ? (
+              <>
+                {formatDateTime(item.appointmentDate).split(' ')[0]} 
+                {item.timeStart && <span className="ml-1 text-blue-600 font-bold">({item.timeStart.substring(0,5)} - {item.timeEnd?.substring(0,5)})</span>}
+              </>
+            ) : (
+              formatDateTime(item.createdAt)
+            )}
           </p>
           <p className="text-xs text-slate-400 mt-0.5">#ORD-{item.orderId}</p>
         </div>
