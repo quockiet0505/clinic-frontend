@@ -29,3 +29,37 @@ class ServiceModel {
     );
   }
 }
+
+enum ServiceType {
+  EXAM,
+  LAB_TEST,
+  X_RAY,
+  ULTRASOUND,
+  CT_SCAN,
+  MRI,
+  ENDOSCOPY,
+  OTHER,
+}
+
+extension ServiceTypeExtension on ServiceType {
+  String get displayName {
+    switch (this) {
+      case ServiceType.EXAM:
+        return 'Khám bệnh';
+      case ServiceType.LAB_TEST:
+        return 'Xét nghiệm';
+      case ServiceType.X_RAY:
+        return 'Chụp X-Quang';
+      case ServiceType.ULTRASOUND:
+        return 'Siêu âm';
+      case ServiceType.CT_SCAN:
+        return 'Chụp CT';
+      case ServiceType.MRI:
+        return 'Chụp MRI';
+      case ServiceType.ENDOSCOPY:
+        return 'Nội soi';
+      case ServiceType.OTHER:
+        return 'Khác';
+    }
+  }
+}

@@ -28,7 +28,9 @@ export const appointmentApi = {
   },
 
   getServices: async (): Promise<Service[]> => {
-    const res = await axiosInstance.get<ApiResponse<Service[]>>('/services/all');
+    const res = await axiosInstance.get<ApiResponse<Service[]>>('/services/all', {
+      params: { bookableOnly: true },
+    });
     return res.data.data;
   },
 

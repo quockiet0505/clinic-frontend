@@ -396,7 +396,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildServices(HomeProvider provider) {
-    final displayServices = provider.featuredServices;
+    final displayServices = provider.featuredServices
+        .where((s) => s.serviceType == 'LAB_TEST' || s.serviceType == 'X_RAY')
+        .toList();
 
     return Column(
       children: [

@@ -131,7 +131,9 @@ export default function ServiceOrders() {
             await laboratoryApi.createServiceOrder({
               recordId: data.recordId,
               serviceId: data.serviceId,
-              orderedById: data.orderedById
+              orderedById: data.orderedById,
+              customServiceName: data.customServiceName,
+              doctorNote: data.doctorNote,
             });
             await fetchOrders();
             setIsAddOpen(false);
@@ -144,8 +146,14 @@ export default function ServiceOrders() {
       <LabResultInputForm
         order={inputOrder}
         onClose={() => setInputOrder(null)}
-        onSubmit={async (id: number, data: { resultData: string; conclusion: string }) => {
-          await laboratoryApi.submitResult({ orderId: id, resultData: data.resultData, conclusion: data.conclusion, enteredById: 1 });
+        onSubmit={async (id: number, data: { resultData: string; conclusion: string; attachmentUrls?: string }) => {
+          await laboratoryApi.submitResult({ 
+            orderId: id, 
+            resultData: data.resultData, 
+            conclusion: data.conclusion, 
+            attachmentUrls: data.attachmentUrls,
+            enteredById: 1 
+          });
           await fetchOrders();
           setInputOrder(null);
         }}

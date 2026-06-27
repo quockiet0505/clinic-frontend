@@ -8,7 +8,7 @@ interface AppointmentQueryParams {
   toDate?: string;
   tab?: string;          // 'today' | 'upcoming' | 'queue'
   source?: string;       // 'ONLINE' | 'WALK_IN'
-  serviceType?: string;  // 'EXAM' | 'LAB_TEST' | 'IMAGING'
+  serviceType?: string;  // 'EXAM' | 'LAB_TEST' | 'X_RAY' | 'ULTRASOUND' | 'CT_SCAN' | 'MRI' | 'ENDOSCOPY' | 'OTHER'
   doctorId?: number;
   patientId?: number;
   page?: number;         // 0‑based

@@ -21,8 +21,18 @@ String serviceTypeLabel(String? type) {
       return 'Khám bệnh';
     case 'LAB_TEST':
       return 'Xét nghiệm';
-    case 'IMAGING':
-      return 'Chẩn đoán hình ảnh';
+    case 'X_RAY':
+      return 'Chụp X-Quang';
+    case 'ULTRASOUND':
+      return 'Siêu âm';
+    case 'CT_SCAN':
+      return 'Chụp CT';
+    case 'MRI':
+      return 'Chụp MRI';
+    case 'ENDOSCOPY':
+      return 'Nội soi';
+    case 'OTHER':
+      return 'Khác';
     default:
       return type ?? 'Dịch vụ';
   }

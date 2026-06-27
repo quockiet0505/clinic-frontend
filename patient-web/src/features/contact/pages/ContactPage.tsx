@@ -60,8 +60,8 @@ export const ContactPage: React.FC = () => {
     {
       icon: <Clock className="w-5 h-5" />,
       label: 'Giờ làm việc',
-      value: settings?.operatingHours ? settings.operatingHours.split(',')[0] : 'T2 – T7: 07:00 – 16:30',
-      sub: settings?.operatingHours ? settings.operatingHours.split(',').slice(1).join(',').trim() : 'Chủ nhật: 07:00 – 12:00',
+      value: settings?.operatingHours ? settings.operatingHours.split(',')[0] : '07:30 – 17:00',
+      sub: settings?.operatingHours ? settings.operatingHours.split(',').slice(1).join(',').trim() : 'Hằng ngày (T2 – CN)',
       accent: 'from-sky-500 to-primary-500',
     },
   ];

@@ -150,7 +150,7 @@ export default function ConsultationWorkspace() {
     setFollowUpSaving(false);
   };
 
-  const handleCreateOrder = async (data: { recordId: number; serviceId: number; orderedById: number }) => {
+  const handleCreateOrder = async (data: { recordId: number; serviceId: number; orderedById: number; customServiceName?: string; doctorNote?: string; }) => {
     try {
       await laboratoryApi.createServiceOrder(data);
       setOrderDialogOpen(false);

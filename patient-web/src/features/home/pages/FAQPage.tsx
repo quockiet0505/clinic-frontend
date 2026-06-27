@@ -25,7 +25,7 @@ const faqs = [
     id: 'cancellation',
     category: 'Chính sách',
     question: 'Hủy lịch hẹn trước bao lâu?',
-    answer: `Để đảm bảo quyền lợi và sự thuận tiện cho cả bạn và các bệnh nhân khác, chúng tôi khuyến khích bạn <strong>hủy hoặc thay đổi lịch hẹn ít nhất 2 giờ</strong> trước giờ khám dự kiến.<br><br>Bạn có thể thực hiện dễ dàng tại mục <a href="/appointments/my" class="text-primary-600 hover:underline cursor-pointer font-semibold">Lịch hẹn của tôi</a> và chọn "Hủy lịch hẹn", hoặc gọi trực tiếp vào tổng đài hỗ trợ.`,
+    answer: `Để đảm bảo quyền lợi và sự thuận tiện cho cả bạn và các bệnh nhân khác, chúng tôi khuyến khích bạn <strong>hủy hoặc thay đổi lịch hẹn ít nhất 3 giờ</strong> trước giờ khám dự kiến.<br><br>Bạn có thể thực hiện dễ dàng tại mục <a href="/appointments/my" class="text-primary-600 hover:underline cursor-pointer font-semibold">Lịch hẹn của tôi</a> và chọn "Hủy lịch hẹn", hoặc gọi trực tiếp vào tổng đài hỗ trợ.`,
     icon: <ShieldQuestion className="w-5 h-5" />,
     accentBg: 'bg-emerald-50',
     accentText: 'text-emerald-600',
@@ -54,7 +54,7 @@ const faqs = [
     id: 'after-hours',
     category: 'Hoạt động',
     question: 'Phòng khám có khám ngoài giờ không?',
-    answer: `Hiện tại, giờ làm việc hành chính của chúng tôi là từ <strong>07:00 – 17:00 (Thứ 2 đến Chủ Nhật)</strong>.<br><br>
+    answer: `Hiện tại, giờ làm việc hành chính của chúng tôi là từ <strong>07:30 – 17:00 (Thứ 2 đến Chủ Nhật)</strong>.<br><br>
     Trong trường hợp cần khám ngoài giờ hoặc cấp cứu, vui lòng liên hệ trước qua đường dây nóng <a href="tel:19002115" class="text-primary-600 font-bold hover:underline cursor-pointer">1900 2115</a> để chúng tôi chuẩn bị đội ngũ y bác sĩ trực tiếp đón nhận.`,
     icon: <PhoneCall className="w-5 h-5" />,
     accentBg: 'bg-amber-50',

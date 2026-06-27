@@ -9,7 +9,8 @@ export interface Expertise {
 export interface Service {
   serviceId: number;
   serviceName: string;
-  serviceType: 'EXAM' | 'LAB_TEST' | 'IMAGING';
+  serviceType: 'EXAM' | 'LAB_TEST' | 'X_RAY' | 'ULTRASOUND' | 'CT_SCAN' | 'MRI' | 'ENDOSCOPY' | 'OTHER';
+  estimatedDuration?: number;
   originalPrice: number;
   discountPrice?: number;
   imageUrl?: string;

@@ -22,7 +22,7 @@ export const FloatingChatbot: React.FC = () => {
 
   const quickReplies = [
     "Lịch làm việc",
-    "Đặt lịch khám",
+    "Hướng dẫn đặt lịch",
     "Chi phí khám"
   ];
 
@@ -130,12 +130,28 @@ export const FloatingChatbot: React.FC = () => {
                   </div>
 
                   {/* Message Bubble */}
-                  <div className={`p-3.5 rounded-2xl text-[14.5px] font-medium leading-relaxed shadow-sm ${
+                  <div className={`p-3.5 rounded-2xl text-[14px] font-medium leading-relaxed shadow-sm whitespace-pre-wrap break-words ${
                     msg.sender === 'AI' 
                       ? 'bg-white border border-slate-100 text-slate-800 rounded-tl-sm' 
                       : 'bg-primary-500 text-white rounded-tr-sm'
                   }`}>
-                    {msg.text}
+                    {(() => {
+                      if (msg.sender !== 'AI') return msg.text;
+                      
+                      let formatted = msg.text.replace(/\*\*/g, '');
+                      formatted = formatted.replace(/ - /g, '\n- ');
+                      formatted = formatted.replace(/: - /g, ':\n- ');
+                      
+                      // Xóa bỏ các dòng trắng dư thừa (ví dụ \n\n thành \n)
+                      formatted = formatted.replace(/\n{2,}/g, '\n');
+                      
+                      return formatted.split('\n').map((line, i) => (
+                        <React.Fragment key={i}>
+                          {line}
+                          {i < formatted.split('\n').length - 1 && <br />}
+                        </React.Fragment>
+                      ));
+                    })()}
                   </div>
                 </div>
               </div>
@@ -158,14 +174,14 @@ export const FloatingChatbot: React.FC = () => {
           </div>
 
           {/* Quick Replies */}
-          <div className="px-4 pb-2">
-            <div className="flex overflow-x-auto gap-2 pb-2 [&::-webkit-scrollbar]:hidden">
+          <div className="px-3 pb-1">
+            <div className="flex flex-wrap gap-1.5 justify-start">
               {quickReplies.map((reply, index) => (
                 <button
                   key={index}
                   onClick={() => handleSend(reply)}
                   disabled={isTyping}
-                  className="whitespace-nowrap px-4 py-2 rounded-full border border-primary-100 bg-white hover:bg-primary-50 text-primary-600 text-[13px] font-semibold transition-colors cursor-pointer shadow-sm disabled:opacity-50"
+                  className="px-3 py-1.5 rounded-full border border-primary-100 bg-white hover:bg-primary-50 text-primary-600 text-[12px] font-medium transition-colors cursor-pointer shadow-sm disabled:opacity-50"
                 >
                   {reply}
                 </button>
@@ -174,7 +190,7 @@ export const FloatingChatbot: React.FC = () => {
           </div>
 
           {/* Input Form */}
-          <div className="p-3 bg-white border-t border-slate-100">
+          <div className="p-2 bg-white border-t border-slate-100">
             <form onSubmit={onSubmitForm} className="flex items-center gap-2">
               <div className="flex-1 bg-slate-50 border border-slate-200 rounded-full flex items-center px-4 focus-within:ring-2 focus-within:ring-primary-500/20 focus-within:border-primary-500 transition-all shadow-inner">
                 <input 

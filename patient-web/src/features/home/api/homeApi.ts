@@ -20,12 +20,12 @@ export const homeApi = {
   },
 
   getServices: async () => {
-    const res = await axiosInstance.get('/services/all');
+    const res = await axiosInstance.get('/services/all', { params: { bookableOnly: true } });
     return res.data.data;
   },
 
   getFeaturedServices: async () => {
-    const res = await axiosInstance.get('/services/featured');
+    const res = await axiosInstance.get('/services/featured', { params: { bookableOnly: true } });
     return res.data.data;
   },
 

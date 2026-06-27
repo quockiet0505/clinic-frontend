@@ -8,10 +8,14 @@ const fields: FieldConfig[] = [
   { name: 'serviceType', label: 'Danh mục', type: 'select', required: true, options: [
     { value: 'EXAM', label: 'Khám bệnh' },
     { value: 'LAB_TEST', label: 'Xét nghiệm' },
-    { value: 'IMAGING', label: 'Chẩn đoán hình ảnh' },
-    { value: 'SURGERY', label: 'Phẫu thuật' },
+    { value: 'X_RAY', label: 'Chụp X-Quang' },
+    { value: 'ULTRASOUND', label: 'Siêu âm' },
+    { value: 'CT_SCAN', label: 'Chụp CT' },
+    { value: 'MRI', label: 'Chụp MRI' },
+    { value: 'ENDOSCOPY', label: 'Nội soi' },
     { value: 'OTHER', label: 'Khác' }
   ]},
+  { name: 'estimatedDuration', label: 'Thời gian ước tính (Phút)', type: 'number', required: false, placeholder: 'Ví dụ: 15' },
   { name: 'originalPrice', label: 'Giá gốc (VNĐ)', type: 'number', required: true, placeholder: 'Ví dụ: 200000' },
   { name: 'discountPrice', label: 'Giá ưu đãi (VNĐ)', type: 'number', required: false, placeholder: 'Để trống nếu không có' },
 ];
@@ -29,6 +33,7 @@ export default function ServiceFormDialog({ service, onClose, onSave }: Props) {
   const initialData = service ? {
     serviceName: service.serviceName || '',
     serviceType: service.serviceType || 'EXAM',
+    estimatedDuration: service.estimatedDuration || 15,
     originalPrice: service.originalPrice || '',
     discountPrice: service.discountPrice || '',
   } : undefined;

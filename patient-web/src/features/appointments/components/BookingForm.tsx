@@ -13,6 +13,7 @@ import type {
   Service,
   TimeSlot,
 } from '../types/appointment';
+import { isPatientBookableService } from '@/constants/serviceTypes';
 
 interface BookingFormProps {
   preselectedExpertiseId?: number;
@@ -88,7 +89,7 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
           appointmentApi.getAvailableDates(),
         ]);
         setExpertises(exps);
-        setServices(servs);
+        setServices(servs.filter((s) => isPatientBookableService(s.serviceType)));
         setDates(avDates);
       } catch {
         toast({ title: 'Lỗi', description: 'Không thể tải dữ liệu đặt khám', variant: 'destructive' });

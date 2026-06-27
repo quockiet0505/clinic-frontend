@@ -22,7 +22,12 @@ const formatCurrency = (value?: number | unknown) => {
 const serviceTypeMap: Record<string, { label: string; color: string }> = {
   EXAM: { label: 'Khám bệnh', color: 'bg-blue-100 text-blue-700' },
   LAB_TEST: { label: 'Xét nghiệm', color: 'bg-emerald-100 text-emerald-700' },
-  IMAGING: { label: 'Chẩn đoán hình ảnh', color: 'bg-orange-100 text-orange-700' },
+  X_RAY: { label: 'Chụp X-Quang', color: 'bg-orange-100 text-orange-700' },
+  ULTRASOUND: { label: 'Siêu âm', color: 'bg-yellow-100 text-yellow-700' },
+  CT_SCAN: { label: 'Chụp CT', color: 'bg-purple-100 text-purple-700' },
+  MRI: { label: 'Chụp MRI', color: 'bg-pink-100 text-pink-700' },
+  ENDOSCOPY: { label: 'Nội soi', color: 'bg-cyan-100 text-cyan-700' },
+  OTHER: { label: 'Khác', color: 'bg-gray-100 text-gray-700' },
 };
 
 export default function ServiceCatalogTable({ data = [], onEdit, onDelete, loading = false, pagination }: Props) {
@@ -52,6 +57,14 @@ export default function ServiceCatalogTable({ data = [], onEdit, onDelete, loadi
           </span>
         );
       },
+    },
+    {
+      key: 'estimatedDuration',
+      label: 'Thời gian',
+      className: 'w-[10%]',
+      render: (item) => (
+        <span className="text-slate-600 font-medium">{item.estimatedDuration ? `${item.estimatedDuration} phút` : '15 phút'}</span>
+      ),
     },
     {
       key: 'originalPrice',

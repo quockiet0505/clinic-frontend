@@ -57,7 +57,7 @@ export const HowItWorks: React.FC<Props> = ({ services, isLoading }) => {
               </div>
             ))
           ) : (
-            services.slice(0, 8).map((service) => {
+            services.filter(s => s.serviceType === 'LAB_TEST' || s.serviceType === 'X_RAY').slice(0, 8).map((service) => {
               const hasDiscount = service.discountPrice && service.originalPrice && service.discountPrice < service.originalPrice;
               const discountPercent = hasDiscount 
                 ? Math.round((1 - service.discountPrice! / service.originalPrice!) * 100) 

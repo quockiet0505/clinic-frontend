@@ -36,7 +36,7 @@ export const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-primary-400 flex-shrink-0" />
-                <span>Email: {settings?.email || 'contact@clinicpro.vn'}</span>
+                <span>Email: {settings?.email || 'cskh@clinic.com'}</span>
               </div>
             </div>
           </div>
@@ -59,7 +59,7 @@ export const Footer: React.FC = () => {
               <Clock className="w-4 h-4 text-primary-400 mt-0.5 flex-shrink-0" />
               <div>
                 <p className="font-semibold text-white/90">Giờ hoạt động</p>
-                <p className="text-white font-medium text-sm mt-0.5">{settings?.operatingHours || '07:00 - 17:00 (T2 - CN)'}</p>
+                <p className="text-white font-medium text-sm mt-0.5">{settings?.operatingHours || '07:30 - 17:00 (T2 - CN)'}</p>
                 <p className="text-xs text-primary-100/60 mt-2 leading-relaxed">
                   * Hệ thống đặt lịch trực tuyến hoạt động liên tục 24/7 phục vụ người dân.
                 </p>
@@ -73,7 +73,7 @@ export const Footer: React.FC = () => {
             <div className="flex items-start gap-2.5 text-sm text-primary-100/80">
               <MapPin className="w-4 h-4 text-primary-400 mt-0.5 flex-shrink-0" />
               <p className="leading-relaxed text-primary-100/90">
-                {settings?.address || '781/B1-B3-B5 Lê Hồng Phong, Phường 12, Quận 10, Thành phố Hồ Chí Minh, Việt Nam.'}
+                {settings?.address || '71-73 Ngô Thời Nhiệm, Phường Võ Thị Sáu, Quận 3, TP.HCM'}
               </p>
             </div>
             <div className="mt-4 flex items-center gap-2 text-xs bg-white/5 p-2.5 rounded-lg border border-white/10 text-emerald-400 w-fit">

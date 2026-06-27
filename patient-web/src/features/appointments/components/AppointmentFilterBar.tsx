@@ -5,8 +5,8 @@ import type { AppointmentStatus } from '../types/appointment';
 interface AppointmentFilterBarProps {
   status: AppointmentStatus | 'ALL';
   onStatusChange: (value: AppointmentStatus | 'ALL') => void;
-  serviceType: 'ALL' | 'EXAM' | 'LAB_TEST' | 'IMAGING';
-  onServiceTypeChange: (value: 'ALL' | 'EXAM' | 'LAB_TEST' | 'IMAGING') => void;
+  serviceType: string;
+  onServiceTypeChange: (value: string) => void;
 }
 
 export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
@@ -51,7 +51,12 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
             {serviceType === 'ALL' && 'Loại dịch vụ'}
             {serviceType === 'EXAM' && 'Khám bệnh'}
             {serviceType === 'LAB_TEST' && 'Xét nghiệm'}
-            {serviceType === 'IMAGING' && 'Chẩn đoán hình ảnh'}
+            {serviceType === 'X_RAY' && 'Chụp X-Quang'}
+            {serviceType === 'ULTRASOUND' && 'Siêu âm'}
+            {serviceType === 'CT_SCAN' && 'Chụp CT'}
+            {serviceType === 'MRI' && 'Chụp MRI'}
+            {serviceType === 'ENDOSCOPY' && 'Nội soi'}
+            {serviceType === 'OTHER' && 'Khác'}
           </span>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${isServiceOpen ? 'rotate-180 text-primary-500' : 'text-slate-400'}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
@@ -61,7 +66,12 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
               { value: 'ALL', label: 'Tất cả dịch vụ' },
               { value: 'EXAM', label: 'Khám bệnh' },
               { value: 'LAB_TEST', label: 'Xét nghiệm' },
-              { value: 'IMAGING', label: 'Chẩn đoán hình ảnh' },
+              { value: 'X_RAY', label: 'Chụp X-Quang' },
+              { value: 'ULTRASOUND', label: 'Siêu âm' },
+              { value: 'CT_SCAN', label: 'Chụp CT' },
+              { value: 'MRI', label: 'Chụp MRI' },
+              { value: 'ENDOSCOPY', label: 'Nội soi' },
+              { value: 'OTHER', label: 'Khác' },
             ].map(item => (
               <button
                 key={item.value}

@@ -13,12 +13,31 @@ console.log('Url import:', aiAvatarUrl);
 
 
 // Chọn src ưu tiên
-const aiAvatarSrc = (typeof aiAvatarDefault === 'string' && aiAvatarDefault.startsWith('/')) 
-  ? aiAvatarDefault 
+const aiAvatarSrc = (typeof aiAvatarDefault === 'string' && aiAvatarDefault.startsWith('/'))
+  ? aiAvatarDefault
   : (aiAvatarUrl || '/src/assets/images/ai-avatar.png');
 
 export const ChatMessageBubble: React.FC<{ message: ChatMessage }> = ({ message }) => {
   const isAI = message.sender === 'AI';
+
+  // Hàm xử lý nội dung: thay `- ` thành xuống dòng (Cách 2 từ người dùng)
+  const formatMessage = (text: string) => {
+    // Xóa SẠCH toàn bộ ký tự in đậm ** do AI tạo ra để không bị vướng mắt
+    let formatted = text.replace(/\*\*/g, '');
+
+    // Thay thế khoảng trắng + dấu gạch ngang + khoảng trắng (" - ") thành xuống dòng
+    formatted = formatted.replace(/ - /g, '\n- ');
+    
+    // Thay thế các dấu gạch ngang dính liền sau dấu hai chấm (ví dụ: "ClinicPro:- ")
+    formatted = formatted.replace(/: - /g, ':\n- ');
+    
+    // Xóa bỏ các dòng trắng dư thừa (ví dụ \n\n thành \n)
+    formatted = formatted.replace(/\n{2,}/g, '\n');
+    
+    return formatted;
+  };
+
+  const displayText = isAI ? formatMessage(message.text) : message.text;
 
   useEffect(() => {
     console.log('ChatMessageBubble rendered for:', message.sender, message.text.substring(0, 30));
@@ -28,15 +47,14 @@ export const ChatMessageBubble: React.FC<{ message: ChatMessage }> = ({ message 
     <div className={`flex w-full ${isAI ? 'justify-start' : 'justify-end'} mb-4`}>
       <div className={`flex max-w-[85%] gap-2 ${isAI ? 'flex-row' : 'flex-row-reverse'}`}>
         {/* Avatar Area */}
-        <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 shadow-sm overflow-hidden ${
-          isAI 
-            ? 'border-2 border-primary-50 bg-white' 
-            : 'bg-brand-dark text-white'
-        }`}>
+        <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 shadow-sm overflow-hidden ${isAI
+          ? 'border-2 border-primary-50 bg-white'
+          : 'bg-brand-dark text-white'
+          }`}>
           {isAI ? (
-            <img 
+            <img
               src={aiAvatarSrc}
-              alt="AI Assistant" 
+              alt="AI Assistant"
               className="w-full h-full object-cover"
               onError={(e) => {
                 console.error('Image load error:', aiAvatarSrc);
@@ -60,12 +78,16 @@ export const ChatMessageBubble: React.FC<{ message: ChatMessage }> = ({ message 
         </div>
 
         {/* Message Bubble */}
-        <div className={`p-3 rounded-2xl text-[14.5px] font-medium leading-relaxed shadow-sm ${
-          isAI 
-            ? 'bg-white border border-border-default text-brand-dark rounded-tl-sm' 
-            : 'bg-primary-500 text-white rounded-tr-sm'
-        }`}>
-          {message.text}
+        <div className={`p-3 rounded-2xl text-[14px] font-medium leading-relaxed shadow-sm whitespace-pre-wrap break-words ${isAI
+          ? 'bg-white border border-border-default text-brand-dark rounded-tl-sm'
+          : 'bg-primary-500 text-white rounded-tr-sm'
+          }`}>
+          {displayText.split('\n').map((line, i) => (
+            <React.Fragment key={i}>
+              {line}
+              {i < displayText.split('\n').length - 1 && <br />}
+            </React.Fragment>
+          ))}
         </div>
       </div>
     </div>

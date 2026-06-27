@@ -18,6 +18,9 @@ export interface Service {
   serviceName: string;
   price: number;
   description?: string;
+  serviceType?: string;
+  originalPrice?: number;
+  discountPrice?: number;
 }
 
 export interface AvailableDate {
@@ -41,7 +44,7 @@ export interface TimeSlot extends TimeSlotRaw {
   period: 'morning' | 'afternoon';
 }
 
-export type BookingMode = 'DOCTOR' | 'EXPERTISE' | 'SERVICE' | 'DIRECT';
+export type BookingMode = 'DOCTOR' | 'EXPERTISE' | 'SERVICE';
 
 export interface BookingFormState {
   bookingMode: BookingMode;
@@ -69,7 +72,7 @@ export interface AppointmentHistoryItem {
   doctorImageUrl?: string; // mapped from getDoctors API
   specialty: string; // expertiseName
   serviceName: string; // newly added to distinguish consultation/test
-  serviceType?: 'EXAM' | 'LAB_TEST' | 'IMAGING';
+  serviceType?: 'EXAM' | 'LAB_TEST' | 'X_RAY' | 'ULTRASOUND' | 'CT_SCAN' | 'MRI' | 'ENDOSCOPY' | 'OTHER';
   servicePrice?: number;
   doctorFee?: number;
   facility: string;

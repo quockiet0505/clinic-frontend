@@ -26,9 +26,8 @@ class _AllServicesScreenState extends State<AllServicesScreen> {
   static const _typeTabs = [
     ClinicTabItem(value: 'ALL', label: 'Tất cả'),
     ClinicTabItem(value: 'DISCOUNT', label: 'Giảm giá'),
-    ClinicTabItem(value: 'EXAM', label: 'Khám bệnh'),
     ClinicTabItem(value: 'LAB_TEST', label: 'Xét nghiệm'),
-    ClinicTabItem(value: 'IMAGING', label: 'Chẩn đoán hình ảnh'),
+    ClinicTabItem(value: 'X_RAY', label: 'Chụp X-Quang'),
   ];
 
   /// Merge `services` + `featuredServices` (unique theo serviceId) để bảo đảm hiển thị
@@ -47,6 +46,7 @@ class _AllServicesScreenState extends State<AllServicesScreen> {
   List<ServiceModel> _filter(List<ServiceModel> source) {
     var list = source.where((s) {
       if (s.effectivePrice <= 0) return false;
+      if (s.serviceType != 'LAB_TEST' && s.serviceType != 'X_RAY') return false;
 
       final matchesSearch = _searchQuery.isEmpty ||
           s.serviceName.toLowerCase().contains(_searchQuery.toLowerCase());

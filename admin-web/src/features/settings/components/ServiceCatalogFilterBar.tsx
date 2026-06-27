@@ -23,7 +23,12 @@ export const ServiceCatalogFilterBar: React.FC<ServiceCatalogFilterBarProps> = (
     { value: 'ALL', label: 'Tất cả loại' },
     { value: 'EXAM', label: 'Khám bệnh' },
     { value: 'LAB_TEST', label: 'Xét nghiệm' },
-    { value: 'IMAGING', label: 'Chẩn đoán hình ảnh' },
+    { value: 'X_RAY', label: 'Chụp X-Quang' },
+    { value: 'ULTRASOUND', label: 'Siêu âm' },
+    { value: 'CT_SCAN', label: 'Chụp CT' },
+    { value: 'MRI', label: 'Chụp MRI' },
+    { value: 'ENDOSCOPY', label: 'Nội soi' },
+    { value: 'OTHER', label: 'Khác' },
   ];
 
   const sortOptions: FilterOption[] = [

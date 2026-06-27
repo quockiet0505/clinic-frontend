@@ -59,10 +59,11 @@ class HomeProvider extends ChangeNotifier {
               .toList();
       services = _extractList((responses[2] as Response).data['data'])
               .map((json) => ServiceModel.fromJson(json))
+              .where((s) => s.serviceType != 'EXAM')
               .toList();
       featuredServices = _extractList((responses[3] as Response).data['data'])
               .map((json) => ServiceModel.fromJson(json))
-              .where((s) => s.effectivePrice > 0)
+              .where((s) => s.effectivePrice > 0 && s.serviceType != 'EXAM')
               .toList();
       if (featuredServices.isEmpty) {
         featuredServices = services.where((s) => s.effectivePrice > 0).take(8).toList();

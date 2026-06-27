@@ -12,7 +12,7 @@ import { useAuth } from '@/context/AuthContext';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { recordId: number; serviceId: number; orderedById: number }) => void;
+  onSubmit: (data: { recordId: number; serviceId: number; orderedById: number; customServiceName?: string; doctorNote?: string; }) => void;
   fixedRecordId?: number;
   fixedOrderedById?: number;
   patientLabel?: string;
@@ -37,9 +37,9 @@ export default function ServiceOrderFormDialog({
   useEffect(() => {
     if (isOpen) {
       settingsApi.getServicesPaged({ size: 100 }).then((res) => {
-        // Chỉ cho phép bác sĩ chọn LAB_TEST và IMAGING
+        // Chỉ cho phép bác sĩ chọn các dịch vụ cận lâm sàng (khác EXAM)
         const allowedServices = res.content.filter(
-          s => s.serviceType === 'LAB_TEST' || s.serviceType === 'IMAGING'
+          s => s.serviceType !== 'EXAM'
         );
         setServices(allowedServices);
       }).catch(console.error);
@@ -85,6 +85,22 @@ export default function ServiceOrderFormDialog({
       options: services.map(s => ({ value: String(s.serviceId), label: s.serviceName })),
       colSpan: 2,
     },
+    {
+      name: 'customServiceName',
+      label: 'Tên dịch vụ khác (Nếu có)',
+      type: 'text',
+      required: false,
+      placeholder: 'Chỉ nhập nếu chọn loại dịch vụ "Khác" (OTHER)',
+      colSpan: 2,
+    },
+    {
+      name: 'doctorNote',
+      label: 'Ghi chú cho KTV',
+      type: 'textarea',
+      required: false,
+      placeholder: 'Ghi chú thêm về vị trí chụp, yêu cầu đặc biệt...',
+      colSpan: 2,
+    }
   ];
 
   const handleSubmit = (data: Record<string, string>) => {
@@ -92,7 +108,9 @@ export default function ServiceOrderFormDialog({
       recordId: fixedRecordId ?? Number(data.recordId),
       orderedById: fixedOrderedById ?? Number(data.orderedById),
       serviceId: Number(data.serviceId),
-    });
+      customServiceName: data.customServiceName,
+      doctorNote: data.doctorNote,
+    } as any);
   };
 
   const initialData: Record<string, string> = {};
