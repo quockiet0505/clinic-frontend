@@ -1,12 +1,5 @@
-/** BN được đặt lịch trực tiếp (SERVICE mode): xét nghiệm + chẩn đoán hình ảnh. */
-export const PATIENT_BOOKABLE_SERVICE_TYPES = [
-  'LAB_TEST',
-  'X_RAY',
-  'ULTRASOUND',
-  'CT_SCAN',
-  'MRI',
-  'ENDOSCOPY',
-] as const;
+/** BN đặt lịch trực tiếp: chỉ xét nghiệm và X-Quang. */
+export const PATIENT_BOOKABLE_SERVICE_TYPES = ['LAB_TEST', 'X_RAY'] as const;
 
 export type PatientBookableServiceType = (typeof PATIENT_BOOKABLE_SERVICE_TYPES)[number];
 
@@ -20,4 +13,5 @@ export const SERVICE_TYPE_LABELS: Record<string, string> = {
   CT_SCAN: 'Chụp CT',
   MRI: 'Chụp MRI',
   ENDOSCOPY: 'Nội soi',
+  OTHER: 'Khác',
 };

@@ -1,44 +1,66 @@
-// components/settings/PricingFormDialog.tsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { DollarSign } from 'lucide-react';
 import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
+import { staffApi } from '@/features/staffs/api/staffApi';
+import { Staff } from '@/features/staffs/types/staff';
+import type { DoctorPricing } from '../types/settings';
 
-export default function PricingFormDialog({ doctor, onClose, onSave }: any) {
+interface Props {
+  doctor: DoctorPricing | null;
+  onClose: () => void;
+  onSave: (id: number, data: { staffId: number; originalPrice: number; discountPrice: number }) => void;
+}
+
+export default function DoctorPricingFormDialog({ doctor, onClose, onSave }: Props) {
   const isOpen = !!doctor;
   const isNew = doctor?.id === 0;
+  const [doctors, setDoctors] = useState<Staff[]>([]);
 
-  const getFields = (): FieldConfig[] => {
-    const baseFields: FieldConfig[] = [
-      { name: 'price', label: 'Phí khám (VNĐ)', type: 'number', required: true, placeholder: 'Ví dụ: 150000', colSpan: 2 }
-    ];
-    if (isNew) {
-      return [
+  useEffect(() => {
+    if (!isOpen) return;
+    staffApi.getAllPaged({ size: 200, staffType: 'DOCTOR' })
+      .then(res => setDoctors(res.content))
+      .catch(console.error);
+  }, [isOpen]);
+
+  const fields: FieldConfig[] = isNew
+    ? [
         {
-          name: 'staffId', label: 'Chọn Bác sĩ', type: 'select', required: true, options: [
-            { value: '1', label: 'BS. Nguyễn Văn A' },
-            { value: '2', label: 'BS. Trần Thị B' }
-          ]
+          name: 'staffId',
+          label: 'Bác sĩ',
+          type: 'combobox',
+          required: true,
+          colSpan: 2,
+          placeholder: 'Chọn bác sĩ',
+          options: doctors.map(d => ({ value: String(d.staffId), label: d.fullName })),
         },
-        {
-          name: 'serviceId', label: 'Chọn Dịch vụ', type: 'select', required: true, options: [
-            { value: '1', label: 'Khám tổng quát' },
-            { value: '2', label: 'Khám chuyên khoa' }
-          ]
-        },
-       
+        { name: 'originalPrice', label: 'Giá gốc (VNĐ)', type: 'number', required: true, placeholder: '300000' },
+        { name: 'discountPrice', label: 'Giá ưu đãi (VNĐ)', type: 'number', required: false, placeholder: 'Để trống = giá gốc' },
+      ]
+    : [
+        { name: 'originalPrice', label: 'Giá gốc (VNĐ)', type: 'number', required: true, placeholder: '300000' },
+        { name: 'discountPrice', label: 'Giá ưu đãi (VNĐ)', type: 'number', required: false, placeholder: 'Để trống = giá gốc' },
       ];
-    }
-    return baseFields;
-  };
 
-  const initialData = doctor ? {
-    staffId: doctor.staffId?.toString() || '',
-    serviceId: doctor.serviceId?.toString() || '',
-    price: doctor.price?.toString() || ''
-  } : undefined;
+  const initialData = doctor
+    ? {
+        staffId: doctor.staffId?.toString() || '',
+        originalPrice: doctor.originalPrice ?? doctor.price ?? '',
+        discountPrice: doctor.discountPrice ?? '',
+      }
+    : undefined;
 
-  const handleSubmit = (data: any) => {
-    onSave(doctor.id, data);
+  const handleSubmit = (data: Record<string, any>) => {
+    const originalPrice = Number(data.originalPrice);
+    if (!Number.isFinite(originalPrice) || originalPrice < 0) return;
+    const discountPrice = data.discountPrice !== '' && data.discountPrice != null
+      ? Number(data.discountPrice)
+      : originalPrice;
+    onSave(doctor!.id, {
+      staffId: isNew ? Number(data.staffId) : doctor!.staffId,
+      originalPrice,
+      discountPrice,
+    });
   };
 
   if (!isOpen) return null;
@@ -47,15 +69,25 @@ export default function PricingFormDialog({ doctor, onClose, onSave }: any) {
     <FormDialog
       open={isOpen}
       onClose={onClose}
-      title={isNew ? 'Thêm Phí khám Bác sĩ' : 'Cập nhật Phí khám'}
-      description={isNew ? 'Chọn bác sĩ và cài đặt giá dịch vụ khám cụ thể.' : `Điều chỉnh giá khám cho bác sĩ ${doctor.doctorName}.`}
+      title={isNew ? 'Thêm phí khám bác sĩ' : 'Cập nhật phí khám'}
+      description="Phí khám theo từng bác sĩ — không gắn dịch vụ EXAM."
       icon={<DollarSign size={16} />}
-      fields={getFields()}
+      fields={fields}
       initialData={initialData}
       onSubmit={handleSubmit}
-      submitLabel="Lưu Giá"
+      submitLabel="Lưu giá"
       compact={true}
       columns={2}
+      validate={(data) => {
+        if (isNew && !data.staffId) return false;
+        return data.originalPrice !== '' && data.originalPrice != null;
+      }}
+      renderBeforeFields={!isNew ? () => (
+        <div className="col-span-2 rounded-xl bg-slate-50 border border-slate-200 px-4 py-3">
+          <p className="text-xs font-bold text-slate-500 uppercase">Bác sĩ</p>
+          <p className="text-sm font-semibold text-slate-800 mt-1">{doctor?.doctorName}</p>
+        </div>
+      ) : undefined}
     />
   );
 }

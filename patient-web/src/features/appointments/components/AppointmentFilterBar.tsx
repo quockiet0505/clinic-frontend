@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { PATIENT_BOOKABLE_SERVICE_TYPES, SERVICE_TYPE_LABELS } from '@/constants/serviceTypes';
 import { SearchInput } from '@/components/common/SearchInput';
 import type { AppointmentStatus } from '../types/appointment';
 
@@ -48,15 +49,9 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
       >
         <button className={`w-full h-11 flex items-center justify-between px-4 rounded-full bg-white border shadow-sm font-medium text-slate-700 cursor-pointer transition-colors ${isServiceOpen ? 'border-primary-500 text-primary-600' : 'border-slate-200'}`}>
           <span className="text-[14px]">
-            {serviceType === 'ALL' && 'Loại dịch vụ'}
-            {serviceType === 'EXAM' && 'Khám bệnh'}
-            {serviceType === 'LAB_TEST' && 'Xét nghiệm'}
-            {serviceType === 'X_RAY' && 'Chụp X-Quang'}
-            {serviceType === 'ULTRASOUND' && 'Siêu âm'}
-            {serviceType === 'CT_SCAN' && 'Chụp CT'}
-            {serviceType === 'MRI' && 'Chụp MRI'}
-            {serviceType === 'ENDOSCOPY' && 'Nội soi'}
-            {serviceType === 'OTHER' && 'Khác'}
+            {serviceType === 'ALL'
+              ? 'Loại dịch vụ'
+              : (SERVICE_TYPE_LABELS[serviceType] ?? serviceType)}
           </span>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${isServiceOpen ? 'rotate-180 text-primary-500' : 'text-slate-400'}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
@@ -64,14 +59,10 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
           <div className="rounded-2xl bg-white border border-slate-100 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] p-1.5 flex flex-col gap-0.5">
             {[
               { value: 'ALL', label: 'Tất cả dịch vụ' },
-              { value: 'EXAM', label: 'Khám bệnh' },
-              { value: 'LAB_TEST', label: 'Xét nghiệm' },
-              { value: 'X_RAY', label: 'Chụp X-Quang' },
-              { value: 'ULTRASOUND', label: 'Siêu âm' },
-              { value: 'CT_SCAN', label: 'Chụp CT' },
-              { value: 'MRI', label: 'Chụp MRI' },
-              { value: 'ENDOSCOPY', label: 'Nội soi' },
-              { value: 'OTHER', label: 'Khác' },
+              ...PATIENT_BOOKABLE_SERVICE_TYPES.map((t) => ({
+                value: t,
+                label: SERVICE_TYPE_LABELS[t] ?? t,
+              })),
             ].map(item => (
               <button
                 key={item.value}

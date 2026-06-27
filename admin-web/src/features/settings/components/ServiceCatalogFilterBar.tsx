@@ -21,7 +21,6 @@ export const ServiceCatalogFilterBar: React.FC<ServiceCatalogFilterBarProps> = (
 }) => {
   const typeOptions: FilterOption[] = [
     { value: 'ALL', label: 'Tất cả loại' },
-    { value: 'EXAM', label: 'Khám bệnh' },
     { value: 'LAB_TEST', label: 'Xét nghiệm' },
     { value: 'X_RAY', label: 'Chụp X-Quang' },
     { value: 'ULTRASOUND', label: 'Siêu âm' },

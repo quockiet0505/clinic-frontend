@@ -46,8 +46,8 @@ class HomeProvider extends ChangeNotifier {
       final responses = await Future.wait([
         _doctorService.getSpecialties(),
         _doctorService.getDoctors(),
-        _dioClient.dio.get('/services'),
-        _dioClient.dio.get('/services/featured'),
+        _dioClient.dio.get('/services/all', queryParameters: {'bookableOnly': true}),
+        _dioClient.dio.get('/services/featured', queryParameters: {'bookableOnly': true}),
         _dioClient.dio.get('/public/quick-actions'),
         _dioClient.dio.get('/static/logo'),
         _dioClient.dio.get('/static/banner'),
@@ -59,11 +59,11 @@ class HomeProvider extends ChangeNotifier {
               .toList();
       services = _extractList((responses[2] as Response).data['data'])
               .map((json) => ServiceModel.fromJson(json))
-              .where((s) => s.serviceType != 'EXAM')
+              .where((s) => isPatientBookableService(s.serviceType))
               .toList();
       featuredServices = _extractList((responses[3] as Response).data['data'])
               .map((json) => ServiceModel.fromJson(json))
-              .where((s) => s.effectivePrice > 0 && s.serviceType != 'EXAM')
+              .where((s) => s.effectivePrice > 0 && isPatientBookableService(s.serviceType))
               .toList();
       if (featuredServices.isEmpty) {
         featuredServices = services.where((s) => s.effectivePrice > 0).take(8).toList();

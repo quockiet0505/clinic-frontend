@@ -44,7 +44,7 @@ export interface TimeSlot extends TimeSlotRaw {
   period: 'morning' | 'afternoon';
 }
 
-export type BookingMode = 'DOCTOR' | 'EXPERTISE' | 'SERVICE';
+export type BookingMode = 'DOCTOR' | 'SERVICE';
 
 export interface BookingFormState {
   bookingMode: BookingMode;

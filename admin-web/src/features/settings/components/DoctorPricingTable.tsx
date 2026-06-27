@@ -35,12 +35,6 @@ export default function PricingTable({ doctors = [], onEdit, onDelete, loading =
       ),
     },
     {
-      key: 'serviceName',
-      label: 'Dịch vụ',
-      className: 'w-[27%]',
-      render: (doc) => <span className="text-slate-600">{doc.serviceName}</span>,
-    },
-    {
       key: 'originalPrice',
       label: 'Giá gốc',
       className: 'w-[15%]',
@@ -58,6 +52,14 @@ export default function PricingTable({ doctors = [], onEdit, onDelete, loading =
           <span className="text-slate-300">—</span>
         );
       },
+    },
+    {
+      key: 'finalPrice',
+      label: 'Giá áp dụng',
+      className: 'w-[15%]',
+      render: (doc) => (
+        <span className="font-semibold text-primary-600">{formatCurrency(doc.finalPrice ?? doc.discountPrice ?? doc.originalPrice ?? doc.price)}</span>
+      ),
     },
     {
       key: 'actions',

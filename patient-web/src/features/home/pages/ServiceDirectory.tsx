@@ -6,6 +6,7 @@ import { SearchInput } from '@/components/common/SearchInput';
 import { homeApi } from '../api/homeApi';
 import { getStaticUrl } from '@/utils/url';
 import { PATIENT_BOOKABLE_SERVICE_TYPES, SERVICE_TYPE_LABELS, isPatientBookableService } from '@/constants/serviceTypes';
+import type { ServicePackage } from '../types/home';
 
 export const ServiceDirectory: React.FC = () => {
   const navigate = useNavigate();
@@ -80,7 +81,7 @@ export const ServiceDirectory: React.FC = () => {
         <SectionContainer className="max-w-6xl relative z-10 w-full text-white">
           <div className="max-w-2xl">
             <h1 className="text-[32px] md:text-[36px] leading-tight font-black uppercase tracking-wide mb-5 text-white drop-shadow-sm">
-              DỊCH VỤ<br /><span className="text-[#38bdf8]">XÉT NGHIỆM & KHÁM BỆNH</span>
+              DỊCH VỤ<br /><span className="text-[#38bdf8]">XÉT NGHIỆM & CHẨN ĐOÁN HÌNH ẢNH</span>
             </h1>
             <div className="flex flex-col gap-3 font-medium text-[15px] mb-7 text-slate-100">
               <p className="flex items-start gap-3"><CheckCircle2 className="w-[18px] h-[18px] text-[#38bdf8] shrink-0 mt-0.5" />Đặt lịch xét nghiệm trực tiếp, linh hoạt tại nhà hoặc cơ sở</p>
@@ -147,7 +148,9 @@ export const ServiceDirectory: React.FC = () => {
               >
                 <button className={`w-full h-11 flex items-center justify-between px-4 rounded-xl bg-white border shadow-sm transition-colors cursor-pointer ${isTypeOpen ? 'border-primary-500 text-primary-600' : 'border-slate-200 text-slate-700'}`}>
                   <span className="text-[14px] font-medium truncate pr-2">
-                    {typeFilter === 'ALL' ? 'Tất cả dịch vụ' : typeFilter === 'LAB_TEST' ? 'Xét nghiệm' : typeFilter === 'X_RAY' ? 'Chụp X-Quang' : 'Khác'}
+                    {typeFilter === 'ALL'
+                      ? 'Tất cả dịch vụ'
+                      : (SERVICE_TYPE_LABELS[typeFilter] ?? typeFilter)}
                   </span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`shrink-0 transition-transform duration-200 ${isTypeOpen ? 'rotate-180 text-primary-500' : 'text-slate-400'}`}><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </button>
@@ -155,8 +158,10 @@ export const ServiceDirectory: React.FC = () => {
                   <div className="rounded-xl bg-white border border-slate-100 shadow-xl p-1.5 flex flex-col gap-0.5">
                     {[
                       { value: 'ALL', label: 'Tất cả dịch vụ' },
-                      { value: 'LAB_TEST', label: 'Xét nghiệm' },
-                      { value: 'X_RAY', label: 'Chụp X-Quang' },
+                      ...PATIENT_BOOKABLE_SERVICE_TYPES.map((t) => ({
+                        value: t,
+                        label: SERVICE_TYPE_LABELS[t] ?? t,
+                      })),
                     ].map(item => (
                       <button key={item.value} onClick={() => { setTypeFilter(item.value); setIsTypeOpen(false); setCurrentPage(1); }} className={`w-full text-left py-2 px-3 text-[13.5px] rounded-lg transition-all cursor-pointer ${typeFilter === item.value ? 'bg-primary-50 text-primary-600 font-bold' : 'text-slate-700 hover:bg-slate-50 font-medium'}`}>
                         {item.label}

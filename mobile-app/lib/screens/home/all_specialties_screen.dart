@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/home_provider.dart';
 
 import 'package:clinic_management_system/providers/appointment_provider.dart';
-import 'package:clinic_management_system/screens/appointment/select_time_screen.dart';
+import 'package:clinic_management_system/screens/appointment/select_doctor_screen.dart';
 
 import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
 
@@ -37,7 +37,7 @@ class AllSpecialtiesScreen extends StatelessWidget {
               return GestureDetector(
                 onTap: () {
                   context.read<AppointmentProvider>().selectSpecialty(specialty);
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => const SelectTimeScreen()));
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const SelectDoctorScreen()));
                 },
                 child: Column(
                   children: [

@@ -32,8 +32,7 @@ export const BookAppointment: React.FC = () => {
   const mode = searchParams.get('mode');
 
   const isDoctorBooking = !!doctorId;
-  const isExpertiseBooking = !!expertiseId;
-  const isServiceBooking = !!serviceId;
+  const isServiceBooking = !!serviceId || mode === 'service';
   const bookingMode = mode === 'service' ? 'service' : 'doctor';
 
   const handleSubmit = () => {
@@ -199,7 +198,6 @@ export const BookAppointment: React.FC = () => {
                 preselectedSuggestedExpertiseId={suggestedExpertiseId}
                 isAiSuggested={isAiSuggested}
                 isDoctorBooking={isDoctorBooking}
-                isExpertiseBooking={isExpertiseBooking}
                 isServiceBooking={isServiceBooking}
                 mode={bookingMode}
                 onSubmit={handleSubmit}

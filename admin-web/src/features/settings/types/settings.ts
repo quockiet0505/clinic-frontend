@@ -22,11 +22,10 @@ export interface DoctorPricing {
   id: number;
   staffId: number;
   doctorName: string;
-  serviceId: number;
-  serviceName: string;
   price: number;
   originalPrice?: number;
   discountPrice?: number;
+  finalPrice?: number;
   imageUrl?: string;
 }
 

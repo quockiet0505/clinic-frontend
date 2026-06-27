@@ -19,6 +19,17 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
   String _searchQuery = '';
   int _sortByFee = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final expId = context.read<AppointmentProvider>().selectedExpertiseId;
+      if (expId != null) {
+        setState(() => _selectedSpecialty = expId.toString());
+      }
+    });
+  }
+
   List<ClinicTabItem> _specialtyTabs(HomeProvider provider) {
     return [
       const ClinicTabItem(value: 'ALL', label: 'Tất cả'),

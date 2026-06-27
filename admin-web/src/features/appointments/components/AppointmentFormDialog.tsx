@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { CalendarPlus } from 'lucide-react';
 import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
 import { patientApi } from '@/features/patients/api/patientApi';
@@ -8,6 +8,7 @@ import { Patient } from '@/features/patients/types/patient';
 import { Staff } from '@/features/staffs/types/staff';
 import { Expertise, Service } from '@/features/settings/types/settings';
 import { useAuth } from '@/context/AuthContext';
+import { isPatientBookableService } from '@/constants/serviceTypes';
 
 interface Props {
   isOpen: boolean;
@@ -21,10 +22,11 @@ export default function AppointmentFormDialog({ isOpen, onClose, onBook }: Props
   const [doctors, setDoctors] = useState<Staff[]>([]);
   const [expertises, setExpertises] = useState<Expertise[]>([]);
   const [services, setServices] = useState<Service[]>([]);
+  const [bookingFlow, setBookingFlow] = useState<'DOCTOR' | 'SERVICE'>('DOCTOR');
+  const [selectedExpertiseId, setSelectedExpertiseId] = useState('');
 
   useEffect(() => {
     if (isOpen) {
-      // Load all necessary data
       Promise.all([
         patientApi.getAllPaged({ size: 1000 }),
         staffApi.getAllPaged({ size: 100, staffType: 'DOCTOR' }),
@@ -34,10 +36,18 @@ export default function AppointmentFormDialog({ isOpen, onClose, onBook }: Props
         setPatients(patientRes.content);
         setDoctors(doctorRes.content);
         setExpertises(expertiseRes.content);
-        setServices(serviceRes.content);
+        setServices(serviceRes.content.filter((s) => isPatientBookableService(s.serviceType)));
       }).catch(console.error);
+    } else {
+      setBookingFlow('DOCTOR');
+      setSelectedExpertiseId('');
     }
   }, [isOpen]);
+
+  const filteredDoctors = useMemo(() => {
+    if (!selectedExpertiseId) return doctors;
+    return doctors.filter(d => String(d.expertiseId) === selectedExpertiseId);
+  }, [doctors, selectedExpertiseId]);
 
   const fields: FieldConfig[] = [
     {
@@ -50,36 +60,52 @@ export default function AppointmentFormDialog({ isOpen, onClose, onBook }: Props
       colSpan: 2,
     },
     {
-      name: 'expertiseId',
-      label: 'Chuyên khoa',
-      type: 'combobox',
-      required: false,
-      options: expertises.map(e => ({ value: String(e.expertiseId), label: e.expertiseName })),
-      placeholder: 'Chọn chuyên khoa (Tuỳ chọn)',
-    },
-    {
-      name: 'serviceId',
-      label: 'Dịch vụ khám',
-      type: 'combobox',
-      required: false,
-      options: services.map(s => ({ value: String(s.serviceId), label: s.serviceName })),
-      placeholder: 'Chọn dịch vụ (Tuỳ chọn)',
-    },
-    {
-      name: 'mainDoctorId',
-      label: 'Bác sĩ chỉ định',
-      type: 'combobox',
-      required: false,
-      options: doctors.map(d => ({ value: String(d.staffId), label: d.fullName })),
-      placeholder: 'Chọn bác sĩ (Tuỳ chọn)',
+      name: 'bookingFlow',
+      label: 'Loại đăng ký',
+      type: 'select',
+      required: true,
       colSpan: 2,
+      options: [
+        { value: 'DOCTOR', label: 'Khám bác sĩ (bắt buộc chọn chuyên khoa + bác sĩ)' },
+        { value: 'SERVICE', label: 'Xét nghiệm / Chụp chiếu (không cần bác sĩ)' },
+      ],
     },
+    ...(bookingFlow === 'DOCTOR'
+      ? [
+          {
+            name: 'expertiseId',
+            label: 'Chuyên khoa',
+            type: 'combobox' as const,
+            required: true,
+            options: expertises.map(e => ({ value: String(e.expertiseId), label: e.expertiseName })),
+            placeholder: 'Chọn chuyên khoa',
+          },
+          {
+            name: 'mainDoctorId',
+            label: 'Bác sĩ',
+            type: 'combobox' as const,
+            required: true,
+            options: filteredDoctors.map(d => ({ value: String(d.staffId), label: d.fullName })),
+            placeholder: selectedExpertiseId ? 'Chọn bác sĩ' : 'Chọn chuyên khoa trước',
+          },
+        ]
+      : [
+          {
+            name: 'serviceId',
+            label: 'Dịch vụ xét nghiệm / chụp',
+            type: 'combobox' as const,
+            required: true,
+            colSpan: 2 as const,
+            options: services.map(s => ({ value: String(s.serviceId), label: s.serviceName })),
+            placeholder: 'Chọn dịch vụ',
+          },
+        ]),
     {
       name: 'note',
       label: 'Lý do khám / Triệu chứng',
       type: 'textarea',
       required: true,
-      placeholder: 'Ví dụ: Đau đầu, chóng mặt, sốt cao... (Bắt buộc)',
+      placeholder: 'Ví dụ: Đau đầu, chóng mặt, sốt cao...',
       colSpan: 2,
     },
     {
@@ -87,45 +113,38 @@ export default function AppointmentFormDialog({ isOpen, onClose, onBook }: Props
       label: 'Khách ưu tiên (Cấp cứu / Người già / VIP)',
       type: 'checkbox',
       colSpan: 2,
-    }
+    },
   ];
 
   const validateForm = (data: Record<string, any>) => {
-    // Patient and Note are required by default (isRequiredMissing handles it but we can double check)
-    const hasPatient = !!data.patientId;
-    const hasNote = !!data.note;
-    // Must select at least one of these 3
-    const hasDoctorOrExpertiseOrService = !!data.mainDoctorId || !!data.expertiseId || !!data.serviceId;
-    
-    return hasPatient && hasNote && hasDoctorOrExpertiseOrService;
+    if (!data.patientId || !data.note) return false;
+    const flow = data.bookingFlow || bookingFlow;
+    if (flow === 'DOCTOR') {
+      return !!data.expertiseId && !!data.mainDoctorId;
+    }
+    return !!data.serviceId;
   };
 
   const handleSubmit = (data: any) => {
-    const payload = {
-      ...data,
-      patientId: data.patientId ? Number(data.patientId) : undefined,
-      expertiseId: data.expertiseId ? Number(data.expertiseId) : undefined,
-      serviceId: data.serviceId ? Number(data.serviceId) : undefined,
-      mainDoctorId: data.mainDoctorId ? Number(data.mainDoctorId) : undefined,
+    const flow = data.bookingFlow || bookingFlow;
+    const payload: Record<string, unknown> = {
+      patientId: Number(data.patientId),
+      note: data.note,
       isPriority: data.isPriority === true,
       appointmentType: 'WALK_IN',
       createdBy: user?.role === 'DOCTOR' ? 'DOCTOR' : 'STAFF',
-      // We pass the current date and time so the backend accepts it.
-      // The backend will generate the queue number and set checkin_time automatically.
       appointmentDate: new Date().toISOString().split('T')[0],
-      timeStart: new Date().toTimeString().split(' ')[0].substring(0, 5) + ':00', // HH:mm:ss
-      timeEnd: new Date(Date.now() + 30 * 60000).toTimeString().split(' ')[0].substring(0, 5) + ':00', // HH:mm:ss
+      timeStart: new Date().toTimeString().split(' ')[0].substring(0, 5) + ':00',
+      timeEnd: new Date(Date.now() + 30 * 60000).toTimeString().split(' ')[0].substring(0, 5) + ':00',
     };
-    
-    // Default Booking Mode based on selection
-    if (payload.mainDoctorId) {
+
+    if (flow === 'DOCTOR') {
       payload.bookingMode = 'DOCTOR';
-    } else if (payload.serviceId) {
-      payload.bookingMode = 'SERVICE';
-    } else if (payload.expertiseId) {
-      payload.bookingMode = 'EXPERTISE';
+      payload.expertiseId = Number(data.expertiseId);
+      payload.mainDoctorId = Number(data.mainDoctorId);
     } else {
-      payload.bookingMode = 'DIRECT';
+      payload.bookingMode = 'SERVICE';
+      payload.serviceId = Number(data.serviceId);
     }
 
     onBook(payload);
@@ -135,15 +154,28 @@ export default function AppointmentFormDialog({ isOpen, onClose, onBook }: Props
     <FormDialog
       open={isOpen}
       onClose={onClose}
-      title="Tạo Lịch Khám Trực Tiếp"
-      description="Đăng ký lịch khám cho bệnh nhân walk-in. Vui lòng chọn ít nhất 1 trong 3 trường: Chuyên khoa, Dịch vụ hoặc Bác sĩ."
+      title="Tạo lịch khám trực tiếp"
+      description="Chỉ 2 luồng: khám bác sĩ (chọn khoa + BS) hoặc xét nghiệm/chụp (KTV xử lý, có check trùng lịch)."
       icon={<CalendarPlus size={16} />}
       fields={fields}
+      initialData={{ bookingFlow: 'DOCTOR' }}
       validate={validateForm}
       onSubmit={handleSubmit}
       submitLabel="Lấy số khám"
       compact={false}
       columns={2}
+      renderBeforeFields={({ formData, onChange }) => {
+        if (formData.bookingFlow && formData.bookingFlow !== bookingFlow) {
+          setBookingFlow(formData.bookingFlow);
+        }
+        if (formData.expertiseId !== selectedExpertiseId) {
+          setSelectedExpertiseId(formData.expertiseId || '');
+          if (formData.mainDoctorId) {
+            onChange('mainDoctorId', '', false);
+          }
+        }
+        return null;
+      }}
     />
   );
 }

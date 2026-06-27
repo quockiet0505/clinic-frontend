@@ -3,6 +3,7 @@ import 'package:clinic_management_system/utils/image_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
 import 'package:clinic_management_system/screens/appointment/confirm_booking_screen.dart';
+import 'package:clinic_management_system/screens/appointment/select_doctor_screen.dart';
 import 'package:clinic_management_system/utils/currency_formatter.dart';
 
 class SelectTimeScreen extends StatefulWidget {
@@ -90,6 +91,45 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
 
           if (doctor == null && service == null && specialty == null) {
             return const Center(child: Text("Missing Data"));
+          }
+
+          if (provider.bookingMode == 'DOCTOR' && doctor == null) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.person_search, size: 48, color: Color(0xFF9CA3AF)),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Vui lòng chọn bác sĩ trước khi chọn ngày giờ',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFF374151)),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      specialty != null ? 'Chuyên khoa: ${specialty['expertiseName'] ?? ''}' : '',
+                      style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SelectDoctorScreen()),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: const Text('Chọn bác sĩ'),
+                    ),
+                  ],
+                ),
+              ),
+            );
           }
 
           return Column(
@@ -454,20 +494,6 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                     fontWeight: isSelected ? FontWeight.bold : (isAvailable ? FontWeight.w600 : FontWeight.normal),
                   ),
                 ),
-                if (provider.bookingMode == 'EXPERTISE' && doctorName != null && doctorName.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 2),
-                    child: Text(
-                      doctorName,
-                      style: TextStyle(
-                        fontSize: 9,
-                        color: isSelected ? Colors.white.withValues(alpha: 0.9) : const Color(0xFF6B7280),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
               ],
             ),
           ),

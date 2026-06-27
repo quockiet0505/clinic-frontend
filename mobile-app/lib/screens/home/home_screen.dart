@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:clinic_management_system/providers/home_provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
+import 'package:clinic_management_system/screens/appointment/select_doctor_screen.dart';
 import 'package:clinic_management_system/screens/appointment/select_time_screen.dart';
 import 'package:clinic_management_system/screens/home/all_doctors_screen.dart';
 import 'package:clinic_management_system/screens/home/all_services_screen.dart';
@@ -397,7 +398,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildServices(HomeProvider provider) {
     final displayServices = provider.featuredServices
-        .where((s) => s.serviceType == 'LAB_TEST' || s.serviceType == 'X_RAY')
+        .where((s) => isPatientBookableService(s.serviceType))
         .toList();
 
     return Column(
@@ -595,7 +596,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     return GestureDetector(
                       onTap: () {
                         context.read<AppointmentProvider>().selectSpecialty(specialty);
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const SelectTimeScreen()));
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const SelectDoctorScreen()));
                       },
                       child: SizedBox(
                         width: itemWidth,

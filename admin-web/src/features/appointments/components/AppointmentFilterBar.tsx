@@ -48,7 +48,6 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
 
   const serviceOptions: FilterOption[] = [
     { value: 'ALL', label: 'Tất cả dịch vụ' },
-    { value: 'EXAM', label: 'Khám bệnh' },
     { value: 'LAB_TEST', label: 'Xét nghiệm' },
     { value: 'X_RAY', label: 'Chụp X-Quang' },
     { value: 'ULTRASOUND', label: 'Siêu âm' },

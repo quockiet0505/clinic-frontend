@@ -61,13 +61,13 @@ export default function DoctorPricing() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
         <PageHeader
           title="Phí khám bệnh"
-          description="Ghi đè giá dịch vụ mặc định cho từng bác sĩ cụ thể."
+          description="Mỗi bác sĩ một mức phí khám riêng (không gắn dịch vụ EXAM)."
         />
         <div className="flex flex-wrap items-center gap-3">
           <StatsCard icon={<DollarSign size={16} />} label="Tổng cấu hình" value={totalPrices} />
           <StatsCard icon={<DollarSign size={16} />} label="Giá trung bình" value={avgPrice} bgColor="bg-emerald-50" iconColor="text-emerald-600" />
           <GradientButton
-            onClick={() => setEditingPrice({ id: 0, staffId: 0, doctorName: '', serviceId: 0, serviceName: '', price: 0, originalPrice: 0, discountPrice: 0 })}
+            onClick={() => setEditingPrice({ id: 0, staffId: 0, doctorName: '', price: 0, originalPrice: 0, discountPrice: 0 })}
             className="w-full sm:w-auto"
           >
             <Plus size={18} className="mr-2" /> Thêm Phí khám mới
@@ -95,7 +95,7 @@ export default function DoctorPricing() {
       <DoctorPricingFormDialog
         doctor={editingPrice}
         onClose={() => setEditingPrice(null)}
-        onSave={async (id: number, data: any) => {
+        onSave={async (_id: number, data: { staffId: number; originalPrice: number; discountPrice: number }) => {
           try {
             await settingsApi.createOrUpdateDoctorPrice(data);
             await fetchData();

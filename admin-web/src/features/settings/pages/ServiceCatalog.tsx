@@ -10,6 +10,8 @@ import { StatsCard } from '@/components/common/StatsCard';
 import GradientButton from '@/components/common/GradientButton';
 import { Service } from '../types/settings';
 import { settingsApi } from '../api/settingsApi';
+import { isHiddenServiceType } from '@/constants/serviceTypes';
+
 export default function ServiceCatalog() {
   const [data, setData] = useState<Service[]>([]);
   const [totalElements, setTotalElements] = useState(0);
@@ -35,7 +37,7 @@ export default function ServiceCatalog() {
         sortBy,
         sortDir,
       });
-      setData(res.content);
+      setData(res.content.filter((s) => !isHiddenServiceType(s.serviceType)));
       setTotalElements(res.totalElements);
     } catch (e) {
       console.error(e);
@@ -56,9 +58,10 @@ export default function ServiceCatalog() {
   const filteredData = data;
 
   const totalServices = totalElements;
-  const examServices = filteredData.filter((s) => s.serviceType === 'EXAM').length;
   const labServices = filteredData.filter((s) => s.serviceType === 'LAB_TEST').length;
-  const imagingServices = filteredData.filter((s) => s.serviceType === 'IMAGING').length;
+  const imagingServices = filteredData.filter((s) =>
+    ['X_RAY', 'ULTRASOUND', 'CT_SCAN', 'MRI', 'ENDOSCOPY'].includes(s.serviceType)
+  ).length;
 
   return (
     <div className="space-y-6 flex flex-col h-full animate-in fade-in duration-500">
@@ -69,7 +72,6 @@ export default function ServiceCatalog() {
         />
         <div className="flex flex-wrap items-center gap-3">
           <StatsCard icon={<Package size={16} />} label="Tổng dịch vụ" value={totalServices} />
-          <StatsCard icon={<Package size={16} />} label="Khám bệnh" value={examServices} bgColor="bg-blue-50" iconColor="text-blue-600" />
           <StatsCard icon={<Package size={16} />} label="Xét nghiệm" value={labServices} bgColor="bg-purple-50" iconColor="text-purple-600" />
           <StatsCard icon={<Package size={16} />} label="Chẩn đoán hình ảnh" value={imagingServices} bgColor="bg-emerald-50" iconColor="text-emerald-600" />
           <GradientButton

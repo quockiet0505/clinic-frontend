@@ -46,7 +46,7 @@ class _AllServicesScreenState extends State<AllServicesScreen> {
   List<ServiceModel> _filter(List<ServiceModel> source) {
     var list = source.where((s) {
       if (s.effectivePrice <= 0) return false;
-      if (s.serviceType != 'LAB_TEST' && s.serviceType != 'X_RAY') return false;
+      if (!isPatientBookableService(s.serviceType)) return false;
 
       final matchesSearch = _searchQuery.isEmpty ||
           s.serviceName.toLowerCase().contains(_searchQuery.toLowerCase());

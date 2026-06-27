@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../core/network/dio_client.dart';
 import '../models/appointment_model.dart';
 import '../models/doctor_model.dart';
 import '../models/service_model.dart';
@@ -40,6 +39,11 @@ class AppointmentProvider extends ChangeNotifier {
   }
 
   void selectService(ServiceModel service) {
+    if (!isPatientBookableService(service.serviceType)) {
+      error = 'Dịch vụ này chỉ được chỉ định trong quá trình khám.';
+      notifyListeners();
+      return;
+    }
     selectedService = service;
     selectedDoctor = null;
     selectedSpecialty = null;
@@ -57,7 +61,7 @@ class AppointmentProvider extends ChangeNotifier {
     selectedDoctor = null;
     selectedService = null;
     selectedExpertiseId = specialty['expertiseId'];
-    bookingMode = 'EXPERTISE';
+    bookingMode = 'DOCTOR';
     selectedDate = null;
     selectedTimeSlot = null;
     note = '';
@@ -74,7 +78,7 @@ class AppointmentProvider extends ChangeNotifier {
     isAiSuggested = true;
     if (selectedExpertiseId != null) {
       this.selectedExpertiseId = selectedExpertiseId;
-      bookingMode = 'EXPERTISE';
+      bookingMode = 'DOCTOR';
     }
     if (symptomNote != null && symptomNote.isNotEmpty) {
       note = symptomNote;
@@ -111,15 +115,17 @@ class AppointmentProvider extends ChangeNotifier {
 
   void selectTimeSlot(Map<String, dynamic> slot) {
     selectedTimeSlot = slot;
-    final doctorId = slot['doctorId'];
-    if (doctorId != null && selectedDoctor == null && bookingMode == 'EXPERTISE') {
-      // Slot từ chuyên khoa có gán bác sĩ
-    }
     notifyListeners();
   }
 
   Future<void> fetchAvailableSlots() async {
     if (selectedDate == null) return;
+
+    if (bookingMode == 'DOCTOR' && selectedDoctor == null) {
+      availableSlots = [];
+      notifyListeners();
+      return;
+    }
 
     isLoading = true;
     error = null;
@@ -128,7 +134,6 @@ class AppointmentProvider extends ChangeNotifier {
     try {
       final data = await _bookingService.getAvailableSlots(
         doctorId: selectedDoctor?.id,
-        expertiseId: bookingMode == 'EXPERTISE' ? selectedExpertiseId : null,
         serviceId: bookingMode == 'SERVICE' ? selectedService?.serviceId : null,
         date: selectedDate!,
       );
@@ -154,19 +159,22 @@ class AppointmentProvider extends ChangeNotifier {
   Future<bool> confirmBooking() async {
     if (selectedDate == null || selectedTimeSlot == null) return false;
 
+    if (bookingMode == 'DOCTOR') {
+      if (selectedExpertiseId == null || selectedDoctor == null) {
+        error = 'Vui lòng chọn chuyên khoa và bác sĩ.';
+        notifyListeners();
+        return false;
+      }
+    }
+
     isLoading = true;
     notifyListeners();
 
     try {
-      int? doctorId = selectedDoctor?.id;
-      if (doctorId == null && selectedTimeSlot?['doctorId'] != null) {
-        doctorId = selectedTimeSlot!['doctorId'] as int?;
-      }
-
       await _bookingService.confirmBooking(
-        doctorId: doctorId,
+        doctorId: selectedDoctor?.id,
         serviceId: selectedService?.serviceId,
-        expertiseId: selectedExpertiseId,
+        expertiseId: bookingMode == 'DOCTOR' ? selectedExpertiseId : null,
         suggestedExpertiseId: suggestedExpertiseId,
         bookingMode: bookingMode,
         date: selectedDate!,

@@ -30,6 +30,16 @@ class ServiceModel {
   }
 }
 
+const patientBookableServiceTypes = {
+  'LAB_TEST',
+  'X_RAY',
+};
+
+bool isPatientBookableService(String? type) =>
+    type != null && patientBookableServiceTypes.contains(type);
+
+bool isHiddenServiceType(String? type) => type == 'EXAM';
+
 enum ServiceType {
   EXAM,
   LAB_TEST,

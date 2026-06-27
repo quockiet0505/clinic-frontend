@@ -1,5 +1,6 @@
 // src/features/home/components/HowItWorks.tsx
 import React from 'react';
+import { isPatientBookableService } from '@/constants/serviceTypes';
 import { Building2, CircleDollarSign } from 'lucide-react';
 import { CarouselWrapper, SectionContainer, SectionHeader, ViewAllButton, ActionButton } from '@/components/common';
 import { getStaticUrl } from '@/utils/url';
@@ -57,7 +58,7 @@ export const HowItWorks: React.FC<Props> = ({ services, isLoading }) => {
               </div>
             ))
           ) : (
-            services.filter(s => s.serviceType === 'LAB_TEST' || s.serviceType === 'X_RAY').slice(0, 8).map((service) => {
+            services.filter(s => isPatientBookableService(s.serviceType)).slice(0, 8).map((service) => {
               const hasDiscount = service.discountPrice && service.originalPrice && service.discountPrice < service.originalPrice;
               const discountPercent = hasDiscount 
                 ? Math.round((1 - service.discountPrice! / service.originalPrice!) * 100) 

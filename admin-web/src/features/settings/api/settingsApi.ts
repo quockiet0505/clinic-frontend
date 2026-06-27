@@ -15,6 +15,14 @@ interface SettingsQueryParams extends BaseFilterParams {
   sortDir?: string;
 }
 
+const normalizeDoctorPrice = (item: DoctorPricing & { finalPrice?: unknown; originalPrice?: unknown; discountPrice?: unknown }): DoctorPricing => ({
+  ...item,
+  originalPrice: toNumber(item.originalPrice),
+  discountPrice: item.discountPrice != null ? toNumber(item.discountPrice) : undefined,
+  finalPrice: item.finalPrice != null ? toNumber(item.finalPrice) : undefined,
+  price: toNumber(item.finalPrice ?? item.discountPrice ?? item.originalPrice ?? item.price),
+});
+
 export const settingsApi = {
   getExpertisesPaged: async (params?: SettingsQueryParams) => {
     try {
@@ -57,7 +65,11 @@ export const settingsApi = {
   getDoctorPricesPaged: async (params?: SettingsQueryParams) => {
     try {
       const res = await axiosInstance.get('/doctor-prices', { params });
-      return parsePagedResponse<DoctorPricing>(res.data);
+      const parsed = parsePagedResponse<DoctorPricing>(res.data);
+      return {
+        content: parsed.content.map(normalizeDoctorPrice),
+        totalElements: parsed.totalElements,
+      };
     } catch (e) {
       console.error(e);
       return { content: [], totalElements: 0 };

@@ -22,16 +22,13 @@ interface BookingFormProps {
   preselectedSuggestedExpertiseId?: number;
   isAiSuggested?: boolean;
   isDoctorBooking: boolean;
-  isExpertiseBooking: boolean;
   isServiceBooking: boolean;
   mode?: 'doctor' | 'service';
   onSubmit: (data: BookingFormState) => void;
 }
 
 function resolveBookingMode(props: BookingFormProps): BookingMode {
-  if (props.isDoctorBooking || props.preselectedDoctorId) return 'DOCTOR';
   if (props.isServiceBooking || props.preselectedServiceId || props.mode === 'service') return 'SERVICE';
-  if (props.isExpertiseBooking || props.preselectedExpertiseId) return 'EXPERTISE';
   return 'DOCTOR';
 }
 
@@ -43,9 +40,7 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
     preselectedSuggestedExpertiseId,
     isAiSuggested,
     isDoctorBooking,
-    isExpertiseBooking,
     isServiceBooking,
-    mode,
     onSubmit,
   } = props;
 
@@ -72,11 +67,8 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
     isAiSuggested: isAiSuggested ?? false,
   });
 
-  const showExpertise = formData.bookingMode !== 'SERVICE';
-  const showDoctor = formData.bookingMode === 'DOCTOR' || formData.bookingMode === 'EXPERTISE';
-  const showService = formData.bookingMode === 'SERVICE';
-
-  const expertiseDisabled = isDoctorBooking || isExpertiseBooking;
+  const isDoctorFlow = formData.bookingMode === 'DOCTOR';
+  const expertiseDisabled = isDoctorBooking;
   const doctorDisabled = isDoctorBooking;
   const serviceDisabled = isServiceBooking;
 
@@ -123,8 +115,9 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
     if (!preselectedExpertiseId || preselectedDoctorId) return;
     setFormData(prev => ({
       ...prev,
-      bookingMode: 'EXPERTISE',
+      bookingMode: 'DOCTOR',
       expertiseId: preselectedExpertiseId,
+      doctorId: '',
     }));
     appointmentApi.getDoctorsByExpertise(preselectedExpertiseId)
       .then(setDoctors)
@@ -141,11 +134,11 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
   }, [preselectedServiceId]);
 
   useEffect(() => {
-    if (!formData.expertiseId || expertiseDisabled || isDoctorBooking) return;
+    if (!formData.expertiseId || !isDoctorFlow || isDoctorBooking) return;
     appointmentApi.getDoctorsByExpertise(Number(formData.expertiseId))
       .then(setDoctors)
       .catch(console.error);
-  }, [formData.expertiseId, expertiseDisabled, isDoctorBooking]);
+  }, [formData.expertiseId, isDoctorFlow, isDoctorBooking]);
 
   useEffect(() => {
     if (!formData.appointmentDate) {
@@ -169,13 +162,6 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
           setTimeSlots(slots);
           return;
         }
-        if (formData.expertiseId) {
-          const slots = await appointmentApi.getTimeSlots(formData.appointmentDate, {
-            expertiseId: Number(formData.expertiseId),
-          });
-          setTimeSlots(slots);
-          return;
-        }
         setTimeSlots([]);
       } catch {
         setTimeSlots([]);
@@ -186,7 +172,6 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
   }, [
     formData.appointmentDate,
     formData.doctorId,
-    formData.expertiseId,
     formData.serviceId,
     formData.bookingMode,
   ]);
@@ -199,7 +184,6 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
     updateFormData({
       timeStart: slot.timeStart,
       timeEnd: slot.timeEnd,
-      ...(slot.doctorId && !formData.doctorId ? { doctorId: slot.doctorId } : {}),
     });
   };
 
@@ -208,13 +192,15 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
       toast({ title: 'Thiếu thông tin', description: 'Vui lòng điền đầy đủ các thông tin bắt buộc', variant: 'destructive' });
       return;
     }
-    if (formData.bookingMode === 'DOCTOR' && !formData.doctorId) {
-      toast({ title: 'Thiếu bác sĩ', description: 'Vui lòng chọn bác sĩ', variant: 'destructive' });
-      return;
-    }
-    if (formData.bookingMode === 'EXPERTISE' && !formData.expertiseId) {
-      toast({ title: 'Thiếu chuyên khoa', description: 'Vui lòng chọn chuyên khoa', variant: 'destructive' });
-      return;
+    if (formData.bookingMode === 'DOCTOR') {
+      if (!formData.expertiseId) {
+        toast({ title: 'Thiếu chuyên khoa', description: 'Vui lòng chọn chuyên khoa', variant: 'destructive' });
+        return;
+      }
+      if (!formData.doctorId) {
+        toast({ title: 'Thiếu bác sĩ', description: 'Vui lòng chọn bác sĩ', variant: 'destructive' });
+        return;
+      }
     }
     if (formData.bookingMode === 'SERVICE' && !formData.serviceId) {
       toast({ title: 'Thiếu dịch vụ', description: 'Vui lòng chọn dịch vụ', variant: 'destructive' });
@@ -232,8 +218,7 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
     formData.appointmentDate &&
     formData.timeStart &&
     formData.description.trim() &&
-    (formData.bookingMode !== 'DOCTOR' || formData.doctorId) &&
-    (formData.bookingMode !== 'EXPERTISE' || formData.expertiseId) &&
+    (formData.bookingMode !== 'DOCTOR' || (formData.expertiseId && formData.doctorId)) &&
     (formData.bookingMode !== 'SERVICE' || formData.serviceId)
   );
 
@@ -288,15 +273,12 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
       }
       return [{ value: String(preselectedDoctorId), label: 'Không tìm thấy bác sĩ', icon: Stethoscope }];
     }
-    return [
-      { value: 'none', label: 'Để hệ thống chọn bác sĩ', icon: Stethoscope },
-      ...(Array.isArray(doctors) ? doctors : []).map(d => ({
-        value: String(d.staffId),
-        label: d.fullName,
-        description: d.expertiseName,
-        icon: Stethoscope,
-      })),
-    ];
+    return (Array.isArray(doctors) ? doctors : []).map(d => ({
+      value: String(d.staffId),
+      label: d.fullName,
+      description: d.expertiseName,
+      icon: Stethoscope,
+    }));
   };
 
   return (
@@ -307,42 +289,62 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
           <div>
             <h4 className="text-sm font-bold text-violet-900">Gợi ý từ Trợ lý AI</h4>
             <p className="text-xs text-violet-700 mt-1 leading-relaxed">
-              Dựa trên triệu chứng của bạn, AI đã tự động chọn chuyên khoa phù hợp. Bạn có thể thay đổi nếu muốn.
+              AI đã gợi ý chuyên khoa phù hợp. Bạn vẫn cần chọn bác sĩ cụ thể trước khi đặt lịch.
             </p>
           </div>
         </div>
       )}
 
       <div className="flex flex-col gap-7">
-        {showExpertise && (
-          <FormSearchModal
-            label="Chuyên khoa"
-            triggerIcon={Activity}
-            modalTitle="Chọn Chuyên khoa"
-            value={String(formData.expertiseId)}
-            disabled={expertiseDisabled}
-            placeholder="Chọn chuyên khoa"
-            onChange={(val) =>
-              updateFormData({
-                bookingMode: formData.bookingMode === 'SERVICE' ? 'SERVICE' : 'EXPERTISE',
-                expertiseId: Number(val),
-                doctorId: '',
-                timeStart: '',
-                timeEnd: '',
-              })
-            }
-            options={getExpertiseOptions()}
-          />
+        {isDoctorFlow && (
+          <>
+            <FormSearchModal
+              label="Chuyên khoa"
+              triggerIcon={Activity}
+              modalTitle="Chọn Chuyên khoa"
+              value={String(formData.expertiseId)}
+              disabled={expertiseDisabled}
+              placeholder="Chọn chuyên khoa"
+              onChange={(val) =>
+                updateFormData({
+                  bookingMode: 'DOCTOR',
+                  expertiseId: Number(val),
+                  doctorId: '',
+                  timeStart: '',
+                  timeEnd: '',
+                })
+              }
+              options={getExpertiseOptions()}
+            />
+
+            <FormSearchModal
+              label="Bác sĩ"
+              triggerIcon={Stethoscope}
+              modalTitle="Chọn Bác sĩ"
+              value={String(formData.doctorId)}
+              disabled={doctorDisabled || !formData.expertiseId}
+              placeholder={formData.expertiseId ? 'Chọn bác sĩ' : 'Chọn chuyên khoa trước'}
+              onChange={(val) =>
+                updateFormData({
+                  doctorId: Number(val),
+                  bookingMode: 'DOCTOR',
+                  timeStart: '',
+                  timeEnd: '',
+                })
+              }
+              options={getDoctorOptions()}
+            />
+          </>
         )}
 
-        {showService && (
+        {formData.bookingMode === 'SERVICE' && (
           <FormSearchModal
             label="Dịch vụ"
             triggerIcon={BriefcaseMedical}
             modalTitle="Chọn Dịch vụ"
             value={String(formData.serviceId)}
             disabled={serviceDisabled}
-            placeholder="Chọn dịch vụ"
+            placeholder="Chọn dịch vụ xét nghiệm / chụp chiếu"
             onChange={(val) =>
               updateFormData({
                 bookingMode: 'SERVICE',
@@ -353,26 +355,6 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
               })
             }
             options={getServiceOptions()}
-          />
-        )}
-
-        {showDoctor && (
-          <FormSearchModal
-            label="Bác sĩ"
-            triggerIcon={Stethoscope}
-            modalTitle="Chọn Bác sĩ"
-            value={String(formData.doctorId)}
-            disabled={doctorDisabled}
-            placeholder="Chọn bác sĩ hoặc để hệ thống chọn"
-            onChange={(val) =>
-              updateFormData({
-                doctorId: val === 'none' ? '' : Number(val),
-                bookingMode: formData.expertiseId && val === 'none' ? 'EXPERTISE' : 'DOCTOR',
-                timeStart: '',
-                timeEnd: '',
-              })
-            }
-            options={getDoctorOptions()}
           />
         )}
 
