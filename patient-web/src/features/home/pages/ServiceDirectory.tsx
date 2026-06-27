@@ -5,7 +5,7 @@ import { EmptyState, Pagination, SectionContainer, ActionButton } from '@/compon
 import { SearchInput } from '@/components/common/SearchInput';
 import { homeApi } from '../api/homeApi';
 import { getStaticUrl } from '@/utils/url';
-import type { ServicePackage } from '../types/home';
+import { PATIENT_BOOKABLE_SERVICE_TYPES, SERVICE_TYPE_LABELS, isPatientBookableService } from '@/constants/serviceTypes';
 
 export const ServiceDirectory: React.FC = () => {
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ export const ServiceDirectory: React.FC = () => {
   };
 
   const filteredServices = services.filter((s) => {
-    if (s.serviceType !== 'LAB_TEST' && s.serviceType !== 'X_RAY') return false; // Only show LAB_TEST and X_RAY
+    if (!isPatientBookableService(s.serviceType)) return false;
     const matchesSearch = s.serviceName.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = typeFilter === 'ALL' || s.serviceType === typeFilter;
 
