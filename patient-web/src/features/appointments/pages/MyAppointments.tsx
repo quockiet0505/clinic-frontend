@@ -166,19 +166,19 @@ export const MyAppointments: React.FC = () => {
       <SectionContainer className="max-w-5xl py-8 flex flex-col gap-6">
         {/* Toolbar: Tabs & Filters */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
-          {/* Tabs - Modern Segmented Control */}
           <div className="flex items-center gap-1 overflow-x-auto p-1 bg-slate-100/80 border border-slate-200/60 rounded-[14px] hide-scrollbar w-full lg:w-auto shrink-0">
             {[
               { id: 'ALL', label: `Tất cả (${filteredAppointments.length})` },
               { id: 'UPCOMING', label: `Sắp tới (${upcomingAppointments.length})` },
-              { id: 'PAST', label: `Đã khám (${pastAppointments.length})` }
-            ].map(tab => (
+              { id: 'PAST', label: `Đã khám (${pastAppointments.length})` },
+            ].map((tab) => (
               <button
                 key={tab.id}
+                type="button"
                 onClick={() => setActiveTab(tab.id as 'ALL' | 'UPCOMING' | 'PAST')}
                 className={`px-4 py-2 rounded-xl text-[13px] font-bold whitespace-nowrap transition-all duration-200 cursor-pointer ${
-                  activeTab === tab.id 
-                    ? 'bg-white text-primary-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] border border-slate-200/50' 
+                  activeTab === tab.id
+                    ? 'bg-white text-primary-600 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] border border-slate-200/50'
                     : 'bg-transparent text-slate-500 border border-transparent hover:text-slate-700'
                 }`}
               >

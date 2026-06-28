@@ -1,8 +1,8 @@
 // src/features/home/components/HowItWorks.tsx
 import React from 'react';
 import { isPatientBookableService } from '@/constants/serviceTypes';
-import { Building2, CircleDollarSign } from 'lucide-react';
-import { CarouselWrapper, SectionContainer, SectionHeader, ViewAllButton, ActionButton } from '@/components/common';
+import { CircleDollarSign } from 'lucide-react';
+import { CarouselWrapper, SectionContainer, SectionHeader, ViewAllButton } from '@/components/common';
 import { getStaticUrl } from '@/utils/url';
 import { useNavigate } from 'react-router-dom';
 import { ImageWithFallback } from '@/components/common/ImageWithFallback';
@@ -35,25 +35,24 @@ export const HowItWorks: React.FC<Props> = ({ services, isLoading }) => {
   };
 
   return (
-    /*
-      Nhận từ FeaturedDoctors: kết thúc white
-      Bắt đầu white → gradient-white-blue → gradient-blue
-      → Kết thúc gradient-blue (#e0f2fe) trước Footer
-    */
     <section className="py-14 bg-gradient-to-b from-white via-gradient-white-blue to-gradient-blue">
-      <SectionContainer className="relative max-w-[1140px]">
-        <SectionHeader title="Chăm sóc sức khỏe toàn diện" />
+      <SectionContainer className="relative max-w-[1280px]">
+        {/* Tiêu đề cập nhật font to hơn một chút */}
+        <h2 className="text-[24px] md:text-[28px] font-bold text-[#0F3B63] text-center mb-10 uppercase">
+          Chăm sóc sức khỏe toàn diện
+        </h2>
+        
         <CarouselWrapper>
           {isLoading ? (
             Array(4).fill(0).map((_, i) => (
-              <div key={`skel-srv-${i}`} className="w-[265px] min-w-[265px] max-w-[265px] shrink-0 snap-start bg-white rounded-[24px] overflow-hidden shadow-sm border border-slate-100 flex flex-col animate-pulse">
-                <div className="w-full h-[160px] bg-slate-200"></div>
+              <div key={`skel-srv-${i}`} className="w-full h-full bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100 flex flex-col animate-pulse">
+                <div className="w-full h-[180px] bg-slate-200"></div>
                 <div className="p-5 flex flex-col flex-1 gap-3">
                   <div className="h-5 bg-slate-200 rounded w-full"></div>
                   <div className="h-5 bg-slate-200 rounded w-2/3"></div>
                   <div className="h-4 bg-slate-100 rounded w-1/2 mt-2"></div>
-                  <div className="h-6 bg-slate-200 rounded w-3/4 mt-auto"></div>
-                  <div className="h-11 bg-slate-200 rounded-xl w-full mt-2"></div>
+                  <div className="h-14 bg-slate-50 rounded-xl w-full mt-auto"></div>
+                  <div className="h-[46px] bg-[#00b5f1] rounded-lg w-full mt-2"></div>
                 </div>
               </div>
             ))
@@ -68,9 +67,9 @@ export const HowItWorks: React.FC<Props> = ({ services, isLoading }) => {
                 <div
                   key={service.serviceId}
                   onClick={() => handleServiceClick(service.serviceId)}
-                  className="cursor-pointer w-[265px] min-w-[265px] max-w-[265px] shrink-0 snap-start bg-white rounded-[24px] overflow-hidden shadow-lg shadow-slate-200/40 border border-slate-200/80 flex flex-col hover:shadow-2xl hover:shadow-primary-500/20 hover:border-primary-300 hover:-translate-y-1 transition-all duration-300 group"
+                  className="cursor-pointer w-full h-full bg-white rounded-xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#e8f1f8] flex flex-col hover:border-[#00b5f1] hover:shadow-[0_6px_20px_rgba(0,181,241,0.15)] hover:-translate-y-1 transition-all duration-300 group"
                 >
-                  <div className="w-full h-[160px] overflow-hidden bg-slate-50 relative">
+                  <div className="w-full h-[180px] overflow-hidden bg-slate-50 relative border-b border-[#e8f1f8]">
                     <ImageWithFallback
                       src={`${staticUrl}${service.imageUrl}`}
                       alt={service.serviceName}
@@ -78,20 +77,22 @@ export const HowItWorks: React.FC<Props> = ({ services, isLoading }) => {
                       containerClassName="absolute inset-0 w-full h-full"
                     />
                     {hasDiscount && (
-                      <div className="absolute top-3 right-3 bg-red-500 text-white text-[12px] font-black px-2.5 py-1 rounded-full shadow-md z-10">
+                      <div className="absolute top-3 right-3 bg-red-500 text-white text-[13px] font-black px-3 py-1.5 rounded-full shadow-md z-10">
                         -{discountPercent}%
                       </div>
                     )}
                   </div>
-                  <div className="p-5 flex flex-col flex-1">
-                    <h3 className="font-bold text-brand-dark text-[16px] leading-snug line-clamp-2 mb-2 min-h-[44px] group-hover:text-primary-600 transition-colors">
+                  <div className="p-5 flex flex-col flex-1 text-[#334155]">
+                    <h3 className="font-bold text-[#0F3B63] text-[18px] leading-snug line-clamp-2 mb-2 group-hover:text-[#00AEEF] transition-colors text-wrap-balance">
                       {service.serviceName}
                     </h3>
+                    
                     {service.description && (
-                      <p className="text-slate-500 text-[12px] leading-relaxed line-clamp-2 mb-3">
+                      <p className="text-[#64748b] text-[14px] leading-relaxed line-clamp-2 mb-4 text-wrap-balance">
                         {service.description}
                       </p>
                     )}
+                    
                     <div className="flex flex-col gap-2 mt-auto">
                       <div className="flex items-center gap-2 text-[13px] bg-slate-50 p-2.5 rounded-xl">
                         <CircleDollarSign className="w-[18px] h-[18px] text-slate-400 shrink-0" />
@@ -104,29 +105,32 @@ export const HowItWorks: React.FC<Props> = ({ services, isLoading }) => {
                               </span>
                             </>
                           ) : (
-                            <span className="text-brand-dark font-bold text-[15px] leading-none">
+                            <span className="text-slate-700 font-bold text-[15px] leading-none">
                               {formatPrice(service.originalPrice || 0)}
                             </span>
                           )}
                         </div>
                       </div>
                     </div>
-                    <ActionButton
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleServiceClick(service.serviceId);
-                      }}
-                      className="mt-4 h-[42px] px-6 text-[14px] font-bold rounded-xl shadow-md shadow-primary-500/20 group-hover:shadow-lg transition-all"
-                    >
-                      Đặt khám ngay
-                    </ActionButton>
+
+                    <div className="mt-4 pt-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleServiceClick(service.serviceId);
+                        }}
+                        className="w-full h-[46px] bg-[#00b5f1] text-white text-[16px] font-bold rounded-lg border-2 border-transparent hover:bg-white hover:text-[#00b5f1] hover:border-[#00b5f1] transition-all duration-300 cursor-pointer"
+                      >
+                        Đặt khám ngay
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
             })
           )}
         </CarouselWrapper>
-        <div className="text-center mt-8">
+        <div className="text-center mt-6">
           <ViewAllButton onClick={handleViewAll} />
         </div>
       </SectionContainer>

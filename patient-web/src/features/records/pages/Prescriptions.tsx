@@ -5,6 +5,7 @@ import {
   Pill,
   FileSignature,
   ChevronRight,
+  ChevronDown,
   FileText,
   UserRound,
   CalendarDays,
@@ -15,6 +16,7 @@ import { SearchInput } from '@/components/common/SearchInput';
 import { SectionContainer, DateFilter } from '@/components/common';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { PrescriptionModalContent } from '../components/PrescriptionModalContent';
+import { RecordCardMeta, RecordStatusBadge } from '../components/RecordCardMeta';
 import { formatDoctorName } from '@/utils/generatePdf';
 
 type StatusTab = 'ALL' | 'ACTIVE' | 'DONE';
@@ -61,7 +63,7 @@ export const Prescriptions: React.FC = () => {
               })),
             );
           })
-          .catch(() => {});
+          .catch(() => { });
       } catch (error) {
         console.error('Failed to fetch prescriptions:', error);
         setLoading(false);
@@ -114,10 +116,9 @@ export const Prescriptions: React.FC = () => {
           </SectionContainer>
         </div>
         <SectionContainer className="max-w-4xl py-8">
-          <div className="flex flex-col gap-3">
-            <div className="h-24 bg-white border border-slate-200 rounded-2xl w-full animate-pulse" />
-            <div className="h-24 bg-white border border-slate-200 rounded-2xl w-full animate-pulse" />
-            <div className="h-24 bg-white border border-slate-200 rounded-2xl w-full animate-pulse" />
+          <div className="flex flex-col gap-4">
+            <div className="h-[240px] bg-white border border-slate-200 rounded-3xl w-full animate-pulse" />
+            <div className="h-[240px] bg-white border border-slate-200 rounded-3xl w-full animate-pulse" />
           </div>
         </SectionContainer>
       </main>
@@ -186,24 +187,22 @@ export const Prescriptions: React.FC = () => {
 
       <SectionContainer className="max-w-4xl py-8 flex flex-col gap-5">
         {/* Tabs */}
-        <div className="bg-slate-100/80 p-1 rounded-xl border border-slate-200/60 shadow-sm inline-flex items-center gap-1 w-full sm:w-fit overflow-x-auto hide-scrollbar">
+        <div className="inline-flex p-1.5 bg-slate-100/80 backdrop-blur-md rounded-2xl border border-slate-200/50 shadow-inner w-full sm:w-fit overflow-x-auto hide-scrollbar gap-1">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setStatusTab(tab.id)}
-              className={`px-3.5 py-1.5 rounded-lg text-[13px] font-bold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
-                statusTab === tab.id
-                  ? 'bg-white text-primary-700 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] border border-slate-200/50'
-                  : 'bg-transparent text-slate-500 border border-transparent hover:text-slate-700'
-              }`}
-            >
-              {tab.label}
-              <span
-                className={`tabular-nums text-[11px] font-bold px-1.5 py-0.5 rounded-md ${
-                  statusTab === tab.id
-                    ? 'bg-primary-50 text-primary-700'
-                    : 'bg-slate-200/60 text-slate-500'
+              className={`relative px-5 py-2 rounded-xl text-[14px] font-bold whitespace-nowrap transition-all duration-300 cursor-pointer flex items-center gap-2 ${statusTab === tab.id
+                  ? 'text-primary-700 bg-white shadow-[0_4px_16px_-4px_rgba(0,0,0,0.08)] border border-slate-200/50'
+                  : 'text-slate-500 bg-transparent border border-transparent hover:bg-slate-200/50 hover:text-slate-700'
                 }`}
+            >
+              <span className="relative z-10">{tab.label}</span>
+              <span
+                className={`relative z-10 tabular-nums text-[12px] font-bold px-2 py-0.5 rounded-lg transition-colors ${statusTab === tab.id
+                    ? 'bg-primary-50 text-primary-700'
+                    : 'bg-slate-200/70 text-slate-500'
+                  }`}
               >
                 {tab.count}
               </span>
@@ -212,7 +211,7 @@ export const Prescriptions: React.FC = () => {
         </div>
 
         {/* List */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
           {filteredPrescriptions.length > 0 ? (
             filteredPrescriptions.map((prescription: any) => (
               <PrescriptionCard key={prescription.prescriptionId} prescription={prescription} />
@@ -235,99 +234,186 @@ export const Prescriptions: React.FC = () => {
 };
 
 const PrescriptionCard: React.FC<{ prescription: any }> = ({ prescription }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const isActive = isRecentPrescription(prescription.createdAt);
   const status = isActive
     ? {
-        label: 'Đang điều trị',
-        color: 'bg-primary-50 text-primary-700 border-primary-200',
-        dot: 'bg-primary-500',
-        icon: <Activity className="w-3 h-3" />,
-      }
+      label: 'Đang điều trị',
+      color: 'bg-primary-50 text-primary-700 border-primary-200',
+      icon: <Activity className="w-3.5 h-3.5" />,
+      hint: 'Đơn thuốc còn hiệu lực trong 14 ngày gần đây. Uống đúng liều và tái khám nếu có dấu hiệu bất thường.',
+    }
     : {
-        label: 'Đã hoàn thành',
-        color: 'bg-slate-50 text-slate-600 border-slate-200',
-        dot: 'bg-slate-400',
-        icon: <CheckCircle2 className="w-3 h-3" />,
-      };
+      label: 'Đã hoàn thành',
+      color: 'bg-slate-100 text-slate-600 border-slate-200',
+      icon: <CheckCircle2 className="w-3.5 h-3.5" />,
+      hint: 'Đơn thuốc đã kết thúc liệu trình. Bạn vẫn có thể xem lại chi tiết hoặc mở bệnh án.',
+    };
 
   const medicines = prescription.items || [];
-  const topMedicines = medicines.slice(0, 3);
-  const remainingCount = medicines.length - topMedicines.length;
+  const visibleMedicines = medicines.slice(0, 4);
+  const remainingCount = medicines.length - visibleMedicines.length;
+  const prescriptionCode = `#${String(prescription.prescriptionId).padStart(5, '0')}`;
+  const issuedDate = new Date(prescription.createdAt).toLocaleDateString('vi-VN');
 
   return (
     <Dialog>
-      <article className="bg-white rounded-2xl border border-slate-200 hover:border-primary-200 hover:shadow-sm transition-all p-4 sm:p-5 flex flex-col gap-3">
-        <div className="flex items-start gap-3 sm:gap-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shrink-0 shadow-sm">
-            <Pill className="w-5 h-5 text-white" />
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2 mb-1.5">
-              <h3 className="font-bold text-[15px] text-slate-900 leading-snug">
+      <article className={`group bg-white rounded-3xl border shadow-sm transition-all overflow-hidden ${isExpanded ? 'border-primary-200 shadow-md' : 'border-slate-200/80 hover:border-primary-200/60 hover:shadow-md'}`}>
+        
+        {/* Accordion Header (Always Visible) */}
+        <div 
+          className="p-5 md:p-6 flex items-start sm:items-center justify-between gap-4 cursor-pointer hover:bg-slate-50/50 transition-colors select-none"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          <div className="flex items-start sm:items-center gap-4 min-w-0">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+              <Pill className="w-5 h-5" />
+            </div>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-x-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                <span>Đơn thuốc · {prescriptionCode}</span>
+                <span className="hidden sm:inline">•</span>
+                <span className="hidden sm:inline">{issuedDate}</span>
+              </div>
+              <h3 className="font-black text-[16px] sm:text-[18px] text-slate-900 leading-snug truncate group-hover:text-primary-600 transition-colors">
                 {prescription.diagnosis || 'Đang cập nhật chẩn đoán'}
               </h3>
-              <span
-                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold shrink-0 ${status.color}`}
-              >
-                <span
-                  className={`w-1.5 h-1.5 rounded-full ${isActive ? 'animate-pulse' : ''} ${status.dot}`}
-                />
-                {status.label}
-              </span>
             </div>
-
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-slate-500 font-medium">
-              <span className="inline-flex items-center gap-1">
-                <span className="px-1.5 py-0.5 rounded bg-slate-100 text-[10px] font-bold uppercase tracking-wide text-slate-600">
-                  Đơn
-                </span>
-                #{String(prescription.prescriptionId).padStart(5, '0')}
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <CalendarDays className="w-3 h-3" />
-                {new Date(prescription.createdAt).toLocaleDateString('vi-VN')}
-              </span>
-              <span className="inline-flex items-center gap-1">
-                <UserRound className="w-3 h-3" />
-                {formatDoctorName(prescription.doctorName)}
-              </span>
+          </div>
+          <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3 shrink-0">
+            <RecordStatusBadge
+              label={status.label}
+              className={`${status.color}`}
+              icon={status.icon}
+            />
+            <div className={`hidden sm:flex w-9 h-9 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-transform duration-300 ${isExpanded ? 'rotate-180 bg-primary-50 text-primary-600' : 'group-hover:bg-slate-100'}`}>
+              <ChevronDown className="w-5 h-5" />
             </div>
           </div>
         </div>
 
-        {medicines.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {topMedicines.map((item: any, idx: number) => (
-              <span
-                key={idx}
-                className="px-2.5 py-1 bg-slate-50 border border-slate-200 rounded-md text-[12px] font-semibold text-slate-700"
-              >
-                {item.medicineName}
-              </span>
-            ))}
-            {remainingCount > 0 && (
-              <span className="px-2.5 py-1 bg-primary-50 border border-primary-100 rounded-md text-[12px] font-semibold text-primary-600">
-                +{remainingCount} loại khác
-              </span>
-            )}
-          </div>
-        )}
+        {/* Accordion Body */}
+        <div className={`grid transition-all duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100 border-t border-slate-100' : 'grid-rows-[0fr] opacity-0'}`}>
+          <div className="overflow-hidden">
+            <div className="flex flex-col lg:flex-row">
+              <div className="flex-1 p-5 md:p-6 pt-0 md:pt-0 min-w-0">
+                {/* The Header was moved up, we only show Meta tags now */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4 mt-2 sm:mt-5">
+              <RecordCardMeta icon={CalendarDays} label="Ngày kê đơn" value={issuedDate} />
+              <RecordCardMeta
+                icon={UserRound}
+                label="Bác sĩ kê đơn"
+                value={formatDoctorName(prescription.doctorName)}
+              />
+              <RecordCardMeta
+                icon={Pill}
+                label="Số loại thuốc"
+                value={`${medicines.length} loại`}
+              />
+            </div>
 
-        <div className="flex flex-wrap gap-2 justify-end pt-1">
-          {prescription.recordId && (
-            <Link
-              to={`/records/detail/${prescription.recordId}`}
-              className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-primary-700 bg-primary-50 border border-primary-200 px-3 py-1.5 rounded-lg hover:bg-primary-100 transition-colors"
-            >
-              <FileText className="w-3.5 h-3.5" /> Bệnh án
-            </Link>
-          )}
-          <DialogTrigger asChild>
-            <button className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold text-white bg-primary-500 border border-transparent px-3 py-1.5 rounded-lg hover:bg-primary-600 transition-colors cursor-pointer">
-              Chi tiết <ChevronRight className="w-3.5 h-3.5" />
-            </button>
-          </DialogTrigger>
+            {medicines.length > 0 ? (
+              <div className="rounded-2xl border border-slate-100 bg-slate-50/70 overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-slate-100 bg-white/70">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                    Thuốc được kê
+                  </p>
+                </div>
+                <div className="overflow-x-auto">
+                  <div className="min-w-[520px]">
+                    <div className="grid grid-cols-[1.3fr_1.6fr_0.8fr] gap-3 px-4 py-2.5 bg-slate-100/70 border-b border-slate-100">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        Tên thuốc
+                      </span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        Cách dùng
+                      </span>
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                        Số lượng
+                      </span>
+                    </div>
+                    <div className="divide-y divide-slate-100">
+                      {visibleMedicines.map((item: any, idx: number) => (
+                        <div
+                          key={idx}
+                          className="grid grid-cols-[1.3fr_1.6fr_0.8fr] gap-3 px-4 py-3.5 bg-white/40 items-start"
+                        >
+                          <p className="text-[13px] font-bold text-slate-800 leading-snug">
+                            {item.medicineName}
+                          </p>
+                          <p className="text-[13px] text-slate-600 leading-relaxed">
+                            {item.dosage || 'Theo chỉ định bác sĩ'}
+                          </p>
+                          <p className="text-[13px] font-semibold text-slate-700 leading-relaxed">
+                            {item.quantity
+                              ? `${item.quantity}${item.unit ? ` ${item.unit}` : ''}`
+                              : 'Chưa ghi'}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                {remainingCount > 0 ? (
+                  <div className="px-4 py-3 text-[12px] font-bold text-primary-600 bg-primary-50/50 border-t border-slate-100">
+                    +{remainingCount} loại thuốc khác trong đơn
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-4 text-[13px] text-slate-500 font-medium">
+                Chưa có danh sách thuốc chi tiết cho đơn này.
+              </div>
+            )}
+
+            {prescription.treatment && prescription.treatment !== 'Chưa có ghi chú điều trị' ? (
+              <div className="mt-4 rounded-2xl border border-slate-100 bg-white p-4">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                  Hướng dẫn điều trị
+                </p>
+                <p className="text-[13px] text-slate-600 leading-relaxed line-clamp-2">
+                  {prescription.treatment}
+                </p>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="lg:w-[272px] shrink-0 bg-slate-50/90 border-t lg:border-t-0 lg:border-l border-slate-100 p-5 flex flex-col justify-between gap-4">
+            <div className="space-y-3">
+              <p className="text-[13px] font-medium text-slate-600 leading-relaxed">{status.hint}</p>
+              <div className="rounded-xl bg-white border border-slate-100 p-3">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                  Tóm tắt
+                </p>
+                <p className="text-[22px] font-black text-slate-800 leading-none">{medicines.length}</p>
+                <p className="text-[12px] font-medium text-slate-500 mt-1">loại thuốc trong đơn</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <DialogTrigger asChild>
+                <button
+                  type="button"
+                  className="w-full inline-flex items-center justify-center gap-2 text-[13px] font-bold text-white bg-primary-500 border border-transparent px-4 py-2.5 rounded-xl hover:bg-primary-600 active:scale-[0.98] transition-all cursor-pointer shadow-sm shadow-primary-500/20"
+                >
+                  Xem chi tiết
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </DialogTrigger>
+              {prescription.recordId ? (
+                <Link
+                  to={`/records/detail/${prescription.recordId}`}
+                  className="w-full inline-flex items-center justify-center gap-2 text-[13px] font-bold text-primary-700 bg-white border border-primary-200 px-4 py-2.5 rounded-xl hover:bg-primary-50 active:scale-[0.98] transition-all"
+                >
+                  <FileText className="w-4 h-4" />
+                  Mở bệnh án
+                </Link>
+              ) : null}
+            </div>
+          </div>
+          </div>
+        </div>
         </div>
       </article>
 

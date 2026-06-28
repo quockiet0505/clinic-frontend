@@ -231,15 +231,12 @@ export const DoctorDirectory: React.FC = () => {
                     </div>
                   </div>
                   
-                  <div className="mt-4 pt-4 border-t border-slate-50 flex gap-2">
-                    <button onClick={() => navigate(`/doctors/${doctor.staffId}`)} className="flex-1 h-10 rounded-xl border border-slate-200 bg-white text-slate-700 font-bold text-[13px] hover:bg-slate-50 transition-colors shadow-sm">
-                      Chi tiết
-                    </button>
+                  <div className="mt-4 pt-4 border-t border-slate-50 flex">
                     <ActionButton
                       onClick={() => handleBooking(doctor.staffId)}
-                      className="flex-1 h-10 text-[13px] font-bold rounded-xl shadow-md shadow-primary-500/20"
+                      className="w-full h-11 text-[14px] font-bold rounded-xl shadow-md shadow-primary-500/20"
                     >
-                      Đặt khám
+                      Đặt khám ngay
                     </ActionButton>
                   </div>
                 </div>

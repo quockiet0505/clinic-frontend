@@ -11,15 +11,7 @@ export const CarouselWrapper: React.FC<CarouselWrapperProps> = ({ children }) =>
   const [showRight, setShowRight] = useState(true);
   const [cardWidth, setCardWidth] = useState(0);
 
-  // Tính chiều rộng của một card (dùng để scroll)
-  useEffect(() => {
-    if (scrollRef.current && Children.count(children) > 0) {
-      const firstChild = scrollRef.current.children[0] as HTMLElement;
-      if (firstChild) {
-        setCardWidth(firstChild.offsetWidth);
-      }
-    }
-  }, [children]);
+  // Không cần cardWidth nữa vì ta sẽ set grid 4 cột chuẩn bằng CSS và cuộn theo clientWidth
 
   const handleScroll = () => {
     if (scrollRef.current) {
@@ -43,10 +35,9 @@ export const CarouselWrapper: React.FC<CarouselWrapperProps> = ({ children }) =>
   }, [children]);
 
   const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current && cardWidth > 0) {
-      const gap = 16; // gap-4 = 16px
-      const scrollAmount = direction === 'left' ? -((cardWidth + gap) * 4) : ((cardWidth + gap) * 4);
-      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    if (scrollRef.current) {
+      const scrollAmount = scrollRef.current.clientWidth;
+      scrollRef.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
     }
   };
 
@@ -69,10 +60,10 @@ export const CarouselWrapper: React.FC<CarouselWrapperProps> = ({ children }) =>
       <div
         ref={scrollRef}
         onScroll={handleScroll}
-        className="flex gap-4 overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory pt-6 pb-10 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+        className="flex gap-5 overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory pt-6 pb-10 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
         {childrenArray.map((child, index) => (
-          <div key={index} className="snap-start shrink-0">
+          <div key={index} className="snap-start shrink-0 w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-13.33px)] xl:w-[calc(25%-15px)] h-full">
             {child}
           </div>
         ))}

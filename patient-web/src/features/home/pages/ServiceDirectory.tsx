@@ -183,8 +183,13 @@ export const ServiceDirectory: React.FC = () => {
               return (
                 <div
                   key={service.serviceId}
-                  className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_-10px_rgba(0,181,241,0.15)] hover:border-primary-200 transition-all duration-300 flex flex-col sm:flex-row gap-5 hover:-translate-y-1 group cursor-pointer"
+                  className="relative bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_-10px_rgba(0,181,241,0.15)] hover:border-primary-200 transition-all duration-300 flex flex-col sm:flex-row gap-5 hover:-translate-y-1 group cursor-pointer"
                 >
+                  {hasDiscount && (
+                    <div className="absolute top-4 left-4 bg-rose-500 text-white text-[12px] font-black px-2.5 py-1 rounded-full shadow-md z-10">
+                      -{discountPercent}%
+                    </div>
+                  )}
                   <div className="w-full sm:w-[120px] shrink-0 flex flex-col items-center">
                     <div className="w-[120px] h-[120px] bg-gradient-to-br from-primary-50 to-[#eef9ff] rounded-2xl p-3 flex items-center justify-center border border-slate-100 group-hover:border-primary-200 transition-colors">
                       <img src={`${staticUrl}${service.imageUrl}`} alt={service.serviceName} className="w-full h-full object-contain mix-blend-multiply drop-shadow-sm group-hover:scale-110 transition-transform duration-300" />
@@ -203,31 +208,26 @@ export const ServiceDirectory: React.FC = () => {
                         <span>Phòng khám ClinicPro</span>
                       </div>
                     </div>
-                    <div className="flex flex-col sm:flex-row sm:items-end justify-between mt-5 gap-4">
-                      <div className="flex flex-col">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mt-3 pt-3 border-t border-slate-100 gap-4">
+                      <div className="flex flex-col bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">
                         {hasDiscount ? (
-                          <>
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-[13px] font-medium text-slate-400 line-through">
-                                {formatPrice(service.originalPrice!)}
-                              </span>
-                              <span className="px-1.5 py-0.5 rounded text-[10px] font-black bg-rose-100 text-rose-600">
-                                -{discountPercent}%
-                              </span>
-                            </div>
-                            <span className="text-primary-600 font-black text-[20px] leading-none">
+                          <div className="flex flex-col gap-1.5">
+                            <span className="text-[13px] font-medium text-slate-400 line-through leading-none">
+                              {formatPrice(service.originalPrice!)}
+                            </span>
+                            <span className="text-rose-500 font-black text-[18px] leading-none">
                               {formatPrice(service.discountPrice!)}
                             </span>
-                          </>
+                          </div>
                         ) : (
-                          <span className="text-primary-600 font-black text-[20px] leading-none">
+                          <span className="text-[#00AEEF] font-black text-[18px] leading-none">
                             {formatPrice(service.originalPrice || 0)}
                           </span>
                         )}
                       </div>
                       <ActionButton
                         onClick={() => handleBooking(service.serviceId)}
-                        className="h-10 px-5 text-[13.5px] font-bold rounded-xl shadow-md shadow-primary-500/20 shrink-0"
+                        className="h-[46px] px-8 text-[14.5px] font-bold rounded-xl shadow-lg shadow-primary-500/20 w-full sm:w-auto"
                       >
                         Đặt lịch ngay
                       </ActionButton>
