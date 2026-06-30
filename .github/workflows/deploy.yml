@@ -64,5 +64,8 @@ jobs:
             
             # Pull new images and restart frontends
             sudo DB_PASSWORD="dummy" JWT_SECRET="dummy" docker compose pull admin-web patient-web
-            sudo DB_PASSWORD="dummy" JWT_SECRET="dummy" docker compose up -d admin-web patient-web nginx-proxy
+            sudo DB_PASSWORD="dummy" JWT_SECRET="dummy" docker compose up -d admin-web patient-web
+            
+            # Restart Nginx Proxy to force re-resolving the new container IP addresses
+            sudo docker restart nginx-proxy
           "
