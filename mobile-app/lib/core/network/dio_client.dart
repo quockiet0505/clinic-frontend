@@ -9,7 +9,9 @@ class DioClient {
   DioClient() {
     _dio = Dio(
       BaseOptions(
-        baseUrl: dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:8080/api/v1',
+        baseUrl: (dotenv.env['USE_LOCAL_API'] == 'true')
+            ? (dotenv.env['LOCAL_API_BASE_URL'] ?? 'http://10.0.2.2:8080/api/v1')
+            : (dotenv.env['PROD_API_BASE_URL'] ?? 'http://api.duongquockiet.id.vn/api/v1'),
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
         headers: {

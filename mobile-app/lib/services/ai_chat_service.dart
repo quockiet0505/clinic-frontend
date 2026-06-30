@@ -11,7 +11,9 @@ class AiChatService {
       : sessionId = sessionId ?? 'mobile-${DateTime.now().millisecondsSinceEpoch}' {
     _dio = Dio(
       BaseOptions(
-        baseUrl: dotenv.env['AI_CHAT_URL'] ?? 'http://10.0.2.2:8000',
+        baseUrl: (dotenv.env['USE_LOCAL_API'] == 'true')
+            ? (dotenv.env['LOCAL_AI_CHAT_URL'] ?? 'http://10.0.2.2:8000')
+            : (dotenv.env['PROD_AI_CHAT_URL'] ?? 'http://ai.duongquockiet.id.vn'),
         connectTimeout: const Duration(seconds: 15),
         receiveTimeout: const Duration(seconds: 120),
         headers: {
