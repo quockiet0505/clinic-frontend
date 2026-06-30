@@ -12,5 +12,5 @@ export const Logo: React.FC = () => {
       .catch(() => console.error('Failed to load logo'));
   }, []);
 
-  return <img src={logoUrl.startsWith('http') ? logoUrl : `${staticUrl}${logoUrl}`} alt="Clinic Logo" className="h-10" />;
+  return <img src={`${staticUrl}${logoUrl}`} alt="Clinic Logo" className="h-10" />;
 };
