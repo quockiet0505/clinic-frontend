@@ -63,6 +63,6 @@ jobs:
             export JWT_SECRET="dummy"
             
             # Pull new images and restart frontends
-            sudo -E docker compose pull admin-web patient-web
-            sudo -E docker compose up -d admin-web patient-web
+            sudo DB_PASSWORD="dummy" JWT_SECRET="dummy" docker compose pull admin-web patient-web
+            sudo DB_PASSWORD="dummy" JWT_SECRET="dummy" docker compose up -d admin-web patient-web
           "
