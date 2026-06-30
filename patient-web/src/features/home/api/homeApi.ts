@@ -30,23 +30,37 @@ export const homeApi = {
   },
 
   getQuickActions: async () => {
-    const res = await axiosInstance.get('/public/quick-actions');
-    // Ghép staticUrl cho iconUrl của từng action
-    const actions = res.data.data.map((action: any) => ({
-      ...action,
-      iconUrl: `${staticUrl}${action.iconUrl}`
-    }));
-    return actions;
+    try {
+      const res = await axiosInstance.get('/public/quick-actions');
+      if (!res.data || !res.data.data) return [];
+      // Ghép staticUrl cho iconUrl của từng action
+      const actions = res.data.data.map((action: any) => ({
+        ...action,
+        iconUrl: `${staticUrl}${action.iconUrl}`
+      }));
+      return actions;
+    } catch (e) {
+      console.error('Failed to get quick actions', e);
+      return [];
+    }
   },
 
   getLogo: async () => {
-    const res = await axiosInstance.get('/public/logos/main');
-    return `${staticUrl}${res.data.data.imageUrl}`;
+    try {
+      const res = await axiosInstance.get('/public/logos/main');
+      return res.data && res.data.data ? `${staticUrl}${res.data.data.imageUrl}` : '/images/logo.png';
+    } catch {
+      return '/images/logo.png';
+    }
   },
 
   getBanner: async (key: string = 'main') => {
-    const res = await axiosInstance.get(`/public/banners/${key}`);
-    return `${staticUrl}${res.data.data.imageUrl}`;
+    try {
+      const res = await axiosInstance.get(`/public/banners/${key}`);
+      return res.data && res.data.data ? `${staticUrl}${res.data.data.imageUrl}` : `/images/banners/${key === 'doctor' ? 'doctor.webp' : key === 'service' ? 'service.webp' : 'hero-banner.jpg'}`;
+    } catch {
+      return `/images/banners/${key === 'doctor' ? 'doctor.webp' : key === 'service' ? 'service.webp' : 'hero-banner.jpg'}`;
+    }
   },
 
   submitContactMessage: async (data: { fullName: string; phone: string; email?: string; subject?: string; content: string }) => {
