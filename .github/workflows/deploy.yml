@@ -1,0 +1,54 @@
+name: Deploy Frontend to VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud (OIDC)
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/1085023765253/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'github-deploy-sa@clinicqa-500817.iam.gserviceaccount.com'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: 'clinicqa-500817'
+
+      - name: Configure Docker to use Artifact Registry
+        run: |
+          gcloud auth configure-docker asia-southeast1-docker.pkg.dev --quiet
+
+      - name: Build and Push Admin Web
+        run: |
+          cd admin-web
+          docker build -t asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/admin-web:latest .
+          docker push asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/admin-web:latest
+
+      - name: Build and Push Patient Web
+        run: |
+          cd patient-web
+          docker build -t asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/patient-web:latest .
+          docker push asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/patient-web:latest
+
+      - name: Deploy to VM via IAP SSH
+        run: |
+          gcloud compute ssh clinic-vm --zone "asia-southeast1-a" --tunnel-through-iap --project "clinicqa-500817" --command "
+            cd ~/deploy
+            # Pull new images and restart frontends
+            sudo docker compose pull admin-web patient-web
+            sudo docker compose up -d admin-web patient-web
+          "
