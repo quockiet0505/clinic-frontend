@@ -49,7 +49,7 @@ export const MyAppointments: React.FC = () => {
         setAppointments(prev => prev.map(appt => {
           let imageUrl = appt.mainDoctorId ? doctorsMap.get(appt.mainDoctorId) : undefined;
           if (imageUrl && imageUrl.startsWith('/')) {
-            imageUrl = `http://localhost:8080${imageUrl}`;
+            imageUrl = `${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}${imageUrl}`;
           }
           return { ...appt, doctorImageUrl: imageUrl };
         }));

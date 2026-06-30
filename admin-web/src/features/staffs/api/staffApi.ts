@@ -26,7 +26,7 @@ export const staffApi = {
     const res = await axiosInstance.get('/staffs/all');
     return res.data.data.map((doc: any) => {
       if (doc && doc.imageUrl && doc.imageUrl.startsWith('/')) {
-        doc.imageUrl = `http://localhost:8080${doc.imageUrl}`;
+        doc.imageUrl = `${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}${doc.imageUrl}`;
       }
       return doc;
     });
@@ -37,7 +37,7 @@ export const staffApi = {
       const res = await axiosInstance.get(`/staffs/${id}`);
       const doc = res.data.data;
       if (doc && doc.imageUrl && doc.imageUrl.startsWith('/')) {
-        doc.imageUrl = `http://localhost:8080${doc.imageUrl}`;
+        doc.imageUrl = `${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}${doc.imageUrl}`;
       }
       return doc;
     } catch {
@@ -53,7 +53,7 @@ export const staffApi = {
     }
     parsed.content = parsed.content.map((doc: any) => {
       if (doc && doc.imageUrl && doc.imageUrl.startsWith('/')) {
-        doc.imageUrl = `http://localhost:8080${doc.imageUrl}`;
+        doc.imageUrl = `${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}${doc.imageUrl}`;
       }
       return doc;
     });

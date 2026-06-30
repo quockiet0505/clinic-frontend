@@ -5,7 +5,7 @@ import { logoApi } from '@/features/settings/api/logoApi';
 import { getImageUrl } from '@/utils/image';
 
 export default function Login() {
-  const [logoUrl, setLogoUrl] = useState<string>('http://localhost:8080/images/logo.png');
+  const [logoUrl, setLogoUrl] = useState<string>(`${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}/images/logo.png`);
 
   useEffect(() => {
     logoApi.getLogo('login').then(data => {

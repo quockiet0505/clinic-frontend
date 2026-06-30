@@ -9,7 +9,7 @@ import { getImageUrl } from '@/utils/image';
 export default function AdminLayout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const { isAuthenticated, loading } = useAuth();
-  const [logoUrl, setLogoUrl] = useState<string>('http://localhost:8080/images/logo.png');
+  const [logoUrl, setLogoUrl] = useState<string>(`${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}/images/logo.png`);
 
   useEffect(() => {
     logoApi.getLogo('main').then(data => {

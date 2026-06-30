@@ -129,7 +129,7 @@ export const appointmentApi = {
       status: item.status,
       mainDoctorId: item.mainDoctorId,
       doctorName: item.doctorName || 'Chưa xếp bác sĩ',
-      doctorImageUrl: item.doctorImageUrl?.startsWith('/') ? `http://localhost:8080${item.doctorImageUrl}` : item.doctorImageUrl,
+      doctorImageUrl: item.doctorImageUrl?.startsWith('/') ? `${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}${item.doctorImageUrl}` : item.doctorImageUrl,
       specialty: item.expertiseName || item.specialty || 'Chưa xác định',
       expertiseId: item.expertiseId,
       serviceId: item.serviceId,
@@ -179,7 +179,7 @@ export const appointmentApi = {
     const res = await axiosInstance.get<ApiResponse<Doctor>>(`/staffs/${doctorId}`);
     const doc = res.data.data;
     if (doc.imageUrl && doc.imageUrl.startsWith('/')) {
-      doc.imageUrl = `http://localhost:8080${doc.imageUrl}`;
+      doc.imageUrl = `${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}${doc.imageUrl}`;
     }
     return doc;
   },
