@@ -55,6 +55,13 @@ jobs:
             fi
             
             cd ~/deploy
+            # Configure Docker Auth on VM to pull from Artifact Registry
+            sudo gcloud auth configure-docker asia-southeast1-docker.pkg.dev --quiet
+            
+            # Set dummy secrets to prevent warnings during docker compose pull
+            export DB_PASSWORD="dummy"
+            export JWT_SECRET="dummy"
+            
             # Pull new images and restart frontends
             sudo -E docker compose pull admin-web patient-web
             sudo -E docker compose up -d admin-web patient-web
