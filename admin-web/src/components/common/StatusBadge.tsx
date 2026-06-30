@@ -19,7 +19,7 @@ interface Props {
 type StatusStyle = {
   color: string;
   label: string;
-  Icon?: React.ComponentType<{ size?: number; className?: string }>;
+  Icon?: React.ElementType;
 };
 
 const STATUS_MAP: Record<string, StatusStyle> = {
