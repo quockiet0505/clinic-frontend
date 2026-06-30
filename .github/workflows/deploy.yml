@@ -56,7 +56,7 @@ jobs:
             
             cd ~/deploy
             # Configure Docker Auth on VM to pull from Artifact Registry
-            sudo gcloud auth configure-docker asia-southeast1-docker.pkg.dev --quiet
+            gcloud auth print-access-token | sudo docker login -u oauth2accesstoken --password-stdin https://asia-southeast1-docker.pkg.dev
             
             # Set dummy secrets to prevent warnings during docker compose pull
             export DB_PASSWORD="dummy"
