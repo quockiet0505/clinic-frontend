@@ -36,13 +36,17 @@ jobs:
       - name: Build and Push Admin Web
         run: |
           cd admin-web
-          docker build -t asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/admin-web:latest .
+          docker build -t asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/admin-web:${{ github.sha }} .
+          docker tag asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/admin-web:${{ github.sha }} asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/admin-web:latest
+          docker push asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/admin-web:${{ github.sha }}
           docker push asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/admin-web:latest
 
       - name: Build and Push Patient Web
         run: |
           cd patient-web
-          docker build -t asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/patient-web:latest .
+          docker build -t asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/patient-web:${{ github.sha }} .
+          docker tag asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/patient-web:${{ github.sha }} asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/patient-web:latest
+          docker push asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/patient-web:${{ github.sha }}
           docker push asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/patient-web:latest
 
       - name: Deploy to VM via IAP SSH
@@ -55,18 +59,23 @@ jobs:
               sudo usermod -aG docker \$USER
             fi
             
-            cd ~/deploy
+            # Initialize Swarm if not active
+            if ! sudo docker info --format '{{.Swarm.LocalNodeState}}' | grep -q 'active'; then
+              echo 'Initializing Docker Swarm...'
+              sudo docker swarm init || true
+            fi
+            
             # Configure Docker Auth on VM to pull from Artifact Registry
             gcloud auth print-access-token | sudo docker login -u oauth2accesstoken --password-stdin https://asia-southeast1-docker.pkg.dev
             
-            # Set dummy secrets to prevent warnings during docker compose pull
-            export DB_PASSWORD="dummy"
-            export JWT_SECRET="dummy"
+            # Update frontend services dynamically in Swarm
+            echo 'Updating Admin Web...'
+            sudo docker service update --image asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/admin-web:${{ github.sha }} --with-registry-auth clinic_admin-web
             
-            # Pull new images and restart frontends
-            sudo DB_PASSWORD="dummy" JWT_SECRET="dummy" docker compose pull admin-web patient-web
-            sudo DB_PASSWORD="dummy" JWT_SECRET="dummy" docker compose up -d admin-web patient-web
+            echo 'Updating Patient Web...'
+            sudo docker service update --image asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/patient-web:${{ github.sha }} --with-registry-auth clinic_patient-web
             
-            # Restart Nginx Proxy to force re-resolving the new container IP addresses
-            sudo docker restart nginx-proxy
+            # Force Nginx Proxy to restart to reload configs if needed
+            echo 'Restarting Nginx Proxy...'
+            sudo docker service update --force clinic_nginx-proxy
           "
