@@ -35,7 +35,7 @@ export const HowItWorks: React.FC<Props> = ({ services, isLoading }) => {
   };
 
   return (
-    <section className="py-14 bg-gradient-to-b from-white via-gradient-white-blue to-gradient-blue">
+    <section className="py-14 bg-gradient-to-b from-white to-[#e0f2fe]">
       <SectionContainer className="relative max-w-[1280px]">
         {/* Tiêu đề cập nhật font to hơn một chút */}
         <h2 className="text-[24px] md:text-[28px] font-bold text-[#0F3B63] text-center mb-10 uppercase">

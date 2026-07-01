@@ -92,4 +92,25 @@ export const staffApi = {
   cancelLeaveRequest: async (leaveId: number): Promise<void> => {
     await axiosInstance.delete(`/leave-requests/${leaveId}`, { toastSuccess: 'Đã hủy đơn nghỉ phép' });
   },
+
+  reviewLeaveRequest: async (
+    leaveId: number,
+    status: 'APPROVED' | 'REJECTED',
+    rejectionReason?: string
+  ): Promise<void> => {
+    await axiosInstance.put(
+      `/leave-requests/${leaveId}/review`,
+      { status, rejectionReason },
+      { toastSuccess: 'Đã cập nhật trạng thái đơn' }
+    );
+  },
+
+  createLeaveRequest: async (data: {
+    leaveType: string;
+    fromDate: string;
+    toDate: string;
+    reason: string;
+  }): Promise<void> => {
+    await axiosInstance.post('/leave-requests', data, { toastSuccess: 'Nộp đơn xin nghỉ thành công' });
+  },
 };

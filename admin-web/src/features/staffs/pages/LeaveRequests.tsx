@@ -61,12 +61,17 @@ export default function LeaveRequests() {
     setCurrentPage(1);
   }, [searchTerm, activeView, roleFilter, filterDate]);
 
-  const handleProcessLeave = (action: string, reason: string) => {
+  const handleProcessLeave = async (action: string, reason: string) => {
+    if (!selectedRequest) return;
     try {
-      setRequests(requests.map(req => req.leaveId === selectedRequest?.leaveId ? { ...req, status: action as LeaveRequest['status'], approvedBy: 'System Admin', rejectionReason: reason } : req));
-      toast.success('Đã lưu quyết định duyệt đơn');
-    } catch (err) {
-      toast.error('Có lỗi xảy ra khi duyệt đơn');
+      await staffApi.reviewLeaveRequest(
+        selectedRequest.leaveId,
+        action as 'APPROVED' | 'REJECTED',
+        reason || undefined
+      );
+      fetchRequests();
+    } catch {
+      // toast is already handled inside axios or handle error here if needed
     }
     setSelectedRequest(null);
   };
@@ -75,20 +80,18 @@ export default function LeaveRequests() {
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
         <PageHeader title="Nghỉ phép & Điểm danh" description="Quản lý đơn xin nghỉ phép của nhân viên." />
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-          <CustomSelect value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className="h-11 sm:w-48">
-            <option value="ALL">Tất cả vai trò</option><option value="DOCTOR">Bác sĩ</option><option value="STAFF">Nhân viên</option><option value="LAB_TECH">Kỹ thuật viên</option>
-          </CustomSelect>
-          {activeView !== 'TODAY' && (
-            <div className="flex items-center gap-2 bg-white rounded-[16px] border border-input px-3 h-11 shadow-sm focus-within:border-primary-400 focus-within:ring-4 focus-within:ring-primary-100 transition-all duration-200 ease-out">
-              <CalendarDays size={16} className="text-slate-400" /><span className="text-sm font-medium text-slate-700">Từ ngày:</span>
-              <Input type="date" value={filterDate} onChange={(e) => setFilterDate(e.target.value)} className="h-8 border-0 bg-transparent p-0 font-medium text-slate-900 focus-visible:ring-0 focus-visible:ring-offset-0 cursor-pointer" />
-            </div>
-          )}
-        </div>
       </div>
 
-      <LeaveRequestsFilterBar activeView={activeView} setActiveView={setActiveView} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <LeaveRequestsFilterBar
+        activeView={activeView}
+        setActiveView={setActiveView}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        roleFilter={roleFilter}
+        setRoleFilter={setRoleFilter}
+        filterDate={filterDate}
+        setFilterDate={setFilterDate}
+      />
       {loading ? (
         <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải danh sách...</div>
       ) : (

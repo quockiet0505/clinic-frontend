@@ -98,14 +98,17 @@ export default function LoginForm() {
         </label>
       </div>
 
-      <Button 
-        type="submit" 
-        disabled={isSubmitting} 
-        className="w-full h-12 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg font-bold text-md shadow-md shadow-blue-100 mt-4 transition-all disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="group relative w-full flex justify-center py-3.5 px-4 border border-primary-500 rounded-xl bg-transparent text-[15px] font-bold text-primary-600 overflow-hidden transition-all duration-300 hover:border-transparent hover:shadow-lg hover:shadow-primary-500/30 focus:outline-none focus:ring-4 focus:ring-primary-500/20 active:scale-[0.98] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
       >
-        {isSubmitting ? <Loader2 className="animate-spin mr-2" size={18} /> : <LogIn className="mr-2" size={18} />}
-        {isSubmitting ? 'Authenticating...' : 'Sign In'}
-      </Button>
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="relative flex items-center group-hover:text-white transition-colors duration-300">
+          {isSubmitting ? <Loader2 className="animate-spin mr-2" size={18} /> : <LogIn className="mr-2" size={18} />}
+          {isSubmitting ? 'Đang đăng nhập...' : 'Đăng nhập vào hệ thống'}
+        </div>
+      </button>
       
     </form>
   );

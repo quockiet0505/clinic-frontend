@@ -22,12 +22,12 @@ export default function AppointmentStatisticsChart({ data }: Props) {
         <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} barGap={6}>
           <defs>
             <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#6366f1" stopOpacity={1}/>
-              <stop offset="100%" stopColor="#4338ca" stopOpacity={1}/>
+              <stop offset="0%" stopColor="#34d399" stopOpacity={1}/>
+              <stop offset="100%" stopColor="#059669" stopOpacity={1}/>
             </linearGradient>
             <linearGradient id="colorCancelled" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ffe4e6" stopOpacity={1}/>
-              <stop offset="100%" stopColor="#fb7185" stopOpacity={1}/>
+              <stop offset="0%" stopColor="#fb7185" stopOpacity={1}/>
+              <stop offset="100%" stopColor="#e11d48" stopOpacity={1}/>
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />

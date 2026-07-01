@@ -6,6 +6,7 @@ import {
   Menu,
   X,
   Mail,
+  ArrowRight,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { crmApi } from '@/features/crm/api/crmApi';
@@ -104,72 +105,137 @@ export default function Header({ onMenuClick }: HeaderProps) {
         {/* Thông báo */}
         <div className="relative" ref={dropdownRef}>
           <button
-            className={`relative ${iconButton}`}
+            className={`relative h-10 w-10 flex items-center justify-center rounded-xl transition-all duration-200 cursor-pointer ${
+              showNotifications
+                ? 'bg-blue-50 text-blue-600 shadow-sm ring-1 ring-blue-200/50'
+                : 'bg-white text-slate-500 hover:bg-slate-50 hover:text-blue-600 border border-slate-200'
+            }`}
             title="Thông báo"
             onClick={() => setShowNotifications(!showNotifications)}
           >
             <Bell size={18} />
             {notifications.length > 0 && (
-              <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">
-                {notifications.length}
+              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center border-2 border-white">
+                {notifications.length > 9 ? '9+' : notifications.length}
               </span>
             )}
           </button>
 
-          {/* Dropdown thông báo */}
-          {showNotifications && (
-            <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-                <h3 className="text-sm font-bold text-slate-800">Thông báo</h3>
-                <button
-                  onClick={() => setShowNotifications(false)}
-                  className="p-1 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                >
-                  <X size={16} />
-                </button>
-              </div>
-              <div className="max-h-80 overflow-y-auto custom-scrollbar">
-                {loadingNotif ? (
-                  <div className="p-4 text-center text-sm text-slate-400">Đang tải...</div>
-                ) : notifications.length > 0 ? (
-                  notifications.map((notif) => (
-                    <div
-                      key={notif.notificationId}
-                      className="px-4 py-3 hover:bg-slate-50 border-b border-slate-100 last:border-0 transition-colors"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="mt-0.5 shrink-0">
-                          {notif.type === 'EMAIL' ? (
-                            <Mail size={14} className="text-amber-500" />
-                          ) : (
-                            <Bell size={14} className="text-indigo-500" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-700 truncate">
-                            {notif.content}
-                          </p>
-                          <p className="text-xs text-slate-400 mt-0.5">
-                            {formatDateTime(notif.sentAt)}
-                          </p>
-                        </div>
-                      </div>
+          {showNotifications && (() => {
+            const todayStr = new Date().toDateString();
+            const todayItems = notifications.filter(n => new Date(n.sentAt).toDateString() === todayStr);
+            const earlierItems = notifications.filter(n => new Date(n.sentAt).toDateString() !== todayStr);
+
+            return (
+              <div className="absolute right-0 top-full mt-2 w-[320px] bg-white rounded-2xl shadow-xl border border-slate-200/80 z-50 overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
+                {/* Header */}
+                <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-slate-800">Thông báo</span>
+                    {notifications.length > 0 && (
+                      <span className="text-[10px] font-bold bg-red-50 text-red-500 rounded-full px-2 py-0.5">
+                        {notifications.length} mới
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => setShowNotifications(false)}
+                    className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                  >
+                    <X size={15} />
+                  </button>
+                </div>
+
+                {/* Body */}
+                <div className="max-h-[340px] overflow-y-auto custom-scrollbar">
+                  {loadingNotif ? (
+                    <div className="flex items-center justify-center gap-2 py-8 text-slate-400">
+                      <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                      <span className="text-sm">Đang tải...</span>
                     </div>
-                  ))
-                ) : (
-                  <div className="p-4 text-center text-sm text-slate-400">Không có thông báo nào</div>
-                )}
+                  ) : notifications.length === 0 ? (
+                    <div className="py-10 flex flex-col items-center gap-2 text-slate-400">
+                      <Bell size={28} className="text-slate-200" />
+                      <p className="text-sm">Không có thông báo mới</p>
+                    </div>
+                  ) : (
+                    <>
+                      {/* TODAY */}
+                      {todayItems.length > 0 && (
+                        <div>
+                          <p className="px-4 pt-3 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Hôm nay</p>
+                          {todayItems.map(notif => (
+                            <a
+                              key={notif.notificationId}
+                              href="/system/notifications"
+                              onClick={() => setShowNotifications(false)}
+                              className="flex items-start gap-3 px-4 py-3 hover:bg-blue-50/50 transition-colors group cursor-pointer border-b border-slate-50 last:border-0"
+                            >
+                              <div className="shrink-0 mt-0.5 h-7 w-7 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                                {notif.type === 'EMAIL'
+                                  ? <Mail size={13} className="text-amber-500" />
+                                  : <Bell size={13} className="text-blue-500" />
+                                }
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[13px] font-medium text-slate-700 line-clamp-2 leading-snug group-hover:text-blue-700 transition-colors">
+                                  {notif.content}
+                                </p>
+                                <p className="text-[11px] text-slate-400 mt-0.5">
+                                  {new Date(notif.sentAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                                </p>
+                              </div>
+                              <div className="shrink-0 w-1.5 h-1.5 mt-2 rounded-full bg-blue-500" />
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                      {/* EARLIER */}
+                      {earlierItems.length > 0 && (
+                        <div>
+                          <p className="px-4 pt-3 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Trước đó</p>
+                          {earlierItems.map(notif => (
+                            <a
+                              key={notif.notificationId}
+                              href="/system/notifications"
+                              onClick={() => setShowNotifications(false)}
+                              className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 transition-colors group cursor-pointer border-b border-slate-50 last:border-0"
+                            >
+                              <div className="shrink-0 mt-0.5 h-7 w-7 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+                                {notif.type === 'EMAIL'
+                                  ? <Mail size={13} className="text-slate-400" />
+                                  : <Bell size={13} className="text-slate-400" />
+                                }
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-[13px] text-slate-500 line-clamp-2 leading-snug group-hover:text-slate-700 transition-colors">
+                                  {notif.content}
+                                </p>
+                                <p className="text-[11px] text-slate-400 mt-0.5">
+                                  {new Date(notif.sentAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })}
+                                </p>
+                              </div>
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {/* Footer */}
+                <div className="border-t border-slate-100 px-4 py-2">
+                  <a
+                    href="/system/notifications"
+                    onClick={() => setShowNotifications(false)}
+                    className="flex items-center justify-center gap-1.5 w-full py-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                  >
+                    Xem tất cả <ArrowRight size={12} />
+                  </a>
+                </div>
               </div>
-              <div className="px-4 py-2 border-t border-slate-100 text-center">
-                <a
-                  href="/system/notifications"
-                  className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors"
-                >
-                  Xem tất cả
-                </a>
-              </div>
-            </div>
-          )}
+            );
+          })()}
         </div>
 
         <div className="mx-2 h-8 w-px bg-slate-200" />

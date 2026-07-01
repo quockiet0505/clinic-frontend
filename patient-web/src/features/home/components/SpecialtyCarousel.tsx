@@ -42,7 +42,7 @@ export const SpecialtyCarousel: React.FC<Props> = ({ specialties, isLoading }) =
   };
 
   return (
-    <section id="specialties-section" ref={sectionRef} className="py-14 bg-gradient-to-b from-white via-gradient-white-blue to-gradient-blue">
+    <section id="specialties-section" ref={sectionRef} className="py-14 bg-gradient-to-b from-white to-[#e0f2fe]">
       <SectionContainer className="max-w-5xl">
         <SectionHeader title="Chuyên khoa" />
         {expanded && (

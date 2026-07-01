@@ -9,20 +9,20 @@ import { ReportFilter } from '../../types/dashboard';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onGenerate: (filter: ReportFilter) => void;
-  onPreview: (filter: ReportFilter) => Promise<string>;
+  onExportPdf: (filter: ReportFilter) => void;
+  onExportExcel: (filter: ReportFilter) => void;
+  onPrint: (filter: ReportFilter) => void;
   loading?: boolean;
 }
 
 export default function ReportDialog({
   isOpen,
   onClose,
-  onGenerate,
-  onPreview,
+  onExportPdf,
+  onExportExcel,
+  onPrint,
   loading = false,
 }: Props) {
-  const [previewContent, setPreviewContent] = useState<string | null>(null);
-  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [period, setPeriod] = useState<'month' | 'quarter'>('month');
 
   const currentYear = new Date().getFullYear();
@@ -101,16 +101,18 @@ export default function ReportDialog({
     ];
   }, [period, currentYear]);
 
+  const currentMonth = new Date().getMonth() + 1;
+  const currentQuarter = Math.floor((currentMonth - 1) / 3) + 1;
+
   const initialData = useMemo(() => ({
-    reportType: '',
+    reportType: 'all',
     period: 'month',
-    periodValue: '',
+    periodValue: String(currentMonth),
     year: String(currentYear),
     format: 'pdf',
-  }), [currentYear]);
+  }), [currentYear, currentMonth]);
 
-  const handleFormSubmit = (data: Record<string, any>, isEdit: boolean) => {
-    // Kiểm tra dữ liệu có đầy đủ không
+  const handleAction = (data: Record<string, any>, actionType: 'download' | 'print') => {
     if (!data.reportType || !data.period || !data.periodValue || !data.year || !data.format) {
       alert('Vui lòng chọn đầy đủ thông tin');
       return;
@@ -124,32 +126,12 @@ export default function ReportDialog({
       year: parseInt(data.year),
       format: data.format,
     };
-    onGenerate(filter);
-  };
-
-  const handlePreviewWrapper = async (data: Record<string, any>) => {
-    if (!data.reportType || !data.period || !data.periodValue || !data.year || !data.format) {
-      alert('Vui lòng chọn đầy đủ thông tin để xem trước');
-      return;
-    }
-
-    const filter: ReportFilter = {
-      type: data.reportType,
-      period: data.period,
-      month: data.period === 'month' ? parseInt(data.periodValue) : undefined,
-      quarter: data.period === 'quarter' ? parseInt(data.periodValue) : undefined,
-      year: parseInt(data.year),
-      format: data.format,
-    };
-    setIsPreviewLoading(true);
-    try {
-      const content = await onPreview(filter);
-      setPreviewContent(content);
-    } catch (error) {
-      console.error('Preview error:', error);
-      alert('Không thể tải preview');
-    } finally {
-      setIsPreviewLoading(false);
+    
+    if (actionType === 'download') {
+      if (data.format === 'pdf') onExportPdf(filter);
+      else if (data.format === 'excel') onExportExcel(filter);
+    } else {
+      onPrint(filter);
     }
   };
 
@@ -159,22 +141,6 @@ export default function ReportDialog({
 
     return (
       <div className="flex flex-col gap-3 p-4 pb-6 bg-slate-50 border-t border-slate-100 rounded-b-[24px]">
-        {previewContent && (
-          <div className="bg-white rounded-xl border border-slate-200 p-3 max-h-40 overflow-y-auto custom-scrollbar mb-2">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-semibold text-slate-500">Xem trước báo cáo</span>
-              <button
-                onClick={() => setPreviewContent(null)}
-                className="text-xs text-slate-400 hover:text-slate-600 transition-colors cursor-pointer"
-              >
-                Ẩn
-              </button>
-            </div>
-            <pre className="whitespace-pre-wrap font-sans text-sm text-slate-700">
-              {previewContent}
-            </pre>
-          </div>
-        )}
         <div className="flex justify-end gap-2">
           <CancelButton
             onClick={onClose}
@@ -182,22 +148,22 @@ export default function ReportDialog({
             className="h-9 px-4 rounded-xl text-xs font-bold"
           />
           <Button
-            onClick={() => handlePreviewWrapper(formData)}
-            disabled={isPreviewLoading || !isFormValid}
-            variant="outline"
-            className="h-9 px-4 rounded-xl text-xs font-bold border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-800 transition-all cursor-pointer"
-          >
-            <Eye size={14} className="mr-1.5" />
-            {isPreviewLoading ? 'Đang tải...' : 'Xem trước'}
-          </Button>
-          <Button
-            onClick={() => handleFormSubmit(formData, false)}
+            onClick={() => handleAction(formData, 'download')}
             disabled={loading || !isFormValid}
-            className="h-9 px-4 rounded-xl text-xs font-bold bg-slate-800 text-white hover:bg-slate-700 transition-all cursor-pointer shadow-sm"
+            variant="outline"
+            className="h-9 px-4 rounded-xl text-xs font-bold border-indigo-200 text-indigo-700 hover:bg-indigo-50 hover:text-indigo-800 transition-all cursor-pointer"
           >
-            <Printer size={14} className="mr-1.5" />
-            {loading ? 'Đang xuất...' : 'Xuất'}
+            <FileText size={14} className="mr-1.5" />
+            Tải về
           </Button>
+          <button
+            onClick={() => handleAction(formData, 'print')}
+            disabled={loading || !isFormValid}
+            className="group inline-flex items-center justify-center gap-1.5 h-9 px-5 rounded-xl text-xs font-bold bg-white text-primary-600 ring-1 ring-primary-500/30 hover:ring-0 hover:bg-gradient-to-r hover:from-primary-600 hover:to-primary-400 hover:text-white hover:shadow-[0_8px_16px_-6px_rgba(14,165,233,0.4)] hover:-translate-y-0.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:pointer-events-none disabled:ring-slate-200 disabled:text-slate-400"
+          >
+            <Printer size={14} className="text-primary-500 group-hover:text-white transition-colors" />
+            {loading ? 'Đang xử lý...' : 'In báo cáo'}
+          </button>
         </div>
       </div>
     );
@@ -212,7 +178,7 @@ export default function ReportDialog({
       icon={<FileText size={20} />}
       fields={fields}
       initialData={initialData}
-      onSubmit={handleFormSubmit}
+      onSubmit={() => {}}
       submitLabel="Xuất"
       cancelLabel="Hủy"
       compact={true}
@@ -230,7 +196,7 @@ export default function ReportDialog({
               onClick={() => {
                 setPeriod('month');
                 ctx.onChange('period', 'month');
-                ctx.onChange('periodValue', '', false); 
+                ctx.onChange('periodValue', String(currentMonth), false); 
               }}
               className={`relative z-10 flex items-center justify-center px-4 py-2.5 rounded-xl text-[13px] font-bold transition-colors duration-200 cursor-pointer ${
                 period === 'month' ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/50'
@@ -243,7 +209,7 @@ export default function ReportDialog({
               onClick={() => {
                 setPeriod('quarter');
                 ctx.onChange('period', 'quarter');
-                ctx.onChange('periodValue', '', false); 
+                ctx.onChange('periodValue', String(currentQuarter), false); 
               }}
               className={`relative z-10 flex items-center justify-center px-4 py-2.5 rounded-xl text-[13px] font-bold transition-colors duration-200 cursor-pointer ${
                 period === 'quarter' ? 'text-indigo-600' : 'text-slate-500 hover:text-slate-800 hover:bg-slate-200/50'

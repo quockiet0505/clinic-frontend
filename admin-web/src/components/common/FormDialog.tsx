@@ -245,13 +245,25 @@ export default function FormDialog({
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className={`${wide ? 'sm:max-w-[672px]' : 'sm:max-w-[500px]'} p-0 border-0 rounded-[24px] shadow-2xl ${compact ? 'max-w-[480px]' : ''}`}>
-        {/* ✅ TĂNG FONT CHO HEADER */}
-        <div className={`${compact ? 'p-5' : 'p-6'} bg-primary-50 border-b border-primary-100 rounded-t-[24px]`}>
-          {icon && <div className={`flex items-center gap-2 mb-2 text-primary-600 ${compact ? 'text-sm' : ''}`}>{icon}</div>}
-          <DialogTitle className={`${compact ? 'text-2xl' : 'text-2xl'} font-semibold`}>{title}</DialogTitle>
-          <DialogDescription className={`text-sm text-primary-600/80 font-medium mt-1 ${compact ? 'text-sm' : ''}`}>
-            {description}
-          </DialogDescription>
+        {/* HEADER - Sky Blue gradient, đồng nhất với màu chủ đạo hệ thống */}
+        <div className={`${compact ? 'px-6 pt-5 pb-4' : 'px-8 pt-7 pb-5'} bg-white border-b border-slate-100 rounded-t-[24px]`}>
+          <div className="flex items-start gap-4">
+            {icon && (
+              <div className="shrink-0 flex items-center justify-center w-11 h-11 rounded-2xl bg-gradient-to-br from-primary-600 to-primary-400 text-white shadow-[0_6px_16px_-4px_rgba(14,165,233,0.45)]">
+                {icon}
+              </div>
+            )}
+            <div className="pt-1">
+              <DialogTitle className="text-[22px] font-bold text-slate-800 tracking-tight leading-none mb-2">
+                {title}
+              </DialogTitle>
+              {description && (
+                <DialogDescription className="text-[13px] text-slate-500 font-medium">
+                  {description}
+                </DialogDescription>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className={`${compact ? 'p-5' : 'p-6'} bg-white custom-scrollbar ${fields.length > 5 ? 'max-h-[60vh] overflow-y-auto' : 'overflow-visible'}`}>
@@ -289,13 +301,15 @@ export default function FormDialog({
             >
               {cancelLabel}
             </Button>
-            <Button
+            <button
               onClick={handleSubmit}
               disabled={!isValid}
-              className={`${compact ? 'h-9 px-6 rounded-xl text-sm font-bold' : 'h-11 px-6 rounded-[14px] font-bold'} bg-primary hover:bg-primary-600 shadow-sm text-white`}
+              className={`group inline-flex items-center justify-center ${
+                compact ? 'h-9 px-5 text-sm' : 'h-10 px-6'
+              } rounded-xl font-bold bg-white text-primary-600 ring-1 ring-primary-500/40 hover:ring-0 hover:bg-gradient-to-r hover:from-primary-600 hover:to-primary-400 hover:text-white hover:shadow-[0_6px_20px_-6px_rgba(14,165,233,0.5)] hover:-translate-y-0.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer disabled:opacity-40 disabled:pointer-events-none`}
             >
               {submitLabel}
-            </Button>
+            </button>
           </DialogFooter>
         )}
       </DialogContent>

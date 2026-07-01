@@ -74,7 +74,7 @@ export const HeroSection: React.FC = () => {
     scrollRef.current?.scrollBy({ left: dir === 'left' ? -300 : 300, behavior: 'smooth' });
 
   return (
-    <div className="relative bg-white pb-0">
+    <div className="relative bg-gradient-to-b from-[#e0f2fe] to-white pb-0">
 
       {/* ── Banner + Text overlay ── */}
       <div className="relative w-full h-[500px] md:h-[600px]">

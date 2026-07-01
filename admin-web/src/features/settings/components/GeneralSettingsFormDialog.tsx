@@ -52,9 +52,15 @@ export default function GeneralSettingsForm({ formData, onChange, onSave }: Gene
           </div>
         </div>
 
-        <Button onClick={onSave} className="rounded-[14px] bg-primary hover:bg-primary-600 shadow-sm text-white font-bold px-8 h-12 cursor-pointer transition-all">
-          <Save size={18} className="mr-2" /> Lưu Cấu hình
-        </Button>
+        <button
+          onClick={onSave}
+          className="group relative w-full sm:w-auto flex justify-center py-3.5 px-8 border border-primary-500 rounded-[14px] bg-transparent text-[15px] font-bold text-primary-600 overflow-hidden transition-all duration-300 hover:border-transparent hover:shadow-sm hover:shadow-primary-500/20 focus:outline-none focus:ring-4 focus:ring-primary-500/20 active:scale-[0.98] cursor-pointer"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="relative flex items-center group-hover:text-white transition-colors duration-300">
+            <Save size={18} className="mr-2" /> Lưu Cấu hình
+          </div>
+        </button>
       </div>
     </div>
   );

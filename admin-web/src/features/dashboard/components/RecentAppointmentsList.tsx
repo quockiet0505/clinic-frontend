@@ -64,7 +64,7 @@ export default function RecentAppointmentsList({ appointments }: Props) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="">
       {appointments.slice(0, 6).map((apt) => {
         const status = statusConfig[apt.status] || statusConfig.PENDING;
         const timeDisplay = new Date(apt.time).toLocaleDateString('vi-VN', {
@@ -78,7 +78,7 @@ export default function RecentAppointmentsList({ appointments }: Props) {
             key={apt.id}
             className="group flex items-center gap-3 py-3.5 px-2 border-b border-slate-100 last:border-0 hover:bg-slate-50/80 transition-colors rounded-xl"
           >
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm ring-2 ring-white">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center font-bold text-sm shrink-0 shadow-sm ring-2 ring-white">
               {apt.patientName.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">

@@ -82,7 +82,7 @@ export default function StaffTab({ searchTerm = '' }: Props) {
     {
       key: 'phone',
       label: 'SĐT',
-      className: 'w-[12%] text-left',
+      className: 'w-[17%] text-left',
       render: (item) => (
         <div className="flex items-center gap-2">
           <Phone size={14} className="text-slate-400 shrink-0" />
@@ -93,20 +93,19 @@ export default function StaffTab({ searchTerm = '' }: Props) {
     {
       key: 'staffType',
       label: 'Vai trò',
-      className: 'w-[16%] text-left',
+      className: 'w-[17%] text-left',
       noTruncate: true,
       render: (item) => <RoleDisplay role={item.staffType} />,
     },
     {
       key: 'isActive',
       label: 'Trạng thái',
-      className: 'w-[24%] text-center',
+      className: 'w-[20%] text-center',
       render: (item) => {
         const active = isStaffActive(item);
         return (
-          <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
-            active ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
-          }`}>{active ? 'Hoạt động' : 'Ngừng hoạt động'}</span>
+          <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${active ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+            }`}>{active ? 'Hoạt động' : 'Ngừng hoạt động'}</span>
         );
       },
     },

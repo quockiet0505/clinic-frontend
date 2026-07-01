@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getImageUrl } from '@/utils/image';
+import { cn } from '@/lib/utils';
 
 const SIZE_MAP = {
   sm: 'w-8 h-8 text-xs',
@@ -31,7 +32,12 @@ export default function EntityAvatar({ name, imageUrl, size = 'md', className = 
 
   return (
     <div
-      className={`${SIZE_MAP[size]} rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0 overflow-hidden ${className}`}
+      className={cn(
+        SIZE_MAP[size],
+        "rounded-full flex items-center justify-center font-bold shrink-0 overflow-hidden",
+        !showImage ? "bg-gradient-to-br from-primary-500 to-primary-300 text-white" : "bg-slate-50",
+        className
+      )}
       title={name}
     >
       {showImage ? (

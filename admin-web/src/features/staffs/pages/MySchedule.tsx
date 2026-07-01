@@ -79,9 +79,15 @@ export default function MySchedule() {
     }
   };
 
-  const handleSubmitLeave = () => {
-    fetchLeaveRequests();
-    setIsApplyOpen(false);
+  const handleSubmitLeave = async (data: any) => {
+    try {
+      await staffApi.createLeaveRequest(data);
+      fetchLeaveRequests();
+    } catch {
+      // Toast or error is handled by axios interceptors
+    } finally {
+      setIsApplyOpen(false);
+    }
   };
 
   return (

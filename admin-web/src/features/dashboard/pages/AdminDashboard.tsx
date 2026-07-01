@@ -11,8 +11,9 @@ import RevenueTab from '../components/tabs/RevenueTab';
 import StaffTab from '../components/tabs/StaffTab';
 import ReportDialog from '../components/common/ReportDialog';
 import DashboardFilterBar from '../components/common/DashboardFilterBar';
+import { DashboardPdfLayout } from '../components/common/DashboardPdfLayout';
 import { dashboardApi } from '../api/dashboardApi';
-import { DashboardStats, MonthlyStat, RecentAppointment, ReportFilter } from '../types/dashboard';
+import { DashboardStats, MonthlyStat, RecentAppointment, ReportFilter, RevenueStatsSummary } from '../types/dashboard';
 
 type TabType = 'overview' | 'doctors' | 'services' | 'patients' | 'revenue' | 'staff';
 
@@ -43,6 +44,9 @@ export default function AdminDashboard() {
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [reportData, setReportData] = useState<{ filter: ReportFilter, stats: DashboardStats, revenue: RevenueStatsSummary } | null>(null);
+  const [reportAction, setReportAction] = useState<'pdf' | 'print' | null>(null);
 
   const tabs: { key: TabType; label: string; icon: React.ElementType }[] = [
     { key: 'overview', label: 'Tổng quan', icon: Activity },
@@ -76,41 +80,81 @@ export default function AdminDashboard() {
     setVisitedTabs((prev) => new Set(prev).add(activeTab));
   }, [activeTab]);
 
-  const handleGenerateReport = async (filter: ReportFilter) => {
+  const fetchReportData = async (filter: ReportFilter) => {
     try {
       setGenerating(true);
-      const blob = await dashboardApi.generateReport(filter);
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      const periodLabel = filter.period === 'month' ? `Thang${filter.month}` : `Quy${filter.quarter}`;
-      link.download = `BaoCao_${filter.type}_${periodLabel}_${filter.year}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      setIsReportOpen(false);
+      const currentStats = await dashboardApi.getStats();
+      const targetMonth = filter.period === 'month' ? filter.month : (filter.quarter ? filter.quarter * 3 : new Date().getMonth() + 1);
+
+      const revenueData = await dashboardApi.getRevenueStatsPaged({
+        month: targetMonth,
+        year: filter.year,
+        page: 0,
+        size: 100
+      });
+
+      const data = { filter, stats: currentStats, revenue: revenueData as RevenueStatsSummary };
+      setReportData(data);
+      return data;
     } catch (error) {
-      console.error('Error generating report:', error);
-      alert('Không thể tạo báo cáo. Vui lòng thử lại.');
+      console.error('Error fetching report data:', error);
+      alert('Không thể lấy dữ liệu báo cáo');
+      return null;
     } finally {
       setGenerating(false);
     }
   };
 
-  const handlePreview = async (filter: ReportFilter): Promise<string> => {
-    try {
-      return await dashboardApi.previewReport(filter);
-    } catch (error) {
-      console.error('Preview error:', error);
-      return '';
-    }
+  const handleExportExcel = async (filter: ReportFilter) => {
+    const data = await fetchReportData(filter);
+    if (!data) return;
+    const { exportDashboardToExcel } = await import('@/utils/excelExport');
+    await exportDashboardToExcel(data.filter, data.stats, data.revenue);
+    setIsReportOpen(false);
   };
+
+  const handleExportPdf = async (filter: ReportFilter) => {
+    const data = await fetchReportData(filter);
+    if (data) setReportAction('pdf');
+  };
+
+  const handlePrint = async (filter: ReportFilter) => {
+    const data = await fetchReportData(filter);
+    if (data) setReportAction('print');
+  };
+
+  useEffect(() => {
+    if (reportAction && reportData) {
+      const executeAction = async () => {
+        await new Promise(r => setTimeout(r, 100)); // Wait for DOM render
+
+        if (reportAction === 'pdf') {
+          const { generatePdf } = await import('@/utils/generatePdf');
+          const periodLabel = reportData.filter.period === 'month' ? `T${reportData.filter.month}` : `Q${reportData.filter.quarter}`;
+          await generatePdf('dashboard-pdf-layout', `BaoCao_${reportData.filter.type}_${periodLabel}_${reportData.filter.year}.pdf`);
+        } else if (reportAction === 'print') {
+          const { printPdfLayout } = await import('@/utils/generatePdf');
+          await printPdfLayout('dashboard-pdf-layout', 'Báo cáo thống kê');
+        }
+
+        setReportAction(null);
+        setIsReportOpen(false);
+      };
+      executeAction();
+    }
+  }, [reportAction, reportData]);
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <PageHeader title="Bảng điều khiển" description="Tổng quan hoạt động phòng khám" />
+        <PageHeader
+          title="Bảng điều khiển"
+          breadcrumbs={[
+            { label: 'Trang chủ', path: '/dashboard' },
+            { label: 'Tổng quan' },
+            { label: 'Bảng điều khiển' }
+          ]}
+        />
         <div className="flex flex-wrap items-center gap-3">
           {activeTab !== 'overview' && (
             <DashboardFilterBar month={month} year={year} onMonthChange={setMonth} onYearChange={setYear} />
@@ -185,10 +229,20 @@ export default function AdminDashboard() {
       <ReportDialog
         isOpen={isReportOpen}
         onClose={() => setIsReportOpen(false)}
-        onGenerate={handleGenerateReport}
-        onPreview={handlePreview}
+        onExportPdf={handleExportPdf}
+        onExportExcel={handleExportExcel}
+        onPrint={handlePrint}
         loading={generating}
       />
+
+      {reportData && (
+        <DashboardPdfLayout
+          id="dashboard-pdf-layout"
+          filter={reportData.filter}
+          stats={reportData.stats}
+          revenue={reportData.revenue}
+        />
+      )}
     </div>
   );
 }

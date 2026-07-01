@@ -103,19 +103,17 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         </label>
       </div>
 
-      <Button
-        disabled={isLoading}
+      <button
         type="submit"
-        className="h-12 rounded-2xl bg-primary-500 hover:bg-gradient-to-r hover:from-primary-600 hover:to-primary-400 text-white font-bold text-sm mt-2 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer"
+        disabled={isLoading}
+        className="group relative w-full flex justify-center py-3.5 px-4 mt-2 border border-primary-500 rounded-2xl bg-transparent text-[15px] font-bold text-primary-600 overflow-hidden transition-all duration-300 hover:border-transparent hover:shadow-lg hover:shadow-primary-500/30 focus:outline-none focus:ring-4 focus:ring-primary-500/20 active:scale-[0.98] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
       >
-        {isLoading ? (
-          <>
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Đang đăng nhập...
-          </>
-        ) : (
-          'Đăng nhập'
-        )}
-      </Button>
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="relative flex items-center group-hover:text-white transition-colors duration-300">
+          {isLoading ? <Loader2 className="animate-spin mr-2" size={18} /> : null}
+          {isLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+        </div>
+      </button>
     </form>
   );
 };

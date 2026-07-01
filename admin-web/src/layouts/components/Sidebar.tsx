@@ -26,14 +26,14 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
       title: 'TỔNG QUAN',
       allowedRoles: ['ADMIN', 'MANAGER'],
       items: [
-        { name: 'Bảng điều khiển', icon: LayoutDashboard, path: '/dashboard' }
+        { name: 'Bảng điều khiển', icon: LayoutDashboard, path: '/dashboard' },
       ]
     },
     {
       title: 'CÁ NHÂN',
       allowedRoles: ['ADMIN', 'DOCTOR', 'STAFF', 'LAB_TECH'],
       items: [
-        { name: 'Lịch làm việc', icon: CalendarClock, path: '/my-schedule' }
+        { name: 'Lịch làm việc', icon: CalendarClock, path: '/my-schedule' },
       ]
     },
     {
@@ -43,7 +43,7 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
         { name: 'Lịch hẹn', icon: CalendarDays, path: '/appointments', exact: true },
         { name: 'Lịch theo tháng', icon: Calendar, path: '/appointments/calendar' },
         { name: 'Nhắc nhở tái khám', icon: PhoneCall, path: '/appointments/follow-ups' },
-        { name: 'Bệnh nhân', icon: Users, path: '/patients' }
+        { name: 'Bệnh nhân', icon: Users, path: '/patients' },
       ]
     },
     {
@@ -52,7 +52,7 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
       items: [
         { name: 'Chuẩn bị khám', icon: HeartPulse, path: '/medical/triage' },
         { name: 'Đang khám', icon: Stethoscope, path: '/medical/active-visits' },
-        { name: 'Hồ sơ bệnh án', icon: History, path: '/medical/records' }
+        { name: 'Hồ sơ bệnh án', icon: History, path: '/medical/records' },
       ]
     },
     {
@@ -68,27 +68,15 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
       allowedRoles: ['ADMIN', 'DOCTOR', 'STAFF'],
       items: [
         { name: 'Danh mục thuốc', icon: Pill, path: '/pharmacy/inventory' },
-        { name: 'Đơn thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions' }
+        { name: 'Đơn thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions' },
       ]
     },
-    /*
-    { 
-      title: 'INVOICE & FINANCE', 
-      allowedRoles: ['ADMIN', 'STAFF'], 
-      items: [
-        { name: 'Invoices', icon: FileText, path: '/billing/invoices' },
-        { name: 'Expenses', icon: ReceiptText, path: '/finance/expenses' },
-        { name: 'Categories', icon: Tags, path: '/finance/categories' },
-        { name: 'Refunds', icon: Undo2, path: '/finance/refunds' }
-      ] 
-    },
-    */
     {
       title: 'QUẢN TRỊ',
       allowedRoles: ['ADMIN'],
       items: [
         { name: 'Nhân viên', icon: BriefcaseMedical, path: '/staffs', exact: true },
-        // { name: 'Leave Requests', icon: CalendarOff, path: '/staffs/leave-requests' }
+        { name: 'Duyệt đơn nghỉ phép', icon: CalendarOff, path: '/staffs/leave-requests' },
       ]
     },
     {
@@ -97,7 +85,6 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
       items: [
         { name: 'Thông báo', icon: Bell, path: '/system/notifications' },
         { name: 'Phản hồi', icon: MessageSquareHeart, path: '/system/feedback' },
-        // { name: 'AI Chat Logs', icon: Bot, path: '/system/ai-chat' } 
       ]
     },
     {
@@ -108,35 +95,36 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
         { name: 'Phân quyền', icon: ShieldCheck, path: '/settings/roles' },
         { name: 'Danh mục Dịch vụ', icon: Layers, path: '/settings/services' },
         { name: 'Phí khám bệnh', icon: CircleDollarSign, path: '/settings/doctor_pricing' },
-        { name: 'Chuyên khoa', icon: Award, path: '/settings/expertise' }
+        { name: 'Chuyên khoa', icon: Award, path: '/settings/expertise' },
       ]
     },
   ];
 
   const filteredMenuGroups = menuGroups.filter(group => group.allowedRoles.includes(currentUserRole));
 
+
   return (
     <aside
-      className={`${isCollapsed ? 'w-[88px]' : 'w-[260px]'} transition-all duration-300 ease-in-out bg-white border-r border-slate-200 h-screen flex-col hidden md:flex sticky top-0 overflow-hidden z-20`}
+      className={`${isCollapsed ? 'w-[72px]' : 'w-[252px]'} transition-all duration-300 ease-in-out bg-white border-r border-slate-200 h-screen flex-col hidden md:flex sticky top-0 overflow-hidden z-20`}
     >
 
-      <div className={`flex items-center border-b border-slate-100 shrink-0 transition-all duration-300 ${isCollapsed ? 'h-14 justify-center px-2' : 'h-24 justify-between px-4'
-        }`}>
-        <div className={`flex items-center gap-4 min-w-0 ${isCollapsed ? 'justify-center' : ''}`}>
+      {/* ── Header / Logo ── compact h-16 */}
+      <div className={`flex items-center border-b border-slate-100 shrink-0 transition-all duration-300 ${
+        isCollapsed ? 'h-14 justify-center px-2' : 'h-16 justify-between px-4'
+      }`}>
+        <div className={`flex items-center gap-3 min-w-0 ${isCollapsed ? 'justify-center' : ''}`}>
           {logoUrl ? (
             <img
               src={logoUrl}
               alt="Logo"
-              className={`object-contain shrink-0 transition-all duration-300 ${isCollapsed ? 'w-18 h-18' : 'w-24 h-24'
-                }`}
+              className={`object-contain shrink-0 transition-all duration-300 ${isCollapsed ? 'w-14 h-14' : 'h-9'}`}
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.style.display = 'none';
                 const parent = e.currentTarget.parentElement;
                 if (parent) {
                   const fallback = document.createElement('div');
-                  fallback.className = `flex items-center justify-center font-bold rounded-xl bg-blue-100 text-blue-700 ${isCollapsed ? 'w-8 h-8 text-sm' : 'w-20 h-20 text-3xl'
-                    }`;
+                  fallback.className = `flex items-center justify-center font-bold rounded-xl bg-blue-600 text-white ${isCollapsed ? 'w-8 h-8 text-xs' : 'w-8 h-8 text-sm'}`;
                   fallback.innerText = 'TC';
                   parent.insertBefore(fallback, e.currentTarget);
                   e.currentTarget.remove();
@@ -144,19 +132,16 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
               }}
             />
           ) : (
-            <div className={`flex items-center justify-center font-bold rounded-xl bg-blue-100 text-blue-700 ${isCollapsed ? 'w-8 h-8 text-sm' : 'w-20 h-20 text-3xl'
-              }`}>
+            <div className={`flex items-center justify-center font-bold rounded-xl bg-blue-600 text-white ${isCollapsed ? 'w-8 h-8 text-xs' : 'w-8 h-8 text-sm'}`}>
               TC
             </div>
           )}
           {!isCollapsed && (
             <div className="min-w-0">
-              <h2 className="text-md font-black text-slate-800 leading-tight truncate">
-                TrustCare
-              </h2>
-              <div className="flex items-center gap-1.5 mt-1">
+              <h2 className="text-sm font-black text-slate-800 leading-tight truncate">TrustCare</h2>
+              <div className="flex items-center gap-1.5 mt-0.5">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                <span className="text-xs font-medium text-slate-500 truncate">Admin Portal</span>
+                <span className="text-[11px] font-medium text-slate-400 truncate">Admin Portal</span>
               </div>
             </div>
           )}
@@ -164,22 +149,23 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
         {!isCollapsed && (
           <button
             onClick={onToggle}
-            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 transition-colors shrink-0"
+            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors shrink-0"
           >
-            <ChevronLeft size={18} />
+            <ChevronLeft size={16} />
           </button>
         )}
       </div>
 
-      {/* Navigation Links */}
-      <div className={`flex-1 overflow-y-auto pb-4 space-y-6 custom-scrollbar ${isCollapsed ? 'px-3 mt-4' : 'px-4 mt-0'}`}>
-        {filteredMenuGroups.map((group, idx) => (
-          <div key={idx}>
-            {/* Đổi tiêu đề thành dấu gạch ngang khi thu gọn */}
+      {/* ── Navigation Links ── */}
+      <div className={`flex-1 overflow-y-auto pb-4 space-y-5 custom-scrollbar ${isCollapsed ? 'px-3 mt-4' : 'px-4 mt-2'}`}>
+        {filteredMenuGroups.map((group, gIdx) => (
+          <div key={gIdx}>
             {!isCollapsed ? (
-              <p className="text-[10px] font-bold text-slate-400 mb-2 px-2 uppercase tracking-widest whitespace-nowrap">{group.title}</p>
+              <p className="text-[10px] font-bold text-slate-400 mb-2 px-2 uppercase tracking-widest whitespace-nowrap">
+                {group.title}
+              </p>
             ) : (
-              <div className="w-6 h-px bg-slate-200 mx-auto mb-3 mt-1"></div>
+              <div className="w-6 h-px bg-slate-200 mx-auto mb-3 mt-1" />
             )}
 
             <div className="space-y-1">
@@ -202,13 +188,15 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
                       }
                     `}
                   >
-                    {/* Icon size cố định, không đổi khi active */}
                     <item.icon
                       size={isCollapsed ? 20 : 18}
-                      className={`shrink-0 transition-colors duration-150 ${isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
-                        }`}
+                      className={`shrink-0 transition-colors duration-150 ${
+                        isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
+                      }`}
                     />
-                    {!isCollapsed && <span className="text-sm tracking-wide whitespace-nowrap">{item.name}</span>}
+                    {!isCollapsed && (
+                      <span className="text-sm tracking-wide whitespace-nowrap">{item.name}</span>
+                    )}
                   </Link>
                 );
               })}
@@ -217,19 +205,26 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
         ))}
       </div>
 
-      {/* User Profile / Bottom Actions */}
-      <div className={`p-4 border-t border-slate-100 shrink-0 bg-slate-50 transition-all ${isCollapsed ? 'flex justify-center' : ''}`}>
+
+      {/* ── User Profile Footer ── */}
+      <div className={`border-t border-slate-100 shrink-0 transition-all ${isCollapsed ? 'p-2 flex justify-center' : 'p-3'}`}>
         <Link
           to="/profile"
-          title={isCollapsed ? "Admin User" : undefined}
-          className={`flex items-center hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-200 transition-all text-slate-700 rounded-xl ${isCollapsed ? 'justify-center p-2' : 'gap-3 p-2'
-            }`}
+          title={isCollapsed ? 'Hồ sơ' : undefined}
+          className={`flex items-center hover:bg-slate-100 transition-all text-slate-700 rounded-xl ${
+            isCollapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'
+          }`}
         >
-          <UserCircle size={isCollapsed ? 26 : 24} className="text-slate-400 shrink-0" />
+          {/* Gradient avatar */}
+          <div className={`shrink-0 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center font-bold ${
+            isCollapsed ? 'w-8 h-8 text-xs' : 'w-8 h-8 text-xs'
+          }`}>
+            QT
+          </div>
           {!isCollapsed && (
-            <div className="flex-1 overflow-hidden">
-              <p className="text-sm font-bold truncate">Quản trị viên</p>
-              <p className="text-xs text-slate-500 truncate">Hồ sơ & Cài đặt</p>
+            <div className="flex-1 overflow-hidden min-w-0">
+              <p className="text-[13px] font-bold text-slate-800 truncate">Quản trị viên</p>
+              <p className="text-[11px] text-slate-400 truncate">Hồ sơ &amp; Cài đặt</p>
             </div>
           )}
         </Link>

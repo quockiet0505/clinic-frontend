@@ -47,7 +47,7 @@ export const FeaturedDoctors: React.FC<Props> = ({ doctors, isLoading }) => {
   };
 
   return (
-    <section id="featured-doctors-section" className="py-14 bg-[#f4f9fd]">
+    <section id="featured-doctors-section" className="py-14 bg-gradient-to-b from-[#e0f2fe] to-white">
       <SectionContainer className="relative max-w-[1280px]">
         {/* Tiêu đề */}
         <h2 className="text-[24px] md:text-[28px] font-bold text-[#0F3B63] text-center mb-10 uppercase">
