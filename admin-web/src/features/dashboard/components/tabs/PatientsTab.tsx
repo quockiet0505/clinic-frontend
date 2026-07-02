@@ -62,7 +62,7 @@ export default function PatientsTab({ month, year, searchTerm = '' }: Props) {
     {
       key: 'totalSpent',
       label: 'Tổng chi phí',
-      className: 'w-[30%] text-right',
+      className: 'w-[30%] text-left',
       render: (item) => <span className="font-medium text-emerald-600">{item.totalSpent.toLocaleString()}đ</span>,
     },
   ];

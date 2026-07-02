@@ -105,11 +105,10 @@ export default function Header({ onMenuClick }: HeaderProps) {
         {/* Thông báo */}
         <div className="relative" ref={dropdownRef}>
           <button
-            className={`relative h-10 w-10 flex items-center justify-center rounded-xl transition-all duration-200 cursor-pointer ${
-              showNotifications
+            className={`relative h-10 w-10 flex items-center justify-center rounded-xl transition-all duration-200 cursor-pointer ${showNotifications
                 ? 'bg-blue-50 text-blue-600 shadow-sm ring-1 ring-blue-200/50'
                 : 'bg-white text-slate-500 hover:bg-slate-50 hover:text-blue-600 border border-slate-200'
-            }`}
+              }`}
             title="Thông báo"
             onClick={() => setShowNotifications(!showNotifications)}
           >

@@ -25,7 +25,7 @@ const holidayDates = ['2026-05-01', '2026-05-02', '2026-04-30']; // ví dụ
 export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, updateForm, dates, timeSlots, onSlotSelect }) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
-  
+
   const quickDates = dates.slice(0, 3);
   const isCustomDateSelected = formData.appointmentDate && !quickDates.find(d => d.dateString === formData.appointmentDate);
 
@@ -34,7 +34,7 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, update
   today.setHours(0, 0, 0, 0);
 
   const isDateAvailable = (date: Date) => {
-    return availableDates.some(availableDate => 
+    return availableDates.some(availableDate =>
       format(availableDate, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
     );
   };
@@ -51,17 +51,17 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, update
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(currentMonth);
   const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
-  
+
   const firstDayOfWeek = 1; // 1 = Thứ 2
   const startOffset = (getDay(monthStart) - firstDayOfWeek + 7) % 7;
-  
+
   const prevMonthDays = [];
   for (let i = startOffset; i > 0; i--) {
     const prevDate = new Date(monthStart);
     prevDate.setDate(monthStart.getDate() - i);
     prevMonthDays.push(prevDate);
   }
-  
+
   const nextMonthDays = [];
   const totalCells = 42;
   const remaining = totalCells - (prevMonthDays.length + daysInMonth.length);
@@ -70,7 +70,7 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, update
     nextDate.setDate(monthEnd.getDate() + i);
     nextMonthDays.push(nextDate);
   }
-  
+
   const allDays = [...prevMonthDays, ...daysInMonth, ...nextMonthDays];
 
   const handleDateSelect = (date: Date) => {
@@ -81,24 +81,29 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, update
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Ngày khám */}
       <div className="flex flex-col gap-3">
         <label className="text-[14px] font-bold text-[#003B5C]">Ngày khám <span className="text-red-500">*</span></label>
-        
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {quickDates.map((item) => (
             <button
               key={item.dateString}
               onClick={() => updateForm({ appointmentDate: item.dateString, timeStart: '', timeEnd: '' })}
               className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 h-[72px] transition-all cursor-pointer ${
-                formData.appointmentDate === item.dateString 
-                  ? 'border-[#00b5f1] bg-[#eaf7fd]' 
-                  : 'border-slate-200 bg-white hover:border-[#00b5f1] hover:bg-[#eaf7fd]'
+                formData.appointmentDate === item.dateString
+                  ? 'border-primary-500 bg-primary-50'
+                  : 'border-slate-200 bg-white hover:border-primary-300 hover:bg-primary-50/50'
               }`}
             >
-              <span className={`text-[15px] font-black ${formData.appointmentDate === item.dateString ? 'text-[#00b5f1]' : 'text-[#003B5C]'}`}>
-                ({item.displayDate})
+              <span className={`text-[15px] font-black ${
+                formData.appointmentDate === item.dateString ? 'text-primary-500' : 'text-[#003B5C]'
+              }`}>
+                {item.displayDate}
               </span>
-              <span className={`text-[13px] font-medium mt-0.5 ${formData.appointmentDate === item.dateString ? 'text-[#00b5f1]' : 'text-slate-500'}`}>
+              <span className={`text-[13px] font-medium mt-0.5 ${
+                formData.appointmentDate === item.dateString ? 'text-primary-400' : 'text-slate-500'
+              }`}>
                 {item.dayOfWeek}
               </span>
             </button>
@@ -107,15 +112,19 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, update
           <button
             onClick={() => setIsCalendarOpen(true)}
             className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 h-[72px] transition-all cursor-pointer ${
-              isCustomDateSelected 
-                ? 'border-[#00b5f1] bg-[#eaf7fd]' 
-                : 'border-slate-200 bg-white hover:border-[#00b5f1] hover:bg-[#eaf7fd]'
+              isCustomDateSelected
+                ? 'border-primary-500 bg-primary-50'
+                : 'border-slate-200 bg-white hover:border-primary-300 hover:bg-primary-50/50'
             }`}
           >
-            <CalendarIcon className={`w-5 h-5 mb-1 ${isCustomDateSelected ? 'text-[#00b5f1]' : 'text-[#00b5f1]'}`} />
-            <span className={`text-[13px] font-bold ${isCustomDateSelected ? 'text-[#00b5f1]' : 'text-[#003B5C]'}`}>
-              {isCustomDateSelected && formData.appointmentDate 
-                ? format(new Date(formData.appointmentDate), 'dd/MM/yyyy') 
+            <CalendarIcon className={`w-5 h-5 mb-1 ${
+              isCustomDateSelected ? 'text-primary-500' : 'text-primary-400'
+            }`} />
+            <span className={`text-[13px] font-bold ${
+              isCustomDateSelected ? 'text-primary-500' : 'text-[#003B5C]'
+            }`}>
+              {isCustomDateSelected && formData.appointmentDate
+                ? format(new Date(formData.appointmentDate), 'dd/MM/yyyy')
                 : 'Ngày khác'}
             </span>
           </button>
@@ -190,9 +199,8 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, update
                       key={idx}
                       onClick={() => handleDateSelect(date)}
                       disabled={disabled}
-                      className={`h-12 flex items-center justify-center text-[14px] font-medium transition-all ${bgColor} ${textColor} ${borderClass} ${
-                        !disabled && !selected ? 'hover:bg-[#eaf7fd] hover:text-[#00b5f1]' : ''
-                      } ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
+                      className={`h-12 flex items-center justify-center text-[14px] font-medium transition-all ${bgColor} ${textColor} ${borderClass} ${!disabled && !selected ? 'hover:bg-[#eaf7fd] hover:text-[#00b5f1]' : ''
+                        } ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
                     >
                       {format(date, 'd')}
                     </button>
@@ -218,7 +226,8 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, update
         <label className="text-[14px] font-bold text-brand-dark flex items-center gap-1">Giờ khám <span className="text-red-500">*</span></label>
         {!formData.appointmentDate ? (
           <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 flex flex-col items-center justify-center gap-2">
-            <span className="text-[14px] font-medium text-slate-500">Vui lòng chọn ngày khám để xem giờ trống</span>
+            <CalendarIcon className="w-7 h-7 text-slate-300" />
+            <span className="text-[13px] font-medium text-slate-400">Chọn ngày khám để xem giờ trống</span>
           </div>
         ) : timeSlots.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-6 flex flex-col items-center justify-center gap-2">
@@ -238,12 +247,12 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, update
                         if (onSlotSelect) onSlotSelect(slot);
                         else updateForm({ timeStart: slot.timeStart, timeEnd: slot.timeEnd });
                       }}
-                      className={`rounded-2xl border py-3 px-1 text-[14px] font-bold transition-all duration-300 cursor-pointer shadow-sm ${
-                        !slot.isAvailable 
-                          ? 'border-slate-100 bg-slate-50/50 text-slate-300 line-through cursor-not-allowed shadow-none' 
-                          : formData.timeStart === slot.timeStart 
-                            ? 'border-primary-500 bg-primary-500 text-white shadow-md shadow-primary-500/20' 
-                            : 'border-slate-200/80 bg-white text-brand-dark hover:border-primary-300 hover:bg-primary-50/50 hover:text-primary-600 hover:shadow-md'
+                      className={`rounded-2xl border py-3 px-1 text-[14px] font-bold transition-all duration-200 cursor-pointer ${
+                        !slot.isAvailable
+                          ? 'border-slate-100 bg-slate-50/50 text-slate-300 line-through cursor-not-allowed'
+                          : formData.timeStart === slot.timeStart
+                            ? 'border-primary-500 bg-primary-500 text-white shadow-md shadow-primary-500/20'
+                            : 'border-slate-200 bg-white text-brand-dark hover:border-primary-300 hover:bg-primary-50'
                       }`}
                     >
                       {slot.displayTime}
@@ -264,12 +273,12 @@ export const TimeSlotPicker: React.FC<TimeSlotPickerProps> = ({ formData, update
                         if (onSlotSelect) onSlotSelect(slot);
                         else updateForm({ timeStart: slot.timeStart, timeEnd: slot.timeEnd });
                       }}
-                      className={`rounded-2xl border py-3 px-1 text-[14px] font-bold transition-all duration-300 cursor-pointer shadow-sm ${
-                        !slot.isAvailable 
-                          ? 'border-slate-100 bg-slate-50/50 text-slate-300 line-through cursor-not-allowed shadow-none' 
-                          : formData.timeStart === slot.timeStart 
-                            ? 'border-primary-500 bg-primary-500 text-white shadow-md shadow-primary-500/20' 
-                            : 'border-slate-200/80 bg-white text-brand-dark hover:border-primary-300 hover:bg-primary-50/50 hover:text-primary-600 hover:shadow-md'
+                      className={`rounded-2xl border py-3 px-1 text-[14px] font-bold transition-all duration-200 cursor-pointer ${
+                        !slot.isAvailable
+                          ? 'border-slate-100 bg-slate-50/50 text-slate-300 line-through cursor-not-allowed'
+                          : formData.timeStart === slot.timeStart
+                            ? 'border-primary-500 bg-primary-500 text-white shadow-md shadow-primary-500/20'
+                            : 'border-slate-200 bg-white text-brand-dark hover:border-primary-300 hover:bg-primary-50'
                       }`}
                     >
                       {slot.displayTime}

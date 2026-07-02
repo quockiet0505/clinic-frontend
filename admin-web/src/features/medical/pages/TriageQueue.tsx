@@ -23,6 +23,7 @@ export default function TriageQueue() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [doctorFilter, setDoctorFilter] = useState('ALL');
   const [search, setSearch] = useState('');
+  const [activeTab, setActiveTab] = useState('all');
 
   useEffect(() => {
     staffApi.getAll().then((staff) => {
@@ -37,12 +38,16 @@ export default function TriageQueue() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
+      const todayStr = new Date().toISOString().split('T')[0];
+      const queryFromDate = activeTab === 'today' ? todayStr : (fromDate || undefined);
+      const queryToDate = activeTab === 'today' ? todayStr : (toDate || undefined);
+
       const res = await medicalApi.getActiveVisitsPaged({
         search: search || undefined,
         status: statusFilter === 'ALL' ? undefined : statusFilter,
         doctorId: doctorFilter === 'ALL' ? undefined : doctorMap[doctorFilter],
-        fromDate: fromDate || undefined,
-        toDate: toDate || undefined,
+        fromDate: queryFromDate,
+        toDate: queryToDate,
         page: currentPage - 1,
         size: pageSize,
         sortBy: 'createdAt',
@@ -55,7 +60,7 @@ export default function TriageQueue() {
       setTotalElements(0);
     }
     setLoading(false);
-  }, [search, statusFilter, doctorFilter, fromDate, toDate, currentPage, doctorMap]);
+  }, [search, statusFilter, doctorFilter, fromDate, toDate, currentPage, doctorMap, activeTab]);
 
   useEffect(() => {
     fetchData();
@@ -63,7 +68,7 @@ export default function TriageQueue() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, statusFilter, doctorFilter, fromDate, toDate]);
+  }, [search, statusFilter, doctorFilter, fromDate, toDate, activeTab]);
 
   const inProgress = visits.filter((v) => v.status === 'IN_PROGRESS').length;
   const waitingResult = visits.filter((v) => v.status === 'WAITING_RESULT').length;
@@ -116,6 +121,8 @@ export default function TriageQueue() {
         onFromDateChange={setFromDate}
         onToDateChange={setToDate}
         doctorOptions={doctorOptions}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
       />
 
       <div className="flex-1 min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">

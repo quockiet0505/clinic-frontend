@@ -57,7 +57,7 @@ export default function ServicesTab({ month, year, searchTerm = '' }: Props) {
     {
       key: 'completionRate',
       label: 'Tỉ lệ',
-      className: 'w-[8%] text-center',
+      className: 'w-[14%] text-center',
       render: (item) => (
         <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
           item.completionRate >= 80 ? 'bg-emerald-100 text-emerald-700' :
@@ -68,7 +68,7 @@ export default function ServicesTab({ month, year, searchTerm = '' }: Props) {
     {
       key: 'revenue',
       label: 'Doanh thu',
-      className: 'w-[22%] text-right',
+      className: 'w-[15%] text-left',
       render: (item) => <span className="font-medium text-slate-700">{item.revenue.toLocaleString()}đ</span>,
     },
   ];

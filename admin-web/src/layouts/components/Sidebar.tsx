@@ -109,9 +109,8 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
     >
 
       {/* ── Header / Logo ── compact h-16 */}
-      <div className={`flex items-center border-b border-slate-100 shrink-0 transition-all duration-300 ${
-        isCollapsed ? 'h-14 justify-center px-2' : 'h-16 justify-between px-4'
-      }`}>
+      <div className={`flex items-center border-b border-slate-100 shrink-0 transition-all duration-300 ${isCollapsed ? 'h-14 justify-center px-2' : 'h-16 justify-between px-4'
+        }`}>
         <div className={`flex items-center gap-3 min-w-0 ${isCollapsed ? 'justify-center' : ''}`}>
           {logoUrl ? (
             <img
@@ -190,9 +189,8 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
                   >
                     <item.icon
                       size={isCollapsed ? 20 : 18}
-                      className={`shrink-0 transition-colors duration-150 ${
-                        isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
-                      }`}
+                      className={`shrink-0 transition-colors duration-150 ${isActive ? 'text-blue-600' : 'text-slate-400 group-hover:text-slate-600'
+                        }`}
                     />
                     {!isCollapsed && (
                       <span className="text-sm tracking-wide whitespace-nowrap">{item.name}</span>
@@ -211,14 +209,12 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
         <Link
           to="/profile"
           title={isCollapsed ? 'Hồ sơ' : undefined}
-          className={`flex items-center hover:bg-slate-100 transition-all text-slate-700 rounded-xl ${
-            isCollapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'
-          }`}
+          className={`flex items-center hover:bg-slate-100 transition-all text-slate-700 rounded-xl ${isCollapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'
+            }`}
         >
           {/* Gradient avatar */}
-          <div className={`shrink-0 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center font-bold ${
-            isCollapsed ? 'w-8 h-8 text-xs' : 'w-8 h-8 text-xs'
-          }`}>
+          <div className={`shrink-0 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center font-bold ${isCollapsed ? 'w-8 h-8 text-xs' : 'w-8 h-8 text-xs'
+            }`}>
             QT
           </div>
           {!isCollapsed && (

@@ -234,25 +234,23 @@ export const LabResults: React.FC = () => {
 
       <SectionContainer className="max-w-4xl py-8 flex flex-col gap-5">
         {/* Filters */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="inline-flex p-1.5 bg-slate-100/80 backdrop-blur-md rounded-2xl border border-slate-200/50 shadow-inner w-full sm:w-fit overflow-x-auto hide-scrollbar gap-1">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/80 mb-2">
+          <div className="flex w-full sm:w-fit overflow-x-auto hide-scrollbar gap-6">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setStatusTab(tab.id)}
-                className={`relative px-5 py-2 rounded-xl text-[14px] font-bold whitespace-nowrap transition-all duration-300 cursor-pointer flex items-center gap-2 ${
-                  statusTab === tab.id
-                    ? 'text-primary-700 bg-white shadow-[0_4px_16px_-4px_rgba(0,0,0,0.08)] border border-slate-200/50'
-                    : 'text-slate-500 bg-transparent border border-transparent hover:bg-slate-200/50 hover:text-slate-700'
-                }`}
-              >
-                <span className="relative z-10">{tab.label}</span>
-                <span
-                  className={`relative z-10 tabular-nums text-[12px] font-bold px-2 py-0.5 rounded-lg transition-colors ${
-                    statusTab === tab.id
-                      ? 'bg-primary-50 text-primary-700'
-                      : 'bg-slate-200/70 text-slate-500'
+                className={`relative pb-3 text-[14px] font-bold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-2 border-b-2 ${statusTab === tab.id
+                  ? 'text-primary-600 border-primary-600'
+                  : 'text-slate-500 border-transparent hover:text-slate-800 hover:border-slate-300'
                   }`}
+              >
+                <span>{tab.label}</span>
+                <span
+                  className={`tabular-nums text-[11px] font-black px-2 py-0.5 rounded-full transition-colors ${statusTab === tab.id
+                    ? 'bg-primary-50 text-primary-600'
+                    : 'bg-slate-100 text-slate-500'
+                    }`}
                 >
                   {tab.count}
                 </span>
@@ -261,17 +259,16 @@ export const LabResults: React.FC = () => {
           </div>
 
           <div
-            className="w-full sm:w-56 shrink-0 relative z-50"
+            className="w-full sm:w-56 shrink-0 relative z-50 mb-3 sm:mb-0"
             onMouseEnter={handleServiceEnter}
             onMouseLeave={handleServiceLeave}
           >
             <button
               type="button"
-              className={`w-full h-10 flex items-center justify-between px-4 rounded-xl bg-white border shadow-sm font-semibold text-[13px] text-slate-700 cursor-pointer transition-colors ${
-                isServiceOpen
-                  ? 'border-primary-500 text-primary-600 ring-2 ring-primary-500/20'
-                  : 'border-slate-200'
-              }`}
+              className={`w-full h-10 flex items-center justify-between px-4 rounded-xl bg-white border shadow-sm font-semibold text-[13px] text-slate-700 cursor-pointer transition-all ${isServiceOpen
+                ? 'border-primary-300 text-primary-600 shadow-primary-500/10'
+                : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                }`}
             >
               <span>
                 {typeFilter === 'ALL' && 'Tất cả loại'}
@@ -294,9 +291,8 @@ export const LabResults: React.FC = () => {
               </svg>
             </button>
             <div
-              className={`absolute left-0 right-0 top-full pt-2 transition-all duration-200 ${
-                isServiceOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'
-              }`}
+              className={`absolute left-0 right-0 top-full pt-2 transition-all duration-200 ${isServiceOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible translate-y-2'
+                }`}
             >
               <div className="rounded-xl bg-white border border-slate-100 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] p-1.5 flex flex-col gap-0.5">
                 {[
@@ -311,11 +307,10 @@ export const LabResults: React.FC = () => {
                       setTypeFilter(item.value as TypeFilter);
                       setIsServiceOpen(false);
                     }}
-                    className={`w-full text-left cursor-pointer py-2 px-3 text-[13px] font-medium rounded-lg transition-all ${
-                      typeFilter === item.value
-                        ? 'bg-primary-50 text-primary-600'
-                        : 'text-slate-700 hover:bg-primary-50 hover:text-primary-600'
-                    }`}
+                    className={`w-full text-left cursor-pointer py-2 px-3 text-[13px] font-medium rounded-lg transition-all ${typeFilter === item.value
+                      ? 'bg-primary-50 text-primary-600'
+                      : 'text-slate-700 hover:bg-primary-50 hover:text-primary-600'
+                      }`}
                   >
                     {item.label}
                   </button>
@@ -363,29 +358,29 @@ const LabResultCard: React.FC<{ result: any }> = ({ result }) => {
   const status = isCompleted
     ? isAbnormal
       ? {
-          label: 'Bất thường',
-          color: 'bg-amber-50 text-amber-700 border-amber-200',
-          icon: <AlertTriangle className="w-3.5 h-3.5" />,
-          hint: 'Có chỉ số cần theo dõi thêm. Vui lòng xem chi tiết và tái khám nếu bác sĩ yêu cầu.',
-          previewClass: 'bg-amber-50/80 border-amber-100',
-          previewTitleClass: 'text-amber-800',
-        }
+        label: 'Bất thường',
+        color: 'bg-amber-50 text-amber-700 border-amber-200',
+        icon: <AlertTriangle className="w-3.5 h-3.5" />,
+        hint: 'Có chỉ số cần theo dõi thêm. Vui lòng xem chi tiết và tái khám nếu bác sĩ yêu cầu.',
+        previewClass: 'bg-amber-50/80 border-amber-100',
+        previewTitleClass: 'text-amber-800',
+      }
       : {
-          label: 'Đã có kết quả',
-          color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-          icon: <CheckCircle2 className="w-3.5 h-3.5" />,
-          hint: 'Kết quả đã sẵn sàng. Bạn có thể xem chi tiết hoặc mở bệnh án liên quan.',
-          previewClass: 'bg-emerald-50/60 border-emerald-100',
-          previewTitleClass: 'text-emerald-800',
-        }
+        label: 'Đã có kết quả',
+        color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+        icon: <CheckCircle2 className="w-3.5 h-3.5" />,
+        hint: 'Kết quả đã sẵn sàng. Bạn có thể xem chi tiết hoặc mở bệnh án liên quan.',
+        previewClass: 'bg-emerald-50/60 border-emerald-100',
+        previewTitleClass: 'text-emerald-800',
+      }
     : {
-        label: 'Đang xử lý',
-        color: 'bg-blue-50 text-blue-700 border-blue-200',
-        icon: <Loader2 className="w-3.5 h-3.5 animate-spin" />,
-        hint: 'Phòng xét nghiệm đang xử lý. Kết quả sẽ được cập nhật khi hoàn tất.',
-        previewClass: 'bg-blue-50/60 border-blue-100',
-        previewTitleClass: 'text-blue-800',
-      };
+      label: 'Đang xử lý',
+      color: 'bg-blue-50 text-blue-700 border-blue-200',
+      icon: <Loader2 className="w-3.5 h-3.5 animate-spin" />,
+      hint: 'Phòng xét nghiệm đang xử lý. Kết quả sẽ được cập nhật khi hoàn tất.',
+      previewClass: 'bg-blue-50/60 border-blue-100',
+      previewTitleClass: 'text-blue-800',
+    };
 
   const enteredDate = new Date(result.enteredAt).toLocaleDateString('vi-VN');
   const technicianName = result.technicianName || result.enteredByName;
@@ -393,29 +388,32 @@ const LabResultCard: React.FC<{ result: any }> = ({ result }) => {
   return (
     <Dialog>
       <article className={`group bg-white rounded-3xl border shadow-sm transition-all overflow-hidden ${isExpanded ? 'border-primary-200 shadow-md' : 'border-slate-200/80 hover:border-primary-200/60 hover:shadow-md'}`}>
-        
+
         {/* Accordion Header (Always Visible) */}
-        <div 
+        <div
           className="p-5 md:p-6 flex items-start sm:items-center justify-between gap-4 cursor-pointer hover:bg-slate-50/50 transition-colors select-none"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           <div className="flex items-start sm:items-center gap-4 min-w-0">
             <div
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border shadow-sm ${
-                isImaging
-                  ? 'bg-violet-50 text-violet-600 border-violet-100'
-                  : 'bg-primary-50 text-primary-600 border-primary-100'
-              }`}
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${isImaging
+                ? 'bg-violet-50 text-violet-600'
+                : 'bg-primary-50 text-primary-600'
+                }`}
             >
-              {isImaging ? <ScanLine className="w-5 h-5" /> : <FlaskConical className="w-5 h-5" />}
+              {isImaging ? <ScanLine className="w-6 h-6" /> : <FlaskConical className="w-6 h-6" />}
             </div>
             <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-x-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                <span>{isImaging ? 'Chẩn đoán hình ảnh' : 'Xét nghiệm'} · #{String(result.resultId).padStart(5, '0')}</span>
+              <div className="flex flex-wrap items-center gap-x-2 text-[12px] font-semibold tracking-wide text-slate-500 mb-1">
+                <span className={isImaging ? "text-violet-600 font-bold" : "text-primary-600 font-bold"}>
+                  {isImaging ? 'Chẩn đoán hình ảnh' : 'Xét nghiệm'}
+                </span>
+                <span>•</span>
+                <span>#{String(result.resultId).padStart(5, '0')}</span>
                 <span className="hidden sm:inline">•</span>
                 <span className="hidden sm:inline">{enteredDate}</span>
               </div>
-              <h3 className="font-black text-[16px] sm:text-[18px] text-slate-900 leading-snug truncate group-hover:text-primary-600 transition-colors">
+              <h3 className="font-bold text-[16px] sm:text-[17px] text-slate-900 leading-snug truncate group-hover:text-primary-600 transition-colors">
                 {serviceName}
               </h3>
             </div>
@@ -437,71 +435,71 @@ const LabResultCard: React.FC<{ result: any }> = ({ result }) => {
           <div className="overflow-hidden">
             <div className="flex flex-col lg:flex-row">
               <div className="flex-1 p-5 md:p-6 pt-0 md:pt-0 min-w-0">
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 mb-4 mt-2 sm:mt-5">
-              <RecordCardMeta icon={CalendarDays} label="Ngày trả KQ" value={enteredDate} />
-              <RecordCardMeta
-                icon={UserRound}
-                label="Bác sĩ chỉ định"
-                value={formatDoctorName(result.doctorName)}
-              />
-              {technicianName ? (
-                <RecordCardMeta
-                  icon={Stethoscope}
-                  label="Kỹ thuật viên"
-                  value={technicianName}
-                  className="sm:col-span-2 xl:col-span-1"
-                />
-              ) : null}
-            </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 mb-4 mt-2 sm:mt-5">
+                  <RecordCardMeta icon={CalendarDays} label="Ngày trả KQ" value={enteredDate} />
+                  <RecordCardMeta
+                    icon={UserRound}
+                    label="Bác sĩ chỉ định"
+                    value={formatDoctorName(result.doctorName)}
+                  />
+                  {technicianName ? (
+                    <RecordCardMeta
+                      icon={Stethoscope}
+                      label="Kỹ thuật viên"
+                      value={technicianName}
+                      className="sm:col-span-2 xl:col-span-1"
+                    />
+                  ) : null}
+                </div>
 
-            <div className={`rounded-2xl border p-4 ${status.previewClass}`}>
-              <p className={`text-[11px] font-bold uppercase tracking-wider mb-2 ${status.previewTitleClass}`}>
-                {isCompleted ? 'Kết luận' : 'Trạng thái xử lý'}
-              </p>
-              {result.conclusion ? (
-                <p className="text-[14px] text-slate-700 leading-relaxed line-clamp-3">
-                  {result.conclusion}
-                </p>
-              ) : isCompleted && result.resultData ? (
-                <p className="text-[14px] text-slate-700 leading-relaxed line-clamp-3">
-                  {result.resultData}
-                </p>
-              ) : (
-                <p className="text-[14px] text-slate-500 leading-relaxed">
-                  Mẫu đang được phân tích. Vui lòng quay lại sau hoặc theo dõi thông báo từ phòng khám.
-                </p>
-              )}
+                <div className={`rounded-2xl border p-4 ${status.previewClass}`}>
+                  <p className={`text-[11px] font-bold uppercase tracking-wider mb-2 ${status.previewTitleClass}`}>
+                    {isCompleted ? 'Kết luận' : 'Trạng thái xử lý'}
+                  </p>
+                  {result.conclusion ? (
+                    <p className="text-[14px] text-slate-700 leading-relaxed line-clamp-3">
+                      {result.conclusion}
+                    </p>
+                  ) : isCompleted && result.resultData ? (
+                    <p className="text-[14px] text-slate-700 leading-relaxed line-clamp-3">
+                      {result.resultData}
+                    </p>
+                  ) : (
+                    <p className="text-[14px] text-slate-500 leading-relaxed">
+                      Mẫu đang được phân tích. Vui lòng quay lại sau hoặc theo dõi thông báo từ phòng khám.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="lg:w-[272px] shrink-0 bg-slate-50/90 border-t lg:border-t-0 lg:border-l border-slate-100 p-5 flex flex-col justify-between gap-4">
+                <div className="space-y-3">
+                  <p className="text-[13px] font-medium text-slate-600 leading-relaxed">{status.hint}</p>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <DialogTrigger asChild>
+                    <button
+                      type="button"
+                      className="w-full inline-flex items-center justify-center gap-2 text-[13px] font-bold text-white bg-primary-500 border border-transparent px-4 py-2.5 rounded-xl hover:bg-primary-600 active:scale-[0.98] transition-all cursor-pointer shadow-sm shadow-primary-500/20"
+                    >
+                      Xem kết quả
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </DialogTrigger>
+                  {result.recordId ? (
+                    <Link
+                      to={`/records/detail/${result.recordId}`}
+                      className="w-full inline-flex items-center justify-center gap-2 text-[13px] font-bold text-primary-700 bg-white border border-primary-200 px-4 py-2.5 rounded-xl hover:bg-primary-50 active:scale-[0.98] transition-all"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Mở bệnh án
+                    </Link>
+                  ) : null}
+                </div>
+              </div>
             </div>
           </div>
-
-          <div className="lg:w-[272px] shrink-0 bg-slate-50/90 border-t lg:border-t-0 lg:border-l border-slate-100 p-5 flex flex-col justify-between gap-4">
-            <div className="space-y-3">
-              <p className="text-[13px] font-medium text-slate-600 leading-relaxed">{status.hint}</p>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <DialogTrigger asChild>
-                <button
-                  type="button"
-                  className="w-full inline-flex items-center justify-center gap-2 text-[13px] font-bold text-white bg-primary-500 border border-transparent px-4 py-2.5 rounded-xl hover:bg-primary-600 active:scale-[0.98] transition-all cursor-pointer shadow-sm shadow-primary-500/20"
-                >
-                  Xem kết quả
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </DialogTrigger>
-              {result.recordId ? (
-                <Link
-                  to={`/records/detail/${result.recordId}`}
-                  className="w-full inline-flex items-center justify-center gap-2 text-[13px] font-bold text-primary-700 bg-white border border-primary-200 px-4 py-2.5 rounded-xl hover:bg-primary-50 active:scale-[0.98] transition-all"
-                >
-                  <FileText className="w-4 h-4" />
-                  Mở bệnh án
-                </Link>
-              ) : null}
-            </div>
-          </div>
-          </div>
-        </div>
         </div>
       </article>
 

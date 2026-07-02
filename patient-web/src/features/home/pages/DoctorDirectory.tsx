@@ -11,6 +11,9 @@ import type { Doctor } from '../types/home';
 export const DoctorDirectory: React.FC = () => {
   const navigate = useNavigate();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [specialties, setSpecialties] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [specialtyFilter, setSpecialtyFilter] = useState('ALL');
   const [priceFilter, setPriceFilter] = useState('ALL');
@@ -30,39 +33,62 @@ export const DoctorDirectory: React.FC = () => {
   const [bannerUrl, setBannerUrl] = useState('/images/banners/doctor.webp');
 
   useEffect(() => {
-    homeApi.getDoctors().then(setDoctors);
+    homeApi.getSpecialties()
+      .then((data: any) => {
+        if (Array.isArray(data)) {
+          setSpecialties(data.map((item: any) => item.name).filter(Boolean));
+        }
+      })
+      .catch(console.error);
+
     homeApi.getBanner('doctor')
       .then(url => setBannerUrl(url))
       .catch(console.error);
   }, []);
 
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      setIsLoading(true);
+      try {
+        const params: any = {
+          page: currentPage - 1,
+          size: itemsPerPage,
+        };
+
+        if (searchTerm) params.search = searchTerm;
+        if (specialtyFilter !== 'ALL') params.expertiseName = specialtyFilter;
+        if (genderFilter !== 'ALL') params.gender = genderFilter;
+
+        if (priceFilter === 'LOW') {
+          params.maxPrice = 299999;
+        } else if (priceFilter === 'MEDIUM') {
+          params.minPrice = 300000;
+          params.maxPrice = 500000;
+        } else if (priceFilter === 'HIGH') {
+          params.minPrice = 500001;
+        }
+
+        const res = await homeApi.getDoctorsPaginated(params);
+        setDoctors(res.content || []);
+        setTotalPages(res.totalPages || 1);
+      } catch (error) {
+        console.error("Lỗi tải danh sách bác sĩ:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDoctors();
+  }, [currentPage, searchTerm, specialtyFilter, genderFilter, priceFilter]);
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
   };
-
-  const filteredDoctors = doctors.filter((doc) => {
-    const matchesSearch = doc.fullName.toLowerCase().includes(searchTerm.toLowerCase()) || doc.expertiseName?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesSpecialty = specialtyFilter === 'ALL' || doc.expertiseName === specialtyFilter;
-    const matchesGender = genderFilter === 'ALL' || doc.gender === genderFilter;
-
-    let matchesPrice = true;
-    const fee = doc.consultationFee || 0;
-    if (priceFilter === 'LOW') matchesPrice = fee < 300000;
-    else if (priceFilter === 'MEDIUM') matchesPrice = fee >= 300000 && fee <= 500000;
-    else if (priceFilter === 'HIGH') matchesPrice = fee > 500000;
-
-    return matchesSearch && matchesSpecialty && matchesPrice && matchesGender;
-  });
-
-  const totalPages = Math.ceil(filteredDoctors.length / itemsPerPage) || 1;
-  const currentItems = filteredDoctors.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   const handleBooking = (doctorId: number) => {
     navigate(`/appointments/book?type=doctor&doctorId=${doctorId}`);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  const specialties = Array.from(new Set(doctors.map(d => d.expertiseName).filter(Boolean)));
 
   return (
     <main className="w-full min-h-screen bg-[#f0f9ff] pb-16">
@@ -193,9 +219,9 @@ export const DoctorDirectory: React.FC = () => {
         </div>
       </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-          {currentItems.length > 0 ? (
-            currentItems.map((doctor, idx) => (
+        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12 ${isLoading ? 'opacity-50 pointer-events-none' : 'transition-opacity duration-300'}`}>
+          {doctors.length > 0 ? (
+            doctors.map((doctor, idx) => (
               <div key={doctor.staffId} className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_-10px_rgba(0,181,241,0.15)] hover:border-primary-200 transition-all duration-300 flex flex-col sm:flex-row gap-5 hover:-translate-y-1 group">
                 <div className="w-full sm:w-[130px] shrink-0 flex flex-col items-center">
                   <div className="w-[120px] h-[120px] sm:w-[130px] sm:h-[130px] bg-gradient-to-br from-primary-50 to-[#eef5fa] rounded-2xl overflow-hidden relative border border-slate-100 group-hover:border-primary-200 transition-colors">

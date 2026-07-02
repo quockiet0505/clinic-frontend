@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PageHeader from '@/components/common/PageHeader';
 import GeneralSettingsForm from '../components/GeneralSettingsFormDialog';
+import BannerSettingsSection from '../components/BannerSettingsSection';
 
 import { settingsApi } from '../api/settingsApi';
 
@@ -51,7 +52,10 @@ export default function GeneralSettings() {
       {loading ? (
         <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải cấu hình...</div>
       ) : (
-        <GeneralSettingsForm formData={formData} onChange={(e: any) => setFormData({...formData, [e.target.name]: e.target.value})} onSave={handleSave} />
+        <div className="space-y-6 flex-1 overflow-auto pb-6 pr-2">
+          <GeneralSettingsForm formData={formData} onChange={(e: any) => setFormData({...formData, [e.target.name]: e.target.value})} onSave={handleSave} />
+          <BannerSettingsSection />
+        </div>
       )}
     </div>
   );

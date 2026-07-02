@@ -14,6 +14,8 @@ interface ActiveVisitsFilterBarProps {
   onFromDateChange: (value: string) => void;
   onToDateChange: (value: string) => void;
   doctorOptions?: FilterOption[];
+  activeTab?: string;
+  onTabChange?: (value: string) => void;
 }
 
 export const ActiveVisitsFilterBar: React.FC<ActiveVisitsFilterBarProps> = ({
@@ -28,6 +30,8 @@ export const ActiveVisitsFilterBar: React.FC<ActiveVisitsFilterBarProps> = ({
   onFromDateChange,
   onToDateChange,
   doctorOptions = [],
+  activeTab = 'all',
+  onTabChange,
 }) => {
   const statusOptions: FilterOption[] = [
     { value: 'ALL', label: 'Tất cả trạng thái' },
@@ -43,11 +47,21 @@ export const ActiveVisitsFilterBar: React.FC<ActiveVisitsFilterBarProps> = ({
     ...doctorOptions,
   ];
 
+  const tabs = [
+    { value: 'all', label: 'Tất cả' },
+    { value: 'today', label: 'Hôm nay' },
+  ];
+
   return (
     <FilterBar
       searchValue={search}
       onSearchChange={onSearchChange}
       searchPlaceholder="Tìm bệnh nhân..."
+      tabs={onTabChange ? {
+        options: tabs,
+        value: activeTab,
+        onChange: onTabChange,
+      } : undefined}
       filters={[
         {
           key: 'status',

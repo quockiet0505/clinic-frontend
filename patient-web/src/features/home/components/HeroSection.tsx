@@ -16,6 +16,12 @@ const TRUST_STATS = [
   { value: '4.9★', label: 'Đánh giá TB', icon: <Star className="w-4 h-4 fill-current" /> },
 ];
 
+const TYPEWRITER_TEXTS = [
+  "Tìm kiếm chuyên khoa...",
+  "Tìm kiếm bác sĩ...",
+  "Tìm kiếm dịch vụ y tế..."
+];
+
 export const HeroSection: React.FC = () => {
   const navigate = useNavigate();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -24,6 +30,32 @@ export const HeroSection: React.FC = () => {
   const [quickActions, setQuickActions] = useState<QuickAction[]>([]);
   const [bannerUrl, setBannerUrl] = useState('/images/banners/hero-banner.jpg');
   const [searchKeyword, setSearchKeyword] = useState('');
+
+  const [placeholderText, setPlaceholderText] = useState('');
+  const [typeIndex, setTypeIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const currentWord = TYPEWRITER_TEXTS[typeIndex];
+    let timer: NodeJS.Timeout;
+
+    if (isDeleting) {
+      if (placeholderText === '') {
+        setIsDeleting(false);
+        setTypeIndex((prev) => (prev + 1) % TYPEWRITER_TEXTS.length);
+        timer = setTimeout(() => {}, 400); // pause before typing next
+      } else {
+        timer = setTimeout(() => setPlaceholderText(currentWord.slice(0, placeholderText.length - 1)), 50); // fast delete
+      }
+    } else {
+      if (placeholderText === currentWord) {
+        timer = setTimeout(() => setIsDeleting(true), 2000); // wait at full word
+      } else {
+        timer = setTimeout(() => setPlaceholderText(currentWord.slice(0, placeholderText.length + 1)), 80); // typing speed
+      }
+    }
+    return () => clearTimeout(timer);
+  }, [placeholderText, isDeleting, typeIndex]);
 
   useEffect(() => {
     homeApi.getQuickActions().then(setQuickActions).catch(console.error);
@@ -88,49 +120,46 @@ export const HeroSection: React.FC = () => {
         />
 
         {/*
-          Overlay LEFT→RIGHT:
-          ─ Trái: banner-overlay-start → Trắng gần như đặc để chữ nổi bật hoàn toàn
-          ─ Giữa: banner-overlay-mid → Chuyển màu mềm mại, kéo dài hơn sang phải
-          ─ Phải: banner-overlay-end → Ảnh lộ ra tự nhiên
+          Overlay BOTTOM→TOP:
+          ─ Dưới: banner-overlay-start (màu mờ đục)
+          ─ Trên: banner-overlay-end (trong suốt)
         */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-banner-overlay-start)] via-[var(--color-banner-overlay-mid)] to-[var(--color-banner-overlay-end)]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-banner-overlay-start)] via-[var(--color-banner-overlay-mid)] to-[var(--color-banner-overlay-end)]" />
 
         {/* Fade đáy xuống nền trang */}
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent via-[#f0f9ff]/40 to-[#f0f9ff] pointer-events-none" />
 
         {/* Content - Thêm pb-20 để đẩy nội dung lên, tránh bị Quick Actions đè */}
-        <div className="absolute inset-0 flex flex-col justify-center px-4 pb-20">
-          <div className="container mx-auto max-w-6xl">
+        <div className="absolute inset-0 flex flex-col justify-center px-4 pb-20 items-center text-center">
+          <div className="container mx-auto max-w-6xl flex flex-col items-center">
             {/* Tăng max-w để chữ dàn ngang được trên 1 dòng */}
-            <div className="max-w-[750px]">
+            <div className="w-full max-w-[1000px] flex flex-col items-center">
 
-              <span className="inline-flex items-center gap-2 bg-primary-50 border border-primary-200 text-primary-600 text-[11px] font-bold px-3.5 py-1.5 rounded-full mb-5 backdrop-blur-sm tracking-wider uppercase drop-shadow-sm">
+              {/* <span className="inline-flex items-center gap-2 bg-primary-50 border border-primary-200 text-primary-600 text-[11px] font-bold px-3.5 py-1.5 rounded-full mb-5 backdrop-blur-sm tracking-wider uppercase drop-shadow-sm">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse shrink-0" />
                 Đặt khám trực tuyến · Không chờ đợi
-              </span>
+              </span> */}
 
-              <h1 className="text-3xl md:text-[40px] lg:text-[46px] font-black text-brand-dark leading-tight mb-4 tracking-tight drop-shadow-sm">
-                Kết nối với <span className="text-primary-600">Bác sĩ chuyên khoa</span>
-                <br className="hidden md:block" />
-                hàng đầu tại nhà
+              <h1 className="text-3xl md:text-4xl lg:text-[40px] font-bold text-black leading-tight mb-4 tracking-tight drop-shadow-sm lg:whitespace-nowrap">
+                Kết nối với <span className="text-black">Bác sĩ chuyên khoa</span> dịch vụ hiện đại
               </h1>
 
-              <p className="text-slate-600 text-sm md:text-base font-medium mb-8 leading-relaxed max-w-[500px] drop-shadow-sm">
+              <p className="text-slate-600 text-sm md:text-base font-medium mb-8 leading-relaxed max-w-[500px] mx-auto drop-shadow-sm">
                 Đặt lịch nhanh chóng, tư vấn từ xa, hoàn tiền nếu hủy.
                 Chăm sóc sức khỏe chưa bao giờ dễ dàng đến vậy.
               </p>
 
-              <div className="mb-8 max-w-[600px]">
+              <div className="mb-8 w-full max-w-[600px] mx-auto">
                 <SearchInput
                   value={searchKeyword}
                   onSearch={handleSearch}
-                  placeholder="Tìm bác sĩ, dịch vụ, chuyên khoa..."
+                  placeholder={placeholderText || '|'}
                   className="shadow-2xl shadow-slate-300/80 border-slate-200 h-14 focus-within:border-primary-400 focus-within:ring-4 focus-within:ring-primary-100 transition-all"
                 />
               </div>
 
               {/* Trust stats - Gộp thành 1 thanh ngang dài để tạo liên kết sang phải */}
-              <div className="flex items-center gap-4 md:gap-8 px-6 py-4 bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-sm w-fit">
+              <div className="flex items-center justify-center gap-4 md:gap-8 px-6 py-4 bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-sm w-fit mx-auto text-left">
                 {TRUST_STATS.map((stat, i) => (
                   <React.Fragment key={stat.label}>
                     <div className="flex items-center gap-3">

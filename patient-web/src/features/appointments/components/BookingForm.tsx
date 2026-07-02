@@ -25,6 +25,8 @@ interface BookingFormProps {
   isServiceBooking: boolean;
   mode?: 'doctor' | 'service';
   onSubmit: (data: BookingFormState) => void;
+  /** Callback để banner steps track theo form — step 0/1/2 */
+  onStepProgress?: (step: number) => void;
 }
 
 function resolveBookingMode(props: BookingFormProps): BookingMode {
@@ -42,6 +44,7 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
     isDoctorBooking,
     isServiceBooking,
     onSubmit,
+    onStepProgress,
   } = props;
 
   const initialBookingMode = resolveBookingMode(props);
@@ -180,6 +183,32 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
     setFormData(prev => ({ ...prev, ...data }));
   }, []);
 
+  // ── Kết nối với banner step indicator ──
+  useEffect(() => {
+    if (!onStepProgress) return;
+    const hasService =
+      formData.bookingMode === 'DOCTOR'
+        ? !!(formData.expertiseId && formData.doctorId)
+        : !!formData.serviceId;
+    const hasDateTime = !!(formData.appointmentDate && formData.timeStart);
+
+    if (hasDateTime) {
+      onStepProgress(2); // Bước 3: Xác nhận
+    } else if (hasService) {
+      onStepProgress(1); // Bước 2: Ngày & Giờ
+    } else {
+      onStepProgress(0); // Bước 1: Chọn dịch vụ
+    }
+  }, [
+    formData.bookingMode,
+    formData.expertiseId,
+    formData.doctorId,
+    formData.serviceId,
+    formData.appointmentDate,
+    formData.timeStart,
+    onStepProgress,
+  ]);
+
   const handleSlotSelect = (slot: TimeSlot) => {
     updateFormData({
       timeStart: slot.timeStart,
@@ -283,18 +312,21 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
 
   return (
     <div className="flex flex-col gap-8">
+
+      {/* AI suggestion banner */}
       {formData.isAiSuggested && formData.suggestedExpertiseId && (
         <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 flex items-start gap-3">
           <Sparkles className="w-5 h-5 text-violet-600 mt-0.5 shrink-0" />
           <div>
-            <h4 className="text-sm font-bold text-violet-900">Gợi ý từ Trợ lý AI</h4>
-            <p className="text-xs text-violet-700 mt-1 leading-relaxed">
-              AI đã gợi ý chuyên khoa phù hợp. Bạn vẫn cần chọn bác sĩ cụ thể trước khi đặt lịch.
+            <h4 className="text-[13px] font-bold text-violet-900">Gợi ý từ Trợ lý AI</h4>
+            <p className="text-[12px] text-violet-700 mt-0.5 leading-relaxed">
+              AI đã gợi ý chuyên khoa phù hợp. Bạn vẫn cần chọn bác sĩ trước khi đặt lịch.
             </p>
           </div>
         </div>
       )}
 
+      {/* Chuyên khoa / Bác sĩ / Dịch vụ */}
       <div className="flex flex-col gap-7">
         {isDoctorFlow && (
           <>
@@ -378,11 +410,12 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
         />
       </div>
 
-      <div className="flex justify-end mt-4">
+      {/* Submit */}
+      <div className="flex justify-end">
         <button
           onClick={handleSubmit}
           disabled={!isFormValid}
-          className="cursor-pointer bg-primary-500 hover:bg-primary-600 text-white font-bold rounded-xl h-12 px-12 shadow-md disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="cursor-pointer bg-primary-500 hover:bg-primary-600 active:scale-[0.98] text-white font-bold rounded-xl h-12 px-12 shadow-md shadow-primary-500/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none transition-all duration-200"
         >
           Xác nhận đặt lịch
         </button>

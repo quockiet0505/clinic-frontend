@@ -120,4 +120,13 @@ export const settingsApi = {
 
   updateGeneralSettings: async (data: unknown) =>
     axiosInstance.post('/settings', data, { toastSuccess: 'Đã lưu cấu hình chung thành công' }),
+
+  uploadBanner: async (key: string, file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return axiosInstance.post(`/admin/banners/${key}/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      toastSuccess: 'Tải ảnh banner thành công'
+    });
+  },
 };

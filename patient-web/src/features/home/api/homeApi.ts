@@ -14,6 +14,11 @@ export const homeApi = {
     return res.data.data;
   },
 
+  getDoctorsPaginated: async (params: any) => {
+    const res = await axiosInstance.get('/staffs/doctors/paginated', { params });
+    return res.data.data;
+  },
+
   getFeaturedDoctors: async () => {
     const res = await axiosInstance.get('/staffs/doctors/featured');
     return res.data.data;
@@ -45,8 +50,15 @@ export const homeApi = {
   },
 
   getBanner: async (key: string = 'main') => {
-    const res = await axiosInstance.get(`/public/banners/${key}`);
-    return `${staticUrl}${res.data.data.imageUrl}`;
+    try {
+      const res = await axiosInstance.get(`/public/banners/${key}`);
+      const url = res.data?.data?.imageUrl;
+      if (!url) throw new Error('No banner url');
+      if (url.startsWith('http')) return url;
+      return `${staticUrl}${url}`;
+    } catch {
+      return `/images/banners/${key === 'main' ? 'hero-banner' : key}.jpg`;
+    }
   },
 
   submitContactMessage: async (data: { fullName: string; phone: string; email?: string; subject?: string; content: string }) => {
