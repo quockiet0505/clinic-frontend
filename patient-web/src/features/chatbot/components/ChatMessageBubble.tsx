@@ -26,13 +26,15 @@ export const ChatMessageBubble: React.FC<{ message: ChatMessage }> = ({ message 
     let formatted = text.replace(/\*\*/g, '');
 
     // Thay thế khoảng trắng + dấu gạch ngang + khoảng trắng (" - ") thành xuống dòng
-    formatted = formatted.replace(/ - /g, '\n- ');
+    // Bắt lỗi AI dính chữ vào gạch đầu dòng (ví dụ: VNĐ- Gói)
+    formatted = formatted.replace(/([^\n:;])\s*-\s/g, '$1\n- ');
     
     // Thay thế các dấu gạch ngang dính liền sau dấu hai chấm (ví dụ: "ClinicPro:- ")
     formatted = formatted.replace(/: - /g, ':\n- ');
+    formatted = formatted.replace(/:-\s/g, ':\n- ');
     
-    // Xóa bỏ các dòng trắng dư thừa (ví dụ \n\n thành \n)
-    formatted = formatted.replace(/\n{2,}/g, '\n');
+    // Xóa bỏ các dòng trắng dư thừa (ví dụ \n \n thành \n)
+    formatted = formatted.replace(/\n(?:\s*\n)+/g, '\n');
     
     return formatted;
   };
@@ -42,6 +44,8 @@ export const ChatMessageBubble: React.FC<{ message: ChatMessage }> = ({ message 
   useEffect(() => {
     console.log('ChatMessageBubble rendered for:', message.sender, message.text.substring(0, 30));
   }, [message]);
+
+  if (!message.text) return null;
 
   return (
     <div className={`flex w-full ${isAI ? 'justify-start' : 'justify-end'} mb-4`}>

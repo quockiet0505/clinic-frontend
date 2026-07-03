@@ -44,28 +44,43 @@ export const ChatWindow: React.FC<Props> = ({ onClose }) => {
     setInputValue('');
     setIsTyping(true);
 
+    const aiMsgId = Math.random().toString();
+    const initialAiMsg: ChatMessage = {
+      id: aiMsgId,
+      text: '',
+      sender: 'AI',
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, initialAiMsg]);
+
     try {
-      const aiReply = await chatbotApi.sendMessage(userMsg.text);
-      setMessages(prev => [...prev, aiReply]);
+      await chatbotApi.streamMessage(userMsg.text, (chunkText: string) => {
+        setIsTyping(false);
+        setMessages(prevMessages =>
+          prevMessages.map(msg =>
+            msg.id === aiMsgId
+              ? { ...msg, text: msg.text + chunkText }
+              : msg
+          )
+        );
+      });
     } catch (error) {
       console.error(error);
-      setMessages(prev => [
-        ...prev,
-        {
-          id: Math.random().toString(),
-          text: 'Xin lỗi, hiện tại trợ lý y tế đang bận hoặc hệ thống đang bảo trì. Bạn vui lòng thử lại sau giây lát nhé.',
-          sender: 'AI',
-          timestamp: new Date(),
-        },
-      ]);
-    } finally {
       setIsTyping(false);
+      setMessages(prevMessages =>
+        prevMessages.map(msg =>
+          msg.id === aiMsgId
+            ? { ...msg, text: 'Xin lỗi, hiện tại trợ lý y tế đang bận hoặc hệ thống đang bảo trì. Bạn vui lòng thử lại sau giây lát nhé.' }
+            : msg
+        )
+      );
     }
   };
 
   return (
     <Card className="w-[350px] sm:w-[400px] h-[500px] flex flex-col shadow-2xl rounded-3xl border-border-default overflow-hidden animate-in slide-in-from-bottom-5 duration-300 z-50">
-      
+
       {/* Header */}
       <CardHeader className="bg-primary-500 p-4 flex flex-row items-center justify-between border-b border-primary-600/50">
         <CardTitle className="text-white text-[16px] font-black flex items-center gap-2 m-0">
@@ -100,15 +115,15 @@ export const ChatWindow: React.FC<Props> = ({ onClose }) => {
       {/* Footer: Input gửi tin nhắn */}
       <div className="p-3 bg-white border-t border-border-default">
         <form onSubmit={handleSend} className="flex items-center gap-2">
-          <input 
-            type="text" 
+          <input
+            type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder="Nhập câu hỏi của bạn..." 
+            placeholder="Nhập câu hỏi của bạn..."
             className="flex-1 bg-background-light border border-border-default rounded-full px-4 h-11 text-[14px] text-brand-dark outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 transition-all"
           />
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={!inputValue.trim() || isTyping}
             className="w-11 h-11 bg-primary-500 hover:bg-primary-600 disabled:bg-primary-500/50 text-white rounded-full flex items-center justify-center shrink-0 transition-colors shadow-sm cursor-pointer disabled:cursor-not-allowed"
           >

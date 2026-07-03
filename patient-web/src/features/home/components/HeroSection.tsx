@@ -135,31 +135,33 @@ export const HeroSection: React.FC = () => {
             {/* Tăng max-w để chữ dàn ngang được trên 1 dòng */}
             <div className="w-full max-w-[1000px] flex flex-col items-center">
 
-              {/* <span className="inline-flex items-center gap-2 bg-primary-50 border border-primary-200 text-primary-600 text-[11px] font-bold px-3.5 py-1.5 rounded-full mb-5 backdrop-blur-sm tracking-wider uppercase drop-shadow-sm">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse shrink-0" />
-                Đặt khám trực tuyến · Không chờ đợi
-              </span> */}
+              <div className="inline-flex items-center gap-2.5 bg-white/60 border border-white/60 text-brand-dark text-[12px] md:text-[13px] font-bold px-4 py-1.5 rounded-full mb-6 backdrop-blur-md tracking-wide shadow-sm hover:bg-white/80 transition-colors cursor-default">
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shrink-0 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+                Nền tảng Y tế Số Thông minh 24/7
+              </div>
 
-              <h1 className="text-3xl md:text-4xl lg:text-[40px] font-bold text-black leading-tight mb-4 tracking-tight drop-shadow-sm lg:whitespace-nowrap">
-                Kết nối với <span className="text-black">Bác sĩ chuyên khoa</span> dịch vụ hiện đại
+              <h1 className="text-3xl md:text-4xl lg:text-[44px] font-extrabold text-slate-900 leading-[1.2] mb-5 tracking-tight drop-shadow-sm">
+                Kết nối với <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-sky-400">Đội ngũ Bác sĩ chuyên khoa</span><br className="hidden md:block" /> dịch vụ chuẩn quốc tế
               </h1>
 
-              <p className="text-slate-600 text-sm md:text-base font-medium mb-8 leading-relaxed max-w-[500px] mx-auto drop-shadow-sm">
-                Đặt lịch nhanh chóng, tư vấn từ xa, hoàn tiền nếu hủy.
-                Chăm sóc sức khỏe chưa bao giờ dễ dàng đến vậy.
+              <p className="text-slate-600 text-[15px] md:text-[17px] font-medium mb-8 leading-relaxed max-w-[650px] mx-auto drop-shadow-sm">
+                Trải nghiệm chăm sóc sức khỏe hiện đại. Đặt lịch nhanh chóng, tư vấn từ xa và quản lý hồ sơ bệnh án trọn đời chỉ với vài thao tác.
               </p>
 
-              <div className="mb-8 w-full max-w-[600px] mx-auto">
-                <SearchInput
-                  value={searchKeyword}
-                  onSearch={handleSearch}
-                  placeholder={placeholderText || '|'}
-                  className="shadow-2xl shadow-slate-300/80 border-slate-200 h-14 focus-within:border-primary-400 focus-within:ring-4 focus-within:ring-primary-100 transition-all"
-                />
+              <div className="mb-10 w-full max-w-[650px] mx-auto relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-primary-200 to-sky-200 rounded-2xl blur opacity-30 group-hover:opacity-70 transition duration-500"></div>
+                <div className="relative">
+                  <SearchInput
+                    value={searchKeyword}
+                    onSearch={handleSearch}
+                    placeholder={placeholderText || '|'}
+                    className="shadow-xl border-white/80 h-[60px] text-lg focus-within:border-primary-400 focus-within:ring-4 focus-within:ring-primary-100 transition-all bg-white/90 backdrop-blur-sm"
+                  />
+                </div>
               </div>
 
               {/* Trust stats - Gộp thành 1 thanh ngang dài để tạo liên kết sang phải */}
-              <div className="flex items-center justify-center gap-4 md:gap-8 px-6 py-4 bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-sm w-fit mx-auto text-left">
+              <div className="flex items-center justify-center gap-4 md:gap-10 px-8 py-4 bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-sm w-fit mx-auto text-left hover:shadow-md transition-shadow">
                 {TRUST_STATS.map((stat, i) => (
                   <React.Fragment key={stat.label}>
                     <div className="flex items-center gap-3">
