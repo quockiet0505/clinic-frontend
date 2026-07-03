@@ -135,10 +135,10 @@ export const HeroSection: React.FC = () => {
             {/* Tăng max-w để chữ dàn ngang được trên 1 dòng */}
             <div className="w-full max-w-[1000px] flex flex-col items-center">
 
-              <div className="inline-flex items-center gap-2.5 bg-white/60 border border-white/60 text-brand-dark text-[12px] md:text-[13px] font-bold px-4 py-1.5 rounded-full mb-6 backdrop-blur-md tracking-wide shadow-sm hover:bg-white/80 transition-colors cursor-default">
+              {/* <div className="inline-flex items-center gap-2.5 bg-white/60 border border-white/60 text-brand-dark text-[12px] md:text-[13px] font-bold px-4 py-1.5 rounded-full mb-6 backdrop-blur-md tracking-wide shadow-sm hover:bg-white/80 transition-colors cursor-default">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shrink-0 shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
                 Nền tảng Y tế Số Thông minh 24/7
-              </div>
+              </div> */}
 
               <h1 className="text-3xl md:text-4xl lg:text-[44px] font-extrabold text-slate-900 leading-[1.2] mb-5 tracking-tight drop-shadow-sm">
                 Kết nối với <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-sky-400">Đội ngũ Bác sĩ chuyên khoa</span><br className="hidden md:block" /> dịch vụ chuẩn quốc tế
