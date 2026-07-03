@@ -56,3 +56,8 @@ app.*.map.json
 **/.flutter-plugins
 **/.flutter-plugins-dependencies
 **/.metadata
+
+# Environment variables
+.env
+.env.*
+!.env.example
