@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'dart:convert';
 import '../models/appointment_model.dart';
 import '../models/doctor_model.dart';
 import '../models/service_model.dart';
@@ -91,16 +93,56 @@ class AppointmentProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchMyAppointments() async {
-    isLoading = true;
+  Future<void> fetchMyAppointments({bool forceRefresh = false}) async {
+    final box = Hive.box('appCache');
+    const cacheKeyAppts = 'cached_appointments';
+    const cacheKeyTime = 'appointments_timestamp';
+
+    if (!forceRefresh) {
+      final int? timestamp = box.get(cacheKeyTime);
+      if (timestamp != null) {
+        final lastFetch = DateTime.fromMillisecondsSinceEpoch(timestamp);
+        final diff = DateTime.now().difference(lastFetch).inMinutes;
+
+        if (diff < 5) {
+          final String? cachedData = box.get(cacheKeyAppts);
+          if (cachedData != null) {
+            try {
+              final List<dynamic> list = jsonDecode(cachedData);
+              myAppointments = list.map((e) => AppointmentModel.fromJson(e)).toList();
+              notifyListeners();
+              return;
+            } catch (_) {}
+          }
+        } else {
+          final String? cachedData = box.get(cacheKeyAppts);
+          if (cachedData != null) {
+            try {
+              final List<dynamic> list = jsonDecode(cachedData);
+              myAppointments = list.map((e) => AppointmentModel.fromJson(e)).toList();
+              notifyListeners();
+            } catch (_) {}
+          }
+        }
+      }
+    }
+
+    if (myAppointments.isEmpty) {
+      isLoading = true;
+      notifyListeners();
+    }
     error = null;
-    notifyListeners();
 
     try {
       final data = await _bookingService.getMyAppointments();
       myAppointments = data.map((e) => AppointmentModel.fromJson(e)).toList();
+      
+      box.put(cacheKeyAppts, jsonEncode(data));
+      box.put(cacheKeyTime, DateTime.now().millisecondsSinceEpoch);
     } catch (e) {
-      error = e.toString().replaceAll('Exception: ', '');
+      if (myAppointments.isEmpty) {
+        error = e.toString().replaceAll('Exception: ', '');
+      }
     } finally {
       isLoading = false;
       notifyListeners();

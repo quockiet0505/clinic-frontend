@@ -13,7 +13,8 @@ class ReviewScreen extends StatefulWidget {
   State<ReviewScreen> createState() => _ReviewScreenState();
 }
 
-class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderStateMixin {
+class _ReviewScreenState extends State<ReviewScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final FeedbackService _feedbackService = FeedbackService();
 
@@ -48,7 +49,8 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
       );
       if (existingDoctor != null && mounted) {
         setState(() {
-          _doctorReviewId = existingDoctor['feedbackId'] ?? existingDoctor['id'];
+          _doctorReviewId =
+              existingDoctor['feedbackId'] ?? existingDoctor['id'];
           _doctorRating = existingDoctor['rating'] ?? 0;
           _doctorComment = existingDoctor['comment'] ?? '';
           _doctorIsAnonymous = existingDoctor['isAnonymous'] ?? false;
@@ -63,7 +65,8 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
       );
       if (existingClinic != null && mounted) {
         setState(() {
-          _clinicReviewId = existingClinic['feedbackId'] ?? existingClinic['id'];
+          _clinicReviewId =
+              existingClinic['feedbackId'] ?? existingClinic['id'];
           _clinicRating = existingClinic['rating'] ?? 0;
           _clinicComment = existingClinic['comment'] ?? '';
           _clinicIsAnonymous = existingClinic['isAnonymous'] ?? false;
@@ -83,7 +86,8 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
 
   Future<void> _submitDoctorReview() async {
     if (_doctorRating == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Vui lòng chọn số sao đánh giá bác sĩ')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Vui lòng chọn số sao đánh giá bác sĩ')));
       return;
     }
 
@@ -108,10 +112,12 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
         );
       }
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã lưu đánh giá bác sĩ thành công!')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Đã lưu đánh giá bác sĩ thành công!')));
       Navigator.pop(context, true);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _doctorSubmitting = false);
     }
@@ -119,7 +125,8 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
 
   Future<void> _submitClinicReview() async {
     if (_clinicRating == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Vui lòng chọn số sao đánh giá phòng khám')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Vui lòng chọn số sao đánh giá phòng khám')));
       return;
     }
 
@@ -142,26 +149,34 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
         );
       }
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã lưu đánh giá phòng khám thành công!')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Đã lưu đánh giá phòng khám thành công!')));
       Navigator.pop(context, true);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _clinicSubmitting = false);
     }
   }
 
-  Widget _buildRatingStars(int rating, Function(int) onRatingChanged, bool isEditable) {
+  Widget _buildRatingStars(
+      int rating, Function(int) onRatingChanged, bool isEditable) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(5, (index) {
-        return IconButton(
-          icon: Icon(
-            index < rating ? Icons.star_rounded : Icons.star_border_rounded,
-            size: 40,
-            color: index < rating ? Colors.amber : AppColors.textSubLight.withOpacity(0.3),
+        return GestureDetector(
+          onTap: isEditable ? () => onRatingChanged(index + 1) : null,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4.0),
+            child: Icon(
+              index < rating ? Icons.star_rounded : Icons.star_border_rounded,
+              size: 48,
+              color: index < rating
+                  ? const Color(0xFFF59E0B)
+                  : AppColors.textSubLight.withOpacity(0.3),
+            ),
           ),
-          onPressed: isEditable ? () => onRatingChanged(index + 1) : null,
         );
       }),
     );
@@ -169,6 +184,7 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
 
   Widget _buildReviewTab({
     required String title,
+    required String subtitle,
     required int rating,
     required String comment,
     required bool isAnonymous,
@@ -206,36 +222,36 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline_rounded, color: Color(0xFF6B7280), size: 20),
+                  const Icon(Icons.info_outline_rounded,
+                      color: Color(0xFF6B7280), size: 20),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       'Đánh giá này đã quá 24 giờ và không thể chỉnh sửa.',
-                      style: AppStyles.caption.copyWith(color: const Color(0xFF4B5563)),
+                      style: AppStyles.caption
+                          .copyWith(color: const Color(0xFF4B5563)),
                     ),
                   ),
                 ],
               ),
             ),
-          
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.05),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(Icons.star_rounded, size: 60, color: AppColors.primary),
-          ),
-          const SizedBox(height: 24),
-          Text(title, style: AppStyles.heading2.copyWith(fontSize: 18), textAlign: TextAlign.center),
-          
+          const SizedBox(height: 16),
+          Text(title,
+              style: AppStyles.heading2.copyWith(fontSize: 22, height: 1.3),
+              textAlign: TextAlign.center),
+          const SizedBox(height: 8),
+          Text(subtitle,
+              style: AppStyles.bodyMedium.copyWith(color: AppColors.textSubLight),
+              textAlign: TextAlign.center),
           const SizedBox(height: 30),
           _buildRatingStars(rating, onRatingChanged, isEditable),
-          
           const SizedBox(height: 40),
           Align(
             alignment: Alignment.centerLeft,
-            child: Text('Góp ý thêm (Không bắt buộc)', style: AppStyles.caption.copyWith(color: AppColors.textSubLight, fontWeight: FontWeight.bold)),
+            child: Text('Góp ý thêm (Không bắt buộc)',
+                style: AppStyles.caption.copyWith(
+                    color: AppColors.textSubLight,
+                    fontWeight: FontWeight.bold)),
           ),
           const SizedBox(height: 8),
           TextField(
@@ -244,33 +260,46 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
             maxLines: 4,
             readOnly: !isEditable,
             decoration: InputDecoration(
-              hintText: isEditable ? 'Nhập trải nghiệm của bạn...' : 'Không có nhận xét.',
-              hintStyle: AppStyles.bodyMedium.copyWith(color: AppColors.textSubLight.withOpacity(0.5)),
+              hintText: isEditable
+                  ? 'Nhập trải nghiệm của bạn...'
+                  : 'Không có nhận xét.',
+              hintStyle: AppStyles.bodyMedium
+                  .copyWith(color: AppColors.textSubLight.withOpacity(0.5)),
               filled: true,
-              fillColor: isEditable ? AppColors.primary.withOpacity(0.03) : const Color(0xFFF9FAFB),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-              focusedBorder: isEditable 
-                  ? OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: AppColors.primary, width: 1.5))
-                  : OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+              fillColor: isEditable
+                  ? AppColors.primary.withOpacity(0.03)
+                  : const Color(0xFFF9FAFB),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide.none),
+              focusedBorder: isEditable
+                  ? OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: const BorderSide(
+                          color: AppColors.primary, width: 1.5))
+                  : OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide.none),
             ),
           ),
-          
           const SizedBox(height: 16),
           CheckboxListTile(
             value: isAnonymous,
             onChanged: isEditable ? onAnonymousChanged : null,
-            title: Text('Đánh giá ẩn danh', style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: AppColors.textMainLight)),
+            title: Text('Đánh giá ẩn danh',
+                style: AppStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textMainLight)),
             controlAffinity: ListTileControlAffinity.leading,
             contentPadding: EdgeInsets.zero,
             activeColor: AppColors.primary,
           ),
-          
           if (isEditable) ...[
             const SizedBox(height: 40),
             SizedBox(
               width: double.infinity,
               height: 56,
-              child: isSubmitting 
+              child: isSubmitting
                   ? const Center(child: CircularProgressIndicator())
                   : GradientButton(
                       text: isEditMode ? 'Cập nhật đánh giá' : 'Gửi Đánh Giá',
@@ -294,9 +323,12 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
           labelColor: AppColors.primary,
           unselectedLabelColor: AppColors.textSubLight,
           indicatorColor: AppColors.primary,
+          indicatorWeight: 3,
+          labelStyle: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+          unselectedLabelStyle: AppStyles.bodyMedium,
           tabs: const [
-            Tab(icon: Icon(Icons.person), text: 'Bác sĩ'),
-            Tab(icon: Icon(Icons.local_hospital), text: 'Phòng khám'),
+            Tab(icon: Icon(Icons.person_rounded), text: 'Bác sĩ'),
+            Tab(icon: Icon(Icons.local_hospital_rounded), text: 'Phòng khám'),
           ],
         ),
       ),
@@ -304,7 +336,8 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
         controller: _tabController,
         children: [
           _buildReviewTab(
-            title: 'Bạn đánh giá thế nào về BS. ${widget.appointment.doctorName}?',
+            title: 'Trải nghiệm của bạn?',
+            subtitle: 'Bạn đánh giá thế nào về BS. ${widget.appointment.doctorName}?',
             rating: _doctorRating,
             comment: _doctorComment,
             isAnonymous: _doctorIsAnonymous,
@@ -313,11 +346,13 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
             isEditMode: _doctorReviewId != null,
             onRatingChanged: (r) => setState(() => _doctorRating = r),
             onCommentChanged: (c) => setState(() => _doctorComment = c),
-            onAnonymousChanged: (v) => setState(() => _doctorIsAnonymous = v ?? false),
+            onAnonymousChanged: (v) =>
+                setState(() => _doctorIsAnonymous = v ?? false),
             onSubmit: _submitDoctorReview,
           ),
           _buildReviewTab(
-            title: 'Bạn cảm thấy hài lòng với dịch vụ phòng khám chứ?',
+            title: 'Đánh giá Phòng khám',
+            subtitle: 'Bạn cảm thấy hài lòng với dịch vụ phòng khám chứ?',
             rating: _clinicRating,
             comment: _clinicComment,
             isAnonymous: _clinicIsAnonymous,
@@ -326,7 +361,8 @@ class _ReviewScreenState extends State<ReviewScreen> with SingleTickerProviderSt
             isEditMode: _clinicReviewId != null,
             onRatingChanged: (r) => setState(() => _clinicRating = r),
             onCommentChanged: (c) => setState(() => _clinicComment = c),
-            onAnonymousChanged: (v) => setState(() => _clinicIsAnonymous = v ?? false),
+            onAnonymousChanged: (v) =>
+                setState(() => _clinicIsAnonymous = v ?? false),
             onSubmit: _submitClinicReview,
           ),
         ],

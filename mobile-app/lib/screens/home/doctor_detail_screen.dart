@@ -1,4 +1,5 @@
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:shimmer/shimmer.dart';
 
 class DoctorDetailScreen extends StatelessWidget {
   final Map<String, dynamic> doctor;
@@ -18,21 +19,24 @@ class DoctorDetailScreen extends StatelessWidget {
             elevation: 0,
             backgroundColor: Colors.white,
             leading: IconButton(
-              icon: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(color: Colors.white.withOpacity(0.8), shape: BoxShape.circle),
-                child: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight, size: 18),
-              ),
+              icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight, size: 22),
               onPressed: () => Navigator.pop(context),
             ),
             flexibleSpace: FlexibleSpaceBar(
               background: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.network(
-                    doctor['imageUrl'] ?? 'https://ui-avatars.com/api/?name=N/A&background=random&format=png',
+                  CachedNetworkImage(imageUrl: doctor['imageUrl'] ?? 'https://ui-avatars.com/api/?name=N/A&background=random&format=png',
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200], child: const Icon(Icons.person, size: 100, color: Colors.grey)),
+                    placeholder: (context, url) => Shimmer.fromColors(
+                baseColor: const Color(0xFFE2E8F0),
+                highlightColor: const Color(0xFFF8FAFC),
+                child: Container(color: Colors.white),
+              ),
+              errorWidget: (context, url, error) => Container(color: Colors.grey[200], child: const Icon(Icons.person, size: 100, color: Colors.grey)),
                   ),
                   Container(
                     decoration: BoxDecoration(

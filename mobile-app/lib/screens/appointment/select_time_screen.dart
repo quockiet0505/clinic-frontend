@@ -1,4 +1,6 @@
+import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:clinic_management_system/utils/image_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
@@ -81,14 +83,8 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFF),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFF8FAFF),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded, color: Color(0xFF1F2937), size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text('Chọn Ngày & Giờ', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1F2937), fontSize: 18)),
+      appBar: const GradientAppBar(
+        title: 'Chọn Ngày & Giờ',
         centerTitle: true,
       ),
       body: Consumer<AppointmentProvider>(
@@ -121,18 +117,26 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                       style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
                     ),
                     const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const SelectDoctorScreen()),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        gradient: AppColors.primaryGradient,
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const SelectDoctorScreen()),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          elevation: 0,
+                        ),
+                        child: const Text('Chọn bác sĩ'),
                       ),
-                      child: const Text('Chọn bác sĩ'),
                     ),
                   ],
                 ),
@@ -159,28 +163,51 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                           tag: 'doctor_img_${doctor.id}',
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(14),
-                            child: Image.network(
-                              ImageUtils.fixImageUrl(doctor.imageUrl),
+                            child: CachedNetworkImage(imageUrl: ImageUtils.fixImageUrl(doctor.imageUrl),
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
                               height: 64, width: 64, fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Container(color: Colors.grey[200], height: 64, width: 64, child: const Icon(Icons.person)),
+                              errorWidget: (context, url, error) => Container(color: Colors.grey[200], height: 64, width: 64, child: const Icon(Icons.person)),
                             ),
                           ),
                         ),
                       ] else if (service != null) ...[
-                        Container(
-                          height: 64, width: 64,
-                          decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(14)),
-                          child: const Icon(Icons.medical_services_outlined, color: AppColors.primary, size: 32),
+                        Builder(
+                          builder: (context) {
+                            final sName = service.serviceName.toLowerCase();
+                            IconData sIcon = Icons.health_and_safety_rounded;
+                            if (sName.contains('xét nghiệm')) {
+                              sIcon = Icons.science_rounded;
+                            } else if (sName.contains('siêu âm') || sName.contains('x-quang')) {
+                              sIcon = Icons.monitor_heart_rounded;
+                            }
+                            return Container(
+                              height: 64, width: 64,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFF38BDF8), Color(0xFF0284C7)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [BoxShadow(color: const Color(0xFF0284C7).withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 3))],
+                              ),
+                              child: Icon(sIcon, color: Colors.white, size: 32),
+                            );
+                          },
                         ),
                       ] else if (specialty != null) ...[
                         Container(
                           height: 64, width: 64,
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14)),
-                          child: Image.network(
-                            ImageUtils.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl'] ?? ''),
+                          child: CachedNetworkImage(imageUrl: ImageUtils.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl'] ?? ''),
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
                             fit: BoxFit.contain,
-                            errorBuilder: (_, __, ___) => const Icon(Icons.medical_services, color: AppColors.primary),
+                            errorWidget: (context, url, error) => const Icon(Icons.medical_services, color: AppColors.primary),
                           ),
                         ),
                       ],
@@ -520,13 +547,18 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
           BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, -4)),
         ],
       ),
-      child: SizedBox(
+      child: Container(
         width: double.infinity,
         height: 52,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: AppColors.primaryGradient,
+        ),
         child: ElevatedButton(
           onPressed: () => _handleContinue(provider),
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             elevation: 0,
           ),

@@ -4,6 +4,7 @@
 export 'package:flutter/material.dart';
 export 'package:google_fonts/google_fonts.dart';
 export 'package:flutter_dotenv/flutter_dotenv.dart';
+export 'package:cached_network_image/cached_network_image.dart';
 
 // Core constants & Theme
 export 'package:clinic_management_system/core/core.dart';

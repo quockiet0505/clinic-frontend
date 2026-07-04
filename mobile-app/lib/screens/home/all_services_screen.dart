@@ -1,4 +1,5 @@
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/home_provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
@@ -182,12 +183,14 @@ class _ServiceListCard extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(16),
-                      child: Image.network(
-                        provider.fixImageUrl(service.imageUrl),
+                      child: CachedNetworkImage(imageUrl: provider.fixImageUrl(service.imageUrl),
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
                         height: 76,
                         width: 76,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
+                        errorWidget: (context, url, error) => Container(
                           height: 76,
                           width: 76,
                           decoration: BoxDecoration(

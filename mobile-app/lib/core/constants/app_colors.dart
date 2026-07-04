@@ -2,6 +2,13 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
+  // Global Gradients
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
   // Primary & Accent Colors (Modern Medical Theme)
   static const Color primary = Color(0xFF2563EB); // Medical Blue
   static const Color primaryDark = Color(0xFF1D4ED8);

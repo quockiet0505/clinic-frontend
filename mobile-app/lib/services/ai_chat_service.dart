@@ -19,6 +19,7 @@ class AiChatService {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
         },
       ),
     );
@@ -40,7 +41,7 @@ class AiChatService {
       }
 
       final response = await _dio.post(
-        '/api/v1/chat/send',
+        '/chat/send',
         data: payload,
       );
 

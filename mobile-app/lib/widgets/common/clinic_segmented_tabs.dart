@@ -96,69 +96,42 @@ class _ClinicSegmentedTabsState extends State<ClinicSegmentedTabs> {
       scrollDirection: Axis.horizontal,
       padding: widget.padding,
       physics: const BouncingScrollPhysics(),
-      child: Container(
-        key: _trackKey,
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF1F5F9),
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFE2E8F0).withValues(alpha: 0.8)),
-        ),
-        child: Stack(
-          children: [
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 260),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: widget.tabs.map((tab) {
+          final isSelected = widget.selectedValue == tab.value;
+          return GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              if (tab.value != widget.selectedValue) {
+                widget.onChanged(tab.value);
+              }
+            },
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
               curve: Curves.easeOutCubic,
-              left: _indicatorLeft,
-              width: _indicatorWidth,
-              top: 0,
-              bottom: 0,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 120),
-                opacity: _indicatorReady ? 1 : 0,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.06),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                gradient: isSelected ? AppColors.primaryGradient : null,
+                color: isSelected ? null : Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: isSelected ? Colors.transparent : const Color(0xFFE2E8F0),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                tab.label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: isSelected ? Colors.white : const Color(0xFF64748B),
                 ),
               ),
             ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: widget.tabs.map((tab) {
-                final isSelected = widget.selectedValue == tab.value;
-                return GestureDetector(
-                  key: _tabKeys[tab.value],
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    if (tab.value == widget.selectedValue) return;
-                    widget.onChanged(tab.value);
-                    WidgetsBinding.instance.addPostFrameCallback((_) => _updateIndicator());
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                    child: Text(
-                      tab.label,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                        color: isSelected ? AppColors.primary : const Color(0xFF64748B),
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
+          );
+        }).toList(),
       ),
     );
   }

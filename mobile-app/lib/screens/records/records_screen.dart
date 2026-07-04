@@ -139,10 +139,14 @@ class _RecordsScreenState extends State<RecordsScreen> {
                         Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.1),
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(Icons.folder_shared_rounded, color: AppColors.primary, size: 20),
+                          child: const Icon(Icons.folder_shared_rounded, color: Colors.white, size: 20),
                         ),
                         const SizedBox(width: 10),
                         const Column(
@@ -196,13 +200,29 @@ class _RecordsScreenState extends State<RecordsScreen> {
 
               // Body
               Expanded(
-                child: records.isEmpty
-                    ? _buildEmptyState(isSearchEmpty: allRecords.isNotEmpty)
-                    : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
-                        itemCount: records.length,
-                        itemBuilder: (context, index) => _buildRecordCard(records[index]),
-                      ),
+                child: RefreshIndicator(
+                  color: AppColors.primary,
+                  backgroundColor: Colors.white,
+                  onRefresh: () async {
+                    await context.read<RecordProvider>().fetchMyRecords(forceRefresh: true);
+                  },
+                  child: records.isEmpty
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: [
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.5,
+                              child: _buildEmptyState(isSearchEmpty: allRecords.isNotEmpty),
+                            ),
+                          ],
+                        )
+                      : ListView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
+                          itemCount: records.length,
+                          itemBuilder: (context, index) => _buildRecordCard(records[index]),
+                        ),
+                ),
               ),
             ],
           );
@@ -334,26 +354,38 @@ class _RecordsScreenState extends State<RecordsScreen> {
 
   Widget _buildTypeBadge(String text, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
+        gradient: LinearGradient(
+          colors: [
+            color.withValues(alpha: 0.15),
+            color.withValues(alpha: 0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         text,
-        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: color),
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color),
       ),
     );
   }
 
   Widget _buildStatusBadge(String text, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
+        gradient: LinearGradient(
+          colors: [
+            color.withValues(alpha: 0.15),
+            color.withValues(alpha: 0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

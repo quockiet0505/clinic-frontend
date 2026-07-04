@@ -1,4 +1,5 @@
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/home_provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
@@ -129,12 +130,14 @@ class _AllDoctorsScreenState extends State<AllDoctorsScreen> {
               tag: 'all_doctor_img_${doctor.id}',
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(14),
-                child: Image.network(
-                  ImageUtils.fixImageUrl(doctor.imageUrl),
+                child: CachedNetworkImage(imageUrl: ImageUtils.fixImageUrl(doctor.imageUrl),
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
                   height: 76,
                   width: 76,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) =>
+                  errorWidget: (context, url, error) =>
                       Container(color: Colors.grey[200], height: 76, width: 76, child: const Icon(Icons.person, color: Colors.grey)),
                 ),
               ),

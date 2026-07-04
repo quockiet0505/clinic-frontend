@@ -74,14 +74,18 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(Icons.calendar_month_rounded, color: Colors.white, size: 20),
                         ),
-                        child: const Icon(Icons.calendar_month_rounded, color: AppColors.primary, size: 20),
-                      ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Column(
@@ -133,90 +137,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Lọc theo trạng thái:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Color(0xFF6B7280))),
-                      GestureDetector(
-                        onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            backgroundColor: Colors.transparent,
-                            isScrollControlled: true,
-                            builder: (BuildContext context) {
-                              final statuses = [
-                                'ALL', 'PENDING', 'CONFIRMED', 'CHECKED_IN', 'IN_PROGRESS', 
-                                'WAITING_RESULT', 'COMPLETED', 'CANCELLED', 'SKIPPED', 'NO_SHOW'
-                              ];
-                              return Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                                ),
-                                padding: const EdgeInsets.fromLTRB(0, 12, 0, 24),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(width: 40, height: 4, decoration: BoxDecoration(color: const Color(0xFFE2E8F0), borderRadius: BorderRadius.circular(2))),
-                                    const SizedBox(height: 20),
-                                    const Text('Lọc theo trạng thái', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
-                                    const SizedBox(height: 16),
-                                    ...statuses.map((item) {
-                                      final isSelected = item == _selectedStatus;
-                                      return InkWell(
-                                        onTap: () {
-                                          setState(() => _selectedStatus = item);
-                                          Navigator.pop(context);
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                          color: isSelected ? const Color(0xFFEFF6FF) : Colors.transparent,
-                                          child: Row(
-                                            children: [
-                                              Text(
-                                                _statusLabel(item),
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                                                  color: isSelected ? const Color(0xFF2563EB) : const Color(0xFF334155),
-                                                ),
-                                              ),
-                                              const Spacer(),
-                                              if (isSelected) const Icon(Icons.check_circle_rounded, color: Color(0xFF2563EB), size: 20),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                    const SizedBox(height: 16), // SafeArea support
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: const Color(0xFFE5E7EB)),
-                            boxShadow: [
-                              BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Text(_statusLabel(_selectedStatus), style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.primary)),
-                              const SizedBox(width: 4),
-                              const Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: AppColors.primary),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
                   ClinicListToolbar(
                     searchHint: 'Tìm bác sĩ, chuyên khoa...',
                     onSearchChanged: (v) => setState(() => _searchQuery = v.trim()),
@@ -232,12 +152,94 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     dateFilterActive: _filterDate != null,
                     tabs: const [
                       ClinicTabItem(value: 'ALL', label: 'Tất cả'),
-                      ClinicTabItem(value: 'ONLINE', label: 'Đặt Online'),
+                      ClinicTabItem(value: 'ONLINE', label: 'Online'),
                       ClinicTabItem(value: 'WALK_IN', label: 'Walk-in'),
                     ],
                     selectedTab: _selectedType,
                     onTabChanged: (v) => setState(() => _selectedType = v),
                     padding: EdgeInsets.zero,
+                    trailingTabWidget: GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          backgroundColor: Colors.transparent,
+                          isScrollControlled: true,
+                          builder: (BuildContext context) {
+                            final statuses = [
+                              'ALL', 'PENDING', 'CONFIRMED', 'CHECKED_IN', 'IN_PROGRESS', 
+                              'WAITING_RESULT', 'COMPLETED', 'CANCELLED', 'SKIPPED', 'NO_SHOW'
+                            ];
+                            return Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                              ),
+                              padding: const EdgeInsets.fromLTRB(0, 12, 0, 24),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(width: 40, height: 4, decoration: BoxDecoration(color: const Color(0xFFE2E8F0), borderRadius: BorderRadius.circular(2))),
+                                  const SizedBox(height: 20),
+                                  const Text('Lọc theo trạng thái', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                                  const SizedBox(height: 16),
+                                  ...statuses.map((item) {
+                                    final isSelected = item == _selectedStatus;
+                                    return InkWell(
+                                      onTap: () {
+                                        setState(() => _selectedStatus = item);
+                                        Navigator.pop(context);
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                                        color: isSelected ? const Color(0xFFEFF6FF) : Colors.transparent,
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              _statusLabel(item),
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                                color: isSelected ? const Color(0xFF2563EB) : const Color(0xFF334155),
+                                              ),
+                                            ),
+                                            const Spacer(),
+                                            if (isSelected) const Icon(Icons.check_circle_rounded, color: Color(0xFF2563EB), size: 20),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                  const SizedBox(height: 16),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: const Color(0xFFE2E8F0)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Text('Trạng thái', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF64748B))),
+                            const SizedBox(width: 2),
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: _selectedStatus != 'ALL' ? const Color(0xFF2563EB) : Colors.transparent,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: Color(0xFF64748B)),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                   if (_filterDate != null) ...[
                     const SizedBox(height: 8),
@@ -253,6 +255,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       ),
                     ),
                   ],
+                  const SizedBox(height: 8),
                 ],
               ),
             ),
@@ -313,30 +316,45 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   Widget _buildList(List<AppointmentModel> appointments, bool hasAny, HomeProvider homeProvider) {
     if (appointments.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      return RefreshIndicator(
+        color: AppColors.primary,
+        backgroundColor: Colors.white,
+        onRefresh: () async {
+          await context.read<AppointmentProvider>().fetchMyAppointments(forceRefresh: true);
+        },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
           children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.08),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        hasAny ? Icons.search_off_rounded : Icons.calendar_today_rounded,
+                        size: 48, color: AppColors.primary.withValues(alpha: 0.5)
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      hasAny ? 'Không tìm thấy lịch hẹn' : 'Bạn chưa có lịch hẹn nào',
+                      style: const TextStyle(color: Color(0xFF6B7280), fontSize: 15, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      hasAny ? 'Thử tìm kiếm khác' : 'Hãy đặt lịch khám ngay hôm nay!',
+                      style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 13),
+                    ),
+                  ],
+                ),
               ),
-              child: Icon(
-                hasAny ? Icons.search_off_rounded : Icons.calendar_today_rounded,
-                size: 48, color: AppColors.primary.withValues(alpha: 0.5)
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              hasAny ? 'Không tìm thấy lịch hẹn' : 'Bạn chưa có lịch hẹn nào',
-              style: const TextStyle(color: Color(0xFF6B7280), fontSize: 15, fontWeight: FontWeight.w500),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              hasAny ? 'Thử tìm kiếm khác' : 'Hãy đặt lịch khám ngay hôm nay!',
-              style: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 13),
             ),
           ],
         ),
@@ -345,10 +363,18 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
     appointments.sort((a, b) => b.appointmentDate.compareTo(a.appointmentDate));
 
-    return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 120),
-      itemCount: appointments.length,
-      itemBuilder: (context, index) => _buildCard(appointments[index], homeProvider),
+    return RefreshIndicator(
+      color: AppColors.primary,
+      backgroundColor: Colors.white,
+      onRefresh: () async {
+        await context.read<AppointmentProvider>().fetchMyAppointments(forceRefresh: true);
+      },
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 120),
+        itemCount: appointments.length,
+        itemBuilder: (context, index) => _buildCard(appointments[index], homeProvider),
+      ),
     );
   }
 
@@ -492,11 +518,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       const SizedBox(width: 8),
                       // Type Badge
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: (isOnline ? const Color(0xFFEFF6FF) : const Color(0xFFFFFBEB)),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: (isOnline ? const Color(0xFFBFDBFE) : const Color(0xFFFEF3C7))),
+                          gradient: LinearGradient(
+                            colors: isOnline 
+                                ? [const Color(0xFF2563EB).withValues(alpha: 0.15), const Color(0xFF2563EB).withValues(alpha: 0.05)]
+                                : [const Color(0xFFD97706).withValues(alpha: 0.15), const Color(0xFFD97706).withValues(alpha: 0.05)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
                           isOnline ? 'Online' : 'Walk-in',
@@ -515,11 +546,17 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     children: [
                       // Status Badge
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: statusColor.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: statusColor.withValues(alpha: 0.2)),
+                          gradient: LinearGradient(
+                            colors: [
+                              statusColor.withValues(alpha: 0.15),
+                              statusColor.withValues(alpha: 0.05),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,

@@ -43,18 +43,30 @@ class PrescriptionScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
-                            child: const Icon(Icons.medication, color: AppColors.primary, size: 24),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  const Color(0xFF0F766E).withValues(alpha: 0.25),
+                                  const Color(0xFF0F766E).withValues(alpha: 0.05),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(Icons.medication_liquid_rounded, color: Color(0xFF0F766E), size: 24),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(med.medicineName ?? 'Thuốc', style: AppStyles.heading3.copyWith(fontSize: 16)),
+                                Text(med.medicineName ?? 'Thuốc', style: AppStyles.heading3.copyWith(fontSize: 16, height: 1.3)),
+                                const SizedBox(height: 6),
                                 if (med.price != null && med.price! > 0)
                                   Text(
                                     CurrencyFormatter.formatVND(med.price!),
@@ -64,32 +76,44 @@ class PrescriptionScreen extends StatelessWidget {
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: Colors.green.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(20),
+                              color: const Color(0xFFF1F5F9),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
                             ),
                             child: Text(
                               '${med.quantity} ${med.unit}',
-                              style: AppStyles.caption.copyWith(color: Colors.green, fontWeight: FontWeight.bold),
+                              style: AppStyles.caption.copyWith(color: const Color(0xFF475569), fontWeight: FontWeight.bold, fontSize: 13),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      if (med.dosage != null && med.dosage!.isNotEmpty)
+                      
+                      if (med.dosage != null && med.dosage!.isNotEmpty) ...[
+                        const SizedBox(height: 20),
                         Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(color: AppColors.warning.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEFF6FF), // Blue-50
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Icon(Icons.info_outline_rounded, color: AppColors.warning, size: 16),
-                              const SizedBox(width: 8),
-                              Expanded(child: Text(med.dosage!, style: AppStyles.caption.copyWith(color: AppColors.warning, fontWeight: FontWeight.bold))),
+                              const Icon(Icons.integration_instructions_rounded, color: Color(0xFF3B82F6), size: 18), // Blue-500
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  med.dosage!, 
+                                  style: AppStyles.bodyMedium.copyWith(color: const Color(0xFF1E3A8A), height: 1.4) // Blue-900
+                                ),
+                              ),
                             ],
                           ),
                         ),
+                      ],
                     ],
                   ),
                 );

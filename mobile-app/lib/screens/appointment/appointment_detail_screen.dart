@@ -96,8 +96,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Status Banner
-            _buildStatusBanner(),
+            // Status banner removed
             if (appointment.status == 'NO_SHOW')
               Container(
                 margin: const EdgeInsets.only(top: 16),
@@ -165,26 +164,27 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
               child: Column(
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (widget.appointment.bookingMode == 'SERVICE')
                         Container(
-                          height: 70, width: 70,
+                          height: 60, width: 60,
                           decoration: BoxDecoration(
                             color: AppColors.primary.withOpacity(0.1),
                             shape: BoxShape.circle,
                             border: Border.all(color: AppColors.primary.withOpacity(0.2), width: 2),
                           ),
-                          child: const Icon(Icons.medical_services_outlined, color: AppColors.primary, size: 32),
+                          child: const Icon(Icons.medical_services_outlined, color: AppColors.primary, size: 28),
                         )
                       else
                         Container(
-                          padding: const EdgeInsets.all(3),
+                          padding: const EdgeInsets.all(2),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(color: AppColors.primary.withOpacity(0.2), width: 2),
                           ),
                           child: CircleAvatar(
-                            radius: 32,
+                            radius: 28,
                             backgroundColor: Colors.grey[200],
                             backgroundImage: NetworkImage(avatarUrl),
                           ),
@@ -198,7 +198,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                               widget.appointment.bookingMode == 'SERVICE' ? (widget.appointment.serviceName ?? 'Dịch vụ') : doctorName, 
                               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF1F2937))
                             ),
-                            const SizedBox(height: 4),
+                            const SizedBox(height: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
@@ -213,6 +213,8 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                           ],
                         ),
                       ),
+                      const SizedBox(width: 8),
+                      _buildStatusBadge(),
                     ],
                   ),
                   const Padding(
@@ -352,7 +354,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
     );
   }
 
-  Widget _buildStatusBanner() {
+  Widget _buildStatusBadge() {
     Color statusColor;
     String statusText;
     IconData statusIcon;
@@ -410,17 +412,24 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: statusColor.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: statusColor.withOpacity(0.2)),
+        gradient: LinearGradient(
+          colors: [
+            statusColor.withOpacity(0.15),
+            statusColor.withOpacity(0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(statusIcon, color: statusColor, size: 24),
-          const SizedBox(width: 12),
-          Text(statusText, style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: 15)),
+          Icon(statusIcon, color: statusColor, size: 12),
+          const SizedBox(width: 4),
+          Text(statusText, style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: 11)),
         ],
       ),
     );

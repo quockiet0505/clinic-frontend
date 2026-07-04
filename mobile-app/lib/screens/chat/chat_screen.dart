@@ -74,10 +74,14 @@ class _ChatScreenState extends State<ChatScreen> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.smart_toy_rounded, color: AppColors.primary, size: 20),
+                      child: const Icon(Icons.support_agent_rounded, color: Colors.white, size: 20),
                     ),
                     const SizedBox(width: 10),
                     const Expanded(
@@ -160,11 +164,15 @@ class _ChatScreenState extends State<ChatScreen> {
             width: 32,
             height: 32,
             margin: const EdgeInsets.only(right: 8, bottom: 4),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.1),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.smart_toy_rounded, color: AppColors.primary, size: 16),
+            child: const Icon(Icons.support_agent_rounded, color: Colors.white, size: 16),
           ),
           Container(
             margin: const EdgeInsets.only(bottom: 12),
@@ -203,11 +211,15 @@ class _ChatScreenState extends State<ChatScreen> {
               width: 32,
               height: 32,
               margin: const EdgeInsets.only(right: 8, bottom: 4),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.smart_toy_rounded, color: AppColors.primary, size: 16),
+              child: const Icon(Icons.support_agent_rounded, color: Colors.white, size: 16),
             ),
           ],
           Container(
@@ -215,7 +227,14 @@ class _ChatScreenState extends State<ChatScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.68),
             decoration: BoxDecoration(
-              color: isUser ? AppColors.primary : Colors.white,
+              gradient: isUser
+                  ? const LinearGradient(
+                      colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )
+                  : null,
+              color: isUser ? null : Colors.white,
               borderRadius: BorderRadius.only(
                 topLeft: const Radius.circular(18),
                 topRight: const Radius.circular(18),
@@ -245,8 +264,9 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildInputArea(bool isLoading) {
+    final isKeyboardOpen = MediaQuery.of(context).viewInsets.bottom > 0;
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 116),
+      padding: EdgeInsets.fromLTRB(16, 10, 16, isKeyboardOpen ? 16 : 116),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -284,7 +304,14 @@ class _ChatScreenState extends State<ChatScreen> {
             child: Container(
               padding: const EdgeInsets.all(13),
               decoration: BoxDecoration(
-                color: isLoading ? AppColors.primary.withValues(alpha: 0.5) : AppColors.primary,
+                gradient: isLoading
+                    ? null
+                    : const LinearGradient(
+                        colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                color: isLoading ? AppColors.primary.withValues(alpha: 0.5) : null,
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.send_rounded, color: Colors.white, size: 18),

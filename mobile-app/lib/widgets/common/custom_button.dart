@@ -21,24 +21,7 @@ class CustomButton extends StatelessWidget {
       height: 56,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
-          colors: color != null 
-            ? [color!, color!.withOpacity(0.8)] 
-            : const [
-                Color(0xFF60A5FA), // Blue 400
-                Color(0xFF3B82F6), // Blue 500
-                Color(0xFF2563EB), // Blue 600
-              ],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: (color ?? AppColors.primary).withOpacity(0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        gradient: color != null ? LinearGradient(colors: [color!, color!.withOpacity(0.8)], begin: Alignment.centerLeft, end: Alignment.centerRight) : AppColors.primaryGradient,
       ),
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,

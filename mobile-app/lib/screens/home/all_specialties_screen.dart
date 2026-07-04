@@ -1,4 +1,5 @@
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/home_provider.dart';
 
@@ -55,10 +56,12 @@ class AllSpecialtiesScreen extends StatelessWidget {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Image.network(
-                              provider.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl']),
+                            child: CachedNetworkImage(imageUrl: provider.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl']),
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
                               fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) => const Icon(Icons.medical_services, color: AppColors.primary, size: 36),
+                              errorWidget: (context, url, error) => const Icon(Icons.medical_services, color: AppColors.primary, size: 36),
                             ),
                           ),
                         ),

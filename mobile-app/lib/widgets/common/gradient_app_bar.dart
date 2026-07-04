@@ -25,21 +25,12 @@ class GradientAppBar extends StatelessWidget implements PreferredSizeWidget {
     Widget? leadingWidget = leading;
     
     if (leadingWidget == null && automaticallyImplyLeading && Navigator.canPop(context)) {
-      leadingWidget = Center(
-        child: Container(
-          height: 40,
-          width: 40,
-          margin: const EdgeInsets.only(left: 16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFE2E8F0)),
-          ),
-          child: IconButton(
-            padding: EdgeInsets.zero,
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight, size: 18),
-            onPressed: onBackPress ?? () => Navigator.pop(context),
-          ),
+      leadingWidget = Padding(
+        padding: const EdgeInsets.only(left: 16),
+        child: IconButton(
+          padding: EdgeInsets.zero,
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight, size: 22),
+          onPressed: onBackPress ?? () => Navigator.pop(context),
         ),
       );
     }

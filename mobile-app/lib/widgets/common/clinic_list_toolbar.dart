@@ -19,6 +19,7 @@ class ClinicListToolbar extends StatelessWidget {
   final List<ClinicTabItem>? tabs;
   final String? selectedTab;
   final ValueChanged<String>? onTabChanged;
+  final Widget? trailingTabWidget;
 
   final EdgeInsetsGeometry padding;
 
@@ -35,6 +36,7 @@ class ClinicListToolbar extends StatelessWidget {
     this.tabs,
     this.selectedTab,
     this.onTabChanged,
+    this.trailingTabWidget,
     this.padding = const EdgeInsets.fromLTRB(20, 0, 20, 0),
   });
 
@@ -68,11 +70,21 @@ class ClinicListToolbar extends StatelessWidget {
           ),
           if (showTabs) ...[
             const SizedBox(height: 12),
-            ClinicSegmentedTabs(
-              tabs: tabs!,
-              selectedValue: selectedTab!,
-              onChanged: onTabChanged!,
-              padding: EdgeInsets.zero,
+            Row(
+              children: [
+                Expanded(
+                  child: ClinicSegmentedTabs(
+                    tabs: tabs!,
+                    selectedValue: selectedTab!,
+                    onChanged: onTabChanged!,
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
+                if (trailingTabWidget != null) ...[
+                  const SizedBox(width: 8),
+                  trailingTabWidget!,
+                ],
+              ],
             ),
           ],
         ],

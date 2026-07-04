@@ -29,20 +29,12 @@ class GradientButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(27),
         gradient: LinearGradient(
           colors: [
-            const Color(0xFF60A5FA).withValues(alpha: isLoading ? 0.7 : 1.0), // Blue 400
-            const Color(0xFF3B82F6).withValues(alpha: isLoading ? 0.7 : 1.0), // Blue 500
-            const Color(0xFF2563EB).withValues(alpha: isLoading ? 0.7 : 1.0), // Blue 600
+            const Color(0xFF0284C7).withValues(alpha: isLoading ? 0.7 : 1.0),
+            const Color(0xFF38BDF8).withValues(alpha: isLoading ? 0.7 : 1.0),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF3B82F6).withValues(alpha: isLoading ? 0.2 : 0.4),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
       ),
       child: Material(
         color: Colors.transparent,

@@ -36,9 +36,13 @@ class HomeProvider extends ChangeNotifier {
   }
 
   Future<void> fetchHomeData() async {
-    isLoading = true;
+    // Chỉ bật shimmer (isLoading = true) nếu chưa có dữ liệu nào
+    if (doctors.isEmpty && services.isEmpty) {
+      isLoading = true;
+      notifyListeners();
+    }
+    
     error = null;
-    notifyListeners();
 
     try {
       final startTime = DateTime.now();

@@ -88,25 +88,47 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               if (provider.logoUrl != null)
                 Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))]),
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(color: const Color(0xFF2563EB).withOpacity(0.10), blurRadius: 12, offset: const Offset(0, 4)),
+                      BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 4, offset: const Offset(0, 1)),
+                    ],
+                  ),
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: Image.network(
-                      provider.fixImageUrl(provider.logoUrl),
-                      height: 32,
-                      width: 32,
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(imageUrl: provider.fixImageUrl(provider.logoUrl),
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
+                      height: 44,
+                      width: 44,
                       fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.local_hospital, color: AppColors.primary, size: 32),
+                      placeholder: (context, url) => Shimmer.fromColors(
+                        baseColor: Colors.grey[200]!,
+                        highlightColor: Colors.grey[50]!,
+                        child: Container(color: Colors.white, height: 44, width: 44),
+                      ),
+                      errorWidget: (context, url, error) => const Icon(Icons.local_hospital, color: AppColors.primary, size: 40),
                     ),
                   ),
                 )
               else
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 8, offset: const Offset(0, 2))]),
-                  child: const Icon(Icons.local_hospital, color: AppColors.primary, size: 32),
-                ),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 10, offset: const Offset(0, 3))],
+                    ),
+                    child: const Icon(Icons.local_hospital, color: Colors.white, size: 28),
+                  ),
               
               const SizedBox(width: 12),
               Column(
@@ -120,11 +142,19 @@ class _HomeScreenState extends State<HomeScreen> {
               Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Container(
-                    height: 40, width: 40,
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))]),
-                    child: IconButton(
-                      icon: const Icon(Icons.notifications_none_rounded, color: AppColors.primary, size: 24),
+                    Container(
+                      height: 40, width: 40,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 24),
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (_) => const NotificationScreen()));
                       },
@@ -215,9 +245,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4))],
                     ),
-                    child: Image.network(
-                      provider.fixImageUrl(action['iconUrl']),
-                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.category, color: AppColors.primary),
+                    child: CachedNetworkImage(imageUrl: provider.fixImageUrl(action['iconUrl']),
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
+                      placeholder: (context, url) => Shimmer.fromColors(
+                        baseColor: Colors.grey[200]!,
+                        highlightColor: Colors.grey[50]!,
+                        child: Container(color: Colors.white),
+                      ),
+                      errorWidget: (context, url, error) => const Icon(Icons.category, color: AppColors.primary),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -363,10 +400,17 @@ class _HomeScreenState extends State<HomeScreen> {
               tag: 'doctor_img_home_${doctor.id}',
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  provider.fixImageUrl(doctor.imageUrl), 
+                child: CachedNetworkImage(imageUrl: provider.fixImageUrl(doctor.imageUrl),
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero, 
                   height: 90, width: double.infinity, fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200], height: 90, child: const Icon(Icons.person, color: Colors.grey)),
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: Colors.grey[200]!,
+                    highlightColor: Colors.grey[50]!,
+                    child: Container(color: Colors.white, height: 90),
+                  ),
+                  errorWidget: (context, url, error) => Container(color: Colors.grey[200], height: 90, child: const Icon(Icons.person, color: Colors.grey)),
                 ),
               ),
             ),
@@ -458,12 +502,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(14),
-                      child: Image.network(
-                        provider.fixImageUrl(service.imageUrl),
+                      child: CachedNetworkImage(imageUrl: provider.fixImageUrl(service.imageUrl),
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
                         height: 56,
                         width: 56,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Container(
+                        placeholder: (context, url) => Shimmer.fromColors(
+                          baseColor: Colors.grey[200]!,
+                          highlightColor: Colors.grey[50]!,
+                          child: Container(color: Colors.white, height: 56, width: 56),
+                        ),
+                        errorWidget: (context, url, error) => Container(
                           height: 56,
                           width: 56,
                           decoration: BoxDecoration(color: AppColors.accentMint, borderRadius: BorderRadius.circular(14)),
@@ -610,10 +661,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius: BorderRadius.circular(16), 
                                 boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4))]
                               ),
-                              child: Image.network(
-                                provider.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl']),
+                              child: CachedNetworkImage(imageUrl: provider.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl']),
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
                                 fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) => const Icon(Icons.medical_services, color: AppColors.primary, size: 24),
+                                placeholder: (context, url) => Shimmer.fromColors(
+                                  baseColor: Colors.grey[200]!,
+                                  highlightColor: Colors.grey[50]!,
+                                  child: Container(color: Colors.white),
+                                ),
+                                errorWidget: (context, url, error) => const Icon(Icons.medical_services, color: AppColors.primary, size: 24),
                               ),
                             ),
                             const SizedBox(height: 8),

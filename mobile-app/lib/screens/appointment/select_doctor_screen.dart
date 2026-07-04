@@ -1,4 +1,5 @@
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/home_provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
@@ -153,12 +154,14 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
               tag: 'doctor_img_${doctor.id}',
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Image.network(
-                  homeProvider.fixImageUrl(doctor.imageUrl),
+                child: CachedNetworkImage(imageUrl: homeProvider.fixImageUrl(doctor.imageUrl),
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
                   height: 80,
                   width: 80,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
+                  errorWidget: (context, url, error) => Container(
                     color: Colors.grey[200],
                     height: 80,
                     width: 80,

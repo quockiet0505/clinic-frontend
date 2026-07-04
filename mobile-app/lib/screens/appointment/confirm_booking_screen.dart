@@ -1,4 +1,5 @@
 import 'package:clinic_management_system/app_exports.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:clinic_management_system/utils/image_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:clinic_management_system/providers/appointment_provider.dart';
@@ -177,10 +178,12 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
             tag: 'doctor_img_${doctor.id}',
             child: ClipRRect(
               borderRadius: BorderRadius.circular(16),
-              child: Image.network(
-                doctor.imageUrl != null ? ImageUtils.fixImageUrl(doctor.imageUrl) : 'https://ui-avatars.com/api/?name=N/A&background=random&format=png',
+              child: CachedNetworkImage(imageUrl: doctor.imageUrl != null ? ImageUtils.fixImageUrl(doctor.imageUrl) : 'https://ui-avatars.com/api/?name=N/A&background=random&format=png',
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
                 height: 70, width: 70, fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(color: Colors.grey[200], height: 70, width: 70, child: const Icon(Icons.person, color: Colors.grey)),
+                errorWidget: (context, url, error) => Container(color: Colors.grey[200], height: 70, width: 70, child: const Icon(Icons.person, color: Colors.grey)),
               ),
             ),
           ),
@@ -261,10 +264,12 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: AppColors.textSubLight.withValues(alpha: 0.1)),
             ),
-            child: Image.network(
-              ImageUtils.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl']),
+            child: CachedNetworkImage(imageUrl: ImageUtils.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl']),
+                        memCacheWidth: 400,
+                        fadeInDuration: Duration.zero,
+                        fadeOutDuration: Duration.zero,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => const Icon(Icons.medical_services, color: AppColors.primary, size: 36),
+              errorWidget: (context, url, error) => const Icon(Icons.medical_services, color: AppColors.primary, size: 36),
             ),
           ),
           const SizedBox(width: 16),

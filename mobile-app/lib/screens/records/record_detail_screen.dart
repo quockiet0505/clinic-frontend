@@ -86,27 +86,64 @@ class _RecordDetailScreenState extends State<RecordDetailScreen> {
                           Text('Mã BA: ${widget.record.recordId}', style: AppStyles.caption.copyWith(color: AppColors.textSubLight, fontWeight: FontWeight.bold, fontSize: 13)),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-                            child: Text(widget.record.status, style: AppStyles.caption.copyWith(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 13)),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.green.withValues(alpha: 0.15),
+                                  Colors.green.withValues(alpha: 0.05),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(20)
+                            ),
+                            child: Text(
+                              widget.record.status.toUpperCase() == 'DONE' ? 'Hoàn thành' : widget.record.status, 
+                              style: AppStyles.caption.copyWith(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 13)
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
-                      Text(widget.record.diagnosis ?? 'Chưa có chuẩn đoán', style: AppStyles.heading2.copyWith(fontSize: 18)),
+                      Text(widget.record.diagnosis ?? 'Chưa có chẩn đoán', style: AppStyles.heading2.copyWith(fontSize: 18, height: 1.3)),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(8)),
+                            child: const Icon(Icons.person_rounded, size: 16, color: Color(0xFF64748B)),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Bác sĩ điều trị', style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
+                                Text(widget.record.doctorName ?? 'Chưa rõ', style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 16),
                       Row(
                         children: [
-                          const Icon(Icons.person_outline, size: 16, color: AppColors.primary),
-                          const SizedBox(width: 8),
-                          Text('Bác sĩ điều trị: ${widget.record.doctorName ?? 'Chưa rõ'}', style: AppStyles.bodyMedium.copyWith(fontSize: 14)),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          const Icon(Icons.calendar_today_outlined, size: 16, color: AppColors.primary),
-                          const SizedBox(width: 8),
-                          Text('Ngày khám: ${DateFormatter.formatDateTime(widget.record.createdAt)}', style: AppStyles.bodyMedium.copyWith(fontSize: 14)),
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(color: const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(8)),
+                            child: const Icon(Icons.calendar_today_rounded, size: 16, color: Color(0xFF64748B)),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Ngày khám', style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
+                                Text(DateFormatter.formatDateTime(widget.record.createdAt), style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -115,26 +152,24 @@ class _RecordDetailScreenState extends State<RecordDetailScreen> {
                 const SizedBox(height: 24),
 
                 // Links to other details
-                Row(
+                Column(
                   children: [
-                    Expanded(
-                      child: _buildActionCard(
-                        context, 
-                        'Đơn thuốc', 
-                        Icons.medication_outlined, 
-                        Colors.orange, 
-                        () => Navigator.push(context, MaterialPageRoute(builder: (_) => PrescriptionScreen(medicines: medicines)))
-                      ),
+                    _buildActionTile(
+                      context,
+                      title: 'Đơn thuốc',
+                      subtitle: '${medicines.length} loại thuốc',
+                      icon: Icons.medication_rounded,
+                      gradientColors: const [Color(0xFFF97316), Color(0xFFEA580C)],
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => PrescriptionScreen(medicines: medicines))),
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: _buildActionCard(
-                        context, 
-                        'Kết quả CLS', 
-                        Icons.science_outlined, 
-                        Colors.blue, 
-                        () => Navigator.push(context, MaterialPageRoute(builder: (_) => LabResultScreen(results: labResults)))
-                      ),
+                    const SizedBox(height: 16),
+                    _buildActionTile(
+                      context,
+                      title: 'Khám Cận lâm sàng',
+                      subtitle: '${labResults.length} kết quả',
+                      icon: Icons.science_rounded,
+                      gradientColors: const [Color(0xFF8B5CF6), Color(0xFF6D28D9)],
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => LabResultScreen(results: labResults))),
                     ),
                   ],
                 ),
@@ -155,11 +190,12 @@ class _RecordDetailScreenState extends State<RecordDetailScreen> {
                       Text('Sinh hiệu', style: AppStyles.heading3),
                       const SizedBox(height: 16),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _buildVitalItem('Huyết áp', '120/80', 'mmHg'),
-                          _buildVitalItem('Nhịp tim', '75', 'lần/p'),
-                          _buildVitalItem('Nhiệt độ', '37', '°C'),
+                          _buildVitalItem('Huyết áp', '120/80', 'mmHg', Icons.water_drop_rounded, const Color(0xFFEF4444)),
+                          const SizedBox(width: 12),
+                          _buildVitalItem('Nhịp tim', '75', 'bpm', Icons.favorite_rounded, const Color(0xFFF43F5E)),
+                          const SizedBox(width: 12),
+                          _buildVitalItem('Nhiệt độ', '37', '°C', Icons.thermostat_rounded, const Color(0xFFF59E0B)),
                         ],
                       ),
                     ],
@@ -173,46 +209,88 @@ class _RecordDetailScreenState extends State<RecordDetailScreen> {
     );
   }
 
-  Widget _buildActionCard(BuildContext context, String title, IconData icon, Color color, VoidCallback onTap) {
+  Widget _buildActionTile(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required List<Color> gradientColors,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 5))],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0, 5))],
         ),
-        child: Column(
+        child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
-              child: Icon(icon, color: color, size: 28),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    gradientColors[0].withValues(alpha: 0.25),
+                    gradientColors[1].withValues(alpha: 0.05),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(icon, color: gradientColors[0], size: 28),
             ),
-            const SizedBox(height: 12),
-            Text(title, style: AppStyles.bodyLarge.copyWith(fontWeight: FontWeight.bold)),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: AppStyles.heading3.copyWith(fontSize: 16)),
+                  const SizedBox(height: 4),
+                  Text(subtitle, style: AppStyles.caption.copyWith(color: AppColors.textSubLight, fontSize: 12)),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: Color(0xFFCBD5E1), size: 24),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildVitalItem(String title, String value, String unit) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Text(title, style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
-        const SizedBox(height: 4),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+  Widget _buildVitalItem(String title, String value, String unit, IconData icon, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withValues(alpha: 0.1)),
+        ),
+        child: Column(
           children: [
-            Text(value, style: AppStyles.heading3.copyWith(color: AppColors.primary)),
-            const SizedBox(width: 2),
-            Text(unit, style: AppStyles.caption.copyWith(fontSize: 10, color: AppColors.textSubLight)),
+            Icon(icon, color: color, size: 24),
+            const SizedBox(height: 8),
+            Text(title, style: AppStyles.caption.copyWith(color: AppColors.textSubLight, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(value, style: AppStyles.heading3.copyWith(color: AppColors.textMainLight, fontSize: 16)),
+                  const SizedBox(width: 2),
+                  Text(unit, style: AppStyles.caption.copyWith(fontSize: 10, color: AppColors.textSubLight)),
+                ],
+              ),
+            ),
           ],
         ),
-      ],
+      ),
     );
   }
 }
