@@ -116,7 +116,7 @@ export const FloatingChatbot: React.FC = () => {
       {isOpen && (
         <div
           ref={chatContainerRef}
-          className="w-[400px] sm:w-[450px] h-[600px] flex flex-col rounded-3xl overflow-hidden shadow-2xl animate-in slide-in-from-bottom-5 duration-300 border border-white/20 bg-white/80 backdrop-blur-xl"
+          className="w-[400px] sm:w-[450px] h-[600px] flex flex-col rounded-3xl overflow-hidden shadow-2xl animate-in slide-in-from-bottom-5 duration-300 border border-slate-200 bg-white"
         >
           {/* Modern Header */}
           <div className="bg-gradient-to-r from-primary-600 to-primary-500 p-4 flex items-center justify-between shadow-md z-10 relative overflow-hidden">

@@ -79,7 +79,7 @@ export const ChatWindow: React.FC<Props> = ({ onClose }) => {
   };
 
   return (
-    <Card className="w-[350px] sm:w-[400px] h-[500px] flex flex-col shadow-2xl rounded-3xl border-border-default overflow-hidden animate-in slide-in-from-bottom-5 duration-300 z-50">
+    <Card className="w-[350px] sm:w-[400px] h-[500px] flex flex-col shadow-2xl rounded-3xl border-border-default overflow-hidden animate-in slide-in-from-bottom-5 duration-300 z-50 bg-white">
 
       {/* Header */}
       <CardHeader className="bg-primary-500 p-4 flex flex-row items-center justify-between border-b border-primary-600/50">
