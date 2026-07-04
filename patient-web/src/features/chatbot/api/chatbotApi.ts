@@ -18,9 +18,12 @@ export const chatbotApi = {
     const sessionId = getOrCreateSessionId();
     const accessToken = getAccessToken();
 
-    const response = await fetch(`${baseUrl}/api/v1/chat/send`, {
+    const response = await fetch(`${baseUrl}/chat/send`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
       body: JSON.stringify({
         message,
         session_id: sessionId,
@@ -51,9 +54,12 @@ export const chatbotApi = {
     const sessionId = getOrCreateSessionId();
     const accessToken = getAccessToken();
 
-    const response = await fetch(`${baseUrl}/api/v1/chat/stream`, {
+    const response = await fetch(`${baseUrl}/chat/stream`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
       body: JSON.stringify({
         message,
         session_id: sessionId,
@@ -96,8 +102,11 @@ export const chatbotApi = {
     const baseUrl = getAiChatBaseUrl();
     const sessionId = getOrCreateSessionId();
     try {
-      await fetch(`${baseUrl}/api/v1/chat/sessions/${sessionId}`, {
+      await fetch(`${baseUrl}/chat/sessions/${sessionId}`, {
         method: 'DELETE',
+        headers: {
+          'ngrok-skip-browser-warning': 'true',
+        },
       });
       // Optionally reset session ID in localStorage if desired:
       // localStorage.removeItem('chat_session_id');
