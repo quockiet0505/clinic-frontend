@@ -46,7 +46,10 @@ export const homeApi = {
 
   getLogo: async () => {
     const res = await axiosInstance.get('/public/logos/main');
-    return `${staticUrl}${res.data.data.imageUrl}`;
+    const url = res.data?.data?.imageUrl;
+    if (!url) throw new Error('No logo url');
+    if (url.startsWith('http')) return url;
+    return `${staticUrl}${url}`;
   },
 
   getBanner: async (key: string = 'main') => {
