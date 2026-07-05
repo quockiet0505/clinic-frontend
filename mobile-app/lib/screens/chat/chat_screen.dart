@@ -13,6 +13,13 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
+  final List<String> _suggestedQuestions = [
+    "Đặt lịch khám",
+    "Giờ làm việc",
+    "Hồ sơ bệnh án",
+    "Các chuyên khoa",
+  ];
+
   @override
   void dispose() {
     _messageController.dispose();
@@ -125,6 +132,14 @@ class _ChatScreenState extends State<ChatScreen> {
                         ],
                       ),
                     ),
+                    const SizedBox(width: 12),
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      icon: const Icon(Icons.refresh_rounded, color: Color(0xFF9CA3AF), size: 24),
+                      onPressed: () => context.read<ChatProvider>().clearMessages(),
+                      tooltip: 'Làm mới cuộc trò chuyện',
+                    ),
                   ],
                 ),
               ),
@@ -147,6 +162,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                 ),
               ),
+              _buildSuggestedQuestions(chatProvider.isLoading),
               _buildInputArea(chatProvider.isLoading),
             ],
           );
@@ -188,15 +204,21 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ],
             ),
-            child: const SizedBox(
-              width: 18,
-              height: 18,
-              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 4),
+              child: _BouncingDots(),
             ),
           ),
         ],
       ),
     );
+  }
+
+  String _formatMessage(String text) {
+    var formatted = text.replaceAll('**', '');
+    // Xóa bỏ các dòng trắng dư thừa (ví dụ \n \n thành \n)
+    formatted = formatted.replaceAll(RegExp(r'\n(?:\s*\n)+'), '\n');
+    return formatted;
   }
 
   Widget _buildMessageBubble(String text, bool isUser) {
@@ -250,7 +272,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ],
             ),
             child: Text(
-              text,
+              isUser ? text : _formatMessage(text),
               style: TextStyle(
                 color: isUser ? Colors.white : const Color(0xFF1F2937),
                 fontSize: 14,
@@ -259,6 +281,37 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSuggestedQuestions(bool isLoading) {
+    return Container(
+      height: 36,
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        scrollDirection: Axis.horizontal,
+        itemCount: _suggestedQuestions.length,
+        separatorBuilder: (context, index) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final question = _suggestedQuestions[index];
+          return ActionChip(
+            label: Text(
+              question,
+              style: const TextStyle(fontSize: 13, color: Color(0xFF0284C7)),
+            ),
+            backgroundColor: Colors.white,
+            side: const BorderSide(color: Color(0xFFBAE6FD)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            onPressed: isLoading
+                ? null
+                : () {
+                    _messageController.text = question;
+                    _sendMessage();
+                  },
+          );
+        },
       ),
     );
   }
@@ -322,3 +375,66 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 }
+
+class _BouncingDots extends StatefulWidget {
+  const _BouncingDots();
+
+  @override
+  State<_BouncingDots> createState() => _BouncingDotsState();
+}
+
+class _BouncingDotsState extends State<_BouncingDots> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Widget _buildDot(int index) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        // Offset for each dot so they bounce sequentially
+        final double offset = index * 0.2;
+        final double value = (_controller.value + offset) % 1.0;
+        
+        // Simple sine-like wave using abs and translation
+        // value goes 0 -> 1. We want 0 -> up -> 0
+        final double y = (value < 0.5) ? -(value * 2) * 5 : -((1 - value) * 2) * 5;
+
+        return Transform.translate(
+          offset: Offset(0, y),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 3),
+            width: 7,
+            height: 7,
+            decoration: const BoxDecoration(
+              color: Color(0xFF38BDF8),
+              shape: BoxShape.circle,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(3, (index) => _buildDot(index)),
+    );
+  }
+}
+

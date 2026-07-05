@@ -19,12 +19,35 @@ export const FloatingChatbot: React.FC = () => {
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const quickRepliesRef = useRef<HTMLDivElement>(null);
+  
+  // Drag to scroll logic
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!quickRepliesRef.current) return;
+    setIsDragging(true);
+    setStartX(e.pageX - quickRepliesRef.current.offsetLeft);
+    setScrollLeft(quickRepliesRef.current.scrollLeft);
+  };
+
+  const handleMouseLeave = () => setIsDragging(false);
+  const handleMouseUp = () => setIsDragging(false);
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !quickRepliesRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - quickRepliesRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    quickRepliesRef.current.scrollLeft = scrollLeft - walk;
+  };
 
   const quickReplies = [
-    "Lịch làm việc",
-    "Hướng dẫn đặt lịch",
-    "Chi phí khám",
-    "Chat mới"
+    "Đặt lịch khám",
+    "Giờ làm việc",
+    "Hồ sơ bệnh án",
+    "Các chuyên khoa"
   ];
 
   useEffect(() => {
@@ -135,12 +158,33 @@ export const FloatingChatbot: React.FC = () => {
                 <span className="text-white/80 text-[12px] font-medium">Trực tuyến</span>
               </div>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition-colors cursor-pointer relative z-10"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-1 relative z-10">
+              <button
+                onClick={async () => {
+                  setMessages([{
+                    id: Math.random().toString(),
+                    text: 'Xin chào! Cuộc trò chuyện đã được làm mới. Tôi là Trợ lý Y tế AI của ClinicPro. Tôi có thể giúp gì cho bạn hôm nay?',
+                    sender: 'AI',
+                    timestamp: new Date()
+                  }]);
+                  try {
+                    await chatbotApi.clearSession();
+                  } catch (e) {
+                    console.error(e);
+                  }
+                }}
+                className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition-colors cursor-pointer"
+                title="Làm mới cuộc trò chuyện"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+              </button>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-white/80 hover:text-white hover:bg-white/20 p-2 rounded-full transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Body */}
@@ -171,11 +215,8 @@ export const FloatingChatbot: React.FC = () => {
                         if (msg.sender !== 'AI') return msg.text;
 
                         let formatted = msg.text.replace(/\*\*/g, '');
-                        // Bắt lỗi AI dính chữ vào gạch đầu dòng (ví dụ: VNĐ- Gói)
-                        formatted = formatted.replace(/([^\n:;])\s*-\s/g, '$1\n- ');
-                        formatted = formatted.replace(/: - /g, ':\n- ');
-                        formatted = formatted.replace(/:-\s/g, ':\n- ');
-
+                        // Bỏ replace RegExp quá khắt khe gây lỗi giờ giấc (VD: 7:00 - 19:00)
+                        
                         // Xóa bỏ các dòng trắng dư thừa (ví dụ \n \n thành \n)
                         formatted = formatted.replace(/\n(?:\s*\n)+/g, '\n');
 
@@ -208,14 +249,21 @@ export const FloatingChatbot: React.FC = () => {
           </div>
 
           {/* Quick Replies */}
-          <div className="px-3 pb-1">
-            <div className="flex flex-wrap gap-1.5 justify-start">
+          <div className="px-3 pb-2">
+            <div 
+              ref={quickRepliesRef}
+              onMouseDown={handleMouseDown}
+              onMouseLeave={handleMouseLeave}
+              onMouseUp={handleMouseUp}
+              onMouseMove={handleMouseMove}
+              className={`flex gap-1.5 justify-start overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+            >
               {quickReplies.map((reply, index) => (
                 <button
                   key={index}
                   onClick={() => handleSend(reply)}
                   disabled={isTyping}
-                  className="px-3 py-1.5 rounded-full border border-primary-100 bg-white hover:bg-primary-50 text-primary-600 text-[12px] font-medium transition-colors cursor-pointer shadow-sm disabled:opacity-50"
+                  className="shrink-0 whitespace-nowrap px-3 py-1.5 rounded-full border border-primary-100 bg-white hover:bg-primary-50 text-primary-600 text-[12px] font-medium transition-colors shadow-sm disabled:opacity-50"
                 >
                   {reply}
                 </button>

@@ -323,6 +323,7 @@ class _ReviewScreenState extends State<ReviewScreen>
           labelColor: AppColors.primary,
           unselectedLabelColor: AppColors.textSubLight,
           indicatorColor: AppColors.primary,
+          indicatorSize: TabBarIndicatorSize.label,
           indicatorWeight: 3,
           labelStyle: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
           unselectedLabelStyle: AppStyles.bodyMedium,

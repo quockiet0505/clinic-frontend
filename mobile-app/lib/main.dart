@@ -51,7 +51,7 @@ class ClinicApp extends StatelessWidget {
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       debugShowCheckedModeBanner: false,
-      home: const AuthWrapper(), 
+      home: const AuthWrapper(),
     );
   }
 }
@@ -76,7 +76,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
   Future<void> _checkAuth() async {
     const storage = FlutterSecureStorage();
     final token = await storage.read(key: 'jwt_token');
-    
+
     if (token != null && token.isNotEmpty) {
       if (mounted) {
         // Tải trước thông tin user & toàn bộ dữ liệu trang chủ trong lúc hiện Splash
@@ -84,7 +84,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
           context.read<AuthProvider>().fetchProfile(),
           context.read<HomeProvider>().fetchHomeData(),
         ]);
-        
+
         // Tải trước ảnh (precache) vào RAM để khi vào app hiện ra ngay lập tức
         if (mounted) {
           await _precacheHomeImages();
@@ -108,9 +108,11 @@ class _AuthWrapperState extends State<AuthWrapper> {
       final provider = context.read<HomeProvider>();
       final List<String> urls = [];
 
-      if (provider.logoUrl != null) urls.add(provider.fixImageUrl(provider.logoUrl));
+      if (provider.logoUrl != null)
+        urls.add(provider.fixImageUrl(provider.logoUrl));
       for (var action in provider.quickActions) {
-        if (action['iconUrl'] != null) urls.add(provider.fixImageUrl(action['iconUrl']));
+        if (action['iconUrl'] != null)
+          urls.add(provider.fixImageUrl(action['iconUrl']));
       }
       for (var doc in provider.doctors.take(3)) {
         if (doc.imageUrl != null) urls.add(provider.fixImageUrl(doc.imageUrl));
@@ -119,13 +121,16 @@ class _AuthWrapperState extends State<AuthWrapper> {
         if (srv.imageUrl != null) urls.add(provider.fixImageUrl(srv.imageUrl));
       }
 
-      final futures = urls.map((url) => precacheImage(
-        CachedNetworkImageProvider(url, maxWidth: 400),
-        context,
-      )).toList();
+      final futures = urls
+          .map((url) => precacheImage(
+                CachedNetworkImageProvider(url, maxWidth: 400),
+                context,
+              ))
+          .toList();
 
       // Chỉ chờ tối đa 2 giây cho việc tải ảnh nền để tránh kẹt Splash quá lâu
-      await Future.wait(futures).timeout(const Duration(seconds: 2), onTimeout: () => []);
+      await Future.wait(futures)
+          .timeout(const Duration(seconds: 2), onTimeout: () => []);
     } catch (e) {
       // Bỏ qua lỗi precache
     }
@@ -136,7 +141,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     if (_isLoading) {
       return const _SplashScreen();
     }
-    
+
     if (_isAuthenticated) {
       return const MainScreen();
     } else {

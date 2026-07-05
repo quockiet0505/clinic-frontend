@@ -44,14 +44,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.05),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.star_rounded, size: 60, color: AppColors.primary),
-            ),
             const SizedBox(height: 24),
             Text('Bạn đánh giá thế nào về trải nghiệm tại phòng khám?', style: AppStyles.heading2.copyWith(fontSize: 20), textAlign: TextAlign.center),
             const SizedBox(height: 8),

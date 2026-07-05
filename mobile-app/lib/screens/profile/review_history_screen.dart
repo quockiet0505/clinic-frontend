@@ -354,6 +354,7 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> {
       onRefresh: _fetchHistory,
       color: AppColors.primary,
       child: ListView.builder(
+        key: PageStorageKey(isDoctor ? 'doctor_reviews' : 'clinic_reviews'),
         padding: const EdgeInsets.all(16),
         itemCount: list.length,
         itemBuilder: (context, index) => _buildReviewCard(list[index], isDoctor),
@@ -396,9 +397,12 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> {
                           ],
                         ),
                       )
-                    : _buildList(
-                        _selectedTab == 'DOCTOR' ? _doctorFeedbacks : _clinicFeedbacks,
-                        _selectedTab == 'DOCTOR',
+                    : IndexedStack(
+                        index: _selectedTab == 'DOCTOR' ? 0 : 1,
+                        children: [
+                          _buildList(_doctorFeedbacks, true),
+                          _buildList(_clinicFeedbacks, false),
+                        ],
                       ),
           ),
         ],

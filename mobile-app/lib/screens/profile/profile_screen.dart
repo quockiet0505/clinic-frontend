@@ -218,33 +218,33 @@ class ProfileScreen extends StatelessWidget {
                       subtitle: 'Bảo mật tài khoản của bạn',
                       onTap: () => _showChangePasswordSheet(context, auth),
                     ),
-                    _buildDivider(),
-                    _buildActionRow(
-                      context,
-                      icon: Icons.language_rounded,
-                      iconColor: const Color(0xFF059669),
-                      iconBg: const Color(0xFFECFDF5),
-                      title: context.locale.languageCode == 'vi' ? 'Ngôn ngữ: Tiếng Việt' : 'Language: English',
-                      subtitle: context.locale.languageCode == 'vi' ? 'Nhấn để chuyển sang tiếng Anh' : 'Tap to switch to Vietnamese',
-                      trailing: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFECFDF5),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          context.locale.languageCode == 'vi' ? 'VI' : 'EN',
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF059669)),
-                        ),
-                      ),
-                      onTap: () async {
-                        if (context.locale.languageCode == 'vi') {
-                          await context.setLocale(const Locale('en'));
-                        } else {
-                          await context.setLocale(const Locale('vi'));
-                        }
-                      },
-                    ),
+                    // _buildDivider(),
+                    // _buildActionRow(
+                    //   context,
+                    //   icon: Icons.language_rounded,
+                    //   iconColor: const Color(0xFF059669),
+                    //   iconBg: const Color(0xFFECFDF5),
+                    //   title: context.locale.languageCode == 'vi' ? 'Ngôn ngữ: Tiếng Việt' : 'Language: English',
+                    //   subtitle: context.locale.languageCode == 'vi' ? 'Nhấn để chuyển sang tiếng Anh' : 'Tap to switch to Vietnamese',
+                    //   trailing: Container(
+                    //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    //     decoration: BoxDecoration(
+                    //       color: const Color(0xFFECFDF5),
+                    //       borderRadius: BorderRadius.circular(8),
+                    //     ),
+                    //     child: Text(
+                    //       context.locale.languageCode == 'vi' ? 'VI' : 'EN',
+                    //       style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF059669)),
+                    //     ),
+                    //   ),
+                    //   onTap: () async {
+                    //     if (context.locale.languageCode == 'vi') {
+                    //       await context.setLocale(const Locale('en'));
+                    //     } else {
+                    //       await context.setLocale(const Locale('vi'));
+                    //     }
+                    //   },
+                    // ),
                   ]),
                 ),
               ),
@@ -788,7 +788,7 @@ class ProfileScreen extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(colors: [Color(0xFF2563EB), Color(0xFF1D4ED8)]),
+                          gradient: const LinearGradient(colors: [Color(0xFF0284C7), Color(0xFF38BDF8)]),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: const Text('Xác nhận đổi mật khẩu', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 16)),

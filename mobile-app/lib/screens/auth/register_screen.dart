@@ -24,17 +24,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final email = _emailController.text.trim();
 
     if (name.isEmpty || phone.isEmpty || email.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Vui lòng điền đủ họ tên, số điện thoại và email')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Vui lòng điền đủ họ tên, số điện thoại và email')));
       return;
     }
-    
+
     setState(() => _currentStep = 1);
-    _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    _pageController.nextPage(
+        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   void _prevStep() {
     setState(() => _currentStep = 0);
-    _pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    _pageController.previousPage(
+        duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
   }
 
   void _handleRegister() async {
@@ -42,12 +45,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final confirm = _confirmController.text;
 
     if (password.isEmpty || confirm.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Vui lòng nhập mật khẩu')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Vui lòng nhập mật khẩu')));
       return;
     }
 
     if (password != confirm) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Mật khẩu xác nhận không khớp')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Mật khẩu xác nhận không khớp')));
       return;
     }
 
@@ -62,10 +67,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!mounted) return;
 
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đăng ký thành công! Vui lòng đăng nhập.')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Đăng ký thành công! Vui lòng đăng nhập.')));
       Navigator.pop(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(authProvider.error ?? 'Đăng ký thất bại')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(authProvider.error ?? 'Đăng ký thất bại')));
     }
   }
 
@@ -87,7 +94,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: GradientAppBar(
         title: '',
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.textMainLight),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: AppColors.textMainLight),
           onPressed: () {
             if (_currentStep == 1) {
               _prevStep();
@@ -109,21 +117,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     height: 80,
                     fit: BoxFit.contain,
                     filterQuality: FilterQuality.high,
-                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.health_and_safety, size: 80, color: AppColors.primary),
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.health_and_safety,
+                        size: 80,
+                        color: AppColors.primary),
                   ),
                   const SizedBox(height: 16),
-                  Text('Tạo tài khoản', style: AppStyles.heading1.copyWith(color: AppColors.textMainLight)),
+                  Text('Tạo tài khoản',
+                      style: AppStyles.heading1
+                          .copyWith(color: AppColors.textMainLight)),
                   const SizedBox(height: 8),
                   Text(
-                    _currentStep == 0 ? 'Nhập thông tin cá nhân của bạn' : 'Tạo mật khẩu bảo mật', 
-                    style: AppStyles.bodyMedium.copyWith(color: AppColors.textSubLight),
+                    _currentStep == 0
+                        ? 'Nhập thông tin cá nhân của bạn'
+                        : 'Tạo mật khẩu bảo mật',
+                    style: AppStyles.bodyMedium
+                        .copyWith(color: AppColors.textSubLight),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 24),
                 ],
               ),
             ),
-            
             Expanded(
               child: PageView(
                 controller: _pageController,
