@@ -51,7 +51,7 @@ export const ServiceDirectory: React.FC = () => {
     const matchesType = typeFilter === 'ALL' || s.serviceType === typeFilter;
 
     let matchesPrice = true;
-    const price = s.discountPrice || s.originalPrice || 0;
+    const price = s.discountAmount || s.originalPrice || 0;
     if (priceFilter === 'LOW') matchesPrice = price < 500000;
     else if (priceFilter === 'MEDIUM') matchesPrice = price >= 500000 && price <= 2000000;
     else if (priceFilter === 'HIGH') matchesPrice = price > 2000000;
@@ -177,8 +177,8 @@ export const ServiceDirectory: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           {currentItems.length > 0 ? (
             currentItems.map((service) => {
-              const hasDiscount = !!(service.discountPrice && service.originalPrice && service.discountPrice < service.originalPrice);
-              const discountPercent = hasDiscount ? Math.round((1 - service.discountPrice! / service.originalPrice!) * 100) : 0;
+              const hasDiscount = !!(service.discountAmount && service.originalPrice && service.discountAmount < service.originalPrice);
+              const discountPercent = hasDiscount ? Math.round((1 - service.discountAmount! / service.originalPrice!) * 100) : 0;
 
               return (
                 <div
@@ -216,7 +216,7 @@ export const ServiceDirectory: React.FC = () => {
                               {formatPrice(service.originalPrice!)}
                             </span>
                             <span className="text-rose-500 font-black text-[18px] leading-none">
-                              {formatPrice(service.discountPrice!)}
+                              {formatPrice(service.discountAmount!)}
                             </span>
                           </div>
                         ) : (

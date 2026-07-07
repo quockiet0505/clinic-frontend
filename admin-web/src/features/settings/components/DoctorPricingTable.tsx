@@ -41,13 +41,13 @@ export default function PricingTable({ doctors = [], onEdit, onDelete, loading =
       render: (doc) => <span className="text-slate-500">{formatCurrency(doc.originalPrice ?? doc.price ?? 0)}</span>,
     },
     {
-      key: 'discountPrice',
+      key: 'discountAmount',
       label: 'Giá giảm',
       className: 'w-[15%]',
       render: (doc) => {
-        const hasDiscount = doc.discountPrice && doc.discountPrice > 0 && doc.discountPrice < (doc.originalPrice ?? doc.price ?? 0);
+        const hasDiscount = doc.discountAmount && doc.discountAmount > 0 && doc.discountAmount < (doc.originalPrice ?? doc.price ?? 0);
         return hasDiscount ? (
-          <span className="text-emerald-600 font-medium">{formatCurrency(doc.discountPrice)}</span>
+          <span className="text-emerald-600 font-medium">{formatCurrency(doc.discountAmount)}</span>
         ) : (
           <span className="text-slate-300">—</span>
         );
@@ -58,7 +58,7 @@ export default function PricingTable({ doctors = [], onEdit, onDelete, loading =
       label: 'Giá áp dụng',
       className: 'w-[15%]',
       render: (doc) => (
-        <span className="font-semibold text-primary-600">{formatCurrency(doc.finalPrice ?? doc.discountPrice ?? doc.originalPrice ?? doc.price)}</span>
+        <span className="font-semibold text-primary-600">{formatCurrency(doc.finalPrice ?? doc.discountAmount ?? doc.originalPrice ?? doc.price)}</span>
       ),
     },
     {

@@ -70,7 +70,7 @@ export const LabResultViewerModal: React.FC<LabResultViewerModalProps> = ({ serv
                       )}
                     </td>
                     <td className="px-8 py-5 text-right font-black text-slate-800">
-                      {order.price != null ? `${order.price.toLocaleString('vi-VN')} ₫` : 'Miễn phí'}
+                      {order.serviceFinalFee != null ? `${order.serviceFinalFee.toLocaleString('vi-VN')} ₫` : 'Miễn phí'}
                     </td>
                   </tr>
                 );

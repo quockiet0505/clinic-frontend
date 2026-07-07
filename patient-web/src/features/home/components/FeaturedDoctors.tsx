@@ -131,7 +131,7 @@ export const FeaturedDoctors: React.FC<Props> = ({ doctors, isLoading }) => {
                       <div className="flex items-start gap-2.5">
                         <CircleDollarSign className="w-[18px] h-[18px] text-[#64748b] shrink-0 mt-0.5" />
                         <span className="line-clamp-1 text-[#334155] font-semibold">
-                          {formatPrice(doctor.consultationFee || 0)}
+                          {formatPrice(doctor.consultationFinalFee || 0)}
                         </span>
                       </div>
                       

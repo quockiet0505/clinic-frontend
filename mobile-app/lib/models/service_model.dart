@@ -3,7 +3,7 @@ class ServiceModel {
   final String serviceName;
   final String serviceType;
   final double originalPrice;
-  final double? discountPrice;
+  final double? discountAmount;
   final String? imageUrl;
   final String? description;
 
@@ -12,7 +12,7 @@ class ServiceModel {
     required this.serviceName,
     required this.serviceType,
     required this.originalPrice,
-    this.discountPrice,
+    this.discountAmount,
     this.imageUrl,
     this.description,
   });
@@ -23,7 +23,7 @@ class ServiceModel {
       serviceName: json['serviceName'] ?? 'Dịch vụ',
       serviceType: json['serviceType'] ?? 'Khám bệnh',
       originalPrice: (json['originalPrice'] as num?)?.toDouble() ?? 0.0,
-      discountPrice: (json['discountPrice'] as num?)?.toDouble(),
+      discountAmount: (json['discountAmount'] as num?)?.toDouble(),
       imageUrl: json['imageUrl'],
       description: json['description'],
     );

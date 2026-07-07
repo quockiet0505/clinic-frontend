@@ -253,7 +253,7 @@ export const DoctorDirectory: React.FC = () => {
                     </div>
                     <div className="flex items-start gap-2.5">
                       <Wallet className="w-4 h-4 text-primary-400 shrink-0 mt-0.5" />
-                      <span>Giá khám: <span className="font-bold text-primary-600">{formatPrice(doctor.consultationFee || 0)}</span></span>
+                      <span>Giá khám: <span className="font-bold text-primary-600">{formatPrice(doctor.consultationFinalFee || 0)}</span></span>
                     </div>
                   </div>
                   

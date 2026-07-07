@@ -3,10 +3,10 @@ import { BaseFilterParams } from '@/types/common';
 import { parsePagedResponse, toNumber } from '@/utils/pagedApi';
 import { Role, Service, Expertise, DoctorPricing } from '../types/settings';
 
-const normalizeService = (item: Service & { originalPrice?: unknown; discountPrice?: unknown }): Service => ({
+const normalizeService = (item: Service & { originalPrice?: unknown; discountAmount?: unknown }): Service => ({
   ...item,
   originalPrice: toNumber(item.originalPrice),
-  discountPrice: item.discountPrice != null ? toNumber(item.discountPrice) : undefined,
+  discountAmount: item.discountAmount != null ? toNumber(item.discountAmount) : undefined,
 });
 
 interface SettingsQueryParams extends BaseFilterParams {
@@ -15,12 +15,12 @@ interface SettingsQueryParams extends BaseFilterParams {
   sortDir?: string;
 }
 
-const normalizeDoctorPrice = (item: DoctorPricing & { finalPrice?: unknown; originalPrice?: unknown; discountPrice?: unknown }): DoctorPricing => ({
+const normalizeDoctorPrice = (item: DoctorPricing & { finalPrice?: unknown; originalPrice?: unknown; discountAmount?: unknown }): DoctorPricing => ({
   ...item,
   originalPrice: toNumber(item.originalPrice),
-  discountPrice: item.discountPrice != null ? toNumber(item.discountPrice) : undefined,
+  discountAmount: item.discountAmount != null ? toNumber(item.discountAmount) : undefined,
   finalPrice: item.finalPrice != null ? toNumber(item.finalPrice) : undefined,
-  price: toNumber(item.finalPrice ?? item.discountPrice ?? item.originalPrice ?? item.price),
+  price: toNumber(item.finalPrice ?? item.discountAmount ?? item.originalPrice ?? item.price),
 });
 
 export const settingsApi = {

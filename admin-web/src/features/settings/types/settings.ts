@@ -12,7 +12,7 @@ export interface Service {
   serviceType: 'EXAM' | 'LAB_TEST' | 'X_RAY' | 'ULTRASOUND' | 'CT_SCAN' | 'MRI' | 'ENDOSCOPY' | 'OTHER';
   estimatedDuration?: number;
   originalPrice: number;
-  discountPrice?: number;
+  discountAmount?: number;
   imageUrl?: string;
   isFeatured?: boolean;
   isDeleted?: number;
@@ -24,7 +24,7 @@ export interface DoctorPricing {
   doctorName: string;
   price: number;
   originalPrice?: number;
-  discountPrice?: number;
+  discountAmount?: number;
   finalPrice?: number;
   imageUrl?: string;
 }

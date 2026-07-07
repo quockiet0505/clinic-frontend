@@ -27,7 +27,9 @@ export interface ServiceOrder {
   orderId: number;
   serviceId: number;
   serviceName: string;
-  price?: number;
+  serviceOriginalFee?: number;
+  serviceDiscount?: number;
+  serviceFinalFee?: number;
   status: string;
   orderedBy: string;
   createdAt: string;
@@ -54,8 +56,9 @@ export interface MedicalRecord {
   status: 'IN_PROGRESS' | 'WAITING_RESULT' | 'DONE' | 'CANCELLED';
   createdAt: string;
   updatedAt: string;
-  consultationFee?: number;
-  serviceFee?: number;
+  consultationOriginalFee?: number;
+  consultationDiscount?: number;
+  consultationFinalFee?: number;
 }
 
 export interface MedicalRecordDetail extends MedicalRecord {

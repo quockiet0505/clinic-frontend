@@ -68,8 +68,8 @@ export interface MedicalRecord {
   status: 'IN_PROGRESS' | 'WAITING_RESULT' | 'DONE' | 'CANCELLED';
   createdAt: string;
   updatedAt: string;
-  consultationFee?: number;
-  serviceFee?: number;
+  consultationFinalFee?: number;
+  serviceFinalFee?: number;
   patientName?: string;
   doctorName?: string;
   checkinTime?: string;

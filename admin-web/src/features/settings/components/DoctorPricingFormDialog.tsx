@@ -8,7 +8,7 @@ import type { DoctorPricing } from '../types/settings';
 interface Props {
   doctor: DoctorPricing | null;
   onClose: () => void;
-  onSave: (id: number, data: { staffId: number; originalPrice: number; discountPrice: number }) => void;
+  onSave: (id: number, data: { staffId: number; originalPrice: number; discountAmount: number }) => void;
 }
 
 export default function DoctorPricingFormDialog({ doctor, onClose, onSave }: Props) {
@@ -35,31 +35,31 @@ export default function DoctorPricingFormDialog({ doctor, onClose, onSave }: Pro
           options: doctors.map(d => ({ value: String(d.staffId), label: d.fullName })),
         },
         { name: 'originalPrice', label: 'Giá gốc (VNĐ)', type: 'number', required: true, placeholder: '300000' },
-        { name: 'discountPrice', label: 'Giá ưu đãi (VNĐ)', type: 'number', required: false, placeholder: 'Để trống = giá gốc' },
+        { name: 'discountAmount', label: 'Giá ưu đãi (VNĐ)', type: 'number', required: false, placeholder: 'Để trống = giá gốc' },
       ]
     : [
         { name: 'originalPrice', label: 'Giá gốc (VNĐ)', type: 'number', required: true, placeholder: '300000' },
-        { name: 'discountPrice', label: 'Giá ưu đãi (VNĐ)', type: 'number', required: false, placeholder: 'Để trống = giá gốc' },
+        { name: 'discountAmount', label: 'Giá ưu đãi (VNĐ)', type: 'number', required: false, placeholder: 'Để trống = giá gốc' },
       ];
 
   const initialData = doctor
     ? {
         staffId: doctor.staffId?.toString() || '',
         originalPrice: doctor.originalPrice ?? doctor.price ?? '',
-        discountPrice: doctor.discountPrice ?? '',
+        discountAmount: doctor.discountAmount ?? '',
       }
     : undefined;
 
   const handleSubmit = (data: Record<string, any>) => {
     const originalPrice = Number(data.originalPrice);
     if (!Number.isFinite(originalPrice) || originalPrice < 0) return;
-    const discountPrice = data.discountPrice !== '' && data.discountPrice != null
-      ? Number(data.discountPrice)
+    const discountAmount = data.discountAmount !== '' && data.discountAmount != null
+      ? Number(data.discountAmount)
       : originalPrice;
     onSave(doctor!.id, {
       staffId: isNew ? Number(data.staffId) : doctor!.staffId,
       originalPrice,
-      discountPrice,
+      discountAmount,
     });
   };
 

@@ -162,7 +162,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
         setLabResultData({
           ...labOrder.result,
           serviceName: labOrder.serviceName,
-          price: labOrder.price,
+          price: labOrder.serviceFinalFee,
           doctorName: detail.mainDoctorName,
           resultId: labOrder.result.resultId,
           patientFullName: detail.patientFullName,

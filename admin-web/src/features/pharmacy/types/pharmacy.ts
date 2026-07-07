@@ -17,8 +17,8 @@ export interface PrescriptionUI {
   createdAt: string;
   status: 'PENDING' | 'DISPENSED';
   diagnosis?: string;
-  consultationFee?: number;
-  serviceFee?: number;
+  consultationFinalFee?: number;
+  serviceFinalFee?: number;
   items: {
     name: string;
     medicineName?: string;

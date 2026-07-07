@@ -6,7 +6,7 @@ class DoctorModel {
   final String? imageUrl;
   final String experience;
   final String biography;
-  final double consultationFee;
+  final double consultationFinalFee;
   final double rating;
   final int patientCount;
 
@@ -23,7 +23,7 @@ class DoctorModel {
     this.imageUrl,
     required this.experience,
     required this.biography,
-    required this.consultationFee,
+    required this.consultationFinalFee,
     required this.rating,
     required this.patientCount,
   });
@@ -40,8 +40,8 @@ class DoctorModel {
         ? (json['patientCount'] as num).toInt() 
         : (100 + safeStaffId * 15);
         
-    final double fee = json['consultationFee'] != null 
-        ? (json['consultationFee'] as num).toDouble() 
+    final double fee = json['consultationFinalFee'] != null 
+        ? (json['consultationFinalFee'] as num).toDouble() 
         : 150000.0;
 
     return DoctorModel(
@@ -52,7 +52,7 @@ class DoctorModel {
       imageUrl: json['imageUrl'],
       experience: json['experience'] ?? 'Nhiều năm kinh nghiệm',
       biography: json['biography'] ?? 'Bác sĩ có chuyên môn cao và luôn tận tâm với bệnh nhân.',
-      consultationFee: fee,
+      consultationFinalFee: fee,
       rating: rating,
       patientCount: patientCount,
     );

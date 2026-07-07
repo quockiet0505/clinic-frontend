@@ -3,15 +3,15 @@ import '../models/service_model.dart';
 extension ServicePriceUtils on ServiceModel {
   /// True only when discount is lower than original (and > 0).
   bool get hasDiscount =>
-      discountPrice != null &&
-      discountPrice! > 0 &&
-      discountPrice! < originalPrice;
+      discountAmount != null &&
+      discountAmount! > 0 &&
+      discountAmount! < originalPrice;
 
-  double get effectivePrice => hasDiscount ? discountPrice! : originalPrice;
+  double get effectivePrice => hasDiscount ? discountAmount! : originalPrice;
 
   int get discountPercent {
     if (!hasDiscount || originalPrice <= 0) return 0;
-    return ((1 - discountPrice! / originalPrice) * 100).round();
+    return ((1 - discountAmount! / originalPrice) * 100).round();
   }
 }
 

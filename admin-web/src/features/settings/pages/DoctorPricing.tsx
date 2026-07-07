@@ -67,7 +67,7 @@ export default function DoctorPricing() {
           <StatsCard icon={<DollarSign size={16} />} label="Tổng cấu hình" value={totalPrices} />
           <StatsCard icon={<DollarSign size={16} />} label="Giá trung bình" value={avgPrice} bgColor="bg-emerald-50" iconColor="text-emerald-600" />
           <GradientButton
-            onClick={() => setEditingPrice({ id: 0, staffId: 0, doctorName: '', price: 0, originalPrice: 0, discountPrice: 0 })}
+            onClick={() => setEditingPrice({ id: 0, staffId: 0, doctorName: '', price: 0, originalPrice: 0, discountAmount: 0 })}
             className="w-full sm:w-auto"
           >
             <Plus size={18} className="mr-2" /> Thêm Phí khám mới
@@ -95,7 +95,7 @@ export default function DoctorPricing() {
       <DoctorPricingFormDialog
         doctor={editingPrice}
         onClose={() => setEditingPrice(null)}
-        onSave={async (_id: number, data: { staffId: number; originalPrice: number; discountPrice: number }) => {
+        onSave={async (_id: number, data: { staffId: number; originalPrice: number; discountAmount: number }) => {
           try {
             await settingsApi.createOrUpdateDoctorPrice(data);
             await fetchData();

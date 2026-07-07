@@ -58,9 +58,9 @@ export const HowItWorks: React.FC<Props> = ({ services, isLoading }) => {
             ))
           ) : (
             services.filter(s => isPatientBookableService(s.serviceType)).slice(0, 8).map((service) => {
-              const hasDiscount = service.discountPrice && service.originalPrice && service.discountPrice < service.originalPrice;
+              const hasDiscount = service.discountAmount && service.originalPrice && service.discountAmount < service.originalPrice;
               const discountPercent = hasDiscount 
-                ? Math.round((1 - service.discountPrice! / service.originalPrice!) * 100) 
+                ? Math.round((1 - service.discountAmount! / service.originalPrice!) * 100) 
                 : 0;
 
               return (
@@ -101,7 +101,7 @@ export const HowItWorks: React.FC<Props> = ({ services, isLoading }) => {
                             <>
                               <span className="text-slate-400 line-through text-[11px] leading-none mb-0.5">{formatPrice(service.originalPrice!)}</span>
                               <span className="text-red-500 font-bold text-[15px] leading-none">
-                                {formatPrice(service.discountPrice!)}
+                                {formatPrice(service.discountAmount!)}
                               </span>
                             </>
                           ) : (

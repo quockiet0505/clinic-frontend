@@ -66,10 +66,10 @@ export interface ClinicPdfLayoutProps {
   conclusion?: string | null;
 
   /* Chi phí */
-  consultationFee?: number | null;
-  serviceFee?: number | null;
+  consultationFinalFee?: number | null;
+  serviceFinalFee?: number | null;
   totalAmount?: number | null;
-  /** Chi tiết từng khoản (ưu tiên hơn consultationFee/serviceFee gộp) */
+  /** Chi tiết từng khoản (ưu tiên hơn consultationFinalFee gộp) */
   feeItems?: PdfFeeItem[];
 
   footerNote?: string;
@@ -114,7 +114,7 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
   tableHeaders = ['Tên', 'Chi tiết / Liều dùng', 'Số lượng'],
   tableRows = [], notes,
   extraSections = [], conclusion,
-  consultationFee, serviceFee, totalAmount, feeItems = [],
+  consultationFinalFee, serviceFinalFee, totalAmount, feeItems = [],
   footerNote, hideSignatures = false,
 }) => {
   const today = new Date();
@@ -122,8 +122,8 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
   const hasItemizedFees = feeItems.length > 0;
   const hasFee =
     hasItemizedFees ||
-    consultationFee != null ||
-    serviceFee != null ||
+    consultationFinalFee != null ||
+    serviceFinalFee != null ||
     totalAmount != null;
   const genderLabel = patient?.gender === 'MALE' ? 'Nam' : patient?.gender === 'FEMALE' ? 'Nữ' : (patient?.gender || undefined);
   const yearOfBirth = patient?.dob ? String(new Date(patient.dob).getFullYear()) : undefined;
@@ -222,7 +222,7 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
                 </div>
               )}
               {serviceName && cell('Dịch vụ:', serviceName)}
-              {consultationFee != null && consultationFee > 0 && cell('Phí khám:', formatVND(consultationFee))}
+              {consultationFinalFee != null && consultationFinalFee > 0 && cell('Phí khám:', formatVND(consultationFinalFee))}
               {serviceDoctor && cell('BS thực hiện:', formatDoctorName(serviceDoctor))}
             </div>
           )}
@@ -317,16 +317,16 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
               </>
             ) : (
               <>
-                {consultationFee != null && (
+                {consultationFinalFee != null && (
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>Phí khám:</span>
-                    <span>{formatVND(consultationFee)}</span>
+                    <span>{formatVND(consultationFinalFee)}</span>
                   </div>
                 )}
-                {serviceFee != null && (
+                {serviceFinalFee != null && (
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span>Phí cận lâm sàng:</span>
-                    <span>{formatVND(serviceFee)}</span>
+                    <span>{formatVND(serviceFinalFee)}</span>
                   </div>
                 )}
                 {totalAmount != null && (

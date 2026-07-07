@@ -226,7 +226,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                                   const Icon(Icons.payments_rounded, size: 14, color: Color(0xFF10B981)),
                                   const SizedBox(width: 4),
                                   Text(
-                                    CurrencyFormatter.formatVND(doctor.consultationFee),
+                                    CurrencyFormatter.formatVND(doctor.consultationFinalFee),
                                     style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 13),
                                   ),
                                 ],
@@ -241,7 +241,7 @@ class _SelectTimeScreenState extends State<SelectTimeScreen> {
                                   const Icon(Icons.payments_rounded, size: 14, color: Color(0xFF10B981)),
                                   const SizedBox(width: 4),
                                   Text(
-                                    CurrencyFormatter.formatVND(service.discountPrice ?? service.originalPrice),
+                                    CurrencyFormatter.formatVND(service.discountAmount ?? service.originalPrice),
                                     style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 13),
                                   ),
                                 ],

@@ -20,7 +20,7 @@ export interface Service {
   description?: string;
   serviceType?: string;
   originalPrice?: number;
-  discountPrice?: number;
+  discountAmount?: number;
 }
 
 export interface AvailableDate {
@@ -76,7 +76,7 @@ export interface AppointmentHistoryItem {
   serviceName: string; // newly added to distinguish consultation/test
   serviceType?: 'EXAM' | 'LAB_TEST' | 'X_RAY' | 'ULTRASOUND' | 'CT_SCAN' | 'MRI' | 'ENDOSCOPY' | 'OTHER';
   servicePrice?: number;
-  doctorFee?: number;
+  consultationFinalFee?: number;
   facility: string;
   symptoms: string; // note
   queueNumber?: number;

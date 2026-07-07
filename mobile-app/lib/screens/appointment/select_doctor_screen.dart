@@ -59,9 +59,9 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
     }).toList();
 
     if (_sortByFee == 1) {
-      list.sort((a, b) => a.consultationFee.compareTo(b.consultationFee));
+      list.sort((a, b) => a.consultationFinalFee.compareTo(b.consultationFinalFee));
     } else if (_sortByFee == 2) {
-      list.sort((a, b) => b.consultationFee.compareTo(a.consultationFee));
+      list.sort((a, b) => b.consultationFinalFee.compareTo(a.consultationFinalFee));
     }
     return list;
   }
@@ -210,7 +210,7 @@ class _SelectDoctorScreenState extends State<SelectDoctorScreen> {
                         ],
                       ),
                       Text(
-                        CurrencyFormatter.formatVND(doctor.consultationFee),
+                        CurrencyFormatter.formatVND(doctor.consultationFinalFee),
                         style: AppStyles.bodyLarge.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold),
                       ),
                     ],

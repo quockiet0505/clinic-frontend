@@ -4,7 +4,7 @@
     "title": "Gói Xét Nghiệm Sinh Hóa Cơ Bản Tại Nhà",
     "clinicName": "Phòng Khám Đa Khoa Pháp Anh",
     "originalPrice": 1015000,
-    "discountPrice": 885000,
+    "discountAmount": 885000,
     "imageUrl": "/images/services/home/home-pkg-c09a907bb4fb4123913d67fd71b13bd1.jpg"
   },
   {
@@ -12,7 +12,7 @@
     "title": "Gói xét nghiệm sức khỏe sinh sản nữ - nâng cao (6 test)",
     "clinicName": "Trung tâm xét nghiệm và chẩn đoán Y khoa Diag - Quận 11",
     "originalPrice": 1338000,
-    "discountPrice": 1338000,
+    "discountAmount": 1338000,
     "imageUrl": "/images/services/home/home-pkg-diag005_DV008.jpg"
   },
   {
@@ -20,7 +20,7 @@
     "title": "Gói XN Viêm gan - cơ bản (3 test)",
     "clinicName": "Trung tâm xét nghiệm và chẩn đoán Y khoa Diag - Quận 11",
     "originalPrice": 420000,
-    "discountPrice": 420000,
+    "discountAmount": 420000,
     "imageUrl": "/images/services/home/home-pkg-diag005_DV011.jpg"
   },
   {
@@ -28,7 +28,7 @@
     "title": "Gói XN đái tháo đường - cơ bản (3 test)",
     "clinicName": "Trung tâm xét nghiệm và chẩn đoán Y khoa Diag - Quận 11",
     "originalPrice": 159000,
-    "discountPrice": 159000,
+    "discountAmount": 159000,
     "imageUrl": "/images/services/home/home-pkg-diag005_DV013.jpg"
   },
   {
@@ -36,7 +36,7 @@
     "title": "Gói xét nghiệm máu cơ bản - Nam/Nữ",
     "clinicName": "Phòng Khám Việt Úc",
     "originalPrice": 2110000,
-    "discountPrice": 2110000,
+    "discountAmount": 2110000,
     "imageUrl": "/images/services/home/home-pkg-pkvietuc_GK007.jpg"
   },
   {
@@ -44,7 +44,7 @@
     "title": "Gói XN Viêm gan - nâng cao (6 test)",
     "clinicName": "Trung tâm xét nghiệm và chẩn đoán Y khoa Diag - Quận 11",
     "originalPrice": 1117000,
-    "discountPrice": 1117000,
+    "discountAmount": 1117000,
     "imageUrl": "/images/services/home/home-pkg-diag005_DV012.jpg"
   }
 ]

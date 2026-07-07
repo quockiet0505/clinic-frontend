@@ -324,15 +324,15 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
   Widget _buildPaymentSummaryCard(DoctorModel? doctor, ServiceModel? service, Map<String, dynamic>? specialty, AppointmentProvider provider, HomeProvider homeProvider) {
     double fee = 0;
     if (doctor != null) {
-      fee = doctor.consultationFee;
+      fee = doctor.consultationFinalFee;
     } else if (service != null) {
-      fee = service.discountPrice ?? service.originalPrice;
+      fee = service.discountAmount ?? service.originalPrice;
     } else if (specialty != null) {
       if (provider.selectedTimeSlot != null && provider.selectedTimeSlot!['doctorId'] != null) {
         final doctorId = provider.selectedTimeSlot!['doctorId'];
         final doc = homeProvider.doctors.where((d) => d.id == doctorId).firstOrNull;
         if (doc != null) {
-          fee = doc.consultationFee;
+          fee = doc.consultationFinalFee;
         } else {
           fee = 150000;
         }

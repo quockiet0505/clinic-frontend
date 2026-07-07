@@ -257,11 +257,11 @@ export default function MedicalRecordDetail() {
 
   const hasPrescription = !!record.prescription?.items?.length;
   const activeOrders = record.serviceOrders?.filter((o) => o.status !== 'CANCELLED') ?? [];
-  const consultationFeeAmount = record.consultationFee ?? 0;
+  const consultationFinalFeeAmount = record.consultationFinalFee ?? 0;
   const orderFeesTotal = activeOrders.reduce((sum, o) => sum + (o.price ?? 0), 0);
   const hasBilling =
-    record.status === 'DONE' && (consultationFeeAmount > 0 || orderFeesTotal > 0);
-  const totalFee = consultationFeeAmount + orderFeesTotal;
+    record.status === 'DONE' && (consultationFinalFeeAmount > 0 || orderFeesTotal > 0);
+  const totalFee = consultationFinalFeeAmount + orderFeesTotal;
 
   const serviceDisplayName =
     appointment?.serviceName && appointment.serviceName !== 'Khám chuyên khoa'
@@ -308,8 +308,8 @@ export default function MedicalRecordDetail() {
     }));
 
   const pdfFeeItems = [
-    ...(consultationFeeAmount > 0
-      ? [{ label: `Phí khám · ${serviceDisplayName}`, amount: consultationFeeAmount }]
+    ...(consultationFinalFeeAmount > 0
+      ? [{ label: `Phí khám · ${serviceDisplayName}`, amount: consultationFinalFeeAmount }]
       : []),
     ...activeOrders
       .filter((o) => (o.price ?? 0) > 0)
@@ -410,7 +410,7 @@ export default function MedicalRecordDetail() {
                   <Stethoscope className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                   <p className="font-medium text-slate-600">
                     {serviceDisplayName}
-                    <InlinePrice amount={consultationFeeAmount} />
+                    <InlinePrice amount={consultationFinalFeeAmount} />
                   </p>
                 </div>
               </div>
@@ -443,11 +443,11 @@ export default function MedicalRecordDetail() {
                   <h3 className="text-[14px] font-bold text-slate-800">Thanh toán</h3>
                 </div>
                 <div className="space-y-2.5 text-[13px]">
-                  {consultationFeeAmount > 0 && (
+                  {consultationFinalFeeAmount > 0 && (
                     <div className="flex justify-between gap-2">
                       <span className="text-slate-500 truncate pr-2">Phí khám · {serviceDisplayName}</span>
                       <span className="font-semibold text-slate-800 tabular-nums shrink-0">
-                        {formatPrice(consultationFeeAmount)}
+                        {formatPrice(consultationFinalFeeAmount)}
                       </span>
                     </div>
                   )}
@@ -660,7 +660,7 @@ export default function MedicalRecordDetail() {
         tableRows={prescriptionTableRows}
         notes={record.treatment || record.note}
         extraSections={labExtraSections}
-        consultationFee={hasPdfFees && consultationFeeAmount > 0 ? consultationFeeAmount : undefined}
+        consultationFinalFee={hasPdfFees && consultationFinalFeeAmount > 0 ? consultationFinalFeeAmount : undefined}
         feeItems={hasPdfFees ? pdfFeeItems : undefined}
         totalAmount={hasPdfFees ? pdfTotalFee : undefined}
         footerNote="Phiếu khám bệnh điện tử — ClinicPro. Vui lòng mang theo khi tái khám."

@@ -3,252 +3,252 @@
     "id": "pkdkvigor_B1",
     "title": "Gói Xét Nghiệm Tổng Quát",
     "originalPrice": 2300000,
-    "discountPrice": 2300000,
+    "discountAmount": 2300000,
     "imageUrl": "/images/services/list/list-pkg-default-pkdkvigor_B1.png"
   },
   {
     "id": "pkdkvigor_B3",
     "title": "Gói Xét Nghiệm Tầm Soát Ung Thư ở Nữ Giới",
     "originalPrice": 1930000,
-    "discountPrice": 1930000,
+    "discountAmount": 1930000,
     "imageUrl": "/images/services/list/list-pkg-default-pkdkvigor_B3.png"
   },
   {
     "id": "pkvietuc_GK007",
     "title": "Gói xét nghiệm máu cơ bản - Nam/Nữ",
     "originalPrice": 2110000,
-    "discountPrice": 2110000,
+    "discountAmount": 2110000,
     "imageUrl": "/images/services/list/list-pkg-default-pkvietuc_GK007.png"
   },
   {
     "id": "pkvietuc_GK009",
     "title": "Gói xét nghiệm máu chuyên sâu (Tầm soát ung thư) - Nữ",
     "originalPrice": 4000000,
-    "discountPrice": 4000000,
+    "discountAmount": 4000000,
     "imageUrl": "/images/services/list/list-pkg-default-pkvietuc_GK009.png"
   },
   {
     "id": "pkvietuc_GK008",
     "title": "Gói xét nghiệm máu chuyên sâu (Tầm soát ung thư) - Nam",
     "originalPrice": 3740000,
-    "discountPrice": 3740000,
+    "discountAmount": 3740000,
     "imageUrl": "/images/services/list/list-pkg-default-pkvietuc_GK008.png"
   },
   {
     "id": "pkvhc_XN03",
     "title": "Anti HIV Test",
     "originalPrice": 250000,
-    "discountPrice": 250000,
+    "discountAmount": 250000,
     "imageUrl": "/images/services/list/list-pkg-default-pkvhc_XN03.png"
   },
   {
     "id": "pkdkvigor_GK04",
     "title": "Gói khám thẻ hồng (Phí dịch vụ tùy theo yêu cầu xét nghiệm của Khách hàng)",
     "originalPrice": 2225000,
-    "discountPrice": 2225000,
+    "discountAmount": 2225000,
     "imageUrl": "/images/services/list/list-pkg-default-pkdkvigor_GK04.png"
   },
   {
     "id": "c09a907bb4fb4123913d67fd71b13bd1",
     "title": "Gói Xét Nghiệm Sinh Hóa Cơ Bản Tại Nhà",
     "originalPrice": 1015000,
-    "discountPrice": 885000,
+    "discountAmount": 885000,
     "imageUrl": "/images/services/list/list-pkg-default-c09a907bb4fb4123913d67fd71b13bd1.png"
   },
   {
     "id": "27b0a86d2aa74820bca914a9db126499",
     "title": "Gói Xét Nghiệm Về Bệnh Truyền Nhiễm",
     "originalPrice": 1230000,
-    "discountPrice": 1069500,
+    "discountAmount": 1069500,
     "imageUrl": "/images/services/list/list-pkg-default-27b0a86d2aa74820bca914a9db126499.png"
   },
   {
     "id": "pkdkphapanh_DV_XNMedpro_PA_010",
     "title": "Gói Xét Nghiệm Tầm Soát Huyết Khối Tại Nhà",
     "originalPrice": 1390000,
-    "discountPrice": 1159000,
+    "discountAmount": 1159000,
     "imageUrl": "/images/services/list/list-pkg-default-pkdkphapanh_DV_XNMedpro_PA_010.png"
   },
   {
     "id": "efacb250c7ba48d3b3cbd62dfc08aaff",
     "title": "Gói Xét Nghiệm Chức Năng Gan Chuyên Sâu",
     "originalPrice": 1478000,
-    "discountPrice": 1285500,
+    "discountAmount": 1285500,
     "imageUrl": "/images/services/list/list-pkg-default-efacb250c7ba48d3b3cbd62dfc08aaff.png"
   },
   {
     "id": "c56ab37db3744fdca76270ddfd3ea536",
     "title": "Gói Xét Nghiệm Ung Thư Chuyên Sâu",
     "originalPrice": 1550000,
-    "discountPrice": 1398000,
+    "discountAmount": 1398000,
     "imageUrl": "/images/services/list/list-pkg-default-c56ab37db3744fdca76270ddfd3ea536.png"
   },
   {
     "id": "78d640068c3949c892bd2900c286c5b1",
     "title": "Gói Xét Nghiệm Cao Cấp Cho Nhân Viên Văn Phòng - Nam",
     "originalPrice": 3180000,
-    "discountPrice": 2895000,
+    "discountAmount": 2895000,
     "imageUrl": "/images/services/list/list-pkg-default-78d640068c3949c892bd2900c286c5b1.png"
   },
   {
     "id": "f2bd26f6913045c6804512d585d47ee4",
     "title": "Gói Xét Nghiệm Cao Cấp Cho Nhân Viên Văn Phòng - Nữ",
     "originalPrice": 3700000,
-    "discountPrice": 3218000,
+    "discountAmount": 3218000,
     "imageUrl": "/images/services/list/list-pkg-default-f2bd26f6913045c6804512d585d47ee4.png"
   },
   {
     "id": "6150c88c3ce040dba9b1cde4a4a8d941",
     "title": "Gói Xét Nghiệm Tổng Quát Toàn Diện dành cho Nam",
     "originalPrice": 4372000,
-    "discountPrice": 3801000,
+    "discountAmount": 3801000,
     "imageUrl": "/images/services/list/list-pkg-default-6150c88c3ce040dba9b1cde4a4a8d941.png"
   },
   {
     "id": "611aa3c0a52e4b84a42c99456e4aed75",
     "title": "Gói Xét Nghiệm Tổng Quát Toàn Diện dành cho Nữ",
     "originalPrice": 4526000,
-    "discountPrice": 3963000,
+    "discountAmount": 3963000,
     "imageUrl": "/images/services/list/list-pkg-default-611aa3c0a52e4b84a42c99456e4aed75.png"
   },
   {
     "id": "cc65a5ce4f6649a699b323c687e82962",
     "title": "Lấy mẫu tại nhà - Nhanh (Trả kết quả trong vòng 4 ngày) Xét nghiệm ADN Cha con Thai nhi - Không xâm lấn",
     "originalPrice": 25000000,
-    "discountPrice": 25000000,
+    "discountAmount": 25000000,
     "imageUrl": "/images/services/list/list-pkg-default-cc65a5ce4f6649a699b323c687e82962.png"
   },
   {
     "id": "cf9db29f176e45d6b9cf2486c4e63256",
     "title": "Tiêu chuẩn (Trả kết quả trong vòng 25-30 ngày) Xét nghiệm ADN Hài cốt liệt sĩ",
     "originalPrice": 12000000,
-    "discountPrice": 12000000,
+    "discountAmount": 12000000,
     "imageUrl": "/images/services/list/list-pkg-default-cf9db29f176e45d6b9cf2486c4e63256.png"
   },
   {
     "id": "pkvhc_Nam005",
     "title": "Tầm soát tiền ung thư bằng xét nghiệm máu Nam",
     "originalPrice": 2153000,
-    "discountPrice": 2153000,
+    "discountAmount": 2153000,
     "imageUrl": "/images/services/list/list-pkg-default-pkvhc_Nam005.png"
   },
   {
     "id": "pkdkvigor_B4",
     "title": "Gói Xét Nghiệm Tầm Soát Viêm Gan",
     "originalPrice": 820000,
-    "discountPrice": 820000,
+    "discountAmount": 820000,
     "imageUrl": "/images/services/list/list-pkg-default-pkdkvigor_B4.png"
   },
   {
     "id": "420bcbbc15be4b8fb75344d8feba7e14",
     "title": "Xét nghiệm tim mạch chuyên khoa",
     "originalPrice": 4955000,
-    "discountPrice": 4955000,
+    "discountAmount": 4955000,
     "imageUrl": "/images/services/list/list-pkg-default-420bcbbc15be4b8fb75344d8feba7e14.png"
   },
   {
     "id": "pkdksp79_GOI009",
     "title": "Gói xét nghiệm KÝ SINH TRÙNG (Nam)",
     "originalPrice": 2500000,
-    "discountPrice": 2500000,
+    "discountAmount": 2500000,
     "imageUrl": "/images/services/list/list-pkg-default-pkdksp79_GOI009.png"
   },
   {
     "id": "pkdksp79_GOI012",
     "title": "Gói xét nghiệm TỔNG QUÁT PREMIUM (Nữ độc thân)",
     "originalPrice": 8800000,
-    "discountPrice": 8800000,
+    "discountAmount": 8800000,
     "imageUrl": "/images/services/list/list-pkg-default-pkdksp79_GOI012.png"
   },
   {
     "id": "pkdksp79_GOI013",
     "title": "Gói xét nghiệm TỔNG QUÁT PREMIUM (Nữ có gia đình)",
     "originalPrice": 9800000,
-    "discountPrice": 9800000,
+    "discountAmount": 9800000,
     "imageUrl": "/images/services/list/list-pkg-default-pkdksp79_GOI013.png"
   },
   {
     "id": "pkdksp79_GOI010",
     "title": "Gói xét nghiệm KÝ SINH TRÙNG (Nữ)",
     "originalPrice": 2500000,
-    "discountPrice": 2500000,
+    "discountAmount": 2500000,
     "imageUrl": "/images/services/list/list-pkg-default-pkdksp79_GOI010.png"
   },
   {
     "id": "pkdksp79_GOI011",
     "title": "Gói xét nghiệm TỔNG QUÁT PREMIUM (Nam)",
     "originalPrice": 11500000,
-    "discountPrice": 11500000,
+    "discountAmount": 11500000,
     "imageUrl": "/images/services/list/list-pkg-default-pkdksp79_GOI011.png"
   },
   {
     "id": "thanhvubl_COVID6",
     "title": "Gói xét nghiệm Tuyến thận - Tiết niệu",
     "originalPrice": 950000,
-    "discountPrice": 950000,
+    "discountAmount": 950000,
     "imageUrl": "/images/services/list/list-pkg-default-thanhvubl_COVID6.png"
   },
   {
     "id": "thanhvubl_COVID3",
     "title": "Gói xét nghiệm Tuyến giáp - Cận giáp",
     "originalPrice": 2150000,
-    "discountPrice": 2150000,
+    "discountAmount": 2150000,
     "imageUrl": "/images/services/list/list-pkg-default-thanhvubl_COVID3.png"
   },
   {
     "id": "thanhvubl_COVID2",
     "title": "Gói xét nghiệm Gan Mật Tụy",
     "originalPrice": 1960000,
-    "discountPrice": 1960000,
+    "discountAmount": 1960000,
     "imageUrl": "/images/services/list/list-pkg-default-thanhvubl_COVID2.png"
   },
   {
     "id": "thanhvubl_COVID1",
     "title": "Gói xét nghiệm xương khớp",
     "originalPrice": 1280000,
-    "discountPrice": 1280000,
+    "discountAmount": 1280000,
     "imageUrl": "/images/services/list/list-pkg-default-thanhvubl_COVID1.png"
   },
   {
     "id": "bvphusanquoctesaigon_D016",
     "title": "Gói xét nghiệm tiền phẫu",
     "originalPrice": 4450000,
-    "discountPrice": 4450000,
+    "discountAmount": 4450000,
     "imageUrl": "/images/services/list/list-pkg-default-bvphusanquoctesaigon_D016.png"
   },
   {
     "id": "bvhongha_M006",
     "title": "Gói IVF 01 (Bao gồm: Đông phôi và 1 lần chuyển phôi tươi, không bao gồm Xét nghiệm)",
     "originalPrice": 70000000,
-    "discountPrice": 70000000,
+    "discountAmount": 70000000,
     "imageUrl": "/images/services/list/list-pkg-default-bvhongha_M006.png"
   },
   {
     "id": "drcheck_011",
     "title": "Gói xét nghiệm dấu ấn ung thư",
     "originalPrice": 720000,
-    "discountPrice": 720000,
+    "discountAmount": 720000,
     "imageUrl": "/images/services/list/list-pkg-drcheck_011.png"
   },
   {
     "id": "1574_XN003",
     "title": "Gói chỉ định xét nghiệm kiểm tra mỡ máu và Bác sĩ tư vấn",
     "originalPrice": 525000,
-    "discountPrice": 525000,
+    "discountAmount": 525000,
     "imageUrl": "/images/services/list/list-pkg-default-1574_XN003.png"
   },
   {
     "id": "1574_PKG010",
     "title": "Gói xét nghiệm Vitamin và khoáng chất cho trẻ em",
     "originalPrice": 1645000,
-    "discountPrice": 1645000,
+    "discountAmount": 1645000,
     "imageUrl": "/images/services/list/list-pkg-default-1574_PKG010.png"
   },
   {
     "id": "eff8e3ab8e59446bad4a49e7a0079b29",
     "title": "Gói xét nghiệm tổng quát  Diag Wellness - vàng (27 test)",
     "originalPrice": 1605000,
-    "discountPrice": 1605000,
+    "discountAmount": 1605000,
     "imageUrl": "/images/services/list/list-pkg-default-eff8e3ab8e59446bad4a49e7a0079b29.png"
   }
 ]

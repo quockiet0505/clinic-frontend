@@ -71,7 +71,7 @@ export default function ServiceCatalogTable({ data = [], onEdit, onDelete, loadi
       label: 'Giá gốc',
       className: 'w-[15%]',
       render: (item) => {
-        const hasDiscount = item.discountPrice && toNumber(item.discountPrice) > 0;
+        const hasDiscount = item.discountAmount && toNumber(item.discountAmount) > 0;
         return hasDiscount ? (
           <span className="line-through text-slate-400">{formatCurrency(item.originalPrice)}</span>
         ) : (
@@ -80,13 +80,13 @@ export default function ServiceCatalogTable({ data = [], onEdit, onDelete, loadi
       },
     },
     {
-      key: 'discountPrice',
+      key: 'discountAmount',
       label: 'Giá giảm',
       className: 'w-[15%]',
       render: (item) => {
-        const hasDiscount = item.discountPrice && toNumber(item.discountPrice) > 0;
+        const hasDiscount = item.discountAmount && toNumber(item.discountAmount) > 0;
         return hasDiscount ? (
-          <span className="text-emerald-600 font-medium">{formatCurrency(item.discountPrice)}</span>
+          <span className="text-emerald-600 font-medium">{formatCurrency(item.discountAmount)}</span>
         ) : (
           <span className="text-slate-300">—</span>
         );

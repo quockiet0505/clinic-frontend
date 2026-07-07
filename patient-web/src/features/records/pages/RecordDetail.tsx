@@ -243,11 +243,11 @@ export const RecordDetail: React.FC = () => {
 
   const hasPrescription = !!record.prescription?.items?.length;
   const activeOrders = record.serviceOrders?.filter((o) => o.status !== 'CANCELLED') ?? [];
-  const consultationFeeAmount = record.consultationFee ?? 0;
-  const orderFeesTotal = activeOrders.reduce((sum, o) => sum + (o.price ?? 0), 0);
+  const consultationFinalFeeAmount = record.consultationFinalFee ?? 0;
+  const orderFeesTotal = activeOrders.reduce((sum, o) => sum + (o.serviceFinalFee ?? 0), 0);
   const hasBilling =
-    record.status === 'DONE' && (consultationFeeAmount > 0 || orderFeesTotal > 0);
-  const totalFee = consultationFeeAmount + orderFeesTotal;
+    record.status === 'DONE' && (consultationFinalFeeAmount > 0 || orderFeesTotal > 0);
+  const totalFee = consultationFinalFeeAmount + orderFeesTotal;
 
   const serviceDisplayName =
     appointment?.serviceName && appointment.serviceName !== 'Khám chuyên khoa'
@@ -290,16 +290,16 @@ export const RecordDetail: React.FC = () => {
       ]
         .filter(Boolean)
         .join('\n'),
-      price: o.price,
+      price: o.serviceFinalFee,
     }));
 
   const pdfFeeItems = [
-    ...(consultationFeeAmount > 0
-      ? [{ label: `Phí khám · ${serviceDisplayName}`, amount: consultationFeeAmount }]
+    ...(consultationFinalFeeAmount > 0
+      ? [{ label: `Phí khám · ${serviceDisplayName}`, amount: consultationFinalFeeAmount }]
       : []),
     ...activeOrders
-      .filter((o) => (o.price ?? 0) > 0)
-      .map((o) => ({ label: o.serviceName, amount: o.price! })),
+      .filter((o) => (o.serviceFinalFee ?? 0) > 0)
+      .map((o) => ({ label: o.serviceName, amount: o.serviceFinalFee! })),
   ];
   const hasPdfFees = pdfFeeItems.length > 0;
   const pdfTotalFee = pdfFeeItems.reduce((sum, item) => sum + item.amount, 0);
@@ -437,7 +437,7 @@ export const RecordDetail: React.FC = () => {
                   <Stethoscope className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                   <p className="font-medium text-slate-600">
                     {serviceDisplayName}
-                    <InlinePrice amount={consultationFeeAmount} />
+                    <InlinePrice amount={consultationFinalFeeAmount} />
                   </p>
                 </div>
               </div>
@@ -470,21 +470,21 @@ export const RecordDetail: React.FC = () => {
                   <h3 className="text-[14px] font-bold text-slate-800">Thanh toán</h3>
                 </div>
                 <div className="space-y-2.5 text-[13px]">
-                  {consultationFeeAmount > 0 && (
+                  {consultationFinalFeeAmount > 0 && (
                     <div className="flex justify-between gap-2">
                       <span className="text-slate-500 truncate pr-2">Phí khám · {serviceDisplayName}</span>
                       <span className="font-semibold text-slate-800 tabular-nums shrink-0">
-                        {formatPrice(consultationFeeAmount)}
+                        {formatPrice(consultationFinalFeeAmount)}
                       </span>
                     </div>
                   )}
                   {activeOrders
-                    .filter((o) => (o.price ?? 0) > 0)
+                    .filter((o) => (o.serviceFinalFee ?? 0) > 0)
                     .map((order) => (
                       <div key={order.orderId} className="flex justify-between gap-2">
                         <span className="text-slate-500 truncate pr-2">{order.serviceName}</span>
                         <span className="font-semibold text-slate-800 tabular-nums shrink-0">
-                          {formatPrice(order.price!)}
+                          {formatPrice(order.serviceFinalFee!)}
                         </span>
                       </div>
                     ))}
@@ -582,7 +582,7 @@ export const RecordDetail: React.FC = () => {
                           <div className="mb-3">
                             <h3 className="font-bold text-slate-900 text-[15px]">
                               {order.serviceName}
-                              <InlinePrice amount={order.price} />
+                              <InlinePrice amount={order.serviceFinalFee} />
                             </h3>
                             <p className="text-[12px] font-medium text-slate-500 mt-1">
                               {labCfg.label}
@@ -684,7 +684,7 @@ export const RecordDetail: React.FC = () => {
         tableRows={prescriptionTableRows}
         notes={record.treatment || record.note}
         extraSections={labExtraSections}
-        consultationFee={hasPdfFees && consultationFeeAmount > 0 ? consultationFeeAmount : undefined}
+        consultationFinalFee={hasPdfFees && consultationFinalFeeAmount > 0 ? consultationFinalFeeAmount : undefined}
         feeItems={hasPdfFees ? pdfFeeItems : undefined}
         totalAmount={hasPdfFees ? pdfTotalFee : undefined}
         footerNote="Phiếu khám bệnh điện tử — ClinicPro. Vui lòng mang theo khi tái khám."
