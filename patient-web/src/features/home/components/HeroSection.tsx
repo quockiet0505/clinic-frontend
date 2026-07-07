@@ -43,7 +43,7 @@ export const HeroSection: React.FC = () => {
       if (placeholderText === '') {
         setIsDeleting(false);
         setTypeIndex((prev) => (prev + 1) % TYPEWRITER_TEXTS.length);
-        timer = setTimeout(() => {}, 400); // pause before typing next
+        timer = setTimeout(() => { }, 400); // pause before typing next
       } else {
         timer = setTimeout(() => setPlaceholderText(currentWord.slice(0, placeholderText.length - 1)), 50); // fast delete
       }
@@ -109,7 +109,7 @@ export const HeroSection: React.FC = () => {
     <div className="relative bg-gradient-to-b from-[#e0f2fe] to-white pb-0">
 
       {/* ── Banner + Text overlay ── */}
-      <div className="relative w-full h-[500px] md:h-[600px]">
+      <div className="relative w-full overflow-hidden h-[calc(100svh-160px)]">
 
         {/* Banner giữ từ API */}
         <img
