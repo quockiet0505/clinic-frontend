@@ -77,22 +77,44 @@ export const chatbotApi = {
 
     const reader = response.body.getReader();
     const decoder = new TextDecoder('utf-8');
+    let buffer = '';
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
 
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n');
+      // Cộng dồn vào buffer, không xử lý ngay (tránh mất data khi TCP split)
+      buffer += decoder.decode(value, { stream: true });
+
+      // Tách các SSE event hoàn chỉnh (kết thúc bằng \n\n)
+      const events = buffer.split('\n\n');
       
-      for (const line of lines) {
+      // Event cuối có thể chưa hoàn chỉnh, giữ lại trong buffer
+      buffer = events.pop() ?? '';
+
+      for (const event of events) {
+        const lines = event.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            let text = line.substring(6);
+            if (text === '[DONE]') continue;
+            // Chuyển \\n thành newline thật
+            text = text.replace(/\\n/g, '\n');
+            onChunk(text);
+          }
+        }
+      }
+    }
+
+    // Xử lý nốt phần còn lại trong buffer (nếu có)
+    if (buffer.trim()) {
+      for (const line of buffer.split('\n')) {
         if (line.startsWith('data: ')) {
-          let text = line.substring(6); // Bỏ chữ "data: "
-          if (text === '[DONE]') continue;
-          
-          // Xử lý xuống dòng cho chunk nếu frontend cần
-          text = text.replace(/\\n/g, '\n');
-          onChunk(text);
+          let text = line.substring(6);
+          if (text !== '[DONE]') {
+            text = text.replace(/\\n/g, '\n');
+            onChunk(text);
+          }
         }
       }
     }

@@ -155,9 +155,12 @@ class _ChatScreenState extends State<ChatScreen> {
                     }
 
                     final message = chatProvider.messages[index];
+                    final isLast = index == chatProvider.messages.length - 1;
                     return _buildMessageBubble(
                       message.messageContent,
                       message.isUser,
+                      isLast: isLast,
+                      isLoading: chatProvider.isLoading,
                     );
                   },
                 ),
@@ -214,6 +217,12 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  List<String> _extractButtons(String text) {
+    final regex = RegExp(r'__BUTTON:(.*?)__');
+    final matches = regex.allMatches(text);
+    return matches.map((m) => m.group(1)!.trim()).toList();
+  }
+
   String _formatMessage(String text) {
     var formatted = text.replaceAll('**', '');
     
@@ -223,12 +232,17 @@ class _ChatScreenState extends State<ChatScreen> {
       (match) => '${match.group(1)}\n- ${match.group(2)}'
     );
     
+    // Remove button tags from display text
+    formatted = formatted.replaceAll(RegExp(r'__BUTTON:(.*?)__'), '').trim();
+
     // Xóa bỏ các dòng trắng dư thừa (ví dụ \n \n thành \n)
     formatted = formatted.replaceAll(RegExp(r'\n(?:\s*\n)+'), '\n');
     return formatted;
   }
 
-  Widget _buildMessageBubble(String text, bool isUser) {
+  Widget _buildMessageBubble(String text, bool isUser, {bool isLast = false, bool isLoading = false}) {
+    final buttons = isUser ? <String>[] : _extractButtons(text);
+
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Row(
@@ -251,40 +265,71 @@ class _ChatScreenState extends State<ChatScreen> {
               child: const Icon(Icons.support_agent_rounded, color: Colors.white, size: 16),
             ),
           ],
-          Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.68),
-            decoration: BoxDecoration(
-              gradient: isUser
-                  ? const LinearGradient(
-                      colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )
-                  : null,
-              color: isUser ? null : Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: const Radius.circular(18),
-                topRight: const Radius.circular(18),
-                bottomLeft: Radius.circular(isUser ? 18 : 4),
-                bottomRight: Radius.circular(isUser ? 4 : 18),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.68),
+                  decoration: BoxDecoration(
+                    gradient: isUser
+                        ? const LinearGradient(
+                            colors: [Color(0xFF0284C7), Color(0xFF38BDF8)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          )
+                        : null,
+                    color: isUser ? null : Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: const Radius.circular(18),
+                      topRight: const Radius.circular(18),
+                      bottomLeft: Radius.circular(isUser ? 18 : 4),
+                      bottomRight: Radius.circular(isUser ? 4 : 18),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.06),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    isUser ? text : _formatMessage(text),
+                    style: TextStyle(
+                      color: isUser ? Colors.white : const Color(0xFF1F2937),
+                      fontSize: 14,
+                      height: 1.5,
+                    ),
+                  ),
                 ),
+                if (!isUser && buttons.isNotEmpty && isLast) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: buttons.map((btn) => ActionChip(
+                        label: Text(
+                          btn,
+                          style: const TextStyle(fontSize: 13, color: Color(0xFF0284C7), fontWeight: FontWeight.bold),
+                        ),
+                        backgroundColor: Colors.white,
+                        side: const BorderSide(color: Color(0xFFBAE6FD)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        onPressed: isLoading
+                            ? null
+                            : () {
+                                _messageController.text = btn;
+                                _sendMessage();
+                              },
+                      )).toList(),
+                    ),
+                  ),
+                ]
               ],
-            ),
-            child: Text(
-              isUser ? text : _formatMessage(text),
-              style: TextStyle(
-                color: isUser ? Colors.white : const Color(0xFF1F2937),
-                fontSize: 14,
-                height: 1.5,
-              ),
             ),
           ),
         ],

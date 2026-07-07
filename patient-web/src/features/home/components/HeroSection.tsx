@@ -140,41 +140,41 @@ export const HeroSection: React.FC = () => {
                 Nền tảng Y tế Số Thông minh 24/7
               </div> */}
 
-              <h1 className="text-3xl md:text-4xl lg:text-[44px] font-extrabold text-slate-900 leading-[1.2] mb-5 tracking-tight drop-shadow-sm">
+              <h1 className="text-[26px] sm:text-3xl md:text-4xl lg:text-[44px] font-extrabold text-slate-900 leading-[1.25] mb-4 md:mb-5 tracking-tight drop-shadow-sm">
                 Kết nối với <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-sky-400">Đội ngũ Bác sĩ chuyên khoa</span><br className="hidden md:block" /> dịch vụ chuẩn quốc tế
               </h1>
 
-              <p className="text-slate-600 text-[15px] md:text-[17px] font-medium mb-8 leading-relaxed max-w-[650px] mx-auto drop-shadow-sm">
+              <p className="text-slate-600 text-[14px] sm:text-[15px] md:text-[17px] font-medium mb-6 md:mb-8 leading-relaxed max-w-[650px] mx-auto drop-shadow-sm px-2 md:px-0">
                 Trải nghiệm chăm sóc sức khỏe hiện đại. Đặt lịch nhanh chóng, tư vấn từ xa và quản lý hồ sơ bệnh án trọn đời chỉ với vài thao tác.
               </p>
 
-              <div className="mb-10 w-full max-w-[650px] mx-auto relative group">
+              <div className="mb-8 md:mb-10 w-full max-w-[650px] mx-auto relative group">
                 <div className="absolute -inset-1 bg-gradient-to-r from-primary-200 to-sky-200 rounded-2xl blur opacity-30 group-hover:opacity-70 transition duration-500"></div>
                 <div className="relative">
                   <SearchInput
                     value={searchKeyword}
                     onSearch={handleSearch}
                     placeholder={placeholderText || '|'}
-                    className="shadow-xl border-white/80 h-[60px] text-lg focus-within:border-primary-400 focus-within:ring-4 focus-within:ring-primary-100 transition-all bg-white/90 backdrop-blur-sm"
+                    className="shadow-xl border-white/80 h-[50px] md:h-[60px] text-base md:text-lg focus-within:border-primary-400 focus-within:ring-4 focus-within:ring-primary-100 transition-all bg-white/90 backdrop-blur-sm"
                   />
                 </div>
               </div>
 
               {/* Trust stats - Gộp thành 1 thanh ngang dài để tạo liên kết sang phải */}
-              <div className="flex items-center justify-center gap-4 md:gap-10 px-8 py-4 bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-sm w-fit mx-auto text-left hover:shadow-md transition-shadow">
+              <div className="grid grid-cols-3 md:flex items-center justify-between md:justify-center gap-2 md:gap-10 px-3 sm:px-6 md:px-8 py-3 md:py-4 bg-white/70 backdrop-blur-md rounded-2xl border border-white shadow-sm w-full md:w-fit max-w-[400px] md:max-w-none mx-auto text-left hover:shadow-md transition-shadow">
                 {TRUST_STATS.map((stat, i) => (
                   <React.Fragment key={stat.label}>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center shrink-0">
+                    <div className="flex flex-col md:flex-row items-center gap-2 md:gap-3 text-center md:text-left">
+                      <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center shrink-0">
                         {stat.icon}
                       </div>
                       <div>
-                        <p className="text-brand-dark font-black text-[18px] leading-none">{stat.value}</p>
-                        <p className="text-slate-600 text-[13px] font-medium mt-1 whitespace-nowrap">{stat.label}</p>
+                        <p className="text-brand-dark font-black text-[14px] md:text-[18px] leading-none">{stat.value}</p>
+                        <p className="text-slate-600 text-[11px] md:text-[13px] font-medium mt-1 md:mt-1 whitespace-nowrap">{stat.label}</p>
                       </div>
                     </div>
                     {i < TRUST_STATS.length - 1 && (
-                      <div className="w-px h-10 bg-slate-300/50 hidden sm:block" />
+                      <div className="w-px h-10 bg-slate-300/50 hidden md:block" />
                     )}
                   </React.Fragment>
                 ))}
@@ -200,15 +200,15 @@ export const HeroSection: React.FC = () => {
           <div
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 pt-2 px-2 w-fit max-w-full mx-auto justify-center [&::-webkit-scrollbar]:hidden"
+            className="flex overflow-x-auto snap-x snap-mandatory gap-3 md:gap-4 pb-4 pt-2 px-4 w-full md:w-fit max-w-full mx-auto justify-start md:justify-center [&::-webkit-scrollbar]:hidden"
           >
             {quickActions.map((action) => (
               <div
                 key={action.id}
                 onClick={() => handleQuickActionClick(action.title)}
-                className="min-w-[130px] max-w-[130px] h-[130px] snap-start shrink-0 bg-white rounded-2xl p-4 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center"
+                className="min-w-[100px] max-w-[100px] h-[110px] md:min-w-[130px] md:max-w-[130px] md:h-[130px] snap-start shrink-0 bg-white rounded-2xl p-3 md:p-4 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center"
               >
-                <div className="h-12 w-12 mb-3 flex items-center justify-center">
+                <div className="h-10 w-10 md:h-12 md:w-12 mb-2 md:mb-3 flex items-center justify-center shrink-0">
                   <img
                     src={action.iconUrl}
                     alt={action.title}

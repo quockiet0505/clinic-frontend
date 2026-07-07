@@ -8,6 +8,7 @@ import { getImageUrl } from '@/utils/image';
 
 export default function AdminLayout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isAuthenticated, loading } = useAuth();
   const [logoUrl, setLogoUrl] = useState<string>(`${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}/images/logo.png`);
 
@@ -37,15 +38,24 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="flex h-screen w-full bg-slate-50 overflow-hidden">
+    <div className="flex h-screen w-full bg-slate-50 overflow-hidden relative">
       <Sidebar 
         isCollapsed={isSidebarCollapsed} 
         onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
+        isMobileOpen={isMobileMenuOpen}
+        onMobileClose={() => setIsMobileMenuOpen(false)}
         logoUrl={logoUrl}
       />
       
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Header onMenuClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} />
+        <Header onMenuClick={() => {
+          // On mobile, toggle mobile menu. On desktop, toggle collapse.
+          if (window.innerWidth < 768) {
+            setIsMobileMenuOpen(!isMobileMenuOpen);
+          } else {
+            setIsSidebarCollapsed(!isSidebarCollapsed);
+          }
+        }} />
         
         <main className="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar">
           <Outlet />

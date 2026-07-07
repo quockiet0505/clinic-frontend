@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { User, Bot } from 'lucide-react';
 import type { ChatMessage } from '../types/chatbot';
 
@@ -6,49 +6,47 @@ import type { ChatMessage } from '../types/chatbot';
 import aiAvatarDefault from '@/assets/images/ai-avatar.png';
 import aiAvatarUrl from '@/assets/images/ai-avatar.png?url';
 
-// Kiểm tra log ngay khi import
-console.log('=== ChatMessageBubble module loaded ===');
-console.log('Default import:', aiAvatarDefault);
-console.log('Url import:', aiAvatarUrl);
-
-
 // Chọn src ưu tiên
 const aiAvatarSrc = (typeof aiAvatarDefault === 'string' && aiAvatarDefault.startsWith('/'))
   ? aiAvatarDefault
   : (aiAvatarUrl || '/src/assets/images/ai-avatar.png');
 
-export const ChatMessageBubble: React.FC<{ message: ChatMessage }> = ({ message }) => {
+export const ChatMessageBubble: React.FC<{ message: ChatMessage, onQuickReply?: (text: string) => void }> = ({ message, onQuickReply }) => {
   const isAI = message.sender === 'AI';
 
-  // Hàm xử lý nội dung: thay `- ` thành xuống dòng (Cách 2 từ người dùng)
   const formatMessage = (text: string) => {
-    // Xóa SẠCH toàn bộ ký tự in đậm ** do AI tạo ra để không bị vướng mắt
     let formatted = text.replace(/\*\*/g, '');
-
-    // Thay thế khoảng trắng + dấu gạch ngang thành xuống dòng (Bắt lỗi AI dính chữ vào gạch đầu dòng)
-    // VD: "Nội Tiết- Da liễu" -> "Nội Tiết\n- Da liễu"
-    // Chỉ áp dụng nếu chữ đằng sau là in hoa để tránh cắt sai "7:00 - 19:00"
     formatted = formatted.replace(/([a-zA-ZÀ-ỹ0-9.:])\s*-\s+([A-ZÀ-Ỹ])/g, '$1\n- $2');
-    
-    // Xóa bỏ các dòng trắng dư thừa (ví dụ \n \n thành \n)
     formatted = formatted.replace(/\n(?:\s*\n)+/g, '\n');
-    
     return formatted;
   };
 
-  const displayText = isAI ? formatMessage(message.text) : message.text;
+  const rawText = message.text;
 
-  useEffect(() => {
-    console.log('ChatMessageBubble rendered for:', message.sender, message.text.substring(0, 30));
-  }, [message]);
+  // Extract buttons từ rawText TRƯỚC khi formatMessage (tránh regex bị cản)
+  const buttons: string[] = [];
+  const buttonRegex = /__BUTTON:([\s\S]*?)__/g;
+  let match;
+  while ((match = buttonRegex.exec(rawText)) !== null) {
+    buttons.push(match[1].trim());
+  }
+
+  // Format text sau khi đã bỏ button markers
+  const finalDisplayText = isAI
+    ? formatMessage(rawText.replace(/__BUTTON:([\s\S]*?)__/g, '').trim())
+    : rawText;
+
+  // Debug logs - xóa sau khi xác nhận hoạt động
+  console.log("TEXT =", JSON.stringify(rawText));
+  console.log("BUTTONS =", buttons);
 
   if (!message.text) return null;
 
   return (
     <div className={`flex w-full ${isAI ? 'justify-start' : 'justify-end'} mb-4`}>
       <div className={`flex max-w-[85%] gap-2 ${isAI ? 'flex-row' : 'flex-row-reverse'}`}>
-        {/* Avatar Area */}
-        <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 shadow-sm overflow-hidden ${isAI
+        {/* Avatar */}
+        <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 shadow-sm overflow-hidden self-start ${isAI
           ? 'border-2 border-primary-50 bg-white'
           : 'bg-brand-dark text-white'
           }`}>
@@ -58,7 +56,6 @@ export const ChatMessageBubble: React.FC<{ message: ChatMessage }> = ({ message 
               alt="AI Assistant"
               className="w-full h-full object-cover"
               onError={(e) => {
-                console.error('Image load error:', aiAvatarSrc);
                 e.currentTarget.style.display = 'none';
                 const parent = e.currentTarget.parentElement;
                 if (parent) {
@@ -66,7 +63,6 @@ export const ChatMessageBubble: React.FC<{ message: ChatMessage }> = ({ message 
                   if (icon) icon.style.display = 'flex';
                 }
               }}
-              onLoad={() => console.log('Image loaded successfully:', aiAvatarSrc)}
             />
           ) : (
             <User className="w-5 h-5" />
@@ -78,17 +74,34 @@ export const ChatMessageBubble: React.FC<{ message: ChatMessage }> = ({ message 
           )}
         </div>
 
-        {/* Message Bubble */}
-        <div className={`p-3 rounded-2xl text-[14px] font-medium leading-relaxed shadow-sm whitespace-pre-wrap break-words ${isAI
-          ? 'bg-white border border-border-default text-brand-dark rounded-tl-sm'
-          : 'bg-primary-500 text-white rounded-tr-sm'
-          }`}>
-          {displayText.split('\n').map((line, i) => (
-            <React.Fragment key={i}>
-              {line}
-              {i < displayText.split('\n').length - 1 && <br />}
-            </React.Fragment>
-          ))}
+        {/* Bubble + Buttons stacked */}
+        <div className="flex flex-col gap-2 min-w-0">
+          <div className={`p-3 rounded-2xl text-[14px] font-medium leading-relaxed shadow-sm whitespace-pre-wrap break-words ${isAI
+            ? 'bg-white border border-border-default text-brand-dark rounded-tl-sm'
+            : 'bg-primary-500 text-white rounded-tr-sm'
+            }`}>
+            {finalDisplayText.split('\n').map((line, i, arr) => (
+              <React.Fragment key={i}>
+                {line}
+                {i < arr.length - 1 && <br />}
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Quick Reply Buttons - hiện ngay dưới bubble */}
+          {buttons.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {buttons.map((btnText, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => onQuickReply?.(btnText)}
+                  className="px-4 py-2 bg-white text-primary-600 hover:bg-primary-50 border-2 border-primary-300 hover:border-primary-500 text-[13px] font-bold rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-md active:scale-95"
+                >
+                  {btnText}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

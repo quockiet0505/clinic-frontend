@@ -29,13 +29,15 @@ export const ChatWindow: React.FC<Props> = ({ onClose }) => {
     }
   }, [messages, isTyping]);
 
-  const handleSend = async (e?: React.FormEvent) => {
+  const handleSend = async (e?: React.FormEvent, textOverride?: string) => {
     if (e) e.preventDefault();
-    if (!inputValue.trim()) return;
+    
+    const textToSend = textOverride || inputValue.trim();
+    if (!textToSend) return;
 
     const userMsg: ChatMessage = {
       id: Math.random().toString(),
-      text: inputValue.trim(),
+      text: textToSend,
       sender: 'USER',
       timestamp: new Date()
     };
@@ -94,7 +96,11 @@ export const ChatWindow: React.FC<Props> = ({ onClose }) => {
       {/* Body: Danh sách tin nhắn */}
       <CardContent className="flex-1 bg-background-light p-4 overflow-y-auto" ref={scrollRef}>
         {messages.map(msg => (
-          <ChatMessageBubble key={msg.id} message={msg} />
+          <ChatMessageBubble 
+            key={msg.id} 
+            message={msg} 
+            onQuickReply={(text) => handleSend(undefined, text)} 
+          />
         ))}
         {isTyping && (
           <div className="flex w-full justify-start mb-4">

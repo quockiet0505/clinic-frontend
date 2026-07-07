@@ -202,8 +202,9 @@ export const FloatingChatbot: React.FC = () => {
 
           {/* Body */}
           <div className="flex-1 p-4 overflow-y-auto flex flex-col space-y-4" ref={scrollRef}>
-            {messages.map(msg => {
+            {messages.map((msg, index) => {
               if (msg.sender === 'AI' && !msg.text) return null;
+              const isLast = index === messages.length - 1;
 
               return (
                 <div key={msg.id} className={`flex w-full ${msg.sender === 'AI' ? 'justify-start' : 'justify-end'}`}>
@@ -219,28 +220,56 @@ export const FloatingChatbot: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Message Bubble */}
-                    <div className={`p-3.5 rounded-2xl text-[14px] font-medium leading-relaxed shadow-sm whitespace-pre-wrap break-words ${msg.sender === 'AI'
-                      ? 'bg-white border border-slate-100 text-slate-800 rounded-tl-sm'
-                      : 'bg-primary-500 text-white rounded-tr-sm'
-                      }`}>
-                      {(() => {
-                        if (msg.sender !== 'AI') return msg.text;
+                    {/* Message Bubble + Buttons */}
+                    <div className="flex flex-col gap-2 min-w-0">
+                      <div className={`p-3.5 rounded-2xl text-[14px] font-medium leading-relaxed shadow-sm whitespace-pre-wrap break-words ${msg.sender === 'AI'
+                        ? 'bg-white border border-slate-100 text-slate-800 rounded-tl-sm'
+                        : 'bg-primary-500 text-white rounded-tr-sm'
+                        }`}>
+                        {(() => {
+                          if (msg.sender !== 'AI') return msg.text;
 
-                        let formatted = msg.text.replace(/\*\*/g, '');
-                        // Xóa bỏ các dòng trắng dư thừa (ví dụ \n \n thành \n)
-                        formatted = formatted.replace(/\n(?:\s*\n)+/g, '\n');
+                          let formatted = msg.text.replace(/\*\*/g, '');
+                          formatted = formatted.replace(/\n(?:\s*\n)+/g, '\n');
+                          formatted = formatted.replace(/([a-zA-ZÀ-ỹ0-9.:])\s*-\s+([A-ZÀ-Ỹ])/g, '$1\n- $2');
+                          
+                          // Strip button markers for display
+                          formatted = formatted.replace(/__BUTTON:([\s\S]*?)__/g, '').trim();
+
+                          return formatted.split('\n').map((line, i) => (
+                            <React.Fragment key={i}>
+                              {line}
+                              {i < formatted.split('\n').length - 1 && <br />}
+                            </React.Fragment>
+                          ));
+                        })()}
+                      </div>
+
+                      {/* Render Quick Reply Buttons ONLY if it's the latest message */}
+                      {msg.sender === 'AI' && isLast && (() => {
+                        const buttons: string[] = [];
+                        const buttonRegex = /__BUTTON:([\s\S]*?)__/g;
+                        let match;
+                        while ((match = buttonRegex.exec(msg.text)) !== null) {
+                          buttons.push(match[1].trim());
+                        }
                         
-                        // Tự động thêm xuống dòng trước các mục danh sách (-) bị dính chùm bởi AI 3B
-                        // Ví dụ: "gồm:- Bác sĩ Gia Đình- Tiêu Hóa" -> "gồm:\n- Bác sĩ Gia Đình\n- Tiêu Hóa"
-                        formatted = formatted.replace(/([a-zA-ZÀ-ỹ0-9.:])\s*-\s+([A-ZÀ-Ỹ])/g, '$1\n- $2');
-
-                        return formatted.split('\n').map((line, i) => (
-                          <React.Fragment key={i}>
-                            {line}
-                            {i < formatted.split('\n').length - 1 && <br />}
-                          </React.Fragment>
-                        ));
+                        if (buttons.length === 0) return null;
+                        
+                        return (
+                          <div className="flex flex-wrap gap-2">
+                            {buttons.map((btn, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => handleSend(btn)}
+                                disabled={isTyping}
+                                className="px-4 py-2 bg-white text-primary-600 hover:bg-primary-50 border border-primary-300 hover:border-primary-500 text-[13px] font-bold rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                {btn}
+                              </button>
+                            ))}
+                          </div>
+                        );
                       })()}
                     </div>
                 </div>

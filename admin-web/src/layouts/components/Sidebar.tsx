@@ -14,10 +14,12 @@ import {
 interface SidebarProps {
   isCollapsed: boolean;
   onToggle: () => void;
+  isMobileOpen?: boolean;
+  onMobileClose?: () => void;
   logoUrl?: string;
 }
 
-export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}/images/logo.png` }: SidebarProps) {
+export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileClose, logoUrl = `${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}/images/logo.png` }: SidebarProps) {
   const location = useLocation();
   const currentUserRole = 'ADMIN';
 
@@ -104,9 +106,21 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
 
 
   return (
-    <aside
-      className={`${isCollapsed ? 'w-[72px]' : 'w-[252px]'} transition-all duration-300 ease-in-out bg-white border-r border-slate-200 h-screen flex-col hidden md:flex sticky top-0 overflow-hidden z-20`}
-    >
+    <>
+      {/* Mobile overlay */}
+      {isMobileOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-900/50 z-40 md:hidden transition-opacity"
+          onClick={onMobileClose}
+        />
+      )}
+      <aside
+        className={`${isCollapsed ? 'w-[72px]' : 'w-[252px]'} 
+          transition-all duration-300 ease-in-out bg-white border-r border-slate-200 flex-col overflow-hidden z-50
+          fixed md:sticky top-0 h-screen md:h-screen
+          ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} flex
+        `}
+      >
 
       {/* ── Header / Logo ── compact h-16 */}
       <div className={`flex items-center border-b border-slate-100 shrink-0 transition-all duration-300 ${isCollapsed ? 'h-14 justify-center px-2' : 'h-16 justify-between px-4'
@@ -178,6 +192,9 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
                     key={itemIdx}
                     to={item.path}
                     title={isCollapsed ? item.name : undefined}
+                    onClick={() => {
+                      if (window.innerWidth < 768 && onMobileClose) onMobileClose();
+                    }}
                     className={`
                       flex items-center transition-all duration-150 rounded-xl group
                       ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2.5'}
@@ -209,6 +226,9 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
         <Link
           to="/profile"
           title={isCollapsed ? 'Hồ sơ' : undefined}
+          onClick={() => {
+            if (window.innerWidth < 768 && onMobileClose) onMobileClose();
+          }}
           className={`flex items-center hover:bg-slate-100 transition-all text-slate-700 rounded-xl ${isCollapsed ? 'justify-center p-2' : 'gap-3 px-3 py-2.5'
             }`}
         >
@@ -227,5 +247,6 @@ export default function Sidebar({ isCollapsed, onToggle, logoUrl = `${import.met
       </div>
 
     </aside>
+    </>
   );
 }
