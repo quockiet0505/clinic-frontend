@@ -23,23 +23,36 @@ export const FloatingChatbot: React.FC = () => {
   
   // Drag to scroll logic
   const [isDragging, setIsDragging] = useState(false);
+  const [hasDragged, setHasDragged] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!quickRepliesRef.current) return;
     setIsDragging(true);
+    setHasDragged(false);
     setStartX(e.pageX - quickRepliesRef.current.offsetLeft);
     setScrollLeft(quickRepliesRef.current.scrollLeft);
   };
 
-  const handleMouseLeave = () => setIsDragging(false);
-  const handleMouseUp = () => setIsDragging(false);
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+  
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    // setTimeout is needed to reset hasDragged after the click event fires
+    setTimeout(() => setHasDragged(false), 50);
+  };
+  
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !quickRepliesRef.current) return;
     e.preventDefault();
     const x = e.pageX - quickRepliesRef.current.offsetLeft;
     const walk = (x - startX) * 2;
+    if (Math.abs(x - startX) > 5) {
+      setHasDragged(true);
+    }
     quickRepliesRef.current.scrollLeft = scrollLeft - walk;
   };
 
@@ -215,10 +228,12 @@ export const FloatingChatbot: React.FC = () => {
                         if (msg.sender !== 'AI') return msg.text;
 
                         let formatted = msg.text.replace(/\*\*/g, '');
-                        // Bỏ replace RegExp quá khắt khe gây lỗi giờ giấc (VD: 7:00 - 19:00)
-                        
                         // Xóa bỏ các dòng trắng dư thừa (ví dụ \n \n thành \n)
                         formatted = formatted.replace(/\n(?:\s*\n)+/g, '\n');
+                        
+                        // Tự động thêm xuống dòng trước các mục danh sách (-) bị dính chùm bởi AI 3B
+                        // Ví dụ: "gồm:- Bác sĩ Gia Đình- Tiêu Hóa" -> "gồm:\n- Bác sĩ Gia Đình\n- Tiêu Hóa"
+                        formatted = formatted.replace(/([a-zA-ZÀ-ỹ0-9.:])\s*-\s+([A-ZÀ-Ỹ])/g, '$1\n- $2');
 
                         return formatted.split('\n').map((line, i) => (
                           <React.Fragment key={i}>

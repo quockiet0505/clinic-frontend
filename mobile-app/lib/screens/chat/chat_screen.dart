@@ -216,6 +216,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
   String _formatMessage(String text) {
     var formatted = text.replaceAll('**', '');
+    
+    // Fix: Tự động xuống dòng trước các dấu gạch ngang của list nếu bị dính chữ
+    formatted = formatted.replaceAllMapped(
+      RegExp(r'([a-zA-ZÀ-ỹ0-9.:])\s*-\s+([A-ZÀ-Ỹ])'),
+      (match) => '${match.group(1)}\n- ${match.group(2)}'
+    );
+    
     // Xóa bỏ các dòng trắng dư thừa (ví dụ \n \n thành \n)
     formatted = formatted.replaceAll(RegExp(r'\n(?:\s*\n)+'), '\n');
     return formatted;

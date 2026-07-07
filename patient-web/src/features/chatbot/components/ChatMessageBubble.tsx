@@ -25,13 +25,10 @@ export const ChatMessageBubble: React.FC<{ message: ChatMessage }> = ({ message 
     // Xóa SẠCH toàn bộ ký tự in đậm ** do AI tạo ra để không bị vướng mắt
     let formatted = text.replace(/\*\*/g, '');
 
-    // Thay thế khoảng trắng + dấu gạch ngang + khoảng trắng (" - ") thành xuống dòng
-    // Bắt lỗi AI dính chữ vào gạch đầu dòng (ví dụ: VNĐ- Gói)
-    formatted = formatted.replace(/([^\n:;])\s*-\s/g, '$1\n- ');
-    
-    // Thay thế các dấu gạch ngang dính liền sau dấu hai chấm (ví dụ: "ClinicPro:- ")
-    formatted = formatted.replace(/: - /g, ':\n- ');
-    formatted = formatted.replace(/:-\s/g, ':\n- ');
+    // Thay thế khoảng trắng + dấu gạch ngang thành xuống dòng (Bắt lỗi AI dính chữ vào gạch đầu dòng)
+    // VD: "Nội Tiết- Da liễu" -> "Nội Tiết\n- Da liễu"
+    // Chỉ áp dụng nếu chữ đằng sau là in hoa để tránh cắt sai "7:00 - 19:00"
+    formatted = formatted.replace(/([a-zA-ZÀ-ỹ0-9.:])\s*-\s+([A-ZÀ-Ỹ])/g, '$1\n- $2');
     
     // Xóa bỏ các dòng trắng dư thừa (ví dụ \n \n thành \n)
     formatted = formatted.replace(/\n(?:\s*\n)+/g, '\n');
