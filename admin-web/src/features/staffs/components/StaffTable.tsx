@@ -38,7 +38,7 @@ export default function StaffTable({ data, onEdit, onDelete, loading = false, pa
     {
       key: 'fullName',
       label: 'Họ tên',
-      className: 'w-[28%]',
+      className: 'w-[24%]',
       render: (staff) => (
         <div className="flex items-center gap-3 min-w-0">
           <EntityAvatar name={staff.fullName} imageUrl={staff.imageUrl} size="sm" />
@@ -74,9 +74,9 @@ export default function StaffTable({ data, onEdit, onDelete, loading = false, pa
     {
       key: 'staffType',
       label: 'Chức vụ',
-      className: 'w-[14%]',
+      className: 'w-[18%]',
       noTruncate: true,
-      render: (staff) => <RoleDisplay role={staff.staffType} />,
+      render: (staff) => <RoleDisplay role={staff.staffType} expertiseName={staff.expertiseName} />,
     },
     {
       key: 'rating',

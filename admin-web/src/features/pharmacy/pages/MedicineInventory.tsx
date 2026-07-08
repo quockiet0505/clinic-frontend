@@ -8,6 +8,7 @@ import { Medicine } from '../types/pharmacy';
 import MedicineFilterBar from '../components/MedicineFilterBar';
 import MedicineTable from '../components/MedicineTable';
 import MedicineFormDialog from '../components/MedicineFormDialog';
+
 export default function MedicineInventory() {
   const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [totalElements, setTotalElements] = useState(0);

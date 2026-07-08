@@ -46,7 +46,7 @@ export const medicalApi = {
     });
   },
 
-  updateRecord: async (
+    updateRecord: async (
     id: number,
     data: {
       patientId: number;
@@ -67,5 +67,26 @@ export const medicalApi = {
       console.error(e);
       throw e;
     }
+  },
+
+  createPrescription: async (data: {
+    recordId: number;
+    notes?: string;
+    items: {
+      medicineId?: number | null;
+      medicineName: string;
+      unit: string;
+      quantity: number;
+      dosage: string;
+    }[];
+  }): Promise<void> => {
+    await axiosInstance.post('/prescriptions', data, {
+      toastSuccess: 'Đã lưu đơn thuốc thành công',
+    });
+  },
+
+  checkInteractions: async (medicineIds: number[]): Promise<any[]> => {
+    const res = await axiosInstance.post('/prescriptions/check-interactions', medicineIds);
+    return res.data.data;
   },
 };

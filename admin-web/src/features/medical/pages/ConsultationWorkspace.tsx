@@ -267,7 +267,7 @@ export default function ConsultationWorkspace() {
             {activeTab === 'orders' && <ConsultationOrdersPanel orders={orders} />}
             {activeTab === 'prescriptions' && (
               canPrescribe ? (
-                <PrescriptionBuilder />
+                <PrescriptionBuilder recordId={recordId} />
               ) : (
                 <div className="text-center p-10 text-amber-700 bg-amber-50 border border-amber-100 rounded-xl">
                   Cần đọc kết quả xét nghiệm trước khi kê đơn.

@@ -1,6 +1,6 @@
 export interface PrescriptionItem {
   id?: number;
-  medicineId?: number;
+  medicineId?: number | null;
   medicineName: string;
   unit: string;
   quantity: number;
