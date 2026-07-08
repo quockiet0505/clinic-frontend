@@ -7,7 +7,7 @@ import {
   Settings, CircleDollarSign, Award, Building2, ChevronLeft,
   UserCircle, ReceiptText, CalendarOff, MessageSquareHeart, Bell,
   Truck, Bot, ShieldCheck, Layers,
-  TrendingDown, Tags, Undo2, HeartPulse,
+  TrendingDown, Tags, Undo2, HeartPulse, Activity
 } from 'lucide-react';
 
 // 1. ĐỊNH NGHĨA PROPS CHO SIDEBAR
@@ -71,6 +71,7 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
       items: [
         { name: 'Danh mục thuốc', icon: Pill, path: '/pharmacy/inventory' },
         { name: 'Đơn thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions' },
+        { name: 'Tra cứu tương tác', icon: Activity, path: '/pharmacy/interaction-checker' },
       ]
     },
     {

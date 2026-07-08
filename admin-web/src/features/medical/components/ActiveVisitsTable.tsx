@@ -79,9 +79,20 @@ export default function ActiveVisitsTable({ data, onConsult, onTriage, loading =
       className: 'w-[17%]',
       render: (visit) => {
         if (onTriage) {
+          const isVitalsTaken = visit.vitalsTaken;
           return (
-            <Button onClick={() => onTriage(visit.recordId)} size="sm" className="h-9 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm">
-              Đo hiệu sinh <ArrowRight size={14} className="ml-1.5" />
+            <Button
+              onClick={() => onTriage(visit.recordId)}
+              disabled={isVitalsTaken}
+              size="sm"
+              className={`h-9 px-4 rounded-xl text-white font-medium text-sm transition-all ${
+                isVitalsTaken
+                  ? 'bg-slate-150 text-slate-450 border-slate-200 pointer-events-none'
+                  : 'bg-indigo-600 hover:bg-indigo-700'
+              }`}
+            >
+              {isVitalsTaken ? 'Đã đo sinh hiệu' : 'Đo hiệu sinh'}
+              {!isVitalsTaken && <ArrowRight size={14} className="ml-1.5" />}
             </Button>
           );
         }

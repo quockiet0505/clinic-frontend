@@ -16,23 +16,23 @@ export default function VitalSignsForm({ initialData, onChange }: { initialData?
   return (
     <div className="grid grid-cols-2 gap-4">
       <div className="space-y-2">
-        <label className="block mb-2 text-sm font-medium text-slate-700">Chiều cao (cm)</label>
+        <label className="block mb-2 text-sm font-medium text-slate-700">Chiều cao (cm) <span className="text-red-500">*</span></label>
         <Input type="number" value={vitals.height || ''} onChange={(e) => setVitals({...vitals, height: Number(e.target.value)})} className="h-11 rounded-[16px] font-medium border-slate-200" placeholder="vd: 170" />
       </div>
       <div className="space-y-2">
-        <label className="block mb-2 text-sm font-medium text-slate-700">Cân nặng (kg)</label>
+        <label className="block mb-2 text-sm font-medium text-slate-700">Cân nặng (kg) <span className="text-red-500">*</span></label>
         <Input type="number" value={vitals.weight || ''} onChange={(e) => setVitals({...vitals, weight: Number(e.target.value)})} className="h-11 rounded-[16px] font-medium border-slate-200" placeholder="vd: 70" />
       </div>
       <div className="space-y-2">
-        <label className="block mb-2 text-sm font-medium text-slate-700">Nhiệt độ (°C)</label>
+        <label className="block mb-2 text-sm font-medium text-slate-700">Nhiệt độ (°C) <span className="text-red-500">*</span></label>
         <Input type="number" step="0.1" value={vitals.temperature || ''} onChange={(e) => setVitals({...vitals, temperature: Number(e.target.value)})} className="h-11 rounded-[16px] font-medium border-slate-200" placeholder="vd: 37.0" />
       </div>
       <div className="space-y-2">
-        <label className="block mb-2 text-sm font-medium text-slate-700">Nhịp tim (bpm)</label>
+        <label className="block mb-2 text-sm font-medium text-slate-700">Nhịp tim (bpm) <span className="text-red-500">*</span></label>
         <Input type="number" value={vitals.pulse || ''} onChange={(e) => setVitals({...vitals, pulse: Number(e.target.value)})} className="h-11 rounded-[16px] font-medium border-slate-200" placeholder="vd: 85" />
       </div>
       <div className="space-y-2">
-        <label className="block mb-2 text-sm font-medium text-slate-700">Huyết áp (mmHg)</label>
+        <label className="block mb-2 text-sm font-medium text-slate-700">Huyết áp (mmHg) <span className="text-red-500">*</span></label>
         <Input value={vitals.bloodPressure || ''} onChange={(e) => setVitals({...vitals, bloodPressure: e.target.value})} className="h-11 rounded-[16px] font-medium border-slate-200" placeholder="vd: 120/80" />
       </div>
       

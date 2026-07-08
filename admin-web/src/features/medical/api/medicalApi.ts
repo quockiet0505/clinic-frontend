@@ -85,8 +85,22 @@ export const medicalApi = {
     });
   },
 
-  checkInteractions: async (medicineIds: number[]): Promise<any[]> => {
-    const res = await axiosInstance.post('/prescriptions/check-interactions', medicineIds);
-    return res.data.data;
+  checkInteractions: async (medicineIds: number[]): Promise<{
+    medicine1: string;
+    medicine2: string;
+    mechanism: string;
+    consequence: string;
+    management: string;
+  }[]> => {
+    try {
+      const res = await axiosInstance.post('/prescriptions/check-interactions', medicineIds, {
+        skipSuccessToast: true,
+        skipToast: true
+      });
+      return res.data.data || [];
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
   },
 };

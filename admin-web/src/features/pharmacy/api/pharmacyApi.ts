@@ -37,6 +37,16 @@ export const pharmacyApi = {
     }
   },
 
+  searchMedicines: async (keyword: string): Promise<Medicine[]> => {
+    try {
+      const res = await axiosInstance.get('/medicines', { params: { search: keyword, size: 50 } });
+      return res.data.data?.content || [];
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  },
+
   createMedicine: async (data: Omit<Medicine, 'medicineId' | 'quantity'>): Promise<void> => {
     await axiosInstance.post('/medicines', data, { toastSuccess: 'Thêm thuốc mới thành công' });
   },

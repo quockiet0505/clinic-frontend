@@ -90,9 +90,26 @@ export default function PrescriptionBuilder({ recordId }: { recordId: number }) 
                 borderRadius: '0.75rem',
                 borderColor: '#e2e8f0',
                 boxShadow: 'none',
+                fontSize: '14px',
                 '&:hover': {
                   borderColor: '#cbd5e1',
                 },
+              }),
+              placeholder: (base) => ({
+                ...base,
+                fontSize: '14px',
+              }),
+              singleValue: (base) => ({
+                ...base,
+                fontSize: '14px',
+              }),
+              option: (base) => ({
+                ...base,
+                fontSize: '14px',
+              }),
+              input: (base) => ({
+                ...base,
+                fontSize: '14px',
               }),
             }}
           />

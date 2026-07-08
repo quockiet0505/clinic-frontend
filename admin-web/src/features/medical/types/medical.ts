@@ -6,6 +6,7 @@ export interface PrescriptionItem {
   quantity: number;
   dosage: string;
   price?: number;
+  warnings?: any[];
 }
 
 export interface Prescription {

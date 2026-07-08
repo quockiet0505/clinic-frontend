@@ -86,7 +86,7 @@ export default function FollowUpFormDialog({
             variant="outline"
             onClick={onSkip}
             disabled={loading}
-            className="h-9 px-5 rounded-xl text-sm font-bold border-slate-300 text-slate-600"
+            className="h-9 px-5 rounded-xl text-sm font-bold border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 cursor-pointer"
           >
             Không tái khám
           </Button>
@@ -94,14 +94,14 @@ export default function FollowUpFormDialog({
             variant="outline"
             onClick={onClose}
             disabled={loading}
-            className="h-9 px-5 rounded-xl text-sm font-bold border-slate-300"
+            className="h-9 px-5 rounded-xl text-sm font-bold border-slate-300 text-slate-600 hover:bg-slate-100 cursor-pointer"
           >
             Hủy
           </Button>
           <Button
             onClick={() => submitFromForm(formData as Record<string, string>)}
             disabled={loading || !formData.scheduledDate}
-            className="h-9 px-6 rounded-xl text-sm font-bold bg-primary hover:bg-primary-600 text-white"
+            className="h-9 px-6 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
           >
             {loading ? 'Đang lưu...' : 'Lưu & gửi thông báo'}
           </Button>

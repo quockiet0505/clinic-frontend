@@ -37,6 +37,7 @@ import LabResults from '@/features/laboratory/pages/LabResults';
 // --- 5. PHARMACY & INVENTORY ---
 import MedicineInventory from '@/features/pharmacy/pages/MedicineInventory';
 import PrescriptionDispense from '@/features/pharmacy/pages/PrescriptionDispense';
+import DrugInteractionChecker from '@/features/pharmacy/pages/DrugInteractionChecker';
 
 
 // --- 6. FINANCE & BILLING ---
@@ -252,6 +253,14 @@ export const router = createBrowserRouter([
         element: (
           <RoleGuard allowedRoles={['ADMIN', 'STAFF']}>
             <PrescriptionDispense />
+          </RoleGuard>
+        ) 
+      },
+      { 
+        path: 'pharmacy/interaction-checker', 
+        element: (
+          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'STAFF']}>
+            <DrugInteractionChecker />
           </RoleGuard>
         ) 
       },
