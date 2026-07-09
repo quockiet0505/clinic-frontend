@@ -34,6 +34,7 @@ import { RecordDetail } from '@/features/records/pages/RecordDetail';
 // Auth Feature
 import { Login } from '@/features/auth/pages/Login';
 import { Register } from '@/features/auth/pages/Register';
+import { GoogleRegister } from '@/features/auth/pages/GoogleRegister';
 
 export const router = createBrowserRouter([
   {
@@ -70,7 +71,8 @@ export const router = createBrowserRouter([
     element: <AuthLayout />,
     children: [
       { path: 'login', element: <Login /> },
-      { path: 'register', element: <Register /> }
+      { path: 'register', element: <Register /> },
+      { path: 'google-register', element: <GoogleRegister /> }
     ]
   },
   { path: '*', element: <Navigate to="/" replace /> }

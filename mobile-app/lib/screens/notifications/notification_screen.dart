@@ -2,6 +2,8 @@ import 'package:clinic_management_system/app_exports.dart';
 import 'package:clinic_management_system/services/follow_up_service.dart';
 import 'package:clinic_management_system/services/notification_service.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'dart:convert';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -23,12 +25,31 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     super.initState();
+    _loadFromCache();
     _load();
+  }
+
+  void _loadFromCache() {
+    final box = Hive.box('appCache');
+    final String? cachedNotifs = box.get('myNotifications');
+    if (cachedNotifs != null) {
+      try {
+        final List<dynamic> decoded = jsonDecode(cachedNotifs);
+        setState(() {
+          _notifications = decoded
+              .map((e) => PatientNotification.fromJson(Map<String, dynamic>.from(e as Map)))
+              .toList();
+          _loading = false;
+        });
+      } catch (e) {
+        // Lỗi parse cache thì bỏ qua
+      }
+    }
   }
 
   Future<void> _load() async {
     setState(() {
-      _loading = true;
+      if (_notifications.isEmpty) _loading = true; // Chỉ hiện loading nếu chưa có cache
       _error = null;
     });
     try {
@@ -43,6 +64,21 @@ class _NotificationScreenState extends State<NotificationScreen> {
             .toList();
         _loading = false;
       });
+
+      // Lưu Cache lại cho lần sau
+      try {
+        // Dùng tạm List Map để dễ encode JSON
+        final box = Hive.box('appCache');
+        final jsonList = _notifications.map((n) => {
+          'id': n.id,
+          'type': n.type,
+          'subject': n.subject,
+          'content': n.content,
+          'sentAt': n.sentAt.toIso8601String()
+        }).toList();
+        box.put('myNotifications', jsonEncode(jsonList));
+      } catch (e) {}
+
     } catch (e) {
       setState(() {
         _error = e.toString();

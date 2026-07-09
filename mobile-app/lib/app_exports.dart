@@ -31,6 +31,7 @@ export 'package:clinic_management_system/widgets/common/gradient_button.dart';
 // Main Screens (Auth & Home)
 export 'package:clinic_management_system/screens/auth/login_screen.dart';
 export 'package:clinic_management_system/screens/auth/register_screen.dart';
+export 'package:clinic_management_system/screens/auth/google_register_screen.dart';
 export 'package:clinic_management_system/screens/main_screen.dart';
 export 'package:clinic_management_system/screens/home/home_screen.dart';
 

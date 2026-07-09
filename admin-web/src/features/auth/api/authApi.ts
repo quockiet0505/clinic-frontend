@@ -37,4 +37,43 @@ export const authApi = {
     };
     return { user, token: data.token };
   },
+
+  googleLogin: async (idToken: string): Promise<LoginResponse> => {
+    try {
+      const response = await axiosInstance.post<ApiResponse<StaffLoginData>>('/auth/google/login', { idToken });
+      const { success, message, data } = response.data;
+      if (!success) {
+        throw new Error(message);
+      }
+
+      const isStaff = data.roles.includes('ROLE_ADMIN') || 
+                      data.roles.includes('ROLE_DOCTOR') || 
+                      data.roles.includes('ROLE_STAFF') || 
+                      data.roles.includes('ROLE_LAB_TECH');
+                      
+      if (!isStaff) {
+        throw new Error('Access Denied: Staff privileges required.');
+      }
+
+      let role: User['role'] = 'STAFF';
+      if (data.roles.includes('ROLE_ADMIN')) role = 'ADMIN';
+      else if (data.roles.includes('ROLE_DOCTOR')) role = 'DOCTOR';
+      else if (data.roles.includes('ROLE_LAB_TECH')) role = 'LAB_TECH';
+
+      const user: User = {
+        id: data.accountId.toString(),
+        email: data.email,
+        fullName: data.email.split('@')[0], 
+        role: role,
+        roles: data.roles,
+      };
+      
+      return { user, token: data.token };
+    } catch (error: any) {
+      if (error.response?.status === 404 && error.response?.data?.message === 'REQUIRES_REGISTRATION') {
+        throw new Error('Access Denied: Account not registered as staff.');
+      }
+      throw error;
+    }
+  },
 };

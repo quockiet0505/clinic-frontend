@@ -9,14 +9,19 @@ import 'package:clinic_management_system/providers/appointment_provider.dart';
 import 'package:clinic_management_system/providers/auth_provider.dart';
 import 'package:clinic_management_system/providers/record_provider.dart';
 import 'package:clinic_management_system/providers/chat_provider.dart';
+import 'package:clinic_management_system/services/notification_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   await dotenv.load(fileName: ".env");
+
+  // Initialize Firebase
+  await Firebase.initializeApp();
 
   await Hive.initFlutter();
   await Hive.openBox('appCache');
@@ -88,6 +93,13 @@ class _AuthWrapperState extends State<AuthWrapper> {
         // Tải trước ảnh (precache) vào RAM để khi vào app hiện ra ngay lập tức
         if (mounted) {
           await _precacheHomeImages();
+        }
+
+        // Xin quyền và setup cấu hình Push Notification
+        try {
+          await NotificationService().setupFCM();
+        } catch (e) {
+          debugPrint('Error setting up FCM: $e');
         }
       }
     }

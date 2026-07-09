@@ -44,6 +44,39 @@ export const authApi = {
     return response.data.data;
   },
 
+  googleLogin: async (idToken: string): Promise<any> => {
+    try {
+      const response = await axiosInstance.post<ApiResponse<AuthResponse>>(
+        '/auth/google/login',
+        { idToken },
+        { toastSuccess: 'Đăng nhập Google thành công' }
+      );
+      return { success: true, data: response.data.data };
+    } catch (error: any) {
+      if (error.response?.status === 404 && error.response?.data?.message === 'REQUIRES_REGISTRATION') {
+        return { 
+          requiresRegistration: true, 
+          data: error.response.data.data 
+        };
+      }
+      throw error;
+    }
+  },
+
+  googleRegister: async (
+    fullName: string,
+    phone: string,
+    email: string,
+    idToken: string
+  ): Promise<AuthResponse> => {
+    const response = await axiosInstance.post<ApiResponse<AuthResponse>>(
+      '/auth/google/register',
+      { fullName, phone, email, idToken },
+      { toastSuccess: 'Đăng ký tài khoản Google thành công' }
+    );
+    return response.data.data;
+  },
+
   logout: async () => {
     await axiosInstance.post('/auth/logout');
   },

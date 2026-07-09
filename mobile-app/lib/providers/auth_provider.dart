@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:clinic_management_system/services/auth_service.dart';
 import 'package:clinic_management_system/models/user_model.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:io';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email', 'profile']);
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -74,6 +76,85 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<Map<String, dynamic>?> googleLogin() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        _isLoading = false;
+        notifyListeners();
+        return null; // User canceled
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
+
+      if (idToken == null) {
+        throw Exception('Không thể lấy Google ID Token');
+      }
+
+      final data = await _authService.googleLogin(idToken);
+      
+      if (data['requires_registration'] == true) {
+        _isLoading = false;
+        notifyListeners();
+        // Trả về thông tin đăng ký cùng idToken
+        return {
+          'requires_registration': true,
+          'idToken': idToken,
+          'email': data['data']['email'],
+          'fullName': data['data']['name'],
+        };
+      }
+
+      final token = data['token'];
+      if (token != null) {
+        await _storage.write(key: 'jwt_token', value: token);
+      }
+      
+      _isAuthenticated = true;
+      _isLoading = false;
+      await fetchProfile();
+      notifyListeners();
+      return {'success': true};
+
+    } catch (e) {
+      _error = e.toString().replaceAll('Exception: ', '');
+      _isLoading = false;
+      notifyListeners();
+      return {'success': false, 'error': _error};
+    }
+  }
+
+  Future<bool> googleRegister(String fullName, String phone, String email, String idToken) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final data = await _authService.googleRegister(fullName, phone, email, idToken);
+      
+      final token = data['token'];
+      if (token != null) {
+        await _storage.write(key: 'jwt_token', value: token);
+      }
+      
+      _isAuthenticated = true;
+      _isLoading = false;
+      await fetchProfile();
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString().replaceAll('Exception: ', '');
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<bool> updateProfile(Map<String, dynamic> data, {File? avatarFile}) async {
     _isLoading = true;
     _error = null;
@@ -117,6 +198,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     await _authService.logout();
+    await _googleSignIn.signOut();
     await _storage.delete(key: 'jwt_token');
     _isAuthenticated = false;
     notifyListeners();

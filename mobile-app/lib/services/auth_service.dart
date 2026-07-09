@@ -27,6 +27,60 @@ class AuthService {
     }
   }
 
+  Future<Map<String, dynamic>> googleLogin(String idToken) async {
+    try {
+      final response = await _dioClient.dio.post(
+        '/auth/google/login',
+        data: {
+          'idToken': idToken,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return response.data['data']; // AuthResponse
+      } else {
+        throw Exception(response.data['message'] ?? 'Google Login failed');
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        if (e.response?.statusCode == 404 && e.response?.data['message'] == 'REQUIRES_REGISTRATION') {
+          return {
+            'requires_registration': true,
+            'data': e.response?.data['data'],
+          };
+        }
+        throw Exception(e.response?.data['message'] ?? 'Google Login failed');
+      }
+      throw Exception('Network error');
+    }
+  }
+
+  Future<Map<String, dynamic>> googleRegister(String fullName, String phone, String email, String idToken) async {
+    try {
+      final response = await _dioClient.dio.post(
+        '/auth/google/register',
+        data: {
+          'fullName': fullName,
+          'phone': phone,
+          'email': email,
+          'idToken': idToken,
+          'password': '', // Backend will mock this
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return response.data['data'];
+      } else {
+        throw Exception(response.data['message'] ?? 'Google Register failed');
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(e.response?.data['message'] ?? 'Google Register failed');
+      }
+      throw Exception('Network error');
+    }
+  }
+
   Future<Map<String, dynamic>> getProfile() async {
     try {
       final response = await _dioClient.dio.get('/patients/profile');

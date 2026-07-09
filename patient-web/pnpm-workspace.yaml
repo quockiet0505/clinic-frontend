@@ -1,3 +1,5 @@
 allowBuilds:
+  '@firebase/util': set this to true or false
   core-js: false
   msw: false
+  protobufjs: set this to true or false

@@ -36,6 +36,38 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void _handleGoogleLogin() async {
+    final authProvider = context.read<AuthProvider>();
+    final result = await authProvider.googleLogin();
+
+    if (!mounted) return;
+
+    if (result == null) {
+      // User canceled
+      return;
+    }
+
+    if (result['requires_registration'] == true) {
+      // Navigate to Google Register Screen to fill in remaining details
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => GoogleRegisterScreen(
+            email: result['email'],
+            fullName: result['fullName'],
+            idToken: result['idToken'],
+          ),
+        ),
+      );
+    } else if (result['success'] == true) {
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const MainScreen()));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result['error'] ?? 'Đăng nhập Google thất bại')));
+    }
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -117,7 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               const SizedBox(height: 24),
-              SocialButton(text: 'Đăng nhập với Google', onPressed: () {}),
+              SocialButton(text: 'Đăng nhập với Google', onPressed: _handleGoogleLogin),
               const SizedBox(height: 32),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
