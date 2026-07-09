@@ -12,9 +12,10 @@ interface Props {
   onEdit: (item: Expertise) => void;
   loading?: boolean;
   pagination?: { page: number; size: number; total: number; onPageChange: (page: number) => void };
+  isTechnicianTab?: boolean;
 }
 
-export default function ExpertiseTable({ data, onDelete, onEdit, loading = false, pagination }: Props) {
+export default function ExpertiseTable({ data, onDelete, onEdit, loading = false, pagination, isTechnicianTab = false }: Props) {
   const columns: Column<Expertise>[] = [
     {
       key: 'expertiseName',
@@ -47,9 +48,13 @@ export default function ExpertiseTable({ data, onDelete, onEdit, loading = false
     },
     {
       key: 'doctorCount',
-      label: 'Số bác sĩ',
+      label: isTechnicianTab ? 'Số Kỹ thuật viên' : 'Số bác sĩ',
       className: 'w-[15%]',
-      render: (item) => <span className="text-sm font-medium text-slate-700">{item.doctorCount ?? 0}</span>,
+      render: (item) => (
+        <span className="text-sm font-medium text-slate-700">
+          {isTechnicianTab ? (item.technicianCount ?? 0) : (item.doctorCount ?? 0)}
+        </span>
+      ),
     },
     {
       key: 'createdAt',

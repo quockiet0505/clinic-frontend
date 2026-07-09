@@ -3,6 +3,7 @@ export interface Expertise {
   expertiseName: string;
   iconUrl?: string;
    doctorCount?: number;
+  technicianCount?: number;
   createdAt?: string;
 }
 

@@ -12,7 +12,7 @@ import { Expertise } from '../types/settings';
 import { settingsApi } from '../api/settingsApi';
 export default function ExpertiseSettings() {
   const [data, setData] = useState<Expertise[]>([]);
-  const [totalElements, setTotalElements] = useState(0);
+  const [activeTab, setActiveTab] = useState<'CLINICAL' | 'TECHNICIAN'>('CLINICAL');
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 20;
   const [loading, setLoading] = useState(true);
@@ -24,24 +24,18 @@ export default function ExpertiseSettings() {
   const fetchData = React.useCallback(async () => {
     setLoading(true);
     try {
-      const sortBy = sort.startsWith('doctor') ? 'expertiseName' : 'expertiseName';
-      const sortDir = sort.endsWith('desc') ? 'DESC' : 'ASC';
+      // Fetch all expertises at once to perform client-side filtering, searching and sorting correctly
       const res = await settingsApi.getExpertisesPaged({
-        search: search || undefined,
-        page: currentPage - 1,
-        size: pageSize,
-        sortBy,
-        sortDir,
+        page: 0,
+        size: 1000,
       });
       setData(res.content);
-      setTotalElements(res.totalElements);
     } catch (e) {
       console.error(e);
       setData([]);
-      setTotalElements(0);
     }
     setLoading(false);
-  }, [search, sort, currentPage]);
+  }, []);
 
   React.useEffect(() => {
     fetchData();
@@ -49,13 +43,40 @@ export default function ExpertiseSettings() {
 
   React.useEffect(() => {
     setCurrentPage(1);
-  }, [search, sort]);
+  }, [search, sort, activeTab]);
 
-  const filteredAndSorted = [...data].sort((a, b) => {
-    if (sort === 'doctor_asc') return (a.doctorCount || 0) - (b.doctorCount || 0);
-    if (sort === 'doctor_desc') return (b.doctorCount || 0) - (a.doctorCount || 0);
+  const technicianIds = [42, 43, 44, 45];
+
+  // 1. Filter by Tab and Search query
+  const filteredData = data.filter((item) => {
+    const isTech = technicianIds.includes(item.expertiseId);
+    const matchesTab = activeTab === 'TECHNICIAN' ? isTech : !isTech;
+    const matchesSearch = item.expertiseName.toLowerCase().includes(search.toLowerCase());
+    return matchesTab && matchesSearch;
+  });
+
+  // 2. Sort data
+  const sortedData = [...filteredData].sort((a, b) => {
+    if (sort === 'name_asc') {
+      return a.expertiseName.localeCompare(b.expertiseName, 'vi');
+    }
+    if (sort === 'name_desc') {
+      return b.expertiseName.localeCompare(a.expertiseName, 'vi');
+    }
+    const countA = activeTab === 'TECHNICIAN' ? (a.technicianCount || 0) : (a.doctorCount || 0);
+    const countB = activeTab === 'TECHNICIAN' ? (b.technicianCount || 0) : (b.doctorCount || 0);
+    if (sort === 'doctor_asc') {
+      return countA - countB;
+    }
+    if (sort === 'doctor_desc') {
+      return countB - countA;
+    }
     return 0;
   });
+
+  // 3. Paginate
+  const totalElements = sortedData.length;
+  const paginatedData = sortedData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const totalExpertise = totalElements;
 
@@ -82,15 +103,18 @@ export default function ExpertiseSettings() {
         onSearchChange={setSearch}
         sort={sort}
         onSortChange={setSort}
+        activeTab={activeTab}
+        onTabChange={(val) => setActiveTab(val as 'CLINICAL' | 'TECHNICIAN')}
       />
 
       <div className="flex-1 min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <ExpertiseTable
-          data={filteredAndSorted}
+          data={paginatedData}
           loading={loading}
           onEdit={setEditing}
           onDelete={(id) => setDeleting(data.find((e) => e.expertiseId === id) || null)}
           pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
+          isTechnicianTab={activeTab === 'TECHNICIAN'}
         />
       </div>
       

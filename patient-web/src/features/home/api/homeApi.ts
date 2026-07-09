@@ -6,7 +6,8 @@ const staticUrl = getStaticUrl();
 export const homeApi = {
   getSpecialties: async () => {
     const res = await axiosInstance.get('/expertise/all');
-    return res.data.data;
+    const technicianIds = [42, 43, 44, 45];
+    return res.data.data.filter((exp: any) => !technicianIds.includes(exp.expertiseId));
   },
 
   getDoctors: async () => {

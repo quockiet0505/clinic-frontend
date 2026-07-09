@@ -25,7 +25,9 @@ export const appointmentApi = {
   // Public endpoints
   getExpertises: async (): Promise<Expertise[]> => {
     const res = await axiosInstance.get<ApiResponse<Expertise[]>>('/expertise/all');
-    return res.data.data;
+    // Hide technician specialties (42: Xét nghiệm, 43: CĐHA, 44: Siêu âm, 45: Nội soi) from patients
+    const technicianIds = [42, 43, 44, 45];
+    return res.data.data.filter(exp => !technicianIds.includes(exp.expertiseId));
   },
 
   getServices: async (): Promise<Service[]> => {
