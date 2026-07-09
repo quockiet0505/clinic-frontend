@@ -13,7 +13,7 @@ import ReportDialog from '../components/common/ReportDialog';
 import DashboardFilterBar from '../components/common/DashboardFilterBar';
 import { DashboardPdfLayout } from '../components/common/DashboardPdfLayout';
 import { dashboardApi } from '../api/dashboardApi';
-import { DashboardStats, MonthlyStat, RecentAppointment, ReportFilter, RevenueStatsSummary } from '../types/dashboard';
+import { DashboardStats, MonthlyStat, RecentAppointment, ReportFilter, RevenueStatsSummary, RevenueMonthlyTrend, ServiceStat } from '../types/dashboard';
 
 type TabType = 'overview' | 'doctors' | 'services' | 'patients' | 'revenue' | 'staff';
 
@@ -39,6 +39,8 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats>(EMPTY_STATS);
   const [monthlyData, setMonthlyData] = useState<MonthlyStat[]>([]);
   const [recentApts, setRecentApts] = useState<RecentAppointment[]>([]);
+  const [revenueTrend, setRevenueTrend] = useState<RevenueMonthlyTrend[]>([]);
+  const [topServices, setTopServices] = useState<ServiceStat[]>([]);
   const [month, setMonth] = useState(new Date().getMonth() + 1);
   const [year, setYear] = useState(new Date().getFullYear());
   const [isReportOpen, setIsReportOpen] = useState(false);
@@ -59,14 +61,19 @@ export default function AdminDashboard() {
 
   const fetchOverviewData = useCallback(async () => {
     try {
-      const [statsData, monthlyStats, recent] = await Promise.all([
+      const currentMonth = new Date().getMonth() + 1;
+      const [statsData, monthlyStats, recent, revenueData, serviceData] = await Promise.all([
         dashboardApi.getStats(),
         dashboardApi.getMonthlyStats(year),
         dashboardApi.getRecentAppointments(8),
+        dashboardApi.getRevenueStatsPaged({ year, month: currentMonth, page: 0, size: 12 }),
+        dashboardApi.getServiceStatsPaged({ year, month: currentMonth, page: 0, size: 5, sortBy: 'totalOrders', sortDir: 'DESC' }),
       ]);
       setStats(statsData);
       setMonthlyData(monthlyStats);
       setRecentApts(recent);
+      setRevenueTrend(revenueData.monthlyTrend || []);
+      setTopServices(serviceData.content || []);
     } catch (error) {
       console.error('Error loading overview:', error);
     }
@@ -198,7 +205,13 @@ export default function AdminDashboard() {
       </div>
 
       <div className={activeTab === 'overview' ? '' : 'hidden'}>
-        <OverviewTab stats={stats} monthlyData={monthlyData} recentApts={recentApts} />
+        <OverviewTab
+          stats={stats}
+          monthlyData={monthlyData}
+          recentApts={recentApts}
+          revenueTrend={revenueTrend}
+          topServices={topServices}
+        />
       </div>
       {visitedTabs.has('doctors') && (
         <div className={activeTab === 'doctors' ? '' : 'hidden'}>
