@@ -37,7 +37,7 @@ export const GoogleRegister: React.FC = () => {
         state.fullName || '',
         phone,
         state.email || '',
-        state.idToken
+        state.idToken || ''
       );
 
       // Successfully registered, now login automatically
