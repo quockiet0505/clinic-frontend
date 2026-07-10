@@ -64,8 +64,9 @@ export default function DoctorPricing() {
           description="Mỗi bác sĩ một mức phí khám riêng (không gắn dịch vụ EXAM)."
         />
         <div className="flex flex-wrap items-center gap-3">
-          <StatsCard icon={<DollarSign size={16} />} label="Tổng cấu hình" value={totalPrices} />
-          <StatsCard icon={<DollarSign size={16} />} label="Giá trung bình" value={avgPrice} bgColor="bg-emerald-50" iconColor="text-emerald-600" />
+          <StatsCard icon={<DollarSign size={16} />} label="Tổng cấu hình" value={totalPrices} compact />
+          <StatsCard icon={<DollarSign size={16} />} label="Giá trung bình" value={avgPrice} bgColor="bg-emerald-50" iconColor="text-emerald-600" compact />
+
           <GradientButton
             onClick={() => setEditingPrice({ id: 0, staffId: 0, doctorName: '', price: 0, originalPrice: 0, discountAmount: 0 })}
             className="w-full sm:w-auto"

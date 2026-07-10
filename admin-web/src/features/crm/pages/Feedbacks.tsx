@@ -82,14 +82,29 @@ export default function Feedbacks() {
     }
   };
 
+  const handleUpdateAiStatus = async (feedback: Feedback, status: string) => {
+    try {
+      if (feedback.type === 'CLINIC') {
+        await crmApi.updateClinicFeedbackAiStatus(feedback.feedbackId, status);
+      } else {
+        await crmApi.updateDoctorFeedbackAiStatus(feedback.feedbackId, status);
+      }
+      await fetchData();
+    } catch {
+      /* toast: axios interceptor */
+    }
+  };
+
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
         <PageHeader title="Đánh giá bệnh nhân" description="Theo dõi phản hồi và mức độ hài lòng của bệnh nhân." />
         <div className="flex flex-wrap items-center gap-3">
-          <StatsCard icon={<MessageSquare size={16} />} label="Tổng đánh giá" value={totalElements} />
-          <StatsCard icon={<Star size={16} />} label="Điểm TB (trang)" value={avgRating} bgColor="bg-amber-50" iconColor="text-amber-600" />
-          <StatsCard icon={<ThumbsUp size={16} />} label="Đã phản hồi (trang)" value={replied} bgColor="bg-emerald-50" iconColor="text-emerald-600" />
+          <StatsCard icon={<MessageSquare size={16} />} label="Tổng đánh giá" value={totalElements} compact />
+          <StatsCard icon={<Star size={16} />} label="Điểm TB (trang)" value={avgRating} bgColor="bg-amber-50" iconColor="text-amber-600" compact />
+          <StatsCard icon={<ThumbsUp size={16} />} label="Đã phản hồi (trang)" value={replied} bgColor="bg-emerald-50" iconColor="text-emerald-600" compact />
+
         </div>
       </div>
 
@@ -110,10 +125,12 @@ export default function Feedbacks() {
         <FeedbackTable
           data={feedbacks}
           onReply={(fb) => setReplyTarget(fb)}
+          onUpdateAiStatus={handleUpdateAiStatus}
           loading={loading}
           pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
         />
       </div>
+
 
       <ReplyDialog isOpen={!!replyTarget} onClose={() => setReplyTarget(null)} feedback={replyTarget} onReply={handleReply} />
     </div>

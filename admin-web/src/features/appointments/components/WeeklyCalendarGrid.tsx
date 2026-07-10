@@ -34,16 +34,17 @@ export default function WeeklyCalendarGrid({ currentWeekStart, appointments, onA
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'CONFIRMED': return 'bg-blue-100 border-blue-200 text-blue-700 hover:bg-blue-200';
-      case 'PENDING': return 'bg-amber-100 border-amber-200 text-amber-700 hover:bg-amber-200';
-      case 'CHECKED_IN':
-      case 'IN_PROGRESS':
-      case 'COMPLETED': return 'bg-emerald-100 border-emerald-200 text-emerald-700 hover:bg-emerald-200';
+      case 'CONFIRMED': return 'bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100/70';
+      case 'PENDING': return 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100/70';
+      case 'CHECKED_IN': return 'bg-sky-50 border-sky-200 text-sky-700 hover:bg-sky-100/70';
+      case 'IN_PROGRESS': return 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100/70';
+      case 'COMPLETED': return 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100/70';
       case 'CANCELLED':
-      case 'NO_SHOW': return 'bg-slate-100 border-slate-200 text-slate-500 hover:bg-slate-200 line-through';
-      default: return 'bg-slate-100 border-slate-200 text-slate-700 hover:bg-slate-200';
+      case 'NO_SHOW': return 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100/70 line-through';
+      default: return 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100/70';
     }
   };
+
 
   return (
     <div className="flex flex-col h-full bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">

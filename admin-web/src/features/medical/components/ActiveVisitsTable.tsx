@@ -60,13 +60,23 @@ export default function ActiveVisitsTable({ data, onConsult, onTriage, loading =
       className: 'w-[14%]',
       render: (visit) =>
         visit.vitalsTaken ? (
-          <Badge className="bg-emerald-100 text-emerald-700 border-0 px-2 py-0.5 text-xs font-medium">
-            <Activity size={12} className="inline mr-1" /> Đã ghi
+          <Badge
+            variant="outline"
+            className="bg-emerald-50 text-emerald-700 border-emerald-200 px-2 py-0.5 text-[11px] font-semibold rounded-md whitespace-nowrap inline-flex items-center"
+          >
+            <Activity size={11} className="mr-1 shrink-0" /> Đã ghi
           </Badge>
         ) : (
-          <Badge className="bg-rose-100 text-rose-700 border-0 px-2 py-0.5 text-xs font-medium">Chưa ghi</Badge>
+          <Badge
+            variant="outline"
+            className="bg-rose-50 text-rose-700 border-rose-200 px-2 py-0.5 text-[11px] font-semibold rounded-md whitespace-nowrap inline-flex items-center"
+          >
+            <XCircle size={11} className="mr-1 shrink-0" /> Chưa ghi
+          </Badge>
         ),
     },
+
+
     {
       key: 'status',
       label: 'Trạng thái',
@@ -91,11 +101,12 @@ export default function ActiveVisitsTable({ data, onConsult, onTriage, loading =
                   : 'bg-indigo-600 hover:bg-indigo-700'
               }`}
             >
-              {isVitalsTaken ? 'Đã đo sinh hiệu' : 'Đo hiệu sinh'}
+              {isVitalsTaken ? 'Đã đo sinh hiệu' : 'Đo sinh hiệu'}
               {!isVitalsTaken && <ArrowRight size={14} className="ml-1.5" />}
             </Button>
           );
         }
+
         if (onConsult) {
           return (
             <Button

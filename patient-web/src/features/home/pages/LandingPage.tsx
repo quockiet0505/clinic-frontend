@@ -3,13 +3,16 @@ import { HeroSection } from '@/features/home/components/HeroSection';
 import { SpecialtyCarousel } from '@/features/home/components/SpecialtyCarousel';
 import { FeaturedDoctors } from '@/features/home/components/FeaturedDoctors';
 import { HowItWorks } from '@/features/home/components/HowItWorks';
+import { PatientReviews } from '@/features/home/components/PatientReviews';
 import { homeApi } from '../api/homeApi';
 
 export const LandingPage: React.FC = () => {
   const [specialties, setSpecialties] = useState<any[]>([]);
   const [doctors, setDoctors] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
+  const [reviewData, setReviewData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isReviewsLoading, setIsReviewsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,7 +31,20 @@ export const LandingPage: React.FC = () => {
         setIsLoading(false);
       }
     };
+
+    const fetchReviews = async () => {
+      try {
+        const data = await homeApi.getLandingReviews();
+        setReviewData(data);
+      } catch (error) {
+        console.error('Failed to load reviews', error);
+      } finally {
+        setIsReviewsLoading(false);
+      }
+    };
+
     fetchData();
+    fetchReviews();
   }, []);
 
   // Sort specialties: ones with at least one doctor appear first
@@ -46,6 +62,7 @@ export const LandingPage: React.FC = () => {
       <SpecialtyCarousel specialties={sortedSpecialties} isLoading={isLoading} />
       <FeaturedDoctors doctors={doctors} isLoading={isLoading} />
       <HowItWorks services={services} isLoading={isLoading} />
+      <PatientReviews data={reviewData} isLoading={isReviewsLoading} />
     </main>
   );
-};
+};

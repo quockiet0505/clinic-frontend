@@ -55,10 +55,11 @@ export default function Notifications() {
           description="Xem lịch sử thông báo đã gửi. Gửi nhắc tái khám qua Nhắc nhở tái khám (nút chuông)."
         />
         <div className="flex flex-wrap items-center gap-3">
-          <StatsCard icon={<Bell size={16} />} label="Tổng thông báo" value={totalElements} />
-          <StatsCard icon={<Mail size={16} />} label="Email (trang)" value={emails} bgColor="bg-amber-50" iconColor="text-amber-600" />
-          <StatsCard icon={<Bell size={16} />} label="Hệ thống (trang)" value={systems} bgColor="bg-indigo-50" iconColor="text-indigo-600" />
+          <StatsCard icon={<Bell size={16} />} label="Tổng thông báo" value={totalElements} compact />
+          <StatsCard icon={<Mail size={16} />} label="Email (trang)" value={emails} bgColor="bg-amber-50" iconColor="text-amber-600" compact />
+          <StatsCard icon={<Bell size={16} />} label="Hệ thống (trang)" value={systems} bgColor="bg-indigo-50" iconColor="text-indigo-600" compact />
         </div>
+
       </div>
 
       <NotificationFilterBar

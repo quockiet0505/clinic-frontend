@@ -153,11 +153,12 @@ export default function AppointmentCalendar() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
         <PageHeader title="Lịch theo tháng" description="Quản lý lịch làm việc hàng tuần và các khối lịch hẹn." />
         <div className="flex flex-wrap items-center gap-3">
-          <StatsCard icon={<CalendarDays size={16} />} label="Tổng" value={total} />
-          <StatsCard icon={<Clock size={16} />} label="Chờ" value={pending} bgColor="bg-amber-50" iconColor="text-amber-600" />
-          <StatsCard icon={<AlertCircle size={16} />} label="Đang khám" value={inProgress} bgColor="bg-pink-50" iconColor="text-pink-600" />
-          <StatsCard icon={<CheckCircle size={16} />} label="Hoàn thành" value={completed} bgColor="bg-emerald-50" iconColor="text-emerald-600" />
+          <StatsCard icon={<CalendarDays size={16} />} label="Tổng" value={total} compact />
+          <StatsCard icon={<Clock size={16} />} label="Chờ" value={pending} bgColor="bg-amber-50" iconColor="text-amber-600" compact />
+          <StatsCard icon={<AlertCircle size={16} />} label="Đang khám" value={inProgress} bgColor="bg-pink-50" iconColor="text-pink-600" compact />
+          <StatsCard icon={<CheckCircle size={16} />} label="Hoàn thành" value={completed} bgColor="bg-emerald-50" iconColor="text-emerald-600" compact />
         </div>
+
       </div>
 
       <CalendarFilterBar

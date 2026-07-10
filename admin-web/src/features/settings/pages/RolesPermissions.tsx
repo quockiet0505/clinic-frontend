@@ -8,16 +8,19 @@ import ConfirmDialog from '@/components/common/ConfirmDialog';
 import { RolesPermissionsFilterBar } from '../components/RolesPermissionsFilterBar';
 import RoleFormDialog from '../components/RoleFormDialog';
 import SharedTable from '@/components/tables/Table';
+import { Badge } from '@/components/ui/badge';
 import { EditButton, DeleteButton } from '@/components/common/ActionButtons';
+
 import { Role } from '../types/settings';
 import { settingsApi } from '../api/settingsApi';
 const roleColorMap: Record<string, { iconBg: string; iconColor: string; codeBg: string; codeText: string }> = {
   ADMIN: { iconBg: 'bg-rose-50', iconColor: 'text-rose-600', codeBg: 'bg-rose-50', codeText: 'text-rose-700 border-rose-200' },
   DOCTOR: { iconBg: 'bg-blue-50', iconColor: 'text-blue-600', codeBg: 'bg-blue-50', codeText: 'text-blue-700 border-blue-200' },
-  STAFF: { iconBg: 'bg-slate-100', iconColor: 'text-slate-600', codeBg: 'bg-slate-100', codeText: 'text-slate-700 border-slate-200' },
+  STAFF: { iconBg: 'bg-slate-50', iconColor: 'text-slate-600', codeBg: 'bg-slate-50', codeText: 'text-slate-700 border-slate-200' },
   LAB_TECH: { iconBg: 'bg-purple-50', iconColor: 'text-purple-600', codeBg: 'bg-purple-50', codeText: 'text-purple-700 border-purple-200' },
   PATIENT: { iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600', codeBg: 'bg-emerald-50', codeText: 'text-emerald-700 border-emerald-200' },
 };
+
 
 const roleNameMap: Record<string, string> = {
   ADMIN: 'Quản trị viên',
@@ -93,6 +96,7 @@ export default function RolesPermissions() {
             bgColor="bg-indigo-50"
             iconColor="text-indigo-600"
             className="shrink-0"
+            compact
           />
           <StatsCard
             icon={<Users size={16} />}
@@ -101,7 +105,9 @@ export default function RolesPermissions() {
             bgColor="bg-blue-50"
             iconColor="text-blue-600"
             className="shrink-0"
+            compact
           />
+
           <GradientButton onClick={() => setEditingRole({ roleId: 0, roleCode: '', roleName: '' })} className="shrink-0">
             <Plus size={18} className="mr-2" /> Tạo vai trò mới
           </GradientButton>
@@ -140,12 +146,17 @@ export default function RolesPermissions() {
               render: (role: Role) => {
                 const colors = roleColorMap[role.roleCode] || roleColorMap.STAFF;
                 return (
-                  <code className={`text-xs px-2 py-1 rounded-md border font-medium ${colors.codeBg} ${colors.codeText}`}>
+                  <Badge
+                    variant="outline"
+                    className={`inline-flex items-center font-semibold px-2 py-0.5 rounded-md border text-[11px] whitespace-nowrap ${colors.codeBg} ${colors.codeText}`}
+                  >
                     {role.roleCode}
-                  </code>
+                  </Badge>
+
                 );
               },
             },
+
             {
               key: 'users',
               label: 'Số người dùng',

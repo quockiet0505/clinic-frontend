@@ -88,7 +88,8 @@ export default function ExpertiseSettings() {
           description="Quản lý các phòng ban và danh mục chuyên khoa của phòng khám." 
         />
         <div className="flex flex-wrap items-center gap-3">
-          <StatsCard icon={<Users size={16} />} label="Tổng chuyên khoa" value={totalExpertise} />
+          <StatsCard icon={<Users size={16} />} label="Tổng chuyên khoa" value={totalExpertise} compact />
+
           <GradientButton
             onClick={() => setEditing({ expertiseId: 0, expertiseName: '' })}
             className="w-full sm:w-auto"

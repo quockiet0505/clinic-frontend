@@ -76,4 +76,9 @@ export const homeApi = {
     const res = await axiosInstance.get('/settings');
     return res.data.data;
   },
+
+  getLandingReviews: async () => {
+    const res = await axiosInstance.get('/feedbacks/clinic/landing');
+    return res.data.data; // { averageRating, totalReviews, reviews: [...] }
+  },
 };

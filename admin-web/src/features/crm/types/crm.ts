@@ -6,11 +6,14 @@ export interface Feedback {
   rating: number;
   comment: string;
   createdAt: string;
-  type: 'CLINIC' | 'DOCTOR';
+  type: 'ALL' | 'CLINIC' | 'DOCTOR'; // or 'CLINIC' | 'DOCTOR'
   reply?: string;
   repliedAt?: string;
   repliedBy?: string;
+  aiStatus?: 'PENDING' | 'APPROVED' | 'REJECTED';
+  aiModerationNote?: string;
 }
+
 
 export interface AppNotification {
   notificationId: number;

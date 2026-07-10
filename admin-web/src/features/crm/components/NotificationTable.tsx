@@ -1,8 +1,10 @@
 import React from 'react';
 import { Mail, SmartphoneNfc, Calendar } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import Table, { Column } from '@/components/tables/Table';
 import { AppNotification } from '../types/crm';
 import { formatDateTime } from '@/utils/formatters';
+
 
 interface Props {
   data?: AppNotification[];
@@ -40,15 +42,22 @@ export default function NotificationTable({
       className: 'w-[15%]',
       render: (item) =>
         item.type === 'EMAIL' ? (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 text-amber-600 font-semibold text-xs uppercase rounded-lg border border-amber-200">
-            <Mail size={12} /> Email
-          </span>
+          <Badge
+            variant="outline"
+            className="inline-flex items-center font-semibold px-2 py-0.5 rounded-md border text-[11px] whitespace-nowrap bg-amber-50 text-amber-700 border-amber-200"
+          >
+            <Mail size={11} className="mr-1 shrink-0" /> Email
+          </Badge>
         ) : (
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-50 text-indigo-600 font-semibold text-xs uppercase rounded-lg border border-indigo-200">
-            <SmartphoneNfc size={12} /> Hệ thống
-          </span>
+          <Badge
+            variant="outline"
+            className="inline-flex items-center font-semibold px-2 py-0.5 rounded-md border text-[11px] whitespace-nowrap bg-indigo-50 text-indigo-700 border-indigo-200"
+          >
+            <SmartphoneNfc size={11} className="mr-1 shrink-0" /> Hệ thống
+          </Badge>
         ),
     },
+
     {
       key: 'accountName',
       label: 'Người nhận',

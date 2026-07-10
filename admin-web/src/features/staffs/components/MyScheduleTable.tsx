@@ -3,6 +3,7 @@ import { Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Table, { Column } from '@/components/tables/Table';
 import StatusBadge from '@/components/common/StatusBadge';
+import { Badge } from '@/components/ui/badge';
 
 interface LeaveRow {
   leaveId: number;
@@ -34,11 +35,15 @@ export default function MyScheduleTable({ data, onCancelRequest, loading = false
       label: 'Loại nghỉ',
       className: 'w-[18%]',
       render: (leave) => (
-        <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">
+        <Badge
+          variant="outline"
+          className="inline-flex items-center font-semibold px-2 py-0.5 rounded-md border text-[11px] whitespace-nowrap bg-slate-50 text-slate-700 border-slate-200"
+        >
           {getLeaveTypeLabel(leave.leaveType)}
-        </span>
+        </Badge>
       ),
     },
+
     {
       key: 'fromDate',
       label: 'Thời gian nghỉ',

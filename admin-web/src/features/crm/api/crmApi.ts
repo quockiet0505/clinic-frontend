@@ -48,6 +48,15 @@ export const crmApi = {
     await axiosInstance.post(`/feedbacks/doctor/${reviewId}/reply`, { reply });
   },
 
+  updateClinicFeedbackAiStatus: async (feedbackId: number, status: string): Promise<void> => {
+    await axiosInstance.put(`/feedbacks/clinic/${feedbackId}/ai-status`, null, { params: { status } });
+  },
+
+  updateDoctorFeedbackAiStatus: async (reviewId: number, status: string): Promise<void> => {
+    await axiosInstance.put(`/feedbacks/doctor/${reviewId}/ai-status`, null, { params: { status } });
+  },
+
+
   getNotificationsPaged: async (
     params?: NotificationQueryParams
   ): Promise<{ content: AppNotification[]; totalElements: number }> => {

@@ -71,9 +71,10 @@ export default function ServiceCatalog() {
           description="Quản lý toàn bộ các dịch vụ lâm sàng và giá cả."
         />
         <div className="flex flex-wrap items-center gap-3">
-          <StatsCard icon={<Package size={16} />} label="Tổng dịch vụ" value={totalServices} />
-          <StatsCard icon={<Package size={16} />} label="Xét nghiệm" value={labServices} bgColor="bg-purple-50" iconColor="text-purple-600" />
-          <StatsCard icon={<Package size={16} />} label="Chẩn đoán hình ảnh" value={imagingServices} bgColor="bg-emerald-50" iconColor="text-emerald-600" />
+          <StatsCard icon={<Package size={16} />} label="Tổng dịch vụ" value={totalServices} compact />
+          <StatsCard icon={<Package size={16} />} label="Xét nghiệm" value={labServices} bgColor="bg-purple-50" iconColor="text-purple-600" compact />
+          <StatsCard icon={<Package size={16} />} label="Chẩn đoán hình ảnh" value={imagingServices} bgColor="bg-emerald-50" iconColor="text-emerald-600" compact />
+
           <GradientButton
             onClick={() => setEditing({ serviceId: 0, serviceName: '', serviceType: 'LAB_TEST', originalPrice: 0 })}
             className="w-full sm:w-auto"

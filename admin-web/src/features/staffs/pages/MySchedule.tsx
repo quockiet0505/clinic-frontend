@@ -95,7 +95,8 @@ export default function MySchedule() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
         <PageHeader title="Nghỉ Phép Của Tôi" description="Quản lý đơn xin nghỉ phép và lịch sử nghỉ phép." />
         <div className="flex flex-wrap items-center gap-3">
-          <StatsCard icon={<FileText size={16} />} label="Tổng đơn nghỉ" value={totalElements} />
+          <StatsCard icon={<FileText size={16} />} label="Tổng đơn nghỉ" value={totalElements} compact />
+
           <GradientButton onClick={() => setIsApplyOpen(true)} className="w-full sm:w-auto">
             <Plus size={18} className="mr-2" /> Nộp Đơn Xin Nghỉ
           </GradientButton>
