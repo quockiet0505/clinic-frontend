@@ -7,6 +7,7 @@ import {
   X,
   Mail,
   ArrowRight,
+  CheckCheck,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { crmApi } from '@/features/crm/api/crmApi';
@@ -22,6 +23,9 @@ export default function Header({ onMenuClick }: HeaderProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [loadingNotif, setLoadingNotif] = useState(false);
+  const [lastReadId, setLastReadId] = useState<number>(() => {
+    return Number(localStorage.getItem('admin_last_read_notif_id') || 0);
+  });
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const userEmail = user?.email || 'Unknown User';
@@ -105,117 +109,170 @@ export default function Header({ onMenuClick }: HeaderProps) {
         {/* Thông báo */}
         <div className="relative" ref={dropdownRef}>
           <button
-            className={`relative h-10 w-10 flex items-center justify-center rounded-xl transition-all duration-200 cursor-pointer ${showNotifications
-                ? 'bg-blue-50 text-blue-600 shadow-sm ring-1 ring-blue-200/50'
+            className={`relative h-10 w-10 flex items-center justify-center rounded-xl transition-all duration-300 cursor-pointer ${showNotifications
+                ? 'bg-blue-50 text-blue-600 shadow-[0_2px_12px_rgba(59,130,246,0.15)] border-blue-200 ring-2 ring-blue-100/50'
                 : 'bg-white text-slate-500 hover:bg-slate-50 hover:text-blue-600 border border-slate-200'
               }`}
             title="Thông báo"
             onClick={() => setShowNotifications(!showNotifications)}
           >
-            <Bell size={18} />
-            {notifications.length > 0 && (
-              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[9px] font-bold flex items-center justify-center border-2 border-white">
-                {notifications.length > 9 ? '9+' : notifications.length}
+            <Bell size={18} className={showNotifications ? 'animate-wiggle' : ''} />
+            {notifications.filter(n => n.notificationId > lastReadId).length > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-4.5 w-4.5 bg-rose-500 text-white text-[9px] font-extrabold items-center justify-center border-2 border-white shadow-sm">
+                  {notifications.filter(n => n.notificationId > lastReadId).length > 9 
+                    ? '9+' 
+                    : notifications.filter(n => n.notificationId > lastReadId).length}
+                </span>
               </span>
             )}
           </button>
 
           {showNotifications && (() => {
+            const unreadItemsCount = notifications.filter(n => n.notificationId > lastReadId).length;
             const todayStr = new Date().toDateString();
             const todayItems = notifications.filter(n => new Date(n.sentAt).toDateString() === todayStr);
             const earlierItems = notifications.filter(n => new Date(n.sentAt).toDateString() !== todayStr);
 
             return (
-              <div className="absolute right-0 top-full mt-2 w-[320px] bg-white rounded-2xl shadow-xl border border-slate-200/80 z-50 overflow-hidden animate-in fade-in slide-in-from-top-1 duration-150">
+              <div className="absolute right-0 top-full mt-2.5 w-[360px] bg-white/98 backdrop-blur-md rounded-2xl shadow-[0_12px_36px_-4px_rgba(15,23,42,0.12),0_4px_12px_-2px_rgba(15,23,42,0.06)] border border-slate-200/60 z-50 overflow-hidden animate-in fade-in slide-in-from-top-1.5 duration-200">
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100/80 bg-slate-50/50">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-slate-800">Thông báo</span>
-                    {notifications.length > 0 && (
-                      <span className="text-[10px] font-bold bg-red-50 text-red-500 rounded-full px-2 py-0.5">
-                        {notifications.length} mới
+                    <span className="text-[14px] font-bold text-slate-800">Thông báo của bạn</span>
+                    {unreadItemsCount > 0 && (
+                      <span className="text-[10px] font-bold bg-rose-50 text-rose-500 rounded-full px-2 py-0.5 border border-rose-100">
+                        {unreadItemsCount} mới
                       </span>
                     )}
                   </div>
-                  <button
-                    onClick={() => setShowNotifications(false)}
-                    className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-                  >
-                    <X size={15} />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    {unreadItemsCount > 0 && (
+                      <button
+                        onClick={() => {
+                          if (notifications.length > 0) {
+                            const maxId = Math.max(...notifications.map(n => n.notificationId));
+                            localStorage.setItem('admin_last_read_notif_id', String(maxId));
+                            setLastReadId(maxId);
+                          }
+                        }}
+                        className="flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-all border border-emerald-200/50 shadow-sm active:scale-95 cursor-pointer"
+                        title="Đánh dấu đã đọc tất cả"
+                      >
+                        <CheckCheck size={12} />
+                        Đã xem
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setShowNotifications(false)}
+                      className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                    >
+                      <X size={15} />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Body */}
-                <div className="max-h-[340px] overflow-y-auto custom-scrollbar">
+                <div className="max-h-[380px] overflow-y-auto custom-scrollbar divide-y divide-slate-100/60">
                   {loadingNotif ? (
-                    <div className="flex items-center justify-center gap-2 py-8 text-slate-400">
-                      <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-                      <span className="text-sm">Đang tải...</span>
+                    <div className="flex items-center justify-center gap-2 py-12 text-slate-400">
+                      <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                      <span className="text-xs font-medium">Đang tải thông báo...</span>
                     </div>
                   ) : notifications.length === 0 ? (
-                    <div className="py-10 flex flex-col items-center gap-2 text-slate-400">
-                      <Bell size={28} className="text-slate-200" />
-                      <p className="text-sm">Không có thông báo mới</p>
+                    <div className="py-12 flex flex-col items-center gap-3 text-slate-400">
+                      <div className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-100">
+                        <Bell size={22} className="text-slate-300" />
+                      </div>
+                      <p className="text-xs font-medium text-slate-500">Tuyệt vời! Bạn không có thông báo nào.</p>
                     </div>
                   ) : (
                     <>
                       {/* TODAY */}
                       {todayItems.length > 0 && (
                         <div>
-                          <p className="px-4 pt-3 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Hôm nay</p>
-                          {todayItems.map(notif => (
-                            <a
-                              key={notif.notificationId}
-                              href="/system/notifications"
-                              onClick={() => setShowNotifications(false)}
-                              className="flex items-start gap-3 px-4 py-3 hover:bg-blue-50/50 transition-colors group cursor-pointer border-b border-slate-50 last:border-0"
-                            >
-                              <div className="shrink-0 mt-0.5 h-7 w-7 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                                {notif.type === 'EMAIL'
-                                  ? <Mail size={13} className="text-amber-500" />
-                                  : <Bell size={13} className="text-blue-500" />
-                                }
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-[13px] font-medium text-slate-700 line-clamp-2 leading-snug group-hover:text-blue-700 transition-colors">
-                                  {notif.content}
-                                </p>
-                                <p className="text-[11px] text-slate-400 mt-0.5">
-                                  {new Date(notif.sentAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
-                                </p>
-                              </div>
-                              <div className="shrink-0 w-1.5 h-1.5 mt-2 rounded-full bg-blue-500" />
-                            </a>
-                          ))}
+                          <p className="px-5 pt-3.5 pb-1.5 text-[9px] font-bold text-slate-400/80 uppercase tracking-wider">Hôm nay</p>
+                          {todayItems.map(notif => {
+                            const isUnread = notif.notificationId > lastReadId;
+                            return (
+                              <a
+                                key={notif.notificationId}
+                                href="/system/notifications"
+                                onClick={() => setShowNotifications(false)}
+                                className={`flex items-start gap-3.5 px-5 py-3.5 transition-all group cursor-pointer border-l-2 border-b border-slate-100/30 last:border-b-0 ${
+                                  isUnread 
+                                    ? 'border-blue-500 bg-blue-50/10 hover:bg-blue-50/20' 
+                                    : 'border-transparent hover:bg-slate-50/60'
+                                }`}
+                              >
+                                <div className={`shrink-0 h-9 w-9 rounded-xl flex items-center justify-center border transition-all ${
+                                  isUnread 
+                                    ? 'bg-blue-50 text-blue-600 border-blue-100/50 group-hover:bg-blue-100/50' 
+                                    : 'bg-slate-50 text-slate-400 border-slate-100 group-hover:bg-slate-100'
+                                }`}>
+                                  {notif.type === 'EMAIL'
+                                    ? <Mail size={15} className={isUnread ? "text-amber-500" : "text-slate-400"} />
+                                    : <Bell size={15} className={isUnread ? "text-blue-500" : "text-slate-400"} />
+                                  }
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className={`text-[13px] line-clamp-2 leading-snug transition-colors ${
+                                    isUnread ? 'font-semibold text-slate-800 group-hover:text-blue-600' : 'font-medium text-slate-500 group-hover:text-slate-800'
+                                  }`}>
+                                    {notif.content}
+                                  </p>
+                                  <p className="text-[11px] text-slate-400 mt-1 font-medium flex items-center gap-1">
+                                    {isUnread && <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse inline-block" />}
+                                    {new Date(notif.sentAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                                  </p>
+                                </div>
+                              </a>
+                            );
+                          })}
                         </div>
                       )}
                       {/* EARLIER */}
                       {earlierItems.length > 0 && (
                         <div>
-                          <p className="px-4 pt-3 pb-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Trước đó</p>
-                          {earlierItems.map(notif => (
-                            <a
-                              key={notif.notificationId}
-                              href="/system/notifications"
-                              onClick={() => setShowNotifications(false)}
-                              className="flex items-start gap-3 px-4 py-3 hover:bg-slate-50 transition-colors group cursor-pointer border-b border-slate-50 last:border-0"
-                            >
-                              <div className="shrink-0 mt-0.5 h-7 w-7 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
-                                {notif.type === 'EMAIL'
-                                  ? <Mail size={13} className="text-slate-400" />
-                                  : <Bell size={13} className="text-slate-400" />
-                                }
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <p className="text-[13px] text-slate-500 line-clamp-2 leading-snug group-hover:text-slate-700 transition-colors">
-                                  {notif.content}
-                                </p>
-                                <p className="text-[11px] text-slate-400 mt-0.5">
-                                  {new Date(notif.sentAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })}
-                                </p>
-                              </div>
-                            </a>
-                          ))}
+                          <p className="px-5 pt-3.5 pb-1.5 text-[9px] font-bold text-slate-400/80 uppercase tracking-wider">Trước đó</p>
+                          {earlierItems.map(notif => {
+                            const isUnread = notif.notificationId > lastReadId;
+                            return (
+                              <a
+                                key={notif.notificationId}
+                                href="/system/notifications"
+                                onClick={() => setShowNotifications(false)}
+                                className={`flex items-start gap-3.5 px-5 py-3.5 transition-all group cursor-pointer border-l-2 border-b border-slate-100/30 last:border-b-0 ${
+                                  isUnread 
+                                    ? 'border-blue-500 bg-blue-50/10 hover:bg-blue-50/20' 
+                                    : 'border-transparent hover:bg-slate-50/60'
+                                }`}
+                              >
+                                <div className={`shrink-0 h-9 w-9 rounded-xl flex items-center justify-center border transition-all ${
+                                  isUnread 
+                                    ? 'bg-blue-50 text-blue-600 border-blue-100/50 group-hover:bg-blue-100/50' 
+                                    : 'bg-slate-50 text-slate-400 border-slate-100 group-hover:bg-slate-100'
+                                }`}>
+                                  {notif.type === 'EMAIL'
+                                    ? <Mail size={15} className={isUnread ? "text-amber-500" : "text-slate-400"} />
+                                    : <Bell size={15} className={isUnread ? "text-blue-500" : "text-slate-400"} />
+                                  }
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className={`text-[13px] line-clamp-2 leading-snug transition-colors ${
+                                    isUnread ? 'font-semibold text-slate-800 group-hover:text-blue-600' : 'font-medium text-slate-500 group-hover:text-slate-800'
+                                  }`}>
+                                    {notif.content}
+                                  </p>
+                                  <p className="text-[11px] text-slate-400 mt-1 font-medium flex items-center gap-1">
+                                    {isUnread && <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse inline-block" />}
+                                    {new Date(notif.sentAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })} • {new Date(notif.sentAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                                  </p>
+                                </div>
+                              </a>
+                            );
+                          })}
                         </div>
                       )}
                     </>
@@ -223,13 +280,13 @@ export default function Header({ onMenuClick }: HeaderProps) {
                 </div>
 
                 {/* Footer */}
-                <div className="border-t border-slate-100 px-4 py-2">
+                <div className="border-t border-slate-100 bg-slate-50/30 px-5 py-3">
                   <a
                     href="/system/notifications"
                     onClick={() => setShowNotifications(false)}
-                    className="flex items-center justify-center gap-1.5 w-full py-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+                    className="flex items-center justify-center gap-1.5 w-full py-2 text-xs font-semibold text-blue-600 hover:text-white hover:bg-blue-600 rounded-xl border border-blue-100 hover:border-blue-600 transition-all duration-300 shadow-sm"
                   >
-                    Xem tất cả <ArrowRight size={12} />
+                    Xem tất cả thông báo <ArrowRight size={12} />
                   </a>
                 </div>
               </div>

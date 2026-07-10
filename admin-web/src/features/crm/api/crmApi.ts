@@ -21,7 +21,9 @@ export const crmApi = {
   ): Promise<{ content: Feedback[]; totalElements: number }> => {
     try {
       const res = await axiosInstance.get('/feedbacks/clinic', { params });
-      return parsePagedResponse<Feedback>(res.data);
+      const paged = parsePagedResponse<Feedback>(res.data);
+      paged.content = paged.content.map(item => ({ ...item, type: 'CLINIC' }));
+      return paged;
     } catch (error) {
       console.error('Lỗi lấy feedback phòng khám:', error);
       return { content: [], totalElements: 0 };
@@ -33,7 +35,13 @@ export const crmApi = {
   ): Promise<{ content: Feedback[]; totalElements: number }> => {
     try {
       const res = await axiosInstance.get('/feedbacks/doctor', { params });
-      return parsePagedResponse<Feedback>(res.data);
+      const paged = parsePagedResponse<any>(res.data);
+      paged.content = paged.content.map(item => ({ 
+        ...item, 
+        type: 'DOCTOR',
+        feedbackId: item.reviewId 
+      }));
+      return paged as { content: Feedback[]; totalElements: number };
     } catch (error) {
       console.error('Lỗi lấy feedback bác sĩ:', error);
       return { content: [], totalElements: 0 };

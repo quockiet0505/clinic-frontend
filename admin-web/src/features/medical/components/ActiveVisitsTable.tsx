@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, Stethoscope, ArrowRight, Calendar } from 'lucide-react';
+import { Activity, Stethoscope, ArrowRight, Calendar, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import Table, { Column } from '@/components/tables/Table';
