@@ -7,6 +7,7 @@ import FeedbackTable from '../components/FeedbackTable';
 import ReplyDialog from '../components/ReplyDialog';
 import { Feedback } from '../types/crm';
 import { crmApi } from '../api/crmApi';
+import { settingsApi } from '@/features/settings/api/settingsApi';
 
 export default function Feedbacks() {
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
@@ -21,6 +22,31 @@ export default function Feedbacks() {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [replyTarget, setReplyTarget] = useState<Feedback | null>(null);
+  const [aiEnabled, setAiEnabled] = useState(false);
+
+  useEffect(() => {
+    const loadAiSettings = async () => {
+      try {
+        const settings = await settingsApi.getGeneralSettings();
+        setAiEnabled(settings['AI_MODERATION_ENABLED'] === 'true');
+      } catch (e) {
+        console.error('Lỗi tải cấu hình AI:', e);
+      }
+    };
+    loadAiSettings();
+  }, []);
+
+  const handleToggleAi = async () => {
+    const newValue = !aiEnabled;
+    try {
+      await settingsApi.updateGeneralSettings({
+        'AI_MODERATION_ENABLED': newValue ? 'true' : 'false'
+      });
+      setAiEnabled(newValue);
+    } catch (e) {
+      console.error('Lỗi cập nhật cấu hình AI:', e);
+    }
+  };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -99,7 +125,24 @@ export default function Feedbacks() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
-        <PageHeader title="Đánh giá bệnh nhân" description="Theo dõi phản hồi và mức độ hài lòng của bệnh nhân." />
+        <div className="flex flex-col md:flex-row md:items-center gap-4">
+          <PageHeader title="Đánh giá bệnh nhân" description="Theo dõi phản hồi và mức độ hài lòng của bệnh nhân." />
+          <div className="flex items-center gap-2 bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-1.5 md:ml-4 shadow-sm w-fit">
+            <span className="text-xs font-semibold text-slate-600">Duyệt AI tự động:</span>
+            <button
+              onClick={handleToggleAi}
+              className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                aiEnabled ? 'bg-indigo-600' : 'bg-slate-300'
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  aiEnabled ? 'translate-x-4' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+        </div>
         <div className="flex flex-wrap items-center gap-3">
           <StatsCard icon={<MessageSquare size={16} />} label="Tổng đánh giá" value={totalElements} compact />
           <StatsCard icon={<Star size={16} />} label="Điểm TB (trang)" value={avgRating} bgColor="bg-amber-50" iconColor="text-amber-600" compact />
