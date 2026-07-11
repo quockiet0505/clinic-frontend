@@ -14,7 +14,7 @@ export const Register: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center w-full">
-      <Link to="/" className="flex-shrink-0 mb-4">
+      <Link to="/" className="flex-shrink-0 mb-2">
         <div className="scale-110">
           <img src={logoUrl} alt="Clinic Logo" className="h-10" />
         </div>
@@ -24,7 +24,7 @@ export const Register: React.FC = () => {
         Đăng ký Bệnh nhân
       </h1>
 
-      <p className="text-slate-500 font-medium text-sm mb-8">
+      <p className="text-slate-500 font-medium text-sm mb-4">
         Tạo tài khoản để đặt lịch khám nhanh chóng
       </p>
 
@@ -32,7 +32,7 @@ export const Register: React.FC = () => {
         <RegisterForm />
       </div>
 
-      <p className="mt-8 text-center text-slate-500 font-medium text-[14px]">
+      <p className="mt-5 text-center text-slate-500 font-medium text-[14px]">
         Đã có tài khoản?{' '}
         <Link to="/auth/login" className="text-primary-500 font-bold hover:underline">
           Đăng nhập

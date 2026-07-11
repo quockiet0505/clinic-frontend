@@ -48,7 +48,7 @@ export const AuthLayout: React.FC = () => {
         </Link>
         
         <div className="w-full max-w-md">
-          <div className="bg-white/80 backdrop-blur-xl p-8 sm:p-10 shadow-soft-lg sm:rounded-[2rem] border border-white">
+          <div className="bg-white/80 backdrop-blur-xl p-6 sm:p-8 shadow-soft-lg sm:rounded-[2rem] border border-white">
             <Outlet />
           </div>
         </div>

@@ -73,7 +73,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   return (
-    <form onSubmit={handleLogin} noValidate className="flex flex-col gap-4 w-full">
+    <form onSubmit={handleLogin} noValidate className="flex flex-col gap-3 w-full">
       {error && (
         <div className="p-3 rounded-xl bg-red-50 text-red-600 text-sm font-medium border border-red-100 animate-in fade-in zoom-in duration-300">
           {error}
@@ -136,7 +136,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       <button
         type="submit"
         disabled={isLoading}
-        className="group relative w-full flex justify-center py-3.5 px-4 mt-2 border border-primary-500 rounded-2xl bg-transparent text-[15px] font-bold text-primary-600 overflow-hidden transition-all duration-300 hover:border-transparent hover:shadow-lg hover:shadow-primary-500/30 focus:outline-none focus:ring-4 focus:ring-primary-500/20 active:scale-[0.98] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+        className="group relative w-full flex justify-center py-2.5 px-4 mt-2 border border-primary-500 rounded-2xl bg-transparent text-[15px] font-bold text-primary-600 overflow-hidden transition-all duration-300 hover:border-transparent hover:shadow-lg hover:shadow-primary-500/30 focus:outline-none focus:ring-4 focus:ring-primary-500/20 active:scale-[0.98] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
       >
         <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="relative flex items-center group-hover:text-white transition-colors duration-300">
@@ -145,7 +145,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         </div>
       </button>
 
-      <div className="relative my-4">
+      <div className="relative my-2">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t border-slate-200" />
         </div>
@@ -158,7 +158,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         type="button"
         disabled={isLoading}
         onClick={handleGoogleLogin}
-        className="relative w-full flex justify-center items-center gap-3 py-3.5 px-4 border border-slate-200 rounded-2xl bg-white text-[15px] font-bold text-slate-700 transition-all duration-300 hover:bg-slate-50 hover:border-slate-300 focus:outline-none focus:ring-4 focus:ring-slate-100 active:scale-[0.98] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+        className="relative w-full flex justify-center items-center gap-3 py-2.5 px-4 border border-slate-200 rounded-2xl bg-white text-[15px] font-bold text-slate-700 transition-all duration-300 hover:bg-slate-50 hover:border-slate-300 focus:outline-none focus:ring-4 focus:ring-slate-100 active:scale-[0.98] cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
       >
         <svg viewBox="0 0 24 24" className="w-5 h-5">
           <path
