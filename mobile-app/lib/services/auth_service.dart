@@ -6,6 +6,10 @@ class AuthService {
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
+      print("BASE URL: ${_dioClient.dio.options.baseUrl}");
+      print("PATH: /auth/patient/login");
+      print("FULL URL: ${_dioClient.dio.options.baseUrl}/auth/patient/login");
+      
       final response = await _dioClient.dio.post(
         '/auth/patient/login',
         data: {
