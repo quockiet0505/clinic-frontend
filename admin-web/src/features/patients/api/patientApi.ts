@@ -50,4 +50,15 @@ export const patientApi = {
   delete: async (id: number): Promise<void> => {
     await axiosInstance.delete(`/patients/${id}`, { toastSuccess: 'Xóa bệnh nhân thành công' });
   },
+
+  unlockBooking: async (id: number): Promise<void> => {
+    await axiosInstance.put(`/patients/${id}/unlock-booking`, {}, { toastSuccess: 'Mở khóa đặt lịch trực tuyến thành công' });
+  },
+
+  updateAccountStatus: async (accountId: number, isActive: number): Promise<void> => {
+    await axiosInstance.put(`/accounts/${accountId}/status`, null, { 
+      params: { isActive },
+      toastSuccess: isActive === 1 ? 'Mở khóa tài khoản thành công' : 'Khóa tài khoản thành công' 
+    });
+  },
 };

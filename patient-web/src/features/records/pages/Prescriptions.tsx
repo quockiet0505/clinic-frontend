@@ -18,6 +18,8 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { PrescriptionModalContent } from '../components/PrescriptionModalContent';
 import { RecordCardMeta, RecordStatusBadge } from '../components/RecordCardMeta';
 import { formatDoctorName } from '@/utils/generatePdf';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 type StatusTab = 'ALL' | 'ACTIVE' | 'DONE';
 
@@ -215,215 +217,103 @@ export const Prescriptions: React.FC = () => {
         </div>
 
         {/* List */}
-        <div className="flex flex-col gap-4">
-          {filteredPrescriptions.length > 0 ? (
-            filteredPrescriptions.map((prescription: any) => (
-              <PrescriptionCard key={prescription.prescriptionId} prescription={prescription} />
-            ))
-          ) : (
-            <div className="rounded-2xl border border-slate-200 shadow-sm p-12 text-center flex flex-col items-center justify-center bg-white">
-              <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mb-3">
-                <Pill className="w-8 h-8 text-primary-400" />
-              </div>
-              <h2 className="text-[16px] font-black text-brand-dark mb-1">Chưa có đơn thuốc nào</h2>
-              <p className="text-slate-500 text-[13px] font-medium max-w-md">
-                Không có đơn thuốc nào khớp với bộ lọc hiện tại.
-              </p>
-            </div>
-          )}
-        </div>
+        <Card className="rounded-3xl border-0 shadow-sm bg-white overflow-hidden">
+          <div className="p-1 overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-[13px] text-slate-500 uppercase bg-slate-50 rounded-t-2xl border-b border-slate-200">
+                <tr>
+                  <th className="px-6 py-5 font-bold rounded-tl-2xl w-[150px]">Mã Đơn thuốc</th>
+                  <th className="px-6 py-5 font-bold w-[250px]">Chẩn đoán</th>
+                  <th className="px-6 py-5 font-bold">Số lượng thuốc</th>
+                  <th className="px-6 py-5 font-bold">Trạng thái</th>
+                  <th className="px-6 py-5 font-bold rounded-tr-2xl text-right pr-6 w-[180px]">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredPrescriptions.length > 0 ? (
+                  filteredPrescriptions.map((prescription: any) => (
+                    <PrescriptionTableRow key={prescription.prescriptionId} prescription={prescription} />
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="text-center py-20 text-slate-500 font-medium bg-white">
+                      <div className="flex flex-col items-center gap-2">
+                        <Pill className="w-8 h-8 text-primary-300" />
+                        <p>Không có đơn thuốc nào khớp với bộ lọc.</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       </SectionContainer>
     </main>
   );
 };
 
-const PrescriptionCard: React.FC<{ prescription: any }> = ({ prescription }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
+const PrescriptionTableRow: React.FC<{ prescription: any }> = ({ prescription }) => {
   const isActive = isRecentPrescription(prescription.createdAt);
-  const status = isActive
-    ? {
-      label: 'Đang điều trị',
-      color: 'bg-primary-50 text-primary-700 border-primary-200',
-      icon: <Activity className="w-3.5 h-3.5" />,
-      hint: 'Đơn thuốc còn hiệu lực trong 14 ngày gần đây. Uống đúng liều và tái khám nếu có dấu hiệu bất thường.',
-    }
-    : {
-      label: 'Đã hoàn thành',
-      color: 'bg-slate-100 text-slate-600 border-slate-200',
-      icon: <CheckCircle2 className="w-3.5 h-3.5" />,
-      hint: 'Đơn thuốc đã kết thúc liệu trình. Bạn vẫn có thể xem lại chi tiết hoặc mở bệnh án.',
-    };
-
-  const medicines = prescription.items || [];
-  const visibleMedicines = medicines.slice(0, 4);
-  const remainingCount = medicines.length - visibleMedicines.length;
   const prescriptionCode = `#${String(prescription.prescriptionId).padStart(5, '0')}`;
   const issuedDate = new Date(prescription.createdAt).toLocaleDateString('vi-VN');
-
+  
   return (
     <Dialog>
-      <article className={`group bg-white rounded-3xl border shadow-sm transition-all overflow-hidden ${isExpanded ? 'border-primary-200 shadow-md' : 'border-slate-200/80 hover:border-primary-200/60 hover:shadow-md'}`}>
-        
-        {/* Accordion Header (Always Visible) */}
-        <div 
-          className="p-5 md:p-6 flex items-start sm:items-center justify-between gap-4 cursor-pointer hover:bg-slate-50/50 transition-colors select-none"
-          onClick={() => setIsExpanded(!isExpanded)}
-        >
-          <div className="flex items-start sm:items-center gap-4 min-w-0">
-            <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
-              <Pill className="w-6 h-6" />
-            </div>
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-x-2 text-[12px] font-semibold tracking-wide text-slate-500 mb-1">
-                <span className="text-teal-600 font-bold">Đơn thuốc</span>
-                <span>•</span>
-                <span>{prescriptionCode}</span>
-                <span className="hidden sm:inline">•</span>
-                <span className="hidden sm:inline">{issuedDate}</span>
-              </div>
-              <h3 className="font-bold text-[16px] sm:text-[17px] text-slate-900 leading-snug truncate group-hover:text-primary-600 transition-colors">
-                {prescription.diagnosis || 'Đang cập nhật chẩn đoán'}
-              </h3>
-            </div>
+      <tr className="border-b border-slate-200 last:border-0 even:bg-slate-100/60 hover:bg-primary-50/40 transition-colors group">
+        <td className="px-6 py-5 align-top">
+          <div className="font-bold text-slate-700">{prescriptionCode}</div>
+          <div className="text-slate-400 text-[13px] mt-0.5">{issuedDate}</div>
+        </td>
+        <td className="px-6 py-5 align-top max-w-[220px]">
+          <div className="font-bold text-slate-800 truncate" title={prescription.diagnosis || 'Đang cập nhật chẩn đoán'}>
+            {prescription.diagnosis || 'Đang cập nhật chẩn đoán'}
           </div>
-          <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3 shrink-0">
-            <RecordStatusBadge
-              label={status.label}
-              className={`${status.color}`}
-              icon={status.icon}
-            />
-            <div className={`hidden sm:flex w-9 h-9 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-transform duration-300 ${isExpanded ? 'rotate-180 bg-primary-50 text-primary-600' : 'group-hover:bg-slate-100'}`}>
-              <ChevronDown className="w-5 h-5" />
-            </div>
+          <div className="text-[12px] text-slate-500 mt-1 flex items-center gap-1.5 truncate" title={prescription.doctorName}>
+            <UserRound className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">{formatDoctorName(prescription.doctorName)}</span>
           </div>
-        </div>
-
-        {/* Accordion Body */}
-        <div className={`grid transition-all duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100 border-t border-slate-100' : 'grid-rows-[0fr] opacity-0'}`}>
-          <div className="overflow-hidden">
-            <div className="flex flex-col lg:flex-row">
-              <div className="flex-1 p-5 md:p-6 pt-0 md:pt-0 min-w-0">
-                {/* The Header was moved up, we only show Meta tags now */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4 mt-2 sm:mt-5">
-                  <RecordCardMeta icon={CalendarDays} label="Ngày kê đơn" value={issuedDate} />
-                  <RecordCardMeta
-                    icon={UserRound}
-                    label="Bác sĩ kê đơn"
-                    value={formatDoctorName(prescription.doctorName)}
-                  />
-                  <RecordCardMeta
-                    icon={Pill}
-                    label="Số loại thuốc"
-                    value={`${medicines.length} loại`}
-                  />
-                </div>
-
-                {medicines.length > 0 ? (
-                  <div className="rounded-2xl border border-slate-100 bg-slate-50/70 overflow-hidden">
-                    <div className="px-4 py-2.5 border-b border-slate-100 bg-white/70">
-                      <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                        Thuốc được kê
-                      </p>
-                    </div>
-                    <div className="overflow-x-auto">
-                      <div className="min-w-[520px]">
-                        <div className="grid grid-cols-[1.3fr_1.6fr_0.8fr] gap-3 px-4 py-2.5 bg-slate-100/70 border-b border-slate-100">
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                            Tên thuốc
-                          </span>
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                            Cách dùng
-                          </span>
-                          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                            Số lượng
-                          </span>
-                        </div>
-                        <div className="divide-y divide-slate-100">
-                          {visibleMedicines.map((item: any, idx: number) => (
-                            <div
-                              key={idx}
-                              className="grid grid-cols-[1.3fr_1.6fr_0.8fr] gap-3 px-4 py-3.5 bg-white/40 items-start"
-                            >
-                              <p className="text-[13px] font-bold text-slate-800 leading-snug">
-                                {item.medicineName}
-                              </p>
-                              <p className="text-[13px] text-slate-600 leading-relaxed">
-                                {item.dosage || 'Theo chỉ định bác sĩ'}
-                              </p>
-                              <p className="text-[13px] font-semibold text-slate-700 leading-relaxed">
-                                {item.quantity
-                                  ? `${item.quantity}${item.unit ? ` ${item.unit}` : ''}`
-                                  : 'Chưa ghi'}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    {remainingCount > 0 ? (
-                      <div className="px-4 py-3 text-[12px] font-bold text-primary-600 bg-primary-50/50 border-t border-slate-100">
-                        +{remainingCount} loại thuốc khác trong đơn
-                      </div>
-                    ) : null}
-                  </div>
-                ) : (
-                  <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/80 p-4 text-[13px] text-slate-500 font-medium">
-                    Chưa có danh sách thuốc chi tiết cho đơn này.
-                  </div>
-                )}
-
-                {prescription.treatment && prescription.treatment !== 'Chưa có ghi chú điều trị' ? (
-                  <div className="mt-4 rounded-2xl border border-slate-100 bg-white p-4">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-                      Hướng dẫn điều trị
-                    </p>
-                    <p className="text-[13px] text-slate-600 leading-relaxed line-clamp-2">
-                      {prescription.treatment}
-                    </p>
-                  </div>
-                ) : null}
-              </div>
-
-              <div className="lg:w-[272px] shrink-0 bg-slate-50/90 border-t lg:border-t-0 lg:border-l border-slate-100 p-5 flex flex-col justify-between gap-4">
-                <div className="space-y-3">
-                  <p className="text-[13px] font-medium text-slate-600 leading-relaxed">{status.hint}</p>
-                  <div className="rounded-xl bg-white border border-slate-100 p-3">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-                      Tóm tắt
-                    </p>
-                    <p className="text-[22px] font-black text-slate-800 leading-none">{medicines.length}</p>
-                    <p className="text-[12px] font-medium text-slate-500 mt-1">loại thuốc trong đơn</p>
-                  </div>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <DialogTrigger asChild>
-                    <button
-                      type="button"
-                      className="w-full inline-flex items-center justify-center gap-2 text-[13px] font-bold text-white bg-primary-500 border border-transparent px-4 py-2.5 rounded-xl hover:bg-primary-600 active:scale-[0.98] transition-all cursor-pointer shadow-sm shadow-primary-500/20"
-                    >
-                      Xem chi tiết
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </DialogTrigger>
-                  {prescription.recordId ? (
-                    <Link
-                      to={`/records/detail/${prescription.recordId}`}
-                      className="w-full inline-flex items-center justify-center gap-2 text-[13px] font-bold text-primary-700 bg-white border border-primary-200 px-4 py-2.5 rounded-xl hover:bg-primary-50 active:scale-[0.98] transition-all"
-                    >
-                      <FileText className="w-4 h-4" />
-                      Mở bệnh án
-                    </Link>
-                  ) : null}
-                </div>
-              </div>
-            </div>
+        </td>
+        <td className="px-6 py-5 align-top">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-teal-50 text-teal-700 border border-teal-100 rounded-xl font-bold text-[13px]">
+            <Pill className="w-4 h-4 text-teal-500" />
+            {prescription.items?.length || 0} loại thuốc
+          </span>
+        </td>
+        <td className="px-6 py-5 align-top">
+          {isActive ? (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-bold bg-primary-50 text-primary-700 border border-primary-100">
+              <Activity className="w-3.5 h-3.5" /> Đang điều trị
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-bold bg-slate-50 text-slate-600 border border-slate-200">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Đã hoàn thành
+            </span>
+          )}
+        </td>
+        <td className="px-6 py-5 text-right pr-6 align-top">
+          <div className="flex flex-col items-end gap-2">
+            <DialogTrigger asChild>
+              <button type="button" className="w-[140px] h-9 inline-flex items-center justify-center gap-1.5 text-[13px] font-bold text-white bg-primary-500 border border-transparent px-3 rounded-xl hover:bg-primary-600 active:scale-[0.98] transition-all cursor-pointer shadow-sm shadow-primary-500/20">
+                Xem chi tiết
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </DialogTrigger>
+            {prescription.recordId && (
+              <button
+                type="button"
+                className="w-[140px] h-9 inline-flex items-center justify-center gap-1.5 text-[13px] font-bold text-primary-700 bg-white border border-primary-200 px-3 rounded-xl hover:bg-primary-50 active:scale-[0.98] transition-all cursor-pointer"
+                onClick={() => window.location.href = `/records/detail/${prescription.recordId}`}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                Mở bệnh án
+              </button>
+            )}
           </div>
-        </div>
-      </article>
-
-      <PrescriptionModalContent prescription={prescription} />
+          {/* Render Modal component via portal */}
+          <PrescriptionModalContent prescription={prescription} />
+        </td>
+      </tr>
     </Dialog>
   );
 };

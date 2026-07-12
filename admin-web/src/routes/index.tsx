@@ -103,7 +103,7 @@ export const router = createBrowserRouter([
       { 
         path: 'dashboard', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'STAFF', 'LAB_TECH']}>
+          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE', 'LAB_TECH']}>
             <AdminDashboard />
           </RoleGuard>
         ) 
@@ -111,7 +111,7 @@ export const router = createBrowserRouter([
       { 
         path: 'my-schedule', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'STAFF', 'LAB_TECH']}>
+          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE', 'LAB_TECH']}>
             <MySchedule />
           </RoleGuard>
         ) 
@@ -119,7 +119,7 @@ export const router = createBrowserRouter([
       { 
         path: 'profile', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'STAFF', 'LAB_TECH']}>
+          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE', 'LAB_TECH']}>
             <MyProfile />
           </RoleGuard>
         ) 
@@ -129,7 +129,7 @@ export const router = createBrowserRouter([
       { 
         path: 'appointments', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'STAFF']}>
+          <RoleGuard allowedRoles={['ADMIN', 'RECEPTIONIST', 'NURSE']}>
             <AppointmentList />
           </RoleGuard>
         ) 
@@ -137,7 +137,7 @@ export const router = createBrowserRouter([
       { 
         path: 'appointments/calendar', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'STAFF', 'DOCTOR']}>
+          <RoleGuard allowedRoles={['ADMIN', 'RECEPTIONIST', 'NURSE', 'DOCTOR']}>
             <AppointmentCalendar />
           </RoleGuard>
         ) 
@@ -145,7 +145,7 @@ export const router = createBrowserRouter([
       { 
         path: 'appointments/follow-ups', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'STAFF']}>
+          <RoleGuard allowedRoles={['ADMIN', 'RECEPTIONIST', 'NURSE']}>
             <FollowUpList />
           </RoleGuard>
         ) 
@@ -153,7 +153,7 @@ export const router = createBrowserRouter([
       { 
         path: 'patients', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'STAFF', 'DOCTOR']}>
+          <RoleGuard allowedRoles={['ADMIN', 'RECEPTIONIST', 'NURSE', 'DOCTOR']}>
             <PatientList />
           </RoleGuard>
         ) 
@@ -161,7 +161,7 @@ export const router = createBrowserRouter([
       { 
         path: 'patients/:id', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'STAFF', 'DOCTOR']}>
+          <RoleGuard allowedRoles={['ADMIN', 'RECEPTIONIST', 'NURSE', 'DOCTOR']}>
             <PatientDetails />
           </RoleGuard>
         ) 
@@ -171,7 +171,7 @@ export const router = createBrowserRouter([
       { 
         path: 'medical/triage', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'STAFF']}>
+          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE']}>
             <TriageQueue />
           </RoleGuard>
         ) 
@@ -179,7 +179,7 @@ export const router = createBrowserRouter([
       { 
         path: 'medical/triage/:id', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'STAFF']}>
+          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE']}>
             <TriageWorkspace />
           </RoleGuard>
         ) 
@@ -243,7 +243,7 @@ export const router = createBrowserRouter([
       { 
         path: 'pharmacy/inventory', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'STAFF']}>
+          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE']}>
             <MedicineInventory />
           </RoleGuard>
         ) 
@@ -251,7 +251,7 @@ export const router = createBrowserRouter([
       { 
         path: 'pharmacy/prescriptions', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'STAFF']}>
+          <RoleGuard allowedRoles={['ADMIN', 'RECEPTIONIST', 'NURSE']}>
             <PrescriptionDispense />
           </RoleGuard>
         ) 
@@ -259,7 +259,7 @@ export const router = createBrowserRouter([
       { 
         path: 'pharmacy/interaction-checker', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'STAFF']}>
+          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE']}>
             <DrugInteractionChecker />
           </RoleGuard>
         ) 
@@ -270,7 +270,7 @@ export const router = createBrowserRouter([
       { 
         path: 'billing/invoices', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'STAFF']}>
+          <RoleGuard allowedRoles={['ADMIN', 'RECEPTIONIST', 'NURSE']}>
             <InvoiceList />
           </RoleGuard>
         ) 
@@ -278,7 +278,7 @@ export const router = createBrowserRouter([
       { 
         path: 'finance/invoices/:id', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'STAFF']}>
+          <RoleGuard allowedRoles={['ADMIN', 'RECEPTIONIST', 'NURSE']}>
             <InvoiceDetails />
           </RoleGuard>
         ) 
@@ -313,7 +313,7 @@ export const router = createBrowserRouter([
       { 
         path: 'system/notifications', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'STAFF']}>
+          <RoleGuard allowedRoles={['ADMIN', 'RECEPTIONIST', 'NURSE']}>
             <Notifications />
           </RoleGuard>
         ) 
@@ -321,7 +321,7 @@ export const router = createBrowserRouter([
       { 
         path: 'system/feedback', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'STAFF']}>
+          <RoleGuard allowedRoles={['ADMIN', 'RECEPTIONIST', 'NURSE']}>
             <Feedbacks />
           </RoleGuard>
         ) 

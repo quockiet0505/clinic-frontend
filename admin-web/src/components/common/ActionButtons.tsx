@@ -1,6 +1,6 @@
 // components/common/ActionButtons.tsx
 import React from 'react';
-import { Edit2, Trash2, Eye, LogIn, XCircle, Edit3, FileText, ArrowRightLeft, Stethoscope, SkipForward, FlaskConical, CheckCircle2, RotateCcw, Check } from 'lucide-react';
+import { Edit2, Trash2, Eye, LogIn, XCircle, Edit3, FileText, ArrowRightLeft, Stethoscope, SkipForward, FlaskConical, CheckCircle2, RotateCcw, Check, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ActionButtonProps {
@@ -57,6 +57,24 @@ export const TransferButton = ({ onClick, label = 'Chuyển BS', icon = <ArrowRi
 export const InputResultButton = ({ onClick, label = 'Nhập kết quả', icon = <Edit3 size={14} />, disabled, className }: ActionButtonProps) => (
   <Button onClick={onClick} disabled={disabled} variant="outline" size="sm" className={`flex items-center gap-1.5 font-semibold px-3 h-8 rounded-[10px] text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-all cursor-pointer whitespace-nowrap ${className || ''}`}>
     {icon}<span>{label}</span>
+  </Button>
+);
+
+export const PayButton = ({ onClick, label = 'Thu tiền', icon = <DollarSign size={14} />, disabled, className, iconOnly, title }: ActionButtonProps) => (
+  <Button onClick={onClick} disabled={disabled} variant="outline" size="sm" title={title || label} className={iconBtnClass('text-blue-600 border-blue-200 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300', className, iconOnly)}>
+    {icon}{!iconOnly && <span>{label}</span>}
+  </Button>
+);
+
+export const VerifyButton = ({ onClick, label = 'Duyệt', icon = <CheckCircle2 size={14} />, disabled, className, iconOnly, title }: ActionButtonProps) => (
+  <Button onClick={onClick} disabled={disabled} variant="outline" size="sm" title={title || label} className={iconBtnClass('text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300', className, iconOnly)}>
+    {icon}{!iconOnly && <span>{label}</span>}
+  </Button>
+);
+
+export const RejectButton = ({ onClick, label = 'Từ chối', icon = <XCircle size={14} />, disabled, className, iconOnly, title }: ActionButtonProps) => (
+  <Button onClick={onClick} disabled={disabled} variant="outline" size="sm" title={title || label} className={iconBtnClass('text-rose-600 border-rose-200 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300', className, iconOnly)}>
+    {icon}{!iconOnly && <span>{label}</span>}
   </Button>
 );
 

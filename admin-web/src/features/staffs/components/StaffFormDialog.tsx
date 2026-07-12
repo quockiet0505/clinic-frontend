@@ -15,7 +15,8 @@ interface Props {
 
 const STAFF_TYPE_OPTIONS = [
   { value: 'DOCTOR', label: 'Bác sĩ' },
-  { value: 'STAFF', label: 'Nhân viên' },
+  { value: 'RECEPTIONIST', label: 'Tiếp tân' },
+  { value: 'NURSE', label: 'Y tá' },
   { value: 'LAB_TECH', label: 'Kỹ thuật viên' },
   { value: 'ADMIN', label: 'Quản trị viên' },
 ];
@@ -36,7 +37,7 @@ function buildInitialData(data?: Staff | null): Record<string, unknown> {
       address: '',
       gender: 'Nam',
       dateOfBirth: '',
-      staffType: 'STAFF',
+      staffType: 'RECEPTIONIST',
       expertiseId: '',
       experience: '',
       specialtyTreatment: '',
@@ -53,7 +54,7 @@ function buildInitialData(data?: Staff | null): Record<string, unknown> {
     address: data.address || '',
     gender: data.gender || 'Nam',
     dateOfBirth: data.dateOfBirth ? String(data.dateOfBirth).slice(0, 10) : '',
-    staffType: data.staffType || 'STAFF',
+    staffType: data.staffType || 'RECEPTIONIST',
     expertiseId: data.expertiseId ? String(data.expertiseId) : '',
     experience: data.experience || '',
     specialtyTreatment: data.specialtyTreatment || '',
@@ -141,7 +142,7 @@ export default function StaffFormDialog({ isOpen, onClose, onSubmit, initialData
         address: String(data.address || '').trim() || undefined,
         gender: data.gender || 'Nam',
         dateOfBirth: data.dateOfBirth || undefined,
-        staffType: data.staffType || 'STAFF',
+        staffType: data.staffType || 'RECEPTIONIST',
         expertiseId: data.expertiseId ? Number(data.expertiseId) : undefined,
         experience: String(data.experience || '').trim() || undefined,
         specialtyTreatment: String(data.specialtyTreatment || '').trim() || undefined,

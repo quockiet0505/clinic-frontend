@@ -4,6 +4,7 @@ import 'package:clinic_management_system/screens/profile/edit_medical_profile_sc
 import 'package:clinic_management_system/screens/profile/feedback_screen.dart';
 import 'package:clinic_management_system/screens/profile/review_history_screen.dart';
 import 'package:clinic_management_system/screens/profile/faq_screen.dart';
+import 'package:clinic_management_system/screens/profile/billing_history_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -273,6 +274,16 @@ class ProfileScreen extends StatelessWidget {
                       title: 'Lịch sử đánh giá',
                       subtitle: 'Xem lại các đánh giá đã gửi',
                       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReviewHistoryScreen())),
+                    ),
+                    _buildDivider(),
+                    _buildActionRow(
+                      context,
+                      icon: Icons.receipt_long_rounded,
+                      iconColor: const Color(0xFF6366F1),
+                      iconBg: const Color(0xFFEEF2FF),
+                      title: 'Lịch sử thanh toán',
+                      subtitle: 'Hóa đơn dịch vụ khám bệnh',
+                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BillingHistoryScreen())),
                     ),
                     _buildDivider(),
                     _buildActionRow(

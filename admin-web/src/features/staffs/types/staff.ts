@@ -1,4 +1,4 @@
-export type StaffType = 'DOCTOR' | 'STAFF' | 'LAB_TECH' | 'ADMIN';
+export type StaffType = 'DOCTOR' | 'RECEPTIONIST' | 'NURSE' | 'LAB_TECH' | 'ADMIN';
 export type LeaveType = 'ANNUAL' | 'SICK' | 'UNPAID' | 'OTHER';
 export type LeaveStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 

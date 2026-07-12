@@ -1,136 +1,302 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, DollarSign, Filter, Printer, Clock, CheckCircle2 } from 'lucide-react';
+import { Search, DollarSign, Filter, Printer, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { FilterBar, FilterOption, TabOption } from '@/components/common/FilterBar';
+import PageHeader from '@/components/common/PageHeader';
 
 import PaymentCheckoutDialog from '../components/PaymentCheckoutDialog';
-import { BillInvoice } from '../types/finance';
+import { BillInvoice, BillStatus } from '../types/finance';
+import { financeApi } from '../api/financeApi';
+import { PayButton, VerifyButton, RejectButton, ViewButton } from '@/components/common/ActionButtons';
 
-const TODAY = new Date().toISOString().split('T')[0];
-
-const INITIAL_INVOICES: BillInvoice[] = [
-  { billId: 9001, recordId: 101, patientName: 'Liam Anderson', createdAt: TODAY, totalPrice: 125.50, status: 'UNPAID' },
-  { billId: 9002, recordId: 102, patientName: 'Emma Watson', createdAt: TODAY, totalPrice: 85.00, status: 'PAID', paymentMethod: 'TRANSFER' },
-  { billId: 9003, recordId: 103, patientName: 'William Garcia', createdAt: '2026-04-07', totalPrice: 210.00, status: 'PAID', paymentMethod: 'CASH' },
-];
-
-const getStatusBadge = (status: string) => {
+const getStatusBadge = (status: BillStatus) => {
   switch (status) {
-    case 'UNPAID': return 'bg-amber-100 text-amber-700 border-amber-200';
-    case 'PAID': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-    case 'REFUNDED': return 'bg-blue-100 text-blue-700 border-blue-200';
-    case 'CANCELLED': return 'bg-slate-100 text-slate-500 border-slate-200';
-    default: return 'bg-slate-100 text-slate-700 border-slate-200';
+    case 'UNPAID': 
+      return 'bg-amber-100 text-amber-700 border-amber-200';
+    case 'PENDING_VERIFY': 
+      return 'bg-orange-100 text-orange-700 border-orange-200 animate-pulse';
+    case 'PAID': 
+      return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+    case 'REFUNDED': 
+      return 'bg-blue-100 text-blue-700 border-blue-200';
+    case 'CANCELLED': 
+      return 'bg-slate-100 text-slate-500 border-slate-200';
+    default: 
+      return 'bg-slate-100 text-slate-700 border-slate-200';
+  }
+};
+
+const getStatusText = (status: BillStatus, paymentMethod?: string) => {
+  switch (status) {
+    case 'UNPAID': return 'Chưa thanh toán';
+    case 'PENDING_VERIFY': return 'Chờ đối soát';
+    case 'PAID': {
+      const method = paymentMethod === 'CASH' ? 'Tiền mặt' : paymentMethod === 'TRANSFER' ? 'Chuyển khoản' : '';
+      return method ? `Đã TT · ${method}` : 'Đã thanh toán';
+    }
+    case 'REFUNDED': return 'Đã hoàn tiền';
+    case 'CANCELLED': return 'Đã hủy';
+    default: return status;
   }
 };
 
 export default function InvoiceList() {
-  const [invoices, setInvoices] = useState<BillInvoice[]>(INITIAL_INVOICES);
+  const [invoices, setInvoices] = useState<BillInvoice[]>([]);
+  const [totalElements, setTotalElements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 15;
+  const [loading, setLoading] = useState(true);
+  
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('ALL');
+  const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [dateFilter, setDateFilter] = useState<'ALL' | 'TODAY'>('ALL');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
   const [selectedInvoice, setSelectedInvoice] = useState<BillInvoice | null>(null);
   
   const navigate = useNavigate();
 
-  const handleProcessPayment = (billId: number, paymentMethod: 'CASH' | 'TRANSFER') => {
-    setInvoices(invoices.map(inv => inv.billId === billId ? { ...inv, status: 'PAID', paymentMethod: paymentMethod } : inv));
-    setSelectedInvoice(null);
+  const fetchInvoices = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await financeApi.getInvoices({
+        status: statusFilter === 'ALL' ? undefined : statusFilter,
+        search: searchTerm || undefined,
+        page: currentPage - 1,
+        size: pageSize
+      });
+      setInvoices(res.content);
+      setTotalElements(res.totalElements);
+    } catch (e) {
+      console.error(e);
+      setInvoices([]);
+      setTotalElements(0);
+    }
+    setLoading(false);
+  }, [statusFilter, searchTerm, currentPage]);
+
+  useEffect(() => {
+    fetchInvoices();
+  }, [fetchInvoices]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, dateFilter, fromDate, toDate]);
+
+  const handleProcessPayment = async (invoiceId: number, paymentMethod: 'CASH' | 'TRANSFER') => {
+    try {
+      await financeApi.collectPayment(invoiceId, paymentMethod);
+      setSelectedInvoice(null);
+      await fetchInvoices();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const handleActionClick = (inv: BillInvoice) => {
-    if (inv.status === 'PAID') navigate(`/finance/invoices/${inv.billId}`);
-    else if (inv.status === 'UNPAID') setSelectedInvoice(inv);
+  const handleVerifyPayment = async (invoiceId: number, status: 'PAID' | 'UNPAID') => {
+    try {
+      await financeApi.verifyTransfer(invoiceId, status);
+      await fetchInvoices();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
-  const filteredInvoices = invoices.filter(inv => {
-    const matchesSearch = inv.patientName.toLowerCase().includes(searchTerm.toLowerCase()) || inv.billId.toString().includes(searchTerm);
-    const matchesStatus = statusFilter === 'ALL' || inv.status === statusFilter;
-    return matchesSearch && matchesStatus;
+  const totalRevenue = invoices
+    .filter(inv => inv.status === 'PAID')
+    .reduce((sum, inv) => sum + inv.totalPrice, 0);
+
+  const todaysRevenue = invoices
+    .filter(inv => inv.status === 'PAID' && new Date(inv.createdAt).toDateString() === new Date().toDateString())
+    .reduce((sum, inv) => sum + inv.totalPrice, 0);
+
+  const displayedInvoices = invoices.filter(inv => {
+    const invDate = new Date(inv.createdAt);
+    invDate.setHours(0, 0, 0, 0);
+
+    if (dateFilter === 'TODAY') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return invDate.getTime() === today.getTime();
+    }
+    
+    if (fromDate) {
+      const from = new Date(fromDate);
+      from.setHours(0, 0, 0, 0);
+      if (invDate < from) return false;
+    }
+    if (toDate) {
+      const to = new Date(toDate);
+      to.setHours(23, 59, 59, 999);
+      if (invDate > to) return false;
+    }
+    return true;
   });
 
-  const todaysRevenue = invoices.filter(inv => inv.status === 'PAID' && inv.createdAt === TODAY).reduce((sum, inv) => sum + inv.totalPrice, 0);
+  const statusOptions: FilterOption[] = [
+    { value: 'ALL', label: 'Tất cả trạng thái' },
+    { value: 'UNPAID', label: 'Chưa thanh toán' },
+    { value: 'PENDING_VERIFY', label: 'Chờ đối soát' },
+    { value: 'PAID', label: 'Đã thanh toán' },
+    { value: 'CANCELLED', label: 'Đã hủy' },
+    { value: 'REFUNDED', label: 'Đã hoàn tiền' },
+  ];
+
+  const tabs: TabOption[] = [
+    { value: 'ALL', label: 'Tất cả' },
+    { value: 'TODAY', label: 'Hôm nay' },
+  ];
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shrink-0">
-        <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">Billing & Invoices</h1>
-          <p className="text-sm text-slate-500 mt-1">Manage patient payments and generate receipts.</p>
-        </div>
-        <div className="bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-4">
-          <div className="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center"><DollarSign size={20} /></div>
-          <div>
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Today's Revenue</p>
-            <p className="text-xl font-black text-slate-900">${todaysRevenue.toFixed(2)}</p>
+        <PageHeader title="Hóa đơn & Thanh toán" description="Quản lý hóa đơn đóng băng giá và đối soát chuyển khoản cho bệnh nhân." />
+        <div className="flex items-center gap-3">
+          <div className="bg-white px-4 py-2 rounded-[20px] shadow-sm border border-slate-200 flex items-center gap-3">
+            <div className="w-8 h-8 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center font-bold">
+              <DollarSign size={16} />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Doanh thu tổng</p>
+              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{totalRevenue.toLocaleString('vi-VN')} đ</p>
+            </div>
+          </div>
+          <div className="bg-white px-4 py-2 rounded-[20px] shadow-sm border border-slate-200 flex items-center gap-3">
+            <div className="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center font-bold">
+              <DollarSign size={16} />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Doanh thu hôm nay</p>
+              <p className="text-sm font-black text-slate-900 leading-none mt-0.5">{todaysRevenue.toLocaleString('vi-VN')} đ</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-white p-3 rounded-2xl border border-slate-200 flex flex-col sm:flex-row gap-3 shadow-sm shrink-0">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-          <Input placeholder="Tìm kiếm by Patient Name or Bill ID..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 h-10 rounded-xl border-slate-200 bg-slate-50 font-medium" />
-        </div>
-        <div className="flex items-center gap-2">
-          <Filter size={18} className="text-slate-400 ml-2" />
-          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="h-10 rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm font-bold text-slate-600 cursor-pointer">
-            <option value="ALL">Tất cả Trạng thái</option>
-            <option value="UNPAID">Unpaid</option>
-            <option value="PAID">Paid</option>
-            <option value="REFUNDED">Refunded</option>
-          </select>
-        </div>
-      </div>
+      <FilterBar
+        searchValue={searchTerm}
+        onSearchChange={setSearchTerm}
+        searchPlaceholder="Tìm mã hóa đơn..."
+        tabs={{
+          options: tabs,
+          value: dateFilter,
+          onChange: (val) => setDateFilter(val as any),
+        }}
+        filters={[
+          {
+            key: 'status',
+            label: 'Trạng thái',
+            options: statusOptions,
+            value: statusFilter,
+            onChange: setStatusFilter,
+            placeholder: 'Trạng thái',
+          },
+        ]}
+        advancedFilters={{
+          dateRange: {
+            from: fromDate,
+            to: toDate,
+            onFromChange: setFromDate,
+            onToChange: setToDate,
+          },
+        }}
+      />
 
-      <div className="bg-white rounded-[32px] shadow-sm border border-slate-200 flex-1 overflow-hidden">
-        <Table>
-          <TableHeader className="bg-slate-50">
-            <TableRow className="h-14">
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Invoice</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bệnh nhân</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Total Amount</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-left">Trạng thái</TableHead>
-              <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredInvoices.map((inv) => (
-              <TableRow key={inv.billId} className="hover:bg-slate-50/50">
-                <TableCell className="px-8 py-4">
-                  <p className="font-bold text-slate-900">BILL-{inv.billId}</p>
-                  <p className="text-xs text-slate-500 font-medium mt-0.5">{inv.createdAt}</p>
-                </TableCell>
-                <TableCell><span className="font-bold text-slate-700">{inv.patientName}</span></TableCell>
-                <TableCell><span className="font-black text-slate-900">${inv.totalPrice.toFixed(2)}</span></TableCell>
-                <TableCell className="text-center">
-                  <Badge variant="outline" className={`font-bold border px-2.5 py-1 rounded-lg ${getStatusBadge(inv.status)}`}>
-                    {inv.status === 'UNPAID' && <Clock size={12} className="mr-1.5 inline" />}
-                    {inv.status === 'PAID' && <CheckCircle2 size={12} className="mr-1.5 inline" />}
-                    {inv.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right pr-8">
-                  <div className="flex items-center justify-end gap-2">
-                    <Button onClick={() => handleActionClick(inv)} variant={inv.status === 'PAID' ? 'outline' : 'default'} size="sm" className={`h-9 font-bold rounded-xl px-4 ${inv.status === 'UNPAID' ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg text-white shadow-sm' : 'border-slate-200 text-slate-600 hover:bg-slate-50'}`}>
-                      {inv.status === 'PAID' ? 'View Details' : 'Collect Payment'}
-                    </Button>
-                    {inv.status === 'PAID' && (
-                      <Button onClick={() => navigate(`/finance/invoices/${inv.billId}`)} variant="outline" size="icon" className="h-9 w-9 text-slate-500 hover:text-slate-700 rounded-xl border-slate-200">
-                        <Printer size={16} />
-                      </Button>
-                    )}
-                  </div>
-                </TableCell>
+      <div className="bg-white rounded-[32px] shadow-sm border border-slate-200 flex-1 overflow-hidden flex flex-col">
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
+          <Table>
+            <TableHeader className="bg-slate-50 sticky top-0 z-10">
+              <TableRow className="h-14">
+                <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Hóa đơn</TableHead>
+                <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Bệnh nhân</TableHead>
+                <TableHead className="font-bold text-slate-600 uppercase text-[11px]">Tổng tiền</TableHead>
+                <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-center">Trạng thái</TableHead>
+                <TableHead className="font-bold text-slate-600 uppercase text-[11px] text-right pr-8">Thao tác</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-20">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+                      <p className="text-slate-500 text-sm font-medium">Đang tải danh sách hóa đơn...</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : displayedInvoices.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-20 text-slate-500 font-medium">
+                    Không tìm thấy hóa đơn nào phù hợp.
+                  </TableCell>
+                </TableRow>
+              ) : displayedInvoices.map((inv) => (
+                <TableRow key={inv.invoiceId} className="hover:bg-slate-50/50">
+                  <TableCell className="px-8 py-4">
+                    <p className="font-bold text-slate-900">BILL-{inv.invoiceId}</p>
+                    <p className="text-xs text-slate-500 font-medium mt-0.5">
+                      {new Date(inv.createdAt).toLocaleDateString('vi-VN')} {new Date(inv.createdAt).toLocaleTimeString('vi-VN')}
+                    </p>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <p className="font-bold text-slate-700">{inv.patientName}</p>
+                      <p className="text-xs text-slate-400 mt-0.5">{inv.patientPhone}</p>
+                    </div>
+                  </TableCell>
+                  <TableCell><span className="font-black text-slate-900">{inv.totalPrice.toLocaleString('vi-VN')} đ</span></TableCell>
+                  <TableCell className="text-center">
+                    <Badge variant="outline" className={`font-bold border px-2.5 py-1 rounded-lg ${getStatusBadge(inv.status)}`}>
+                      {inv.status === 'UNPAID' && <Clock size={12} className="mr-1.5 inline" />}
+                      {inv.status === 'PENDING_VERIFY' && <AlertCircle size={12} className="mr-1.5 inline animate-bounce" />}
+                      {inv.status === 'PAID' && <CheckCircle2 size={12} className="mr-1.5 inline" />}
+                      {getStatusText(inv.status, inv.paymentMethod)}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right pr-8">
+                    <div className="flex items-center justify-end gap-2">
+                      {inv.status === 'UNPAID' && (
+                        <PayButton onClick={() => setSelectedInvoice(inv)} />
+                      )}
+                      
+                      {inv.status === 'PENDING_VERIFY' && (
+                        <>
+                          <VerifyButton onClick={() => handleVerifyPayment(inv.invoiceId, 'PAID')} />
+                          <RejectButton onClick={() => handleVerifyPayment(inv.invoiceId, 'UNPAID')} />
+                        </>
+                      )}
+
+                      <ViewButton onClick={() => navigate(`/finance/invoices/${inv.invoiceId}`)} />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+        {totalElements > pageSize && (
+          <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-slate-50 shrink-0">
+            <span className="text-xs font-semibold text-slate-500">
+              Hiển thị {(currentPage - 1) * pageSize + 1} - {Math.min(currentPage * pageSize, totalElements)} của {totalElements} hóa đơn
+            </span>
+            <div className="flex gap-2">
+              <Button disabled={currentPage === 1} onClick={() => setCurrentPage(p => p - 1)} variant="outline" size="sm" className="h-8 rounded-lg font-bold">Trước</Button>
+              <Button disabled={currentPage * pageSize >= totalElements} onClick={() => setCurrentPage(p => p + 1)} variant="outline" size="sm" className="h-8 rounded-lg font-bold">Sau</Button>
+            </div>
+          </div>
+        )}
       </div>
 
-      <PaymentCheckoutDialog isOpen={!!selectedInvoice} onClose={() => setSelectedInvoice(null)} onProcessPayment={handleProcessPayment} invoice={selectedInvoice} />
+      <PaymentCheckoutDialog 
+        invoice={selectedInvoice} 
+        onClose={() => setSelectedInvoice(null)} 
+        onProcessPayment={handleProcessPayment} 
+        onPaymentSuccess={() => { setSelectedInvoice(null); fetchInvoices(); }}
+      />
     </div>
   );
 }

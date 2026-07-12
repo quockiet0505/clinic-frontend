@@ -3,7 +3,7 @@ export interface User {
   email: string;
   fullName: string;
 
-  role: 'ADMIN' | 'DOCTOR' | 'STAFF' | 'LAB_TECH';
+  role: 'ADMIN' | 'DOCTOR' |  'LAB_TECH' | 'RECEPTIONIST' | 'NURSE';
 
   roles: string[];
 

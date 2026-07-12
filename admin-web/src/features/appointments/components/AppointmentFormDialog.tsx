@@ -132,7 +132,7 @@ export default function AppointmentFormDialog({ isOpen, onClose, onBook }: Props
       note: data.note,
       isPriority: data.isPriority === true,
       appointmentType: 'WALK_IN',
-      createdBy: user?.role === 'DOCTOR' ? 'DOCTOR' : 'STAFF',
+      createdBy: user?.role === 'DOCTOR' ? 'DOCTOR' : (user?.role as any),
       appointmentDate: new Date().toISOString().split('T')[0],
       timeStart: new Date().toTimeString().split(' ')[0].substring(0, 5) + ':00',
       timeEnd: new Date(Date.now() + 30 * 60000).toTimeString().split(' ')[0].substring(0, 5) + ':00',

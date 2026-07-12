@@ -62,22 +62,7 @@ export default function PrescriptionTable({ data, onViewDetails, loading = false
         </div>
       ),
     },
-    {
-      key: 'status',
-      label: 'Trạng thái',
-      className: 'w-[15%]',
-      render: (rx) => (
-        rx.status === 'DISPENSED' ? (
-          <Badge className="bg-emerald-100/80 text-emerald-700 border-0 px-2.5 py-1 text-[11px] font-bold">
-            Đã phát thuốc
-          </Badge>
-        ) : (
-          <Badge className="bg-amber-100/80 text-amber-700 border-0 px-2.5 py-1 text-[11px] font-bold">
-            Chờ phát thuốc
-          </Badge>
-        )
-      ),
-    },
+
     {
       key: 'actions',
       label: 'Thao tác',

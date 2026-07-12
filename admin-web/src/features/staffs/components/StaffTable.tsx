@@ -1,8 +1,9 @@
 // features/staffs/components/StaffTable.tsx
 import React from 'react';
-import { Mail, Phone, Star } from 'lucide-react';
+import { Mail, Phone, Star, Lock, Unlock } from 'lucide-react';
 import Table, { Column } from '@/components/tables/Table';
 import { EditButton, DeleteButton } from '@/components/common/ActionButtons';
+import { Button } from '@/components/ui/button';
 import EntityAvatar from '@/components/common/EntityAvatar';
 import { RoleDisplay } from '../utils/roleDisplay';
 import { Staff } from '../types/staff';
@@ -29,11 +30,12 @@ interface StaffTableProps {
   data: Staff[];
   onEdit: (staff: Staff) => void;
   onDelete: (staff: Staff) => void;
+  onToggleStatus?: (accountId: number, newStatus: number) => void;
   loading?: boolean;
   pagination?: { page: number; size: number; total: number; onPageChange: (page: number) => void };
 }
 
-export default function StaffTable({ data, onEdit, onDelete, loading = false, pagination }: StaffTableProps) {
+export default function StaffTable({ data, onEdit, onDelete, onToggleStatus, loading = false, pagination }: StaffTableProps) {
   const columns: Column<Staff>[] = [
     {
       key: 'fullName',
@@ -88,10 +90,28 @@ export default function StaffTable({ data, onEdit, onDelete, loading = false, pa
     {
       key: 'actions',
       label: 'Thao tác',
-      className: 'w-[15%]',
+      className: 'w-[20%]',
       render: (staff) => (
         <div className="flex gap-2">
           <EditButton onClick={() => onEdit(staff)} label="Sửa" />
+          {staff.accountId && onToggleStatus && (
+            <Button
+              onClick={() => {
+                const newStatus = staff.isActive === 0 ? 1 : 0;
+                onToggleStatus(staff.accountId!, newStatus);
+              }}
+              variant="outline"
+              size="sm"
+              className={`flex items-center gap-1.5 font-semibold px-2.5 h-8 rounded-[10px] ${
+                staff.isActive === 0
+                  ? 'text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700'
+                  : 'text-amber-600 border-amber-200 hover:bg-amber-50 hover:text-amber-700'
+              }`}
+            >
+              {staff.isActive === 0 ? <Unlock size={14} /> : <Lock size={14} />}
+              <span>{staff.isActive === 0 ? 'Mở' : 'Khóa'}</span>
+            </Button>
+          )}
           <DeleteButton onClick={() => onDelete(staff)} label="Xóa" />
         </div>
       ),

@@ -14,7 +14,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend
 } from 'recharts';
 
-type FilterType = 'ALL' | 'DOCTOR' | 'STAFF' | 'LAB_TECH' | 'ADMIN';
+type FilterType = 'ALL' | 'DOCTOR' | 'RECEPTIONIST' | 'NURSE' | 'LAB_TECH' | 'ADMIN';
 
 interface Props {
   searchTerm?: string;
@@ -71,7 +71,7 @@ export default function StaffTab({ searchTerm = '' }: Props) {
     return {
       total: allStaff.length,
       doctors: allStaff.filter((s) => s.staffType === 'DOCTOR').length,
-      staffs: allStaff.filter((s) => s.staffType === 'STAFF').length,
+      staffs: allStaff.filter((s) => s.staffType === 'RECEPTIONIST' | 'NURSE').length,
       labTech: allStaff.filter((s) => s.staffType === 'LAB_TECH').length,
       admins: allStaff.filter((s) => s.staffType === 'ADMIN').length,
     };
@@ -88,7 +88,7 @@ export default function StaffTab({ searchTerm = '' }: Props) {
     return [
       { name: 'Bác sĩ', value: counts['DOCTOR'] || 0, color: '#0284c7' },
       { name: 'KTV', value: counts['LAB_TECH'] || 0, color: '#818cf8' },
-      { name: 'Nhân viên', value: counts['STAFF'] || 0, color: '#34d399' },
+      { name: 'Nhân viên', value: counts['RECEPTIONIST' | 'NURSE'] || 0, color: '#34d399' },
       { name: 'Quản trị viên', value: counts['ADMIN'] || 0, color: '#fb923c' },
     ].filter(d => d.value > 0);
   }, [allStaff]);
@@ -244,13 +244,13 @@ export default function StaffTab({ searchTerm = '' }: Props) {
         </div>
 
         {/* Nhân viên */}
-        <div onClick={() => setFilterType('STAFF')} className="cursor-pointer">
+        <div onClick={() => setFilterType('RECEPTIONIST' | 'NURSE')} className="cursor-pointer">
           <StatsCard
             icon={<Briefcase size={18} className="text-white" />}
             label="Nhân viên"
             value={stats.staffs}
             bgColor="from-emerald-400 to-emerald-600"
-            className={filterType === 'STAFF'
+            className={filterType === 'RECEPTIONIST' | 'NURSE'
               ? 'bg-emerald-50/40 border-emerald-300 ring-2 ring-emerald-300/30'
               : 'border-slate-200/80 hover:border-slate-300 opacity-75'
             }

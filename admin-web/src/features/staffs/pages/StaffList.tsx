@@ -9,6 +9,7 @@ import StaffFormDialog from '../components/StaffFormDialog';
 import GradientButton from '@/components/common/GradientButton';
 import { Staff } from '../types/staff';
 import { staffApi } from '../api/staffApi';
+import { patientApi } from '@/features/patients/api/patientApi';
 
 export default function StaffList() {
   const [staffList, setStaffList] = useState<Staff[]>([]);
@@ -64,6 +65,15 @@ export default function StaffList() {
     }
   };
 
+  const handleToggleStatus = async (accountId: number, newStatus: number) => {
+    try {
+      await patientApi.updateAccountStatus(accountId, newStatus);
+      await fetchStaff();
+    } catch {
+      /* toast: axios interceptor */
+    }
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500 h-[calc(100vh-6rem)] flex flex-col">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shrink-0">
@@ -99,6 +109,7 @@ export default function StaffList() {
           loading={loading}
           onEdit={(s) => { setSelectedStaff(s); setIsFormOpen(true); }}
           onDelete={setDeletingStaff}
+          onToggleStatus={handleToggleStatus}
           pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
         />
       </div>

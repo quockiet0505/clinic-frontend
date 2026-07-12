@@ -20,6 +20,8 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { LabResultModalContent } from '../components/LabResultModalContent';
 import { RecordCardMeta, RecordStatusBadge } from '../components/RecordCardMeta';
 import { formatDoctorName } from '@/utils/generatePdf';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 type StatusTab = 'ALL' | 'COMPLETED' | 'PROCESSING';
 type TypeFilter = 'ALL' | 'CLS' | 'XN';
@@ -321,33 +323,43 @@ export const LabResults: React.FC = () => {
         </div>
 
         {/* List */}
-        <div className="flex flex-col gap-4">
-          {filteredResults.length > 0 ? (
-            filteredResults.map((result: any) => (
-              <LabResultCard key={result.resultId} result={result} />
-            ))
-          ) : (
-            <div className="rounded-2xl border border-slate-200 shadow-sm p-12 text-center flex flex-col items-center justify-center bg-white">
-              <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mb-3">
-                <FlaskConical className="w-8 h-8 text-primary-400" />
-              </div>
-              <h2 className="text-[16px] font-black text-brand-dark mb-1">
-                Chưa có kết quả xét nghiệm
-              </h2>
-              <p className="text-slate-500 text-[13px] font-medium max-w-md">
-                Không có kết quả khớp với bộ lọc hiện tại.
-              </p>
-            </div>
-          )}
-        </div>
+        <Card className="rounded-3xl border-0 shadow-sm bg-white overflow-hidden">
+          <div className="p-1 overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-[13px] text-slate-500 uppercase bg-slate-50 rounded-t-2xl border-b border-slate-200">
+                <tr>
+                  <th className="px-6 py-5 font-bold rounded-tl-2xl w-[120px]">Mã Phiếu</th>
+                  <th className="px-6 py-5 font-bold w-[250px]">Tên Dịch vụ</th>
+                  <th className="px-6 py-5 font-bold w-[200px]">Phân loại</th>
+                  <th className="px-6 py-5 font-bold w-[160px]">Trạng thái</th>
+                  <th className="px-6 py-5 font-bold rounded-tr-2xl text-right pr-6 w-[180px]">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredResults.length > 0 ? (
+                  filteredResults.map((result: any) => (
+                    <LabResultTableRow key={result.resultId} result={result} />
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} className="text-center py-20 text-slate-500 font-medium bg-white">
+                      <div className="flex flex-col items-center gap-2">
+                        <FlaskConical className="w-8 h-8 text-primary-300" />
+                        <p>Không có kết quả khớp với bộ lọc hiện tại.</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       </SectionContainer>
     </main>
   );
 };
 
-const LabResultCard: React.FC<{ result: any }> = ({ result }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
+const LabResultTableRow: React.FC<{ result: any }> = ({ result }) => {
   const isCompleted = !!result.resultData;
   const serviceName = result.serviceName || 'Xét nghiệm cận lâm sàng';
   const isImaging = isImagingService(serviceName.toLowerCase());
@@ -355,155 +367,70 @@ const LabResultCard: React.FC<{ result: any }> = ({ result }) => {
     result.resultData?.toLowerCase().includes('bất thường') ||
     result.conclusion?.toLowerCase().includes('bất thường');
 
-  const status = isCompleted
-    ? isAbnormal
-      ? {
-        label: 'Bất thường',
-        color: 'bg-amber-50 text-amber-700 border-amber-200',
-        icon: <AlertTriangle className="w-3.5 h-3.5" />,
-        hint: 'Có chỉ số cần theo dõi thêm. Vui lòng xem chi tiết và tái khám nếu bác sĩ yêu cầu.',
-        previewClass: 'bg-amber-50/80 border-amber-100',
-        previewTitleClass: 'text-amber-800',
-      }
-      : {
-        label: 'Đã có kết quả',
-        color: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-        icon: <CheckCircle2 className="w-3.5 h-3.5" />,
-        hint: 'Kết quả đã sẵn sàng. Bạn có thể xem chi tiết hoặc mở bệnh án liên quan.',
-        previewClass: 'bg-emerald-50/60 border-emerald-100',
-        previewTitleClass: 'text-emerald-800',
-      }
-    : {
-      label: 'Đang xử lý',
-      color: 'bg-blue-50 text-blue-700 border-blue-200',
-      icon: <Loader2 className="w-3.5 h-3.5 animate-spin" />,
-      hint: 'Phòng xét nghiệm đang xử lý. Kết quả sẽ được cập nhật khi hoàn tất.',
-      previewClass: 'bg-blue-50/60 border-blue-100',
-      previewTitleClass: 'text-blue-800',
-    };
-
   const enteredDate = new Date(result.enteredAt).toLocaleDateString('vi-VN');
-  const technicianName = result.technicianName || result.enteredByName;
 
   return (
     <Dialog>
-      <article className={`group bg-white rounded-3xl border shadow-sm transition-all overflow-hidden ${isExpanded ? 'border-primary-200 shadow-md' : 'border-slate-200/80 hover:border-primary-200/60 hover:shadow-md'}`}>
-
-        {/* Accordion Header (Always Visible) */}
-        <div
-          className="p-5 md:p-6 flex items-start sm:items-center justify-between gap-4 cursor-pointer hover:bg-slate-50/50 transition-colors select-none"
-          onClick={() => setIsExpanded(!isExpanded)}
-        >
-          <div className="flex items-start sm:items-center gap-4 min-w-0">
-            <div
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${isImaging
-                ? 'bg-violet-50 text-violet-600'
-                : 'bg-primary-50 text-primary-600'
-                }`}
-            >
-              {isImaging ? <ScanLine className="w-6 h-6" /> : <FlaskConical className="w-6 h-6" />}
-            </div>
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-x-2 text-[12px] font-semibold tracking-wide text-slate-500 mb-1">
-                <span className={isImaging ? "text-violet-600 font-bold" : "text-primary-600 font-bold"}>
-                  {isImaging ? 'Chẩn đoán hình ảnh' : 'Xét nghiệm'}
-                </span>
-                <span>•</span>
-                <span>#{String(result.resultId).padStart(5, '0')}</span>
-                <span className="hidden sm:inline">•</span>
-                <span className="hidden sm:inline">{enteredDate}</span>
-              </div>
-              <h3 className="font-bold text-[16px] sm:text-[17px] text-slate-900 leading-snug truncate group-hover:text-primary-600 transition-colors">
-                {serviceName}
-              </h3>
-            </div>
+      <tr className="border-b border-slate-200 last:border-0 even:bg-slate-100/60 hover:bg-primary-50/40 transition-colors group">
+        <td className="px-6 py-5 align-top">
+          <div className="font-bold text-slate-700">#{String(result.resultId).padStart(5, '0')}</div>
+          <div className="text-slate-400 text-[13px] mt-0.5">{enteredDate}</div>
+        </td>
+        <td className="px-6 py-5 align-top max-w-[220px]">
+          <div className="font-bold text-slate-800 truncate" title={serviceName}>
+            {serviceName}
           </div>
-          <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3 shrink-0">
-            <RecordStatusBadge
-              label={status.label}
-              className={`${status.color}`}
-              icon={status.icon}
-            />
-            <div className={`hidden sm:flex w-9 h-9 items-center justify-center rounded-xl bg-slate-50 text-slate-400 transition-transform duration-300 ${isExpanded ? 'rotate-180 bg-primary-50 text-primary-600' : 'group-hover:bg-slate-100'}`}>
-              <ChevronDown className="w-5 h-5" />
-            </div>
+          <div className="text-[12px] text-slate-500 mt-1 flex items-center gap-1.5 truncate" title={result.doctorName}>
+            <UserRound className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">{formatDoctorName(result.doctorName)}</span>
           </div>
-        </div>
-
-        {/* Accordion Body */}
-        <div className={`grid transition-all duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100 border-t border-slate-100' : 'grid-rows-[0fr] opacity-0'}`}>
-          <div className="overflow-hidden">
-            <div className="flex flex-col lg:flex-row">
-              <div className="flex-1 p-5 md:p-6 pt-0 md:pt-0 min-w-0">
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 mb-4 mt-2 sm:mt-5">
-                  <RecordCardMeta icon={CalendarDays} label="Ngày trả KQ" value={enteredDate} />
-                  <RecordCardMeta
-                    icon={UserRound}
-                    label="Bác sĩ chỉ định"
-                    value={formatDoctorName(result.doctorName)}
-                  />
-                  {technicianName ? (
-                    <RecordCardMeta
-                      icon={Stethoscope}
-                      label="Kỹ thuật viên"
-                      value={technicianName}
-                      className="sm:col-span-2 xl:col-span-1"
-                    />
-                  ) : null}
-                </div>
-
-                <div className={`rounded-2xl border p-4 ${status.previewClass}`}>
-                  <p className={`text-[11px] font-bold uppercase tracking-wider mb-2 ${status.previewTitleClass}`}>
-                    {isCompleted ? 'Kết luận' : 'Trạng thái xử lý'}
-                  </p>
-                  {result.conclusion ? (
-                    <p className="text-[14px] text-slate-700 leading-relaxed line-clamp-3">
-                      {result.conclusion}
-                    </p>
-                  ) : isCompleted && result.resultData ? (
-                    <p className="text-[14px] text-slate-700 leading-relaxed line-clamp-3">
-                      {result.resultData}
-                    </p>
-                  ) : (
-                    <p className="text-[14px] text-slate-500 leading-relaxed">
-                      Mẫu đang được phân tích. Vui lòng quay lại sau hoặc theo dõi thông báo từ phòng khám.
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              <div className="lg:w-[272px] shrink-0 bg-slate-50/90 border-t lg:border-t-0 lg:border-l border-slate-100 p-5 flex flex-col justify-between gap-4">
-                <div className="space-y-3">
-                  <p className="text-[13px] font-medium text-slate-600 leading-relaxed">{status.hint}</p>
-                </div>
-
-                <div className="flex flex-col gap-2">
-                  <DialogTrigger asChild>
-                    <button
-                      type="button"
-                      className="w-full inline-flex items-center justify-center gap-2 text-[13px] font-bold text-white bg-primary-500 border border-transparent px-4 py-2.5 rounded-xl hover:bg-primary-600 active:scale-[0.98] transition-all cursor-pointer shadow-sm shadow-primary-500/20"
-                    >
-                      Xem kết quả
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </DialogTrigger>
-                  {result.recordId ? (
-                    <Link
-                      to={`/records/detail/${result.recordId}`}
-                      className="w-full inline-flex items-center justify-center gap-2 text-[13px] font-bold text-primary-700 bg-white border border-primary-200 px-4 py-2.5 rounded-xl hover:bg-primary-50 active:scale-[0.98] transition-all"
-                    >
-                      <FileText className="w-4 h-4" />
-                      Mở bệnh án
-                    </Link>
-                  ) : null}
-                </div>
-              </div>
-            </div>
+        </td>
+        <td className="px-6 py-5 align-top">
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-[13px] ${isImaging ? 'bg-violet-50 text-violet-700' : 'bg-primary-50 text-primary-700'}`}>
+            {isImaging ? <ScanLine className="w-4 h-4" /> : <FlaskConical className="w-4 h-4" />}
+            {isImaging ? 'Chẩn đoán hình ảnh' : 'Xét nghiệm'}
+          </span>
+        </td>
+        <td className="px-6 py-5 align-top">
+          {isCompleted ? (
+            isAbnormal ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-bold bg-amber-50 text-amber-700 border border-amber-100">
+                <AlertTriangle className="w-3.5 h-3.5" /> Bất thường
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Có kết quả
+              </span>
+            )
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[12px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
+              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Đang xử lý
+            </span>
+          )}
+        </td>
+        <td className="px-6 py-5 text-right pr-6 align-top">
+          <div className="flex flex-col items-end gap-2">
+            <DialogTrigger asChild>
+              <button type="button" className="w-[140px] h-9 inline-flex items-center justify-center gap-1.5 text-[13px] font-bold text-white bg-primary-500 border border-transparent px-3 rounded-xl hover:bg-primary-600 active:scale-[0.98] transition-all cursor-pointer shadow-sm shadow-primary-500/20">
+                Xem chi tiết
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </DialogTrigger>
+            {result.recordId && (
+              <button
+                type="button"
+                className="w-[140px] h-9 inline-flex items-center justify-center gap-1.5 text-[13px] font-bold text-primary-700 bg-white border border-primary-200 px-3 rounded-xl hover:bg-primary-50 active:scale-[0.98] transition-all cursor-pointer"
+                onClick={() => window.location.href = `/records/detail/${result.recordId}`}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                Mở bệnh án
+              </button>
+            )}
           </div>
-        </div>
-      </article>
-
-      <LabResultModalContent result={result} />
+          {/* Render Modal component via portal */}
+          <LabResultModalContent result={result} />
+        </td>
+      </tr>
     </Dialog>
   );
 };

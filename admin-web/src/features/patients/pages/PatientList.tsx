@@ -24,6 +24,7 @@ export default function PatientList() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [deletingPatient, setDeletingPatient] = useState<Patient | null>(null);
+  const [togglingPatient, setTogglingPatient] = useState<Patient | null>(null);
 
   const fetchPatients = useCallback(async () => {
     setLoading(true);
@@ -96,6 +97,17 @@ export default function PatientList() {
           onViewDetails={(id) => navigate(`/patients/${id}`)}
           onEdit={(patient) => { setSelectedPatient(patient); setIsFormOpen(true); }}
           onDelete={(patient) => setDeletingPatient(patient)}
+          onUnlockBooking={async (patient) => {
+            if (confirm(`Bạn có chắc chắn muốn mở khóa đặt lịch cho bệnh nhân ${patient.fullName}?`)) {
+              try {
+                await patientApi.unlockBooking(patient.patientId);
+                fetchPatients();
+              } catch (e) {
+                console.error(e);
+              }
+            }
+          }}
+          onToggleAccountStatus={(patient) => setTogglingPatient(patient)}
           pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
         />
       </div>
@@ -119,6 +131,26 @@ export default function PatientList() {
         title="Xóa Bệnh Nhân"
         description={`Bạn có chắc chắn muốn xóa hồ sơ của ${deletingPatient?.fullName} không?`}
         confirmText="Xác nhận xóa"
+      />
+
+      <ConfirmDialog
+        isOpen={!!togglingPatient}
+        onClose={() => setTogglingPatient(null)}
+        onConfirm={async () => {
+          if (togglingPatient?.accountId) {
+            const newStatus = togglingPatient.isActive === 0 ? 1 : 0;
+            try {
+              await patientApi.updateAccountStatus(togglingPatient.accountId, newStatus);
+              await fetchPatients();
+            } catch (e) {
+              console.error(e);
+            }
+          }
+          setTogglingPatient(null);
+        }}
+        title={togglingPatient?.isActive === 0 ? "Mở Khóa Tài Khoản" : "Khóa Tài Khoản"}
+        description={`Bạn có chắc chắn muốn ${togglingPatient?.isActive === 0 ? 'mở khóa' : 'khóa'} tài khoản của bệnh nhân ${togglingPatient?.fullName} không?`}
+        confirmText="Xác nhận"
       />
     </div>
   );

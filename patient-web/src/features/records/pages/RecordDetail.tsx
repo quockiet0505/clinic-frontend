@@ -104,49 +104,7 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-function SectionShell({
-  title,
-  icon,
-  count,
-  open,
-  onToggle,
-  accentClass = 'text-primary-600',
-  children,
-}: {
-  title: string;
-  icon: React.ReactNode;
-  count?: number;
-  open: boolean;
-  onToggle: () => void;
-  accentClass?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section className="rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden">
-      <button
-        type="button"
-        onClick={onToggle}
-        className="w-full flex items-center justify-between gap-3 px-5 py-4 hover:bg-slate-50/80 transition-colors text-left"
-      >
-        <div className="flex items-center gap-3 min-w-0">
-          <div className={`shrink-0 ${accentClass}`}>{icon}</div>
-          <h2 className="text-[15px] font-bold text-slate-800 truncate">{title}</h2>
-          {count !== undefined && (
-            <span className="shrink-0 px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[11px] font-bold">
-              {count}
-            </span>
-          )}
-        </div>
-        {open ? (
-          <ChevronUp className="w-4 h-4 text-slate-400 shrink-0" />
-        ) : (
-          <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
-        )}
-      </button>
-      {open && <div className="px-5 pb-5 pt-0 border-t border-slate-100">{children}</div>}
-    </section>
-  );
-}
+// SectionShell component removed as per new flat design
 
 function EmptyBlock({ message }: { message: string }) {
   return (
@@ -163,8 +121,6 @@ export const RecordDetail: React.FC = () => {
   const [appointment, setAppointment] = useState<AppointmentHistoryItem | null>(null);
   const [doctorInfo, setDoctorInfo] = useState<Doctor | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isPrescriptionOpen, setIsPrescriptionOpen] = useState(true);
-  const [isLabOpen, setIsLabOpen] = useState(true);
   const [imgError, setImgError] = useState(false);
   const [patientProfile, setPatientProfile] = useState<PatientProfile | null>(null);
   const [pdfLoading, setPdfLoading] = useState(false);
@@ -393,128 +349,112 @@ export const RecordDetail: React.FC = () => {
       <SectionContainer className="max-w-6xl px-4 pt-8 pb-4 md:pt-10">
         <div className="grid lg:grid-cols-[minmax(0,300px)_1fr] gap-6 items-start">
           {/* Sidebar */}
-          <aside className="flex flex-col gap-4 lg:sticky lg:top-6">
-            {/* Doctor card */}
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shrink-0 text-white font-bold text-xl overflow-hidden ring-4 ring-primary-50">
-                  {doctorInfo?.imageUrl && !imgError ? (
-                    <img
-                      src={doctorInfo.imageUrl}
-                      onError={() => setImgError(true)}
-                      alt={record.mainDoctorName}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    doctorInitial
-                  )}
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-0.5">
-                    Bác sĩ phụ trách
-                  </p>
-                  <h2 className="font-bold text-slate-900 text-[16px] leading-snug truncate">
-                    {record.mainDoctorName}
-                  </h2>
-                  <p className="text-[13px] font-medium text-primary-600 mt-0.5">{expertiseLabel}</p>
-                </div>
-              </div>
-
-              <div className="mt-5 pt-4 border-t border-slate-100 space-y-3">
-                <div className="flex items-start gap-3 text-[13px]">
-                  <Calendar className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-semibold text-slate-700">{formatDate(record.createdAt)}</p>
-                    {appointment?.timeStart && (
-                      <p className="text-slate-500 mt-0.5">
-                        {appointment.timeStart.substring(0, 5)} –{' '}
-                        {appointment.timeEnd?.substring(0, 5)}
-                      </p>
+          <aside className="flex flex-col lg:sticky lg:top-6">
+            <div className="rounded-2xl border border-slate-200/80 bg-white shadow-sm flex flex-col overflow-hidden">
+              {/* Doctor card */}
+              <div className="p-5 md:p-6 border-b border-slate-100">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center shrink-0 text-slate-500 font-bold text-xl overflow-hidden border border-slate-200">
+                    {doctorInfo?.imageUrl && !imgError ? (
+                      <img
+                        src={doctorInfo.imageUrl}
+                        onError={() => setImgError(true)}
+                        alt={record.mainDoctorName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      doctorInitial
                     )}
                   </div>
-                </div>
-                <div className="flex items-start gap-3 text-[13px]">
-                  <Stethoscope className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-                  <p className="font-medium text-slate-600">
-                    {serviceDisplayName}
-                    <InlinePrice amount={consultationFinalFeeAmount} />
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick stats */}
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { label: 'Xét nghiệm', value: activeOrders.length, icon: FlaskConical },
-                { label: 'Thuốc kê', value: record.prescription?.items?.length ?? 0, icon: Pill },
-              ].map(({ label, value, icon: Icon }) => (
-                <div
-                  key={label}
-                  className="rounded-xl border border-slate-200/80 bg-white px-3 py-3 shadow-sm"
-                >
-                  <Icon className="w-4 h-4 text-primary-500 mb-2" />
-                  <p className="text-[20px] font-black text-slate-800 tabular-nums leading-none">
-                    {value}
-                  </p>
-                  <p className="text-[11px] font-semibold text-slate-500 mt-1">{label}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Billing */}
-            {hasBilling && (
-              <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                <div className="flex items-center gap-2 mb-4">
-                  <CreditCard className="w-4 h-4 text-primary-600" />
-                  <h3 className="text-[14px] font-bold text-slate-800">Thanh toán</h3>
-                </div>
-                <div className="space-y-2.5 text-[13px]">
-                  {consultationFinalFeeAmount > 0 && (
-                    <div className="flex justify-between gap-2">
-                      <span className="text-slate-500 truncate pr-2">Phí khám · {serviceDisplayName}</span>
-                      <span className="font-semibold text-slate-800 tabular-nums shrink-0">
-                        {formatPrice(consultationFinalFeeAmount)}
-                      </span>
-                    </div>
-                  )}
-                  {activeOrders
-                    .filter((o) => (o.serviceFinalFee ?? 0) > 0)
-                    .map((order) => (
-                      <div key={order.orderId} className="flex justify-between gap-2">
-                        <span className="text-slate-500 truncate pr-2">{order.serviceName}</span>
-                        <span className="font-semibold text-slate-800 tabular-nums shrink-0">
-                          {formatPrice(order.serviceFinalFee!)}
-                        </span>
-                      </div>
-                    ))}
-                  <div className="border-t border-slate-100 pt-2.5 flex justify-between items-center">
-                    <span className="font-bold text-slate-700">Tổng cộng</span>
-                    <span className="text-[18px] font-black text-primary-700 tabular-nums">
-                      {formatPrice(totalFee)}
-                    </span>
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-0.5">
+                      Bác sĩ phụ trách
+                    </p>
+                    <h2 className="font-bold text-slate-900 text-[16px] leading-snug truncate">
+                      {record.mainDoctorName}
+                    </h2>
+                    <p className="text-[13px] font-medium text-primary-600 mt-0.5">{expertiseLabel}</p>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg w-fit ring-1 ring-emerald-200/60">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  Đã thanh toán
+
+                <div className="mt-5 pt-4 border-t border-slate-100 space-y-3">
+                  <div className="flex items-start gap-3 text-[13px]">
+                    <Calendar className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-slate-700">{formatDate(record.createdAt)}</p>
+                      {appointment?.timeStart && (
+                        <p className="text-slate-500 mt-0.5">
+                          {appointment.timeStart.substring(0, 5)} –{' '}
+                          {appointment.timeEnd?.substring(0, 5)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 text-[13px]">
+                    <Stethoscope className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                    <p className="font-medium text-slate-600">
+                      {serviceDisplayName}
+                    </p>
+                  </div>
                 </div>
               </div>
-            )}
 
-            {/* Trust */}
-            <div className="rounded-xl border border-slate-200/60 bg-white/60 backdrop-blur-sm px-4 py-3 flex items-center gap-3">
-              <ShieldCheck className="w-5 h-5 text-primary-500 shrink-0" />
-              <p className="text-[11px] text-slate-500 leading-relaxed">
-                Hồ sơ điện tử được mã hóa và lưu trên hệ thống ClinicPro.
-              </p>
+
+
+              {/* Billing */}
+              {hasBilling && (
+                <div className="p-5 md:p-6 border-b border-slate-100">
+                  <div className="flex items-center gap-2 mb-4">
+                    <CreditCard className="w-4 h-4 text-slate-400" />
+                    <h3 className="text-[14px] font-bold text-slate-800">Thanh toán viện phí</h3>
+                  </div>
+                  <div className="space-y-2.5 text-[13px]">
+                    {consultationFinalFeeAmount > 0 && (
+                      <div className="flex justify-between gap-2">
+                        <span className="text-slate-500 truncate pr-2">Khám bệnh</span>
+                        <span className="font-semibold text-slate-800 tabular-nums shrink-0">
+                          {formatPrice(consultationFinalFeeAmount)}
+                        </span>
+                      </div>
+                    )}
+                    {activeOrders
+                      .filter((o) => (o.serviceFinalFee ?? 0) > 0)
+                      .map((order) => (
+                        <div key={order.orderId} className="flex justify-between gap-2">
+                          <span className="text-slate-500 truncate pr-2">{order.serviceName}</span>
+                          <span className="font-semibold text-slate-800 tabular-nums shrink-0">
+                            {formatPrice(order.serviceFinalFee!)}
+                          </span>
+                        </div>
+                      ))}
+                    <div className="border-t border-slate-100 pt-2.5 flex justify-between items-center">
+                      <span className="font-bold text-slate-700">Tổng cộng</span>
+                      <span className="text-[16px] font-black text-slate-900 tabular-nums">
+                        {formatPrice(totalFee)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-center justify-center gap-1.5 text-[12px] font-semibold text-emerald-700 bg-emerald-50/80 px-3 py-2 rounded-xl ring-1 ring-emerald-200/50">
+                    <CheckCircle2 className="w-4 h-4" />
+                    Đã thanh toán thành công
+                  </div>
+                </div>
+              )}
+
+              {/* Trust */}
+              <div className="bg-slate-50/50 px-5 py-4 flex items-center justify-center gap-2 text-center">
+                <ShieldCheck className="w-4 h-4 text-slate-400 shrink-0" />
+                <p className="text-[11px] text-slate-500 font-medium">
+                  Hồ sơ y tế được bảo mật bởi ClinicPro.
+                </p>
+              </div>
             </div>
           </aside>
 
           {/* Main content */}
-          <div className="flex flex-col gap-5 min-w-0">
+          <div className="rounded-2xl border border-slate-200/80 bg-white shadow-sm flex flex-col min-w-0">
             {/* Diagnosis highlight */}
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 md:p-6 shadow-sm">
+            <div className="p-5 md:p-6 border-b border-slate-100">
               <div className="flex items-center justify-between gap-3 mb-4">
                 <div className="flex items-center gap-2 min-w-0">
                   <Activity className="w-5 h-5 text-primary-600 shrink-0" />
@@ -523,19 +463,18 @@ export const RecordDetail: React.FC = () => {
                 <StatusBadge status={record.status} />
               </div>
 
-              <div className="rounded-xl border border-violet-100 border-l-[3px] border-l-violet-400 bg-violet-50/30 p-4 md:p-5 mb-5">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-violet-600/70 mb-2">
+              <div className="mb-5">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">
                   Chẩn đoán
                 </p>
                 <p className="text-[14px] text-slate-700 leading-relaxed whitespace-pre-wrap">
                   {record.diagnosis || (
-                    <span className="text-slate-400 font-normal italic">Chưa cập nhật</span>
+                    <span className="text-slate-400 italic">Chưa cập nhật</span>
                   )}
                 </p>
               </div>
 
               <div className="space-y-4">
-                
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">
                     Phác đồ điều trị
@@ -558,17 +497,19 @@ export const RecordDetail: React.FC = () => {
             </div>
 
             {/* Lab */}
-            <SectionShell
-              title="Kết quả cận lâm sàng"
-              icon={<FlaskConical className="w-5 h-5" />}
-              count={activeOrders.length}
-              open={isLabOpen}
-              onToggle={() => setIsLabOpen(!isLabOpen)}
-              accentClass="text-primary-600"
-            >
-              <div className="pt-4">
+            <div className="p-5 md:p-6 border-b border-slate-100">
+              <div className="flex items-center gap-2 mb-4">
+                <FlaskConical className="w-5 h-5 text-primary-600 shrink-0" />
+                <h2 className="text-[15px] font-bold text-slate-800">Kết quả cận lâm sàng</h2>
+                {activeOrders.length > 0 && (
+                  <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[11px] font-bold">
+                    {activeOrders.length}
+                  </span>
+                )}
+              </div>
+              <div className="pt-2">
                 {activeOrders.length > 0 ? (
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col divide-y divide-slate-100">
                     {activeOrders.map((order) => {
                       const hasResult = !!order.result;
                       const computedStatus = hasResult ? 'COMPLETED' : order.status;
@@ -577,24 +518,30 @@ export const RecordDetail: React.FC = () => {
                       return (
                         <article
                           key={order.orderId}
-                          className={`rounded-xl border border-slate-200/80 border-l-4 ${labCfg.accent} ${labCfg.bg} p-4 md:p-5`}
+                          className="py-4 first:pt-0 last:pb-0"
                         >
-                          <div className="mb-3">
-                            <h3 className="font-bold text-slate-900 text-[15px]">
-                              {order.serviceName}
-                              <InlinePrice amount={order.serviceFinalFee} />
-                            </h3>
-                            <p className="text-[12px] font-medium text-slate-500 mt-1">
+                          <div className="flex justify-between items-start mb-1.5">
+                            <div className="min-w-0 flex-1 pr-3">
+                              <h3 className="font-bold text-slate-800 text-[14px]">
+                                {order.serviceName}
+                              </h3>
+                              {(order.serviceFinalFee ?? 0) > 0 && (
+                                <p className="text-[12px] text-slate-400 font-medium mt-0.5 tabular-nums">
+                                  {formatPrice(order.serviceFinalFee!)}
+                                </p>
+                              )}
+                            </div>
+                            <span className="text-[11px] font-semibold text-slate-500 shrink-0">
                               {labCfg.label}
-                              {hasResult && order.result?.conclusion
-                                ? ` · ${order.result.conclusion}`
-                                : ''}
-                            </p>
+                            </span>
                           </div>
 
                           {hasResult ? (
-                            <div className="text-[14px] text-slate-700 leading-relaxed whitespace-pre-wrap pl-3 border-l-2 border-slate-200/80">
-                              {order.result!.resultData}
+                            <div className="text-[13px] text-slate-700 leading-relaxed whitespace-pre-wrap">
+                              {order.result!.conclusion ? (
+                                <p className="font-semibold text-slate-800 mb-0.5">{order.result!.conclusion}</p>
+                              ) : null}
+                              <p className="text-slate-600">{order.result!.resultData}</p>
                             </div>
                           ) : (
                             <p className="text-[13px] text-slate-500 italic">
@@ -607,7 +554,7 @@ export const RecordDetail: React.FC = () => {
                               href={order.result.attachmentUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary-600 hover:text-primary-700 transition-colors"
+                              className="mt-3 inline-flex items-center gap-1.5 text-[12px] font-semibold text-primary-600 hover:text-primary-700 transition-colors"
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
                               Xem file đính kèm
@@ -621,51 +568,49 @@ export const RecordDetail: React.FC = () => {
                   <EmptyBlock message="Không có chỉ định cận lâm sàng trong lần khám này." />
                 )}
               </div>
-            </SectionShell>
+            </div>
 
             {/* Prescription */}
-            <SectionShell
-              title="Đơn thuốc"
-              icon={<Pill className="w-5 h-5" />}
-              count={record.prescription?.items?.length ?? 0}
-              open={isPrescriptionOpen}
-              onToggle={() => setIsPrescriptionOpen(!isPrescriptionOpen)}
-              accentClass="text-emerald-600"
-            >
-              <div className="pt-4">
+            <div className="p-5 md:p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Pill className="w-5 h-5 text-emerald-600 shrink-0" />
+                <h2 className="text-[15px] font-bold text-slate-800">Đơn thuốc</h2>
+                {(record.prescription?.items?.length ?? 0) > 0 && (
+                  <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[11px] font-bold">
+                    {record.prescription?.items?.length}
+                  </span>
+                )}
+              </div>
+              <div className="pt-2">
                 {hasPrescription ? (
-                  <>
-                    <ul className="flex flex-col gap-3">
-                    {record.prescription!.items.map((item, i) => (
-                      <li
-                        key={i}
-                        className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 rounded-xl border border-slate-200/80 bg-slate-50/50 px-4 py-3.5"
-                      >
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <div className="w-9 h-9 rounded-lg bg-white border border-slate-200 flex items-center justify-center shrink-0">
-                            <Pill className="w-4 h-4 text-emerald-600" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="font-semibold text-slate-800 text-[14px] truncate">
-                              {item.medicineName}
-                            </p>
-                            <p className="text-[12px] text-slate-500 mt-0.5 line-clamp-2">
-                              {item.dosage}
-                            </p>
-                          </div>
+                  <ul className="flex flex-col divide-y divide-slate-100">
+                  {record.prescription!.items.map((item, i) => (
+                    <li
+                      key={i}
+                      className="flex items-start justify-between gap-4 py-3 first:pt-0 last:pb-0"
+                    >
+                      <div className="flex items-start gap-3 min-w-0 flex-1">
+                        <div className="mt-0.5 w-1.5 h-1.5 rounded-full bg-slate-300 shrink-0"></div>
+                        <div className="min-w-0 -mt-1">
+                          <p className="font-semibold text-slate-800 text-[14px]">
+                            {item.medicineName}
+                          </p>
+                          <p className="text-[13px] text-slate-500 mt-0.5">
+                            {item.dosage}
+                          </p>
                         </div>
-                        <span className="inline-flex self-start sm:self-center items-center px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-[12px] font-bold text-slate-700 tabular-nums shrink-0">
-                          {item.quantity} {item.unit}
-                        </span>
-                      </li>
-                    ))}
-                    </ul>
-                  </>
+                      </div>
+                      <span className="font-semibold text-slate-700 text-[13px] tabular-nums shrink-0 -mt-0.5">
+                        {item.quantity} {item.unit}
+                      </span>
+                    </li>
+                  ))}
+                  </ul>
                 ) : (
                   <EmptyBlock message="Bác sĩ không kê đơn thuốc cho lần khám này." />
                 )}
               </div>
-            </SectionShell>
+            </div>
           </div>
         </div>
       </SectionContainer>

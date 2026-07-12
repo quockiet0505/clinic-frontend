@@ -10,6 +10,8 @@ import {
   TrendingDown, Tags, Undo2, HeartPulse, Activity
 } from 'lucide-react';
 
+import { useAuth } from '@/context/AuthContext';
+
 // 1. ĐỊNH NGHĨA PROPS CHO SIDEBAR
 interface SidebarProps {
   isCollapsed: boolean;
@@ -21,7 +23,8 @@ interface SidebarProps {
 
 export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileClose, logoUrl = `${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}/images/logo.png` }: SidebarProps) {
   const location = useLocation();
-  const currentUserRole = 'ADMIN';
+  const { user } = useAuth();
+  const currentUserRole = user?.role || 'RECEPTIONIST';
 
   const menuGroups = [
     {
@@ -33,24 +36,25 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
     },
     {
       title: 'CÁ NHÂN',
-      allowedRoles: ['ADMIN', 'DOCTOR', 'STAFF', 'LAB_TECH'],
+      allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE', 'LAB_TECH', 'RECEPTIONIST', 'NURSE'],
       items: [
         { name: 'Lịch làm việc', icon: CalendarClock, path: '/my-schedule' },
       ]
     },
     {
-      title: 'TIẾP TÂN',
-      allowedRoles: ['ADMIN', 'STAFF'],
+      title: 'TIẾP TÂN / THU NGÂN',
+      allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE', 'RECEPTIONIST'],
       items: [
         { name: 'Lịch hẹn', icon: CalendarDays, path: '/appointments', exact: true },
         { name: 'Lịch theo tháng', icon: Calendar, path: '/appointments/calendar' },
         { name: 'Nhắc nhở tái khám', icon: PhoneCall, path: '/appointments/follow-ups' },
         { name: 'Bệnh nhân', icon: Users, path: '/patients' },
+        { name: 'Hóa đơn & Thanh toán', icon: ReceiptText, path: '/billing/invoices' },
       ]
     },
     {
       title: 'KHÁM BỆNH',
-      allowedRoles: ['ADMIN', 'DOCTOR'],
+      allowedRoles: ['ADMIN', 'DOCTOR', 'NURSE'],
       items: [
         { name: 'Chuẩn bị khám', icon: HeartPulse, path: '/medical/triage' },
         { name: 'Đang khám', icon: Stethoscope, path: '/medical/active-visits' },
@@ -59,7 +63,7 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
     },
     {
       title: 'XÉT NGHIỆM',
-      allowedRoles: ['ADMIN', 'DOCTOR', 'LAB_TECH', 'STAFF'],
+      allowedRoles: ['ADMIN', 'DOCTOR', 'LAB_TECH', 'RECEPTIONIST', 'NURSE'],
       items: [
         { name: 'Chỉ định XN', icon: TestTube, path: '/laboratory/orders' },
         { name: 'Kết quả XN', icon: Archive, path: '/laboratory/results' },
@@ -67,7 +71,7 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
     },
     {
       title: 'NHÀ THUỐC',
-      allowedRoles: ['ADMIN', 'DOCTOR', 'STAFF'],
+      allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE', 'RECEPTIONIST'],
       items: [
         { name: 'Danh mục thuốc', icon: Pill, path: '/pharmacy/inventory' },
         { name: 'Đơn thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions' },

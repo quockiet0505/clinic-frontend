@@ -109,13 +109,20 @@ export default function PatientDetails() {
           onBack={() => navigate('/patients')}
           backLabel="Về danh sách bệnh nhân"
           statusBadge={
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            patient.isActive === 0 ? (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
+                Đã bị khóa đăng nhập
               </span>
-              Đang hoạt động
-            </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                </span>
+                Đang hoạt động
+              </span>
+            )
           }
           actions={
             <>
@@ -131,6 +138,22 @@ export default function PatientDetails() {
                 tone="emerald"
                 onClick={() => setIsEditOpen(true)}
               />
+
+              {patient.bookingLocked && (
+                <IconAction
+                  icon={<Activity size={15} />}
+                  label="Mở khóa đặt lịch"
+                  tone="blue"
+                  onClick={async () => {
+                    try {
+                      await patientApi.unlockBooking(patient.patientId);
+                      fetchPatient();
+                    } catch (e) {
+                      console.error(e);
+                    }
+                  }}
+                />
+              )}
             </>
           }
         />
@@ -162,6 +185,11 @@ export default function PatientDetails() {
                   {age && (
                     <Pill icon={<Cake className="w-3 h-3" />} tone="violet">
                       {age} tuổi
+                    </Pill>
+                  )}
+                  {patient.bookingLocked && (
+                    <Pill icon={<Activity className="w-3 h-3" />} tone="rose">
+                      Khóa đặt lịch ({patient.cancelSpamCount} lần hủy)
                     </Pill>
                   )}
                 </div>

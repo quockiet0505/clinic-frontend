@@ -18,8 +18,8 @@ export default function RoleGuard({
     return <Navigate to="/login" replace />;
   }
 
-  // user.role là string đơn
-  const hasPermission = allowedRoles.includes(user.role);
+  const effectiveRoles: string[] = [user.role];
+  const hasPermission = allowedRoles.some(role => effectiveRoles.includes(role));
 
   if (!hasPermission) {
     return (

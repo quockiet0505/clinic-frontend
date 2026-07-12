@@ -37,7 +37,7 @@ export default function AppointmentTable({
 }: Props) {
   const { user } = useAuth();
   const isDoctor = user?.role === 'DOCTOR';
-  const isStaffOrAdmin = user?.role === 'STAFF' || user?.role === 'ADMIN';
+  const isStaffOrAdmin = user?.role === 'RECEPTIONIST' || user?.role === 'NURSE' || user?.role === 'ADMIN';
   const columns: Column<Appointment>[] = [
     {
       key: 'appointmentType',

@@ -1,11 +1,12 @@
 import React from 'react';
-import { Stethoscope, ShieldCheck, TestTube, Briefcase, UserCog, LucideIcon } from 'lucide-react';
+import { Stethoscope, ShieldCheck, TestTube, Briefcase, UserCog, Activity, LucideIcon } from 'lucide-react';
 
 const ROLE_CONFIG: Record<string, { Icon: LucideIcon; color: string; bg: string; label: string }> = {
   DOCTOR: { Icon: Stethoscope, color: 'text-blue-600', bg: 'bg-blue-50 border-blue-200', label: 'Bác sĩ' },
   ADMIN: { Icon: ShieldCheck, color: 'text-purple-600', bg: 'bg-purple-50 border-purple-200', label: 'Quản trị viên' },
   LAB_TECH: { Icon: TestTube, color: 'text-emerald-600', bg: 'bg-emerald-50 border-emerald-200', label: 'Kỹ thuật viên' },
-  STAFF: { Icon: Briefcase, color: 'text-slate-600', bg: 'bg-slate-50 border-slate-200', label: 'Nhân viên' },
+  RECEPTIONIST: { Icon: Briefcase, color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200', label: 'Tiếp tân' },
+  NURSE: { Icon: Activity, color: 'text-pink-600', bg: 'bg-pink-50 border-pink-200', label: 'Điều dưỡng' },
 };
 
 export function getRoleLabel(role: string): string {

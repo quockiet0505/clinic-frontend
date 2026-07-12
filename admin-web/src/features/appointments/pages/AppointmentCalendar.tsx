@@ -52,7 +52,7 @@ export default function AppointmentCalendar() {
       try {
         const staffData = await staffApi.getAll();
         const docs = staffData
-          .filter((s: any) => s.staffType === 'DOCTOR' || s.staffType === 'NURSE' || s.staffType === 'STAFF')
+          .filter((s: any) => s.staffType === 'DOCTOR' || s.staffType === 'NURSE' || s.staffType === 'RECEPTIONIST')
           .map((s: any) => ({
             id: s.staffId.toString(),
             name: s.fullName,

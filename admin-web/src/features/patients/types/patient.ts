@@ -19,4 +19,7 @@ export interface Patient {
      bloodPressure?: string;
      pulse?: number;
      medicalHistory?: string;
+     isActive?: number;
+     bookingLocked?: boolean;
+     cancelSpamCount?: number;
    }

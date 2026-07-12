@@ -35,7 +35,7 @@ export default function LeaveRequestsTable({ data, onAction, pagination }: Props
             <TableRow key={req.leaveId} className="hover:bg-slate-50/50">
               <TableCell className="px-6 py-4">
                 <p className="font-bold text-slate-900">{req.fullName}</p>
-                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{req.staffType === 'DOCTOR' ? 'Bác sĩ' : req.staffType === 'STAFF' ? 'Nhân viên' : req.staffType === 'LAB_TECH' ? 'Kỹ thuật viên' : 'Quản trị viên'} • {req.leaveType === 'SICK' ? 'Nghỉ ốm' : req.leaveType === 'ANNUAL' ? 'Nghỉ phép năm' : 'Nghỉ khác'}</p>
+                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">{req.staffType === 'DOCTOR' ? 'Bác sĩ' : req.staffType === 'RECEPTIONIST' ? 'Tiếp tân' : req.staffType === 'NURSE' ? 'Y tá' : req.staffType === 'LAB_TECH' ? 'Kỹ thuật viên' : 'Quản trị viên'} • {req.leaveType === 'SICK' ? 'Nghỉ ốm' : req.leaveType === 'ANNUAL' ? 'Nghỉ phép năm' : 'Nghỉ khác'}</p>
               </TableCell>
               <TableCell className="font-medium text-slate-600 text-sm">
                 {req.fromDate} <br/> <span className="text-slate-400">đến</span> {req.toDate}

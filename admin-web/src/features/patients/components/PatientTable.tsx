@@ -1,6 +1,6 @@
 // features/patients/components/PatientTable.tsx
 import React from 'react';
-import { Eye, Edit2, Trash2, Phone, MapPin } from 'lucide-react';
+import { Eye, Edit2, Trash2, Phone, MapPin, Activity, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Table, { Column } from '@/components/tables/Table';
 import EntityAvatar from '@/components/common/EntityAvatar';
@@ -11,6 +11,8 @@ interface Props {
   onViewDetails: (id: number) => void;
   onEdit: (patient: Patient) => void;
   onDelete: (patient: Patient) => void;
+  onUnlockBooking?: (patient: Patient) => void;
+  onToggleAccountStatus?: (patient: Patient) => void;
   loading?: boolean;
   pagination?: { page: number; size: number; total: number; onPageChange: (page: number) => void };
 }
@@ -28,7 +30,7 @@ const getBirthYear = (dateOfBirth?: string) => {
   return /^\d{4}$/.test(year) ? year : null;
 };
 
-export default function PatientTable({ data, onViewDetails, onEdit, onDelete, loading = false, pagination }: Props) {
+export default function PatientTable({ data, onViewDetails, onEdit, onDelete, onUnlockBooking, onToggleAccountStatus, loading = false, pagination }: Props) {
   const columns: Column<Patient>[] = [
     {
       key: 'fullName',
@@ -77,15 +79,30 @@ export default function PatientTable({ data, onViewDetails, onEdit, onDelete, lo
       label: 'Thao tác',
       className: 'w-[30%]',
       render: (patient) => (
-        <div className="flex gap-2 flex-wrap">
-          <Button onClick={() => onViewDetails(patient.patientId)} variant="outline" className="h-8 px-3 rounded-lg text-xs font-semibold border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-colors">
-            <Eye size={14} className="mr-1.5" /> Chi tiết
+        <div className="grid grid-cols-3 gap-2">
+          <Button onClick={() => onViewDetails(patient.patientId)} variant="outline" className="h-8 px-2 rounded-lg text-xs font-semibold border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-colors w-full flex items-center justify-center">
+            <Eye size={14} className="mr-1.5 shrink-0" /> <span className="truncate">Chi tiết</span>
           </Button>
-          <Button onClick={() => onEdit(patient)} variant="outline" className="h-8 px-3 rounded-lg text-xs font-semibold border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 transition-colors">
-            <Edit2 size={14} className="mr-1.5" /> Sửa
-          </Button>
-          <Button onClick={() => onDelete(patient)} variant="outline" className="h-8 px-3 rounded-lg text-xs font-semibold border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 transition-colors">
-            <Trash2 size={14} className="mr-1.5" /> Xóa
+          {patient.bookingLocked && onUnlockBooking && (
+            <Button onClick={() => onUnlockBooking(patient)} variant="outline" className="h-8 px-2 rounded-lg text-xs font-semibold border-orange-200 text-orange-600 hover:bg-orange-50 hover:text-orange-700 hover:border-orange-300 transition-colors w-full flex items-center justify-center">
+              <Activity size={14} className="mr-1.5 shrink-0" /> <span className="truncate">Mở khóa</span>
+            </Button>
+          )}
+          {patient.accountId && onToggleAccountStatus && (
+            <Button
+              onClick={() => onToggleAccountStatus(patient)}
+              variant="outline"
+              className={`h-8 px-2 rounded-lg text-xs font-semibold transition-colors w-full flex items-center justify-center ${patient.isActive === 0
+                  ? 'border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300'
+                  : 'border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300'
+                }`}
+            >
+              <ShieldCheck size={14} className="mr-1.5 shrink-0" />
+              <span className="truncate">{patient.isActive === 0 ? "Mở khóa" : "Khóa"}</span>
+            </Button>
+          )}
+          <Button onClick={() => onDelete(patient)} variant="outline" title="Xóa" className="h-8 px-2 rounded-lg text-xs font-semibold border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 transition-colors w-full flex items-center justify-center">
+            <Trash2 size={14} className="mr-1.5 shrink-0" /> <span className="truncate">Xóa</span>
           </Button>
         </div>
       ),

@@ -30,7 +30,8 @@ export const StaffFilterBar: React.FC<StaffFilterBarProps> = ({
   const tabs: TabOption[] = [
     { value: 'ALL', label: 'Tất cả' },
     { value: 'DOCTOR', label: 'Bác sĩ' },
-    { value: 'STAFF', label: 'Nhân viên' },
+    { value: 'RECEPTIONIST', label: 'Tiếp tân' },
+        { value: 'NURSE', label: 'Y tá' },
     { value: 'LAB_TECH', label: 'Kỹ thuật viên' },
     { value: 'ADMIN', label: 'Quản trị viên' },
   ];

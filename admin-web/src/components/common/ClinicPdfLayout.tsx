@@ -75,6 +75,9 @@ export interface ClinicPdfLayoutProps {
   footerNote?: string;
   /** Ẩn khối chữ ký (dùng cho phiếu hồ sơ sức khoẻ) */
   hideSignatures?: boolean;
+  
+  /** Phương thức thanh toán (dành cho hóa đơn) */
+  paymentMethod?: string | null;
 }
 
 /* ─── Constants ────────────────────────────────────────────────── */
@@ -115,7 +118,7 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
   tableRows = [], notes,
   extraSections = [], conclusion,
   consultationFinalFee, serviceFinalFee, totalAmount, feeItems = [],
-  footerNote, hideSignatures = false,
+  footerNote, hideSignatures = false, paymentMethod,
 }) => {
   const today = new Date();
   const dateStr = `TP. Hồ Chí Minh, ngày ${today.getDate()} tháng ${today.getMonth() + 1} năm ${today.getFullYear()}`;
@@ -314,6 +317,12 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
                     <span style={{ fontWeight: 'bold' }}>{formatVND(totalAmount)}</span>
                   </div>
                 )}
+                {paymentMethod && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+                    <span style={{ fontStyle: 'italic' }}>Thanh toán bằng:</span>
+                    <span style={{ fontStyle: 'italic' }}>{paymentMethod}</span>
+                  </div>
+                )}
               </>
             ) : (
               <>
@@ -333,6 +342,12 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
                   <div style={{ borderTop: '1px solid #000', paddingTop: '6px', display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ fontWeight: 'bold' }}>Tổng cộng:</span>
                     <span style={{ fontWeight: 'bold' }}>{formatVND(totalAmount)}</span>
+                  </div>
+                )}
+                {paymentMethod && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+                    <span style={{ fontStyle: 'italic' }}>Thanh toán bằng:</span>
+                    <span style={{ fontStyle: 'italic' }}>{paymentMethod}</span>
                   </div>
                 )}
               </>

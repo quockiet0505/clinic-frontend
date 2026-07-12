@@ -21,7 +21,7 @@ export interface Appointment {
   timeEnd?: string;
   appointmentType: AppointmentType;
   status: AppointmentStatus;
-  createdBy: 'PATIENT' | 'STAFF';
+  createdBy: 'PATIENT' | 'RECEPTIONIST' | 'NURSE';
   cancelReason?: string;
   cancelledBy?: 'PATIENT' | 'CLINIC';
   note?: string;

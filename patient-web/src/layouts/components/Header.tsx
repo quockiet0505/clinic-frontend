@@ -13,6 +13,7 @@ import {
   UserCircle,
   X,
   Star,
+  DollarSign
 } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { HoverDropdown } from '@/components/common/HoverDropdown';
@@ -281,6 +282,13 @@ export const Header: React.FC = () => {
                         Lịch sử đánh giá
                       </button>
                       <button
+                        onClick={() => navigate('/profile/billing')}
+                        className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
+                      >
+                        <DollarSign className="mr-3 h-4 w-4 text-slate-400 group-hover/item:text-primary-500" />
+                        Hóa đơn & Thanh toán
+                      </button>
+                      <button
                         onClick={() => navigate('/records')}
                         className="w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:bg-primary-50 hover:text-primary-600 transition-colors cursor-pointer flex items-center group/item"
                       >
@@ -435,6 +443,13 @@ export const Header: React.FC = () => {
                           className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50"
                         >
                           Lịch sử đánh giá
+                        </Link>
+                        <Link
+                          to="/profile/billing"
+                          onClick={() => setIsSheetOpen(false)}
+                          className="px-4 py-3 rounded-xl text-[15px] font-semibold text-slate-700 hover:bg-slate-50"
+                        >
+                          Hóa đơn & Thanh toán
                         </Link>
                         <Link
                           to="/records"

@@ -22,11 +22,12 @@ export const authApi = {
     if (!success) {
       throw new Error(message);
     }
-    // Xác định role từ mảng roles
-    let role: User['role'] = 'STAFF';
+    let role: User['role'] = 'RECEPTIONIST';
     if (data.roles.includes('ROLE_ADMIN')) role = 'ADMIN';
     else if (data.roles.includes('ROLE_DOCTOR')) role = 'DOCTOR';
     else if (data.roles.includes('ROLE_LAB_TECH')) role = 'LAB_TECH';
+    else if (data.roles.includes('ROLE_RECEPTIONIST')) role = 'RECEPTIONIST';
+    else if (data.roles.includes('ROLE_NURSE')) role = 'NURSE';
     
     const user: User = {
       id: data.accountId.toString(),
@@ -48,17 +49,21 @@ export const authApi = {
 
       const isStaff = data.roles.includes('ROLE_ADMIN') || 
                       data.roles.includes('ROLE_DOCTOR') || 
-                      data.roles.includes('ROLE_STAFF') || 
-                      data.roles.includes('ROLE_LAB_TECH');
+                      data.roles.includes('ROLE_RECEPTIONIST') || data.roles.includes('ROLE_NURSE') || 
+                      data.roles.includes('ROLE_LAB_TECH') ||
+                      data.roles.includes('ROLE_RECEPTIONIST') ||
+                      data.roles.includes('ROLE_NURSE');
                       
       if (!isStaff) {
         throw new Error('Access Denied: Staff privileges required.');
       }
 
-      let role: User['role'] = 'STAFF';
+      let role: User['role'] = 'RECEPTIONIST';
       if (data.roles.includes('ROLE_ADMIN')) role = 'ADMIN';
       else if (data.roles.includes('ROLE_DOCTOR')) role = 'DOCTOR';
       else if (data.roles.includes('ROLE_LAB_TECH')) role = 'LAB_TECH';
+      else if (data.roles.includes('ROLE_RECEPTIONIST')) role = 'RECEPTIONIST';
+      else if (data.roles.includes('ROLE_NURSE')) role = 'NURSE';
 
       const user: User = {
         id: data.accountId.toString(),

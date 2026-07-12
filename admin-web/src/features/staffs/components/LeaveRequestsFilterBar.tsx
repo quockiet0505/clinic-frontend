@@ -35,7 +35,8 @@ export default function LeaveRequestsFilterBar({
       options: [
         { value: 'ALL', label: 'Tất cả vai trò' },
         { value: 'DOCTOR', label: 'Bác sĩ' },
-        { value: 'STAFF', label: 'Nhân viên' },
+        { value: 'RECEPTIONIST', label: 'Tiếp tân' },
+        { value: 'NURSE', label: 'Y tá' },
         { value: 'LAB_TECH', label: 'Kỹ thuật viên' },
       ],
       value: roleFilter,
