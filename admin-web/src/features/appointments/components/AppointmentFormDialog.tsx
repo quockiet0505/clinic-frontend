@@ -164,18 +164,52 @@ export default function AppointmentFormDialog({ isOpen, onClose, onBook }: Props
       submitLabel="Lấy số khám"
       compact={false}
       columns={2}
-      renderBeforeFields={({ formData, onChange }) => {
-        if (formData.bookingFlow && formData.bookingFlow !== bookingFlow) {
-          setBookingFlow(formData.bookingFlow);
-        }
-        if (formData.expertiseId !== selectedExpertiseId) {
-          setSelectedExpertiseId(formData.expertiseId || '');
-          if (formData.mainDoctorId) {
-            onChange('mainDoctorId', '', false);
-          }
-        }
-        return null;
-      }}
+      renderBeforeFields={({ formData, onChange }) => (
+        <FormSync
+          formData={formData}
+          bookingFlow={bookingFlow}
+          selectedExpertiseId={selectedExpertiseId}
+          setBookingFlow={setBookingFlow}
+          setSelectedExpertiseId={setSelectedExpertiseId}
+          onChange={onChange}
+        />
+      )}
     />
   );
+}
+
+interface FormSyncProps {
+  formData: Record<string, any>;
+  bookingFlow: 'DOCTOR' | 'SERVICE';
+  selectedExpertiseId: string;
+  setBookingFlow: (flow: 'DOCTOR' | 'SERVICE') => void;
+  setSelectedExpertiseId: (id: string) => void;
+  onChange: (name: string, value: any, setTouchedFlag?: boolean) => void;
+}
+
+function FormSync({
+  formData,
+  bookingFlow,
+  selectedExpertiseId,
+  setBookingFlow,
+  setSelectedExpertiseId,
+  onChange,
+}: FormSyncProps) {
+  useEffect(() => {
+    if (formData.bookingFlow && formData.bookingFlow !== bookingFlow) {
+      setBookingFlow(formData.bookingFlow);
+    }
+  }, [formData.bookingFlow, bookingFlow, setBookingFlow]);
+
+  useEffect(() => {
+    const formExpId = formData.expertiseId ? String(formData.expertiseId) : '';
+    if (formExpId !== selectedExpertiseId) {
+      setSelectedExpertiseId(formExpId);
+      if (formData.mainDoctorId) {
+        onChange('mainDoctorId', '', false);
+      }
+    }
+  }, [formData.expertiseId, selectedExpertiseId, formData.mainDoctorId, setSelectedExpertiseId, onChange]);
+
+  return null;
 }
