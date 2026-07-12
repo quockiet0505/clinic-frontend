@@ -66,6 +66,13 @@ export const appointmentApi = {
     });
   },
 
+  confirm: async (id: number): Promise<void> => {
+    await axiosInstance.patch(`/appointments/${id}/status`, null, {
+      params: { status: 'CONFIRMED' },
+      toastSuccess: 'Đã xác nhận lịch hẹn',
+    });
+  },
+
   createWalkIn: async (data: any): Promise<void> => {
     await axiosInstance.post(
       '/appointments',

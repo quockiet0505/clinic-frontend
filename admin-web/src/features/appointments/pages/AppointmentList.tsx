@@ -88,6 +88,15 @@ export default function AppointmentList() {
     }
   };
 
+  const handleConfirm = async (id: number) => {
+    try {
+      await appointmentApi.confirm(id);
+      fetchData();
+    } catch {
+      /* toast: axios interceptor */
+    }
+  };
+
   const handleCancel = async (id: number, reason: string) => {
     try {
       await appointmentApi.cancel(id, reason);
@@ -226,6 +235,7 @@ export default function AppointmentList() {
         <AppointmentTable
           data={appointments}
           onCheckIn={setCheckInAptId}
+          onConfirm={handleConfirm}
           onCancel={setCancelApt}
           onTransfer={setTransferApt}
           onReschedule={setRescheduleApt}

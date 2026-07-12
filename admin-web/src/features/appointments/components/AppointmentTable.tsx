@@ -5,12 +5,13 @@ import StatusBadge from '@/components/common/StatusBadge';
 import QueueNumberCell from '@/components/common/QueueNumberCell';
 import { Appointment, getBookingModeLabel } from '../types/appointment';
 import { formatDateTime } from '@/utils/formatters';
-import { CheckInButton, CancelButton, TransferButton, CallPatientButton, SkipPatientButton, SendToLabButton, CompleteButton, ReturnToQueueButton, RescheduleButton } from '@/components/common/ActionButtons';
+import { CheckInButton, CancelButton, TransferButton, CallPatientButton, SkipPatientButton, SendToLabButton, CompleteButton, ReturnToQueueButton, RescheduleButton, ConfirmButton } from '@/components/common/ActionButtons';
 import { useAuth } from '@/context/AuthContext';
 
 interface Props {
   data: Appointment[];
   onCheckIn: (id: number) => void;
+  onConfirm?: (id: number) => void;
   onCancel: (apt: Appointment) => void;
   onTransfer?: (apt: Appointment) => void;
   onCall?: (id: number) => void;
@@ -30,7 +31,7 @@ interface Props {
 }
 
 export default function AppointmentTable({
-  data, onCheckIn, onCancel, onTransfer,
+  data, onCheckIn, onConfirm, onCancel, onTransfer,
   onCall, onSkip, onReturnToQueue, onSendToLab, onReturnFromLab, onComplete, onReschedule,
   loading = false, pagination
 }: Props) {
@@ -157,6 +158,9 @@ export default function AppointmentTable({
           item.status === 'CHECKED_IN' && item.queueNumber === 0 ? 'Đọc kết quả' : 'Gọi khám';
         return (
           <div className="flex items-center gap-1 flex-wrap">
+            {isStaffOrAdmin && item.status === 'PENDING' && onConfirm && (
+              <ConfirmButton onClick={() => onConfirm(item.appointmentId)} />
+            )}
             {isStaffOrAdmin && ['PENDING', 'CONFIRMED'].includes(item.status) && (
               <CheckInButton onClick={() => onCheckIn(item.appointmentId)} />
             )}

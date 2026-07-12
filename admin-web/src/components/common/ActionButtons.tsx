@@ -1,6 +1,6 @@
 // components/common/ActionButtons.tsx
 import React from 'react';
-import { Edit2, Trash2, Eye, LogIn, XCircle, Edit3, FileText, ArrowRightLeft, Stethoscope, SkipForward, FlaskConical, CheckCircle2, RotateCcw } from 'lucide-react';
+import { Edit2, Trash2, Eye, LogIn, XCircle, Edit3, FileText, ArrowRightLeft, Stethoscope, SkipForward, FlaskConical, CheckCircle2, RotateCcw, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface ActionButtonProps {
@@ -106,6 +106,12 @@ export const ReturnToQueueButton = ({ onClick, label = 'Trả về hàng đợi'
 import { CalendarClock } from 'lucide-react';
 export const RescheduleButton = ({ onClick, label = 'Dời lịch', icon = <CalendarClock size={14} />, disabled, className, iconOnly, title }: ActionButtonProps) => (
   <Button onClick={onClick} disabled={disabled} variant="outline" size="sm" title={title || label} className={iconBtnClass('text-cyan-600 border-cyan-200 hover:bg-cyan-50 hover:text-cyan-700 hover:border-cyan-300', className, iconOnly)}>
+    {icon}{!iconOnly && <span>{label}</span>}
+  </Button>
+);
+
+export const ConfirmButton = ({ onClick, label = 'Xác nhận', icon = <Check size={14} />, disabled, className, iconOnly, title }: ActionButtonProps) => (
+  <Button onClick={onClick} disabled={disabled} variant="outline" size="sm" title={title || label} className={iconBtnClass('text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300', className, iconOnly)}>
     {icon}{!iconOnly && <span>{label}</span>}
   </Button>
 );
