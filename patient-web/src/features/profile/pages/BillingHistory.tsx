@@ -205,7 +205,7 @@ export const BillingHistory: React.FC = () => {
                       </td>
                       <td className="px-6 py-5 text-right pr-6">
                         <div className="flex flex-col items-end gap-2">
-                          {invoice.status === 'UNPAID' ? (
+                          {invoice.status === 'UNPAID' && (
                             <Button 
                               onClick={() => setActiveInvoice(invoice)} 
                               size="sm" 
@@ -213,10 +213,9 @@ export const BillingHistory: React.FC = () => {
                             >
                               Thanh toán QR
                             </Button>
-                          ) : invoice.status === 'PENDING_VERIFY' ? (
+                          )}
+                          {invoice.status === 'PENDING_VERIFY' && (
                             <span className="text-[13px] font-bold text-orange-600 h-9 flex items-center justify-center">Đang chờ duyệt...</span>
-                          ) : (
-                            <span className="text-[13px] font-bold text-emerald-600 h-9 flex items-center justify-center">Hoàn thành</span>
                           )}
                           
                           {invoice.recordId ? (
