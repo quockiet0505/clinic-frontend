@@ -30,8 +30,7 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401 || error.response?.status === 403) {
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      if (token) {
+      if (!window.location.pathname.startsWith('/auth/')) {
         localStorage.removeItem('token');
         sessionStorage.removeItem('token');
         window.location.href = '/auth/login';

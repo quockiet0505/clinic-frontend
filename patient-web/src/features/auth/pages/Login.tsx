@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { LoginForm } from '../components/LoginForm';
 import { homeApi } from '@/features/home/api/homeApi';
+import { useEffect, useState } from 'react';
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [logoUrl, setLogoUrl] = useState('/images/logo.png');
+
+  const redirectUrl = searchParams.get('redirect') || '/';
 
   useEffect(() => {
     homeApi.getLogo()
@@ -23,7 +26,7 @@ export const Login: React.FC = () => {
       <h1 className="text-2xl font-black text-brand-dark mb-2">Đăng nhập Bệnh nhân</h1>
       <p className="text-slate-500 font-medium text-sm mb-4">Vui lòng đăng nhập để tiếp tục</p>
       
-      <LoginForm onSuccess={() => navigate('/')} />
+      <LoginForm onSuccess={() => navigate(redirectUrl)} />
 
       <p className="mt-5 text-center text-slate-500 font-medium text-[14px]">
         Chưa có tài khoản? <Link to="/auth/register" className="text-primary-500 font-bold hover:underline">Đăng ký ngay</Link>

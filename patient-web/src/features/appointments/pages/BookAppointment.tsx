@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { MapPin, CalendarClock, Clock, AlertCircle, Phone, ShieldCheck } from 'lucide-react';
 import { SectionContainer } from '@/components/common';
@@ -19,6 +19,13 @@ const RULES = [
 export const BookAppointment: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!token) {
+      navigate('/auth/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search), { replace: true });
+    }
+  }, [navigate]);
 
   // ── Kết nối banner steps với form ──
   const [activeStep, setActiveStep] = useState(0);
