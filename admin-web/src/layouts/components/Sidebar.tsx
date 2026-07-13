@@ -31,7 +31,8 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
       title: 'TỔNG QUAN',
       allowedRoles: ['ADMIN', 'MANAGER'],
       items: [
-        { name: 'Bảng điều khiển', icon: LayoutDashboard, path: '/dashboard' },
+        { name: 'Bảng điều khiển', icon: LayoutDashboard, path: '/dashboard', exact: true },
+        { name: 'Đánh giá AI', icon: Bot, path: '/dashboard/ai-evaluation' },
       ]
     },
     {

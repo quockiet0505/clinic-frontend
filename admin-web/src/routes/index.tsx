@@ -9,6 +9,7 @@ import RoleGuard from '@/routes/guards/RoleGuard';
 // --- 1. AUTH & DASHBOARD ---
 import Login from '@/features/auth/pages/Login';
 import AdminDashboard from '@/features/dashboard/pages/AdminDashboard';
+import AiEvaluationDashboard from '@/features/dashboard/pages/AiEvaluationDashboard';
 import MyProfile from '@/features/profile/pages/MyProfile';
 
 
@@ -105,6 +106,14 @@ export const router = createBrowserRouter([
         element: (
           <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE', 'LAB_TECH']}>
             <AdminDashboard />
+          </RoleGuard>
+        ) 
+      },
+      { 
+        path: 'dashboard/ai-evaluation', 
+        element: (
+          <RoleGuard allowedRoles={['ADMIN']}>
+            <AiEvaluationDashboard />
           </RoleGuard>
         ) 
       },

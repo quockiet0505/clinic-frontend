@@ -71,7 +71,8 @@ export default function StaffTab({ searchTerm = '' }: Props) {
     return {
       total: allStaff.length,
       doctors: allStaff.filter((s) => s.staffType === 'DOCTOR').length,
-      staffs: allStaff.filter((s) => s.staffType === 'RECEPTIONIST' | 'NURSE').length,
+      receptionists: allStaff.filter((s) => s.staffType === 'RECEPTIONIST').length,
+      nurses: allStaff.filter((s) => s.staffType === 'NURSE').length,
       labTech: allStaff.filter((s) => s.staffType === 'LAB_TECH').length,
       admins: allStaff.filter((s) => s.staffType === 'ADMIN').length,
     };
@@ -88,7 +89,8 @@ export default function StaffTab({ searchTerm = '' }: Props) {
     return [
       { name: 'Bác sĩ', value: counts['DOCTOR'] || 0, color: '#0284c7' },
       { name: 'KTV', value: counts['LAB_TECH'] || 0, color: '#818cf8' },
-      { name: 'Nhân viên', value: counts['RECEPTIONIST' | 'NURSE'] || 0, color: '#34d399' },
+      { name: 'Tiếp tân', value: counts['RECEPTIONIST'] || 0, color: '#d97706' },
+      { name: 'Điều dưỡng', value: counts['NURSE'] || 0, color: '#db2777' },
       { name: 'Quản trị viên', value: counts['ADMIN'] || 0, color: '#fb923c' },
     ].filter(d => d.value > 0);
   }, [allStaff]);
@@ -214,7 +216,7 @@ export default function StaffTab({ searchTerm = '' }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {/* Tất cả */}
         <div onClick={() => setFilterType('ALL')} className="cursor-pointer">
           <StatsCard
@@ -243,15 +245,29 @@ export default function StaffTab({ searchTerm = '' }: Props) {
           />
         </div>
 
-        {/* Nhân viên */}
-        <div onClick={() => setFilterType('RECEPTIONIST' | 'NURSE')} className="cursor-pointer">
+        {/* Tiếp tân */}
+        <div onClick={() => setFilterType('RECEPTIONIST')} className="cursor-pointer">
           <StatsCard
             icon={<Briefcase size={18} className="text-white" />}
-            label="Nhân viên"
-            value={stats.staffs}
-            bgColor="from-emerald-400 to-emerald-600"
-            className={filterType === 'RECEPTIONIST' | 'NURSE'
-              ? 'bg-emerald-50/40 border-emerald-300 ring-2 ring-emerald-300/30'
+            label="Tiếp tân"
+            value={stats.receptionists}
+            bgColor="from-amber-400 to-amber-600"
+            className={filterType === 'RECEPTIONIST'
+              ? 'bg-amber-50/40 border-amber-300 ring-2 ring-amber-300/30'
+              : 'border-slate-200/80 hover:border-slate-300 opacity-75'
+            }
+          />
+        </div>
+
+        {/* Điều dưỡng */}
+        <div onClick={() => setFilterType('NURSE')} className="cursor-pointer">
+          <StatsCard
+            icon={<Briefcase size={18} className="text-white" />}
+            label="Điều dưỡng"
+            value={stats.nurses}
+            bgColor="from-pink-400 to-pink-600"
+            className={filterType === 'NURSE'
+              ? 'bg-pink-50/40 border-pink-300 ring-2 ring-pink-300/30'
               : 'border-slate-200/80 hover:border-slate-300 opacity-75'
             }
           />

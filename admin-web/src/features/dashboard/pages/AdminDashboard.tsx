@@ -1,6 +1,7 @@
 // features/dashboard/pages/AdminDashboard.tsx
 import React, { useEffect, useState, useCallback } from 'react';
-import { Activity, Stethoscope, Package, Users, DollarSign, FileText, Search } from 'lucide-react';
+import { Activity, Stethoscope, Package, Users, DollarSign, FileText, Search, Brain } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import PageHeader from '@/components/common/PageHeader';
 import GradientButton from '@/components/common/GradientButton';
 import OverviewTab from '../components/tabs/OverviewTab';
@@ -34,6 +35,7 @@ const EMPTY_STATS: DashboardStats = {
 };
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [visitedTabs, setVisitedTabs] = useState<Set<TabType>>(new Set(['overview']));
   const [stats, setStats] = useState<DashboardStats>(EMPTY_STATS);
@@ -166,6 +168,13 @@ export default function AdminDashboard() {
           {activeTab !== 'overview' && (
             <DashboardFilterBar month={month} year={year} onMonthChange={setMonth} onYearChange={setYear} />
           )}
+          <button
+            onClick={() => navigate('/dashboard/ai-evaluation')}
+            className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-semibold shadow-md shadow-indigo-200 transition-all hover:shadow-lg hover:-translate-y-0.5 cursor-pointer"
+          >
+            <Brain size={18} />
+            Tiến trình AI
+          </button>
           <GradientButton onClick={() => setIsReportOpen(true)} disabled={generating}>
             <FileText size={18} className="mr-2" />
             {generating ? 'Đang tạo...' : 'Xuất báo cáo'}
