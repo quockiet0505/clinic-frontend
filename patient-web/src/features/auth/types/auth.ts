@@ -26,5 +26,8 @@ export interface RegisterRequest {
   fullName: string;
   email: string;
   password: string;
-  phone?: string;
+  phone: string;
+  gender: string;
+  dateOfBirth: string;
+  address: string;
 }

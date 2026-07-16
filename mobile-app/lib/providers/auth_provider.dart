@@ -58,13 +58,13 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> register(String fullName, String phone, String email, String password) async {
+  Future<bool> register(String fullName, String phone, String email, String password, String gender, String dateOfBirth, String address) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      await _authService.register(fullName, phone, email, password);
+      await _authService.register(fullName, phone, email, password, gender, dateOfBirth, address);
       _isLoading = false;
       notifyListeners();
       return true; // Register success, no auto-login to let them login manually or we can auto-login
@@ -129,13 +129,13 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> googleRegister(String fullName, String phone, String email, String idToken) async {
+  Future<bool> googleRegister(String fullName, String phone, String email, String idToken, String gender, String dateOfBirth, String address) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      final data = await _authService.googleRegister(fullName, phone, email, idToken);
+      final data = await _authService.googleRegister(fullName, phone, email, idToken, gender, dateOfBirth, address);
       
       final token = data['token'];
       if (token != null) {

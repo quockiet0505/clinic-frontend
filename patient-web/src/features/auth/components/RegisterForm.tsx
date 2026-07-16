@@ -13,6 +13,9 @@ export const RegisterForm: React.FC = () => {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [gender, setGender] = useState('MALE');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [address, setAddress] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -23,8 +26,8 @@ export const RegisterForm: React.FC = () => {
   const handleNextStep = (e: React.MouseEvent) => {
     e.preventDefault();
     setError('');
-    if (!fullName || !phone || !email) {
-      setError('Vui lòng nhập đầy đủ họ tên, số điện thoại và email!');
+    if (!fullName || !phone || !email || !dateOfBirth || !address) {
+      setError('Vui lòng nhập đầy đủ tất cả thông tin cá nhân!');
       return;
     }
     setStep(2);
@@ -47,7 +50,7 @@ export const RegisterForm: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await register({ fullName, email, password, phone });
+      await register({ fullName, email, password, phone, gender, dateOfBirth, address });
       navigate('/auth/login');
     } catch (err: unknown) {
       const errorResponse = err as { response?: { data?: { error?: string; message?: string } } };
@@ -114,6 +117,42 @@ export const RegisterForm: React.FC = () => {
               />
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex flex-col gap-1.5 flex-1">
+              <label className="text-sm font-bold text-brand-dark">Giới tính <span className="text-red-500">*</span></label>
+              <select
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+                className="h-12 rounded-2xl px-4 bg-background-light border-border-default text-sm focus-visible:ring-primary-500/20 focus-visible:border-primary-500 cursor-pointer outline-none border"
+              >
+                <option value="MALE">Nam</option>
+                <option value="FEMALE">Nữ</option>
+                <option value="OTHER">Khác</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1.5 flex-1">
+              <label className="text-sm font-bold text-brand-dark">Ngày sinh <span className="text-red-500">*</span></label>
+              <Input
+                type="date"
+                value={dateOfBirth}
+                onChange={(e) => setDateOfBirth(e.target.value)}
+                className="h-12 rounded-2xl px-4 bg-background-light border-border-default text-sm focus-visible:ring-primary-500/20 focus-visible:border-primary-500 cursor-text"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-bold text-brand-dark">Địa chỉ <span className="text-red-500">*</span></label>
+            <Input
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="h-12 rounded-2xl px-4 bg-background-light border-border-default text-sm focus-visible:ring-primary-500/20 focus-visible:border-primary-500 cursor-text"
+              placeholder="VD: 123 Đường A, Quận 1, TP HCM"
+            />
           </div>
 
           <Button

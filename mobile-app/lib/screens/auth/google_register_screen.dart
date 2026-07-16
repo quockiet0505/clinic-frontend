@@ -21,6 +21,9 @@ class _GoogleRegisterScreenState extends State<GoogleRegisterScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
 
   @override
   void initState() {
@@ -33,10 +36,13 @@ class _GoogleRegisterScreenState extends State<GoogleRegisterScreen> {
     final name = _nameController.text.trim();
     final phone = _phoneController.text.trim();
     final email = _emailController.text.trim();
+    final gender = _genderController.text.trim();
+    final dob = _dobController.text.trim();
+    final address = _addressController.text.trim();
 
-    if (name.isEmpty || phone.isEmpty || email.isEmpty) {
+    if (name.isEmpty || phone.isEmpty || email.isEmpty || gender.isEmpty || dob.isEmpty || address.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Vui lòng điền đủ họ tên và số điện thoại')));
+          content: Text('Vui lòng điền đầy đủ tất cả thông tin')));
       return;
     }
 
@@ -46,6 +52,9 @@ class _GoogleRegisterScreenState extends State<GoogleRegisterScreen> {
       phone,
       email,
       widget.idToken,
+      gender.toUpperCase() == 'NỮ' ? 'FEMALE' : 'MALE',
+      dob,
+      address,
     );
 
     if (!mounted) return;
@@ -68,6 +77,9 @@ class _GoogleRegisterScreenState extends State<GoogleRegisterScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _genderController.dispose();
+    _dobController.dispose();
+    _addressController.dispose();
     super.dispose();
   }
 
@@ -127,6 +139,24 @@ class _GoogleRegisterScreenState extends State<GoogleRegisterScreen> {
                 hintText: 'Số điện thoại',
                 prefixIcon: Icons.phone_outlined,
                 controller: _phoneController,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                hintText: 'Giới tính (Nam/Nữ)',
+                prefixIcon: Icons.wc,
+                controller: _genderController,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                hintText: 'Ngày sinh (YYYY-MM-DD)',
+                prefixIcon: Icons.calendar_today,
+                controller: _dobController,
+              ),
+              const SizedBox(height: 16),
+              CustomTextField(
+                hintText: 'Địa chỉ',
+                prefixIcon: Icons.location_on_outlined,
+                controller: _addressController,
               ),
               const SizedBox(height: 32),
               Consumer<AuthProvider>(

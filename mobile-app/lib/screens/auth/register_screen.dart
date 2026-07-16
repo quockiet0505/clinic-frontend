@@ -17,15 +17,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmController = TextEditingController();
+  final TextEditingController _genderController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
 
   void _nextStep() {
     final name = _nameController.text.trim();
     final phone = _phoneController.text.trim();
     final email = _emailController.text.trim();
+    final gender = _genderController.text.trim();
+    final dob = _dobController.text.trim();
+    final address = _addressController.text.trim();
 
-    if (name.isEmpty || phone.isEmpty || email.isEmpty) {
+    if (name.isEmpty || phone.isEmpty || email.isEmpty || gender.isEmpty || dob.isEmpty || address.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Vui lòng điền đủ họ tên, số điện thoại và email')));
+          content: Text('Vui lòng điền đầy đủ tất cả thông tin')));
       return;
     }
 
@@ -62,6 +68,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _phoneController.text.trim(),
       _emailController.text.trim(),
       password,
+      _genderController.text.trim().toUpperCase() == 'NỮ' ? 'FEMALE' : 'MALE',
+      _dobController.text.trim(),
+      _addressController.text.trim(),
     );
 
     if (!mounted) return;
@@ -165,6 +174,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           hintText: 'Email',
                           prefixIcon: Icons.email_outlined,
                           controller: _emailController,
+                        ),
+                        const SizedBox(height: 16),
+                        CustomTextField(
+                          hintText: 'Giới tính (Nam/Nữ)',
+                          prefixIcon: Icons.wc,
+                          controller: _genderController,
+                        ),
+                        const SizedBox(height: 16),
+                        CustomTextField(
+                          hintText: 'Ngày sinh (YYYY-MM-DD)',
+                          prefixIcon: Icons.calendar_today,
+                          controller: _dobController,
+                        ),
+                        const SizedBox(height: 16),
+                        CustomTextField(
+                          hintText: 'Địa chỉ',
+                          prefixIcon: Icons.location_on_outlined,
+                          controller: _addressController,
                         ),
                         const SizedBox(height: 32),
                         CustomButton(

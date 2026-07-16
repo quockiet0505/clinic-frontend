@@ -59,7 +59,7 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>> googleRegister(String fullName, String phone, String email, String idToken) async {
+  Future<Map<String, dynamic>> googleRegister(String fullName, String phone, String email, String idToken, String gender, String dateOfBirth, String address) async {
     try {
       final response = await _dioClient.dio.post(
         '/auth/google/register',
@@ -69,6 +69,9 @@ class AuthService {
           'email': email,
           'idToken': idToken,
           'password': '', // Backend will mock this
+          'gender': gender,
+          'dateOfBirth': dateOfBirth,
+          'address': address,
         },
       );
 
@@ -139,7 +142,7 @@ class AuthService {
     }
   }
 
-  Future<Map<String, dynamic>> register(String fullName, String phone, String email, String password) async {
+  Future<Map<String, dynamic>> register(String fullName, String phone, String email, String password, String gender, String dateOfBirth, String address) async {
     try {
       final response = await _dioClient.dio.post(
         '/auth/patient/register',
@@ -148,6 +151,9 @@ class AuthService {
           'phone': phone,
           'email': email,
           'password': password,
+          'gender': gender,
+          'dateOfBirth': dateOfBirth,
+          'address': address,
         },
       );
 

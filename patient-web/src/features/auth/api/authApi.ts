@@ -67,11 +67,14 @@ export const authApi = {
     fullName: string,
     phone: string,
     email: string,
-    idToken: string
+    idToken: string,
+    gender: string,
+    dateOfBirth: string,
+    address: string
   ): Promise<AuthResponse> => {
     const response = await axiosInstance.post<ApiResponse<AuthResponse>>(
       '/auth/google/register',
-      { fullName, phone, email, idToken },
+      { fullName, phone, email, idToken, gender, dateOfBirth, address },
       { toastSuccess: 'Đăng ký tài khoản Google thành công' }
     );
     return response.data.data;

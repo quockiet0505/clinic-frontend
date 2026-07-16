@@ -219,6 +219,23 @@ export const BookAppointment: React.FC = () => {
             </div>
 
             <div className="p-6 md:p-8">
+              {/* Profile Check Reminder Alert */}
+              <div className="mb-6 bg-blue-50/50 border border-blue-100 rounded-xl p-4 flex gap-3">
+                <AlertCircle className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-sm font-bold text-blue-800">Kiểm tra thông tin hồ sơ</h3>
+                  <p className="text-[13px] text-blue-600/80 mt-1">
+                    Vui lòng đảm bảo thông tin cá nhân của bạn là chính xác để hồ sơ bệnh án được đồng bộ chuẩn xác.
+                  </p>
+                  <button 
+                    onClick={() => navigate('/profile')} 
+                    className="mt-2 text-[13px] font-bold text-blue-600 hover:text-blue-700 underline underline-offset-2"
+                  >
+                    Bấm vào đây để kiểm tra thông tin cá nhân
+                  </button>
+                </div>
+              </div>
+
               <BookingForm
                 preselectedExpertiseId={expertiseId}
                 preselectedDoctorId={doctorId}

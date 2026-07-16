@@ -1,5 +1,6 @@
 import React from 'react';
 import { User, Bot } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import type { ChatMessage } from '../types/chatbot';
 
 // Import ảnh với nhiều cách
@@ -39,6 +40,25 @@ export const ChatMessageBubble: React.FC<{ message: ChatMessage, onQuickReply?: 
   // Debug logs - xóa sau khi xác nhận hoạt động
   console.log("TEXT =", JSON.stringify(rawText));
   console.log("BUTTONS =", buttons);
+
+  // Xử lý markdown link: [text](url)
+  const renderLineWithLinks = (line: string) => {
+    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+    while ((match = linkRegex.exec(line)) !== null) {
+      parts.push(line.substring(lastIndex, match.index));
+      parts.push(
+        <Link key={match.index} to={match[2]} className="text-primary-600 font-bold underline hover:text-primary-700">
+          {match[1]}
+        </Link>
+      );
+      lastIndex = match.index + match[0].length;
+    }
+    parts.push(line.substring(lastIndex));
+    return parts;
+  };
 
   if (!message.text) return null;
 
@@ -82,7 +102,7 @@ export const ChatMessageBubble: React.FC<{ message: ChatMessage, onQuickReply?: 
             }`}>
             {finalDisplayText.split('\n').map((line, i, arr) => (
               <React.Fragment key={i}>
-                {line}
+                {renderLineWithLinks(line)}
                 {i < arr.length - 1 && <br />}
               </React.Fragment>
             ))}
