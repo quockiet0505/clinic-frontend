@@ -21,7 +21,7 @@ interface SidebarProps {
   logoUrl?: string;
 }
 
-export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileClose, logoUrl = `${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}/images/logo.png` }: SidebarProps) {
+export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileClose, logoUrl = '/images/logo.png' }: SidebarProps) {
   const location = useLocation();
   const { user } = useAuth();
   const currentUserRole = user?.role || 'RECEPTIONIST';

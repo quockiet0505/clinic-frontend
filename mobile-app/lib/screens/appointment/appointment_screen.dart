@@ -506,7 +506,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           children: [
                             Text(
                               isService ? (apt.serviceName ?? 'Dịch vụ') : doctorName, 
-                              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Color(0xFF1F2937), letterSpacing: -0.3),
+                              style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF1F2937)),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),

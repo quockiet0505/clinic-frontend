@@ -65,7 +65,7 @@ class PrescriptionScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(med.medicineName ?? 'Thuốc', style: AppStyles.heading3.copyWith(fontSize: 16, height: 1.3)),
+                                Text(med.medicineName ?? 'Thuốc', style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF1F2937))),
                                 const SizedBox(height: 6),
                                 if (med.price != null && med.price! > 0)
                                   Text(

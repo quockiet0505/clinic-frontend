@@ -22,12 +22,22 @@ class AuthProvider extends ChangeNotifier {
   Map<String, dynamic>? _user;
   Map<String, dynamic>? get user => _user;
 
-  Future<void> fetchProfile() async {
+  Future<bool> fetchProfile() async {
     try {
       _user = await _authService.getProfile();
+      _isAuthenticated = true;
       notifyListeners();
+      return true;
     } catch (e) {
-      // Ignore or handle
+      if (e.toString().contains('UNAUTHORIZED')) {
+        _isAuthenticated = false;
+        await logout();
+        return false;
+      }
+      // Keep authenticated on network error
+      _isAuthenticated = true;
+      notifyListeners();
+      return true;
     }
   }
 

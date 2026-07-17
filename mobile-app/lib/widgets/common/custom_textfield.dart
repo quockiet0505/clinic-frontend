@@ -7,8 +7,9 @@ class CustomTextField extends StatefulWidget {
   final bool isPassword;
   final TextEditingController? controller;
   final bool readOnly;
+  final String? Function(String?)? validator;
 
-  const CustomTextField({super.key, required this.hintText, this.prefixIcon, this.isPassword = false, this.controller, this.readOnly = false});
+  const CustomTextField({super.key, required this.hintText, this.prefixIcon, this.isPassword = false, this.controller, this.readOnly = false, this.validator});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -29,6 +30,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       controller: widget.controller,
       obscureText: _obscureText,
       readOnly: widget.readOnly,
+      validator: widget.validator,
       style: AppStyles.bodyLarge.copyWith(color: AppColors.textMainLight),
       decoration: InputDecoration(
         hintText: widget.hintText,

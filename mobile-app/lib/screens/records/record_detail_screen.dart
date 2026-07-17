@@ -105,7 +105,7 @@ class _RecordDetailScreenState extends State<RecordDetailScreen> {
                         ],
                       ),
                       const SizedBox(height: 16),
-                      Text(widget.record.diagnosis ?? 'Chưa có chẩn đoán', style: AppStyles.heading2.copyWith(fontSize: 18, height: 1.3)),
+                      Text(widget.record.diagnosis ?? 'Chưa có chẩn đoán', style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF1F2937))),
                       const SizedBox(height: 20),
                       Row(
                         children: [
@@ -248,7 +248,7 @@ class _RecordDetailScreenState extends State<RecordDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: AppStyles.heading3.copyWith(fontSize: 16)),
+                  Text(title, style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF1F2937))),
                   const SizedBox(height: 4),
                   Text(subtitle, style: AppStyles.caption.copyWith(color: AppColors.textSubLight, fontSize: 12)),
                 ],

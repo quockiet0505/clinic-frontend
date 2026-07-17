@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:clinic_management_system/app_exports.dart';
 import 'package:clinic_management_system/widgets/common/gradient_app_bar.dart';
 import 'package:clinic_management_system/services/billing_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BillingHistoryScreen extends StatefulWidget {
   const BillingHistoryScreen({super.key});
@@ -219,6 +220,27 @@ class _BillingHistoryScreenState extends State<BillingHistoryScreen> {
                       'Vui lòng không chỉnh sửa số tiền và nội dung chuyển khoản (BILL$invoiceId) để hệ thống nhận diện tự động chính xác.',
                       style: AppStyles.caption.copyWith(color: Colors.orange.shade800, fontWeight: FontWeight.w600),
                       textAlign: TextAlign.center,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () async {
+                        try {
+                          await launchUrl(Uri.parse(qrUrl), mode: LaunchMode.externalApplication);
+                        } catch (e) {
+                          debugPrint('Error launching url: $e');
+                        }
+                      },
+                      icon: const Icon(Icons.download_rounded, size: 20),
+                      label: const Text('Tải / Lưu mã QR để quét', style: TextStyle(fontWeight: FontWeight.bold)),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.primary,
+                        side: const BorderSide(color: AppColors.primary, width: 1.5),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),

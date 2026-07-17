@@ -65,7 +65,7 @@ class LabResultScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(result.serviceName ?? 'Xét nghiệm', style: AppStyles.heading3.copyWith(fontSize: 16, height: 1.3)),
+                                Text(result.serviceName ?? 'Xét nghiệm', style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF1F2937))),
                                 const SizedBox(height: 4),
                                 Text(DateFormatter.formatDateTime(result.date), style: AppStyles.caption.copyWith(color: AppColors.textSubLight, fontSize: 13)),
                               ],

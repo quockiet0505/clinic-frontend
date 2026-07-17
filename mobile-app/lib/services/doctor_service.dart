@@ -5,12 +5,20 @@ class DoctorService {
 
   Future<List<dynamic>> getSpecialties() async {
     try {
-      final response = await _dioClient.dio.get('/expertise');
+      final response = await _dioClient.dio.get('/expertise/all');
       if (response.statusCode == 200) {
         final data = response.data['data'];
-        if (data is List) return data;
-        if (data is Map && data.containsKey('content')) return data['content'] as List;
-        return data == null ? [] : [data];
+        List<dynamic> listData = [];
+        if (data is List) {
+          listData = data;
+        } else if (data is Map && data.containsKey('content')) {
+          listData = data['content'] as List;
+        } else {
+          listData = data == null ? [] : [data];
+        }
+        
+        final technicianIds = [42, 43, 44, 45];
+        return listData.where((exp) => !technicianIds.contains(exp['expertiseId'])).toList();
       } else {
         throw Exception(response.data['message'] ?? 'Failed to fetch specialties');
       }

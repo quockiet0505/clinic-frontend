@@ -10,14 +10,19 @@ export default function AdminLayout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { isAuthenticated, loading } = useAuth();
-  const [logoUrl, setLogoUrl] = useState<string>(`${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}/images/logo.png`);
+  const [logoUrl, setLogoUrl] = useState<string>('/images/logo.png');
 
+  // Lấy logo hiển thị sidebar
   useEffect(() => {
-    logoApi.getLogo('main').then(data => {
-      if (data && data.imageUrl) {
-        setLogoUrl(getImageUrl(data.imageUrl));
-      }
-    });
+    logoApi.getLogo('main')
+      .then(data => {
+        if (data && data.imageUrl) {
+          setLogoUrl(getImageUrl(data.imageUrl));
+        }
+      })
+      .catch(err => {
+        console.warn('Could not load logo from backend, using local fallback.', err);
+      });
   }, []);
 
   // Chờ AuthContext khởi tạo xong (đọc localStorage)

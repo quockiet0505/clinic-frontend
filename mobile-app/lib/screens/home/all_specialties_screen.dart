@@ -42,38 +42,42 @@ class AllSpecialtiesScreen extends StatelessWidget {
                 },
                 child: Column(
                   children: [
-                    Expanded(
-                      child: AspectRatio(
-                        aspectRatio: 1,
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            boxShadow: [
-                              BoxShadow(color: AppColors.primary.withOpacity(0.08), blurRadius: 15, offset: const Offset(0, 5)),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: CachedNetworkImage(imageUrl: provider.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl']),
-                        memCacheWidth: 400,
-                        fadeInDuration: Duration.zero,
-                        fadeOutDuration: Duration.zero,
-                              fit: BoxFit.cover,
-                              errorWidget: (context, url, error) => const Icon(Icons.medical_services, color: AppColors.primary, size: 36),
-                            ),
-                          ),
+                    Container(
+                      height: 55, width: 55,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(color: AppColors.primary.withOpacity(0.08), blurRadius: 15, offset: const Offset(0, 5)),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: CachedNetworkImage(imageUrl: provider.fixImageUrl(specialty['iconUrl'] ?? specialty['imageUrl']),
+                          memCacheWidth: 400,
+                          fadeInDuration: Duration.zero,
+                          fadeOutDuration: Duration.zero,
+                          width: 38, height: 38,
+                          fit: BoxFit.contain,
+                          errorWidget: (context, url, error) => const Icon(Icons.medical_services, color: AppColors.primary, size: 24),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      specialty['expertiseName'] ?? '',
-                      style: AppStyles.bodyMedium.copyWith(color: AppColors.textMainLight, fontWeight: FontWeight.bold, fontSize: 12),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                      child: Container(
+                        height: 36, // Đảm bảo đủ chỗ cho 2 dòng chữ
+                        alignment: Alignment.topCenter,
+                        child: Text(
+                          specialty['expertiseName'] ?? '',
+                          style: AppStyles.bodyMedium.copyWith(color: AppColors.textMainLight, fontSize: 11, fontWeight: FontWeight.w600, height: 1.3),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ),
                   ],
                 ),

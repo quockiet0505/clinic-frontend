@@ -6,6 +6,7 @@ import QueueNumberCell from '@/components/common/QueueNumberCell';
 import { Appointment, getBookingModeLabel } from '../types/appointment';
 import { formatDateTime } from '@/utils/formatters';
 import { CheckInButton, CancelButton, TransferButton, CallPatientButton, SkipPatientButton, SendToLabButton, CompleteButton, ReturnToQueueButton, RescheduleButton, ConfirmButton } from '@/components/common/ActionButtons';
+import ActionMenu from '@/components/common/ActionMenu';
 import { useAuth } from '@/context/AuthContext';
 
 interface Props {
@@ -153,11 +154,12 @@ export default function AppointmentTable({
       key: 'actions',
       label: 'Thao tác',
       className: 'w-[12%]',
+      noTruncate: true,
       render: (item) => {
         const callLabel =
           item.status === 'CHECKED_IN' && item.queueNumber === 0 ? 'Đọc kết quả' : 'Gọi khám';
         return (
-          <div className="flex items-center gap-1 flex-wrap">
+          <ActionMenu>
             {isStaffOrAdmin && item.status === 'PENDING' && onConfirm && (
               <ConfirmButton onClick={() => onConfirm(item.appointmentId)} />
             )}
@@ -191,7 +193,7 @@ export default function AppointmentTable({
             {isDoctor && ['IN_PROGRESS'].includes(item.status) && onComplete && (
               <CompleteButton onClick={() => onComplete(item.appointmentId)} />
             )}
-          </div>
+          </ActionMenu>
         );
       },
     },

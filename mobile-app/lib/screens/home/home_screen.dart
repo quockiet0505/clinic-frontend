@@ -260,11 +260,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 8),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                    child: SizedBox(
-                      height: 28, // Đảm bảo luôn chiếm khoảng trống 2 dòng chữ để các icon thẳng hàng
+                    child: Container(
+                      height: 36, // Đảm bảo đủ chỗ cho 2 dòng chữ trên mọi kích cỡ màn hình
+                      alignment: Alignment.topCenter,
                       child: Text(
                         action['title'] ?? '',
-                        style: AppStyles.caption.copyWith(color: AppColors.textMainLight, fontSize: 11, fontWeight: FontWeight.w600, height: 1.2),
+                        style: AppStyles.caption.copyWith(color: AppColors.textMainLight, fontSize: 11, fontWeight: FontWeight.w600, height: 1.3),
                         textAlign: TextAlign.center,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -665,7 +666,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         memCacheWidth: 400,
                         fadeInDuration: Duration.zero,
                         fadeOutDuration: Duration.zero,
-                                fit: BoxFit.cover,
+                                width: 38, height: 38,
+                                fit: BoxFit.contain,
                                 placeholder: (context, url) => Shimmer.fromColors(
                                   baseColor: Colors.grey[200]!,
                                   highlightColor: Colors.grey[50]!,
@@ -677,11 +679,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(height: 8),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                              child: SizedBox(
-                                height: 28, // Đảm bảo luôn chiếm khoảng trống 2 dòng chữ
+                              child: Container(
+                                height: 36, // Đảm bảo đủ chỗ cho 2 dòng chữ trên mọi kích cỡ màn hình
+                                alignment: Alignment.topCenter,
                                 child: Text(
                                   specialty['expertiseName'] ?? '', 
-                                  style: AppStyles.bodyMedium.copyWith(color: AppColors.textMainLight, fontSize: 11, fontWeight: FontWeight.w600, height: 1.2),
+                                  style: AppStyles.bodyMedium.copyWith(color: AppColors.textMainLight, fontSize: 11, fontWeight: FontWeight.w600, height: 1.3),
                                   textAlign: TextAlign.center,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,

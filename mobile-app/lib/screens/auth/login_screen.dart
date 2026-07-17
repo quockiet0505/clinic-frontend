@@ -1,5 +1,6 @@
 import 'package:clinic_management_system/app_exports.dart';
 import 'package:provider/provider.dart';
+import 'package:clinic_management_system/utils/ui_utils.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -9,6 +10,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -16,9 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Vui lòng nhập đầy đủ email và mật khẩu')));
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 
@@ -31,8 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => const MainScreen()));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authProvider.error ?? 'Đăng nhập thất bại')));
+      UIUtils.showCustomSnackBar(context, authProvider.error ?? 'Đăng nhập thất bại', isError: true);
     }
   }
 
@@ -63,8 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => const MainScreen()));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['error'] ?? 'Đăng nhập Google thất bại')));
+      UIUtils.showCustomSnackBar(context, result['error'] ?? 'Đăng nhập Google thất bại', isError: true);
     }
   }
 
@@ -82,7 +80,9 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
+          child: Form(
+            key: _formKey,
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 60),
@@ -108,12 +108,14 @@ class _LoginScreenState extends State<LoginScreen> {
               CustomTextField(
                   hintText: 'Địa chỉ Email',
                   prefixIcon: Icons.email_outlined,
+                  validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập email' : null,
                   controller: _emailController),
               const SizedBox(height: 16),
               CustomTextField(
                   hintText: 'Mật khẩu',
                   prefixIcon: Icons.lock_outline,
                   isPassword: true,
+                  validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập mật khẩu' : null,
                   controller: _passwordController),
               const SizedBox(height: 12),
               Align(
@@ -173,6 +175,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

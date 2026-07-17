@@ -4,6 +4,7 @@ import { Eye, Edit2, Trash2, Phone, MapPin, Activity, ShieldCheck } from 'lucide
 import { Button } from '@/components/ui/button';
 import Table, { Column } from '@/components/tables/Table';
 import EntityAvatar from '@/components/common/EntityAvatar';
+import ActionMenu from '@/components/common/ActionMenu';
 import { Patient } from '../types/patient';
 
 interface Props {
@@ -77,14 +78,15 @@ export default function PatientTable({ data, onViewDetails, onEdit, onDelete, on
     {
       key: 'actions',
       label: 'Thao tác',
-      className: 'w-[30%]',
+      className: 'w-[30%] lg:w-[15%]',
+      noTruncate: true,
       render: (patient) => (
-        <div className="grid grid-cols-3 gap-2">
-          <Button onClick={() => onViewDetails(patient.patientId)} variant="outline" className="h-8 px-2 rounded-lg text-xs font-semibold border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-colors w-full flex items-center justify-center">
+        <ActionMenu>
+          <Button onClick={() => onViewDetails(patient.patientId)} variant="outline" className="h-8 px-2 rounded-lg text-xs font-semibold border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-colors w-full flex items-center justify-start">
             <Eye size={14} className="mr-1.5 shrink-0" /> <span className="truncate">Chi tiết</span>
           </Button>
           {patient.bookingLocked && onUnlockBooking && (
-            <Button onClick={() => onUnlockBooking(patient)} variant="outline" className="h-8 px-2 rounded-lg text-xs font-semibold border-orange-200 text-orange-600 hover:bg-orange-50 hover:text-orange-700 hover:border-orange-300 transition-colors w-full flex items-center justify-center">
+            <Button onClick={() => onUnlockBooking(patient)} variant="outline" className="h-8 px-2 rounded-lg text-xs font-semibold border-orange-200 text-orange-600 hover:bg-orange-50 hover:text-orange-700 hover:border-orange-300 transition-colors w-full flex items-center justify-start">
               <Activity size={14} className="mr-1.5 shrink-0" /> <span className="truncate">Mở khóa</span>
             </Button>
           )}
@@ -92,19 +94,19 @@ export default function PatientTable({ data, onViewDetails, onEdit, onDelete, on
             <Button
               onClick={() => onToggleAccountStatus(patient)}
               variant="outline"
-              className={`h-8 px-2 rounded-lg text-xs font-semibold transition-colors w-full flex items-center justify-center ${patient.isActive === 0
+              className={`h-8 px-2 rounded-lg text-xs font-semibold transition-colors w-full flex items-center justify-start ${patient.isActive === 0
                   ? 'border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300'
-                  : 'border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300'
+                  : 'border-amber-200 text-amber-600 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-300'
                 }`}
             >
               <ShieldCheck size={14} className="mr-1.5 shrink-0" />
               <span className="truncate">{patient.isActive === 0 ? "Mở khóa" : "Khóa"}</span>
             </Button>
           )}
-          <Button onClick={() => onDelete(patient)} variant="outline" title="Xóa" className="h-8 px-2 rounded-lg text-xs font-semibold border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 transition-colors w-full flex items-center justify-center">
+          <Button onClick={() => onDelete(patient)} variant="outline" title="Xóa" className="h-8 px-2 rounded-lg text-xs font-semibold border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-300 transition-colors w-full flex items-center justify-start">
             <Trash2 size={14} className="mr-1.5 shrink-0" /> <span className="truncate">Xóa</span>
           </Button>
-        </div>
+        </ActionMenu>
       ),
     },
   ];

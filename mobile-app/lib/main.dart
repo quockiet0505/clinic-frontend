@@ -56,6 +56,15 @@ class ClinicApp extends StatelessWidget {
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        fontFamily: 'Inter',
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          },
+        ),
+      ),
       home: const AuthWrapper(),
     );
   }
@@ -109,7 +118,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
 
     if (mounted) {
       setState(() {
-        _isAuthenticated = token != null && token.isNotEmpty;
+        _isAuthenticated = context.read<AuthProvider>().isAuthenticated;
         _isLoading = false;
       });
     }

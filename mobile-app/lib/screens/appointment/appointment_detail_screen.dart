@@ -196,7 +196,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                           children: [
                             Text(
                               widget.appointment.bookingMode == 'SERVICE' ? (widget.appointment.serviceName ?? 'Dịch vụ') : doctorName, 
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF1F2937))
+                              style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF1F2937))
                             ),
                             const SizedBox(height: 8),
                             Container(
@@ -207,7 +207,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
                               ),
                               child: Text(
                                 widget.appointment.bookingMode == 'SERVICE' ? 'Xét nghiệm / Chụp chiếu' : expertise, 
-                                style: const TextStyle(fontSize: 13, color: Color(0xFF4B5563), fontWeight: FontWeight.w600)
+                                style: AppStyles.caption.copyWith(color: AppColors.textSubLight)
                               ),
                             ),
                           ],
@@ -241,7 +241,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
             const SizedBox(height: 24),
 
             // Details Section
-            const Text('Thông tin chi tiết', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Color(0xFF1F2937))),
+            Text('Thông tin chi tiết', style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF1F2937))),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(20),
@@ -447,7 +447,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
             children: [
               Text(label, style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280))),
               const SizedBox(height: 2),
-              Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Color(0xFF1F2937))),
+              Text(value, style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF1F2937))),
             ],
           ),
         ),
@@ -476,7 +476,7 @@ class _AppointmentDetailScreenState extends State<AppointmentDetailScreen> {
               const SizedBox(height: 4),
               Text(
                 value, 
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Color(0xFF1F2937), height: 1.4),
+                style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: const Color(0xFF1F2937), height: 1.4),
               ),
             ],
           ),

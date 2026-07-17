@@ -5,14 +5,18 @@ import { logoApi } from '@/features/settings/api/logoApi';
 import { getImageUrl } from '@/utils/image';
 
 export default function Login() {
-  const [logoUrl, setLogoUrl] = useState<string>(`${import.meta.env.VITE_STATIC_BASE_URL || 'http://localhost:8080'}/images/logo.png`);
+  const [logoUrl, setLogoUrl] = useState<string>('/images/logo.png');
 
   useEffect(() => {
-    logoApi.getLogo('login').then(data => {
-      if (data && data.imageUrl) {
-        setLogoUrl(getImageUrl(data.imageUrl));
-      }
-    });
+    logoApi.getLogo('login')
+      .then(data => {
+        if (data && data.imageUrl) {
+          setLogoUrl(getImageUrl(data.imageUrl));
+        }
+      })
+      .catch(err => {
+        console.warn('Could not load logo from backend, using local fallback.', err);
+      });
   }, []);
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-50 flex items-center justify-center p-4 font-sans">

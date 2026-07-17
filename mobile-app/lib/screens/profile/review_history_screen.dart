@@ -74,7 +74,7 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> {
     String formattedDate = '';
     if (dateStr != null) {
       try {
-        final d = DateTime.parse(dateStr);
+        final d = DateTime.parse(dateStr.toString());
         formattedDate = DateFormat('dd/MM/yyyy HH:mm').format(d);
       } catch (_) {}
     }
@@ -99,7 +99,7 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title, style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: AppColors.primary)),
+              Text(title.toString(), style: AppStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold, color: AppColors.primary)),
               Text(formattedDate, style: AppStyles.caption.copyWith(color: AppColors.textSubLight)),
             ],
           ),
@@ -114,7 +114,7 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                feedback['comment'],
+                feedback['comment'].toString(),
                 style: AppStyles.caption.copyWith(color: AppColors.textMainLight, fontStyle: FontStyle.italic),
               ),
             ),
@@ -136,13 +136,13 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> {
                     style: AppStyles.caption.copyWith(fontWeight: FontWeight.bold, color: Colors.green),
                   ),
                   const SizedBox(height: 4),
-                  Text(feedback['reply'], style: AppStyles.caption.copyWith(color: AppColors.textMainLight)),
+                  Text(feedback['reply'].toString(), style: AppStyles.caption.copyWith(color: AppColors.textMainLight)),
                 ],
               ),
             ),
           ],
           if (dateStr != null) Builder(builder: (context) {
-            final createdAt = DateTime.tryParse(dateStr);
+            final createdAt = DateTime.tryParse(dateStr.toString());
             if (createdAt != null && DateTime.now().difference(createdAt).inHours < 24) {
               return Padding(
                 padding: const EdgeInsets.only(top: 12),

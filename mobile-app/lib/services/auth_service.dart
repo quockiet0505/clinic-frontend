@@ -98,6 +98,9 @@ class AuthService {
       }
     } on DioException catch (e) {
       if (e.response != null) {
+        if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+          throw Exception('UNAUTHORIZED');
+        }
         throw Exception(e.response?.data['message'] ?? 'Failed to get profile');
       }
       throw Exception('Network error');

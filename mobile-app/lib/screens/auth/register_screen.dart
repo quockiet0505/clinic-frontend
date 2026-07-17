@@ -1,5 +1,6 @@
 import 'package:clinic_management_system/app_exports.dart';
 import 'package:provider/provider.dart';
+import 'package:clinic_management_system/utils/ui_utils.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -11,6 +12,8 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final PageController _pageController = PageController();
   int _currentStep = 0;
+  final _formKey1 = GlobalKey<FormState>();
+  final _formKey2 = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -29,9 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final dob = _dobController.text.trim();
     final address = _addressController.text.trim();
 
-    if (name.isEmpty || phone.isEmpty || email.isEmpty || gender.isEmpty || dob.isEmpty || address.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Vui lòng điền đầy đủ tất cả thông tin')));
+    if (!_formKey1.currentState!.validate()) {
       return;
     }
 
@@ -50,15 +51,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final password = _passwordController.text;
     final confirm = _confirmController.text;
 
-    if (password.isEmpty || confirm.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Vui lòng nhập mật khẩu')));
+    if (!_formKey2.currentState!.validate()) {
       return;
     }
 
     if (password != confirm) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Mật khẩu xác nhận không khớp')));
+      UIUtils.showCustomSnackBar(context, 'Mật khẩu xác nhận không khớp', isError: true);
       return;
     }
 
@@ -76,12 +74,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (!mounted) return;
 
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Đăng ký thành công! Vui lòng đăng nhập.')));
+      UIUtils.showCustomSnackBar(context, 'Đăng ký thành công! Vui lòng đăng nhập.', isError: false);
       Navigator.pop(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authProvider.error ?? 'Đăng ký thất bại')));
+      UIUtils.showCustomSnackBar(context, authProvider.error ?? 'Đăng ký thất bại', isError: true);
     }
   }
 
@@ -156,82 +152,96 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   // PAGE 1: User Info
                   SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Column(
-                      children: [
-                        CustomTextField(
-                          hintText: 'Họ và tên',
-                          prefixIcon: Icons.person_outline,
-                          controller: _nameController,
-                        ),
-                        const SizedBox(height: 16),
-                        CustomTextField(
-                          hintText: 'Số điện thoại',
-                          prefixIcon: Icons.phone_outlined,
-                          controller: _phoneController,
-                        ),
-                        const SizedBox(height: 16),
-                        CustomTextField(
-                          hintText: 'Email',
-                          prefixIcon: Icons.email_outlined,
-                          controller: _emailController,
-                        ),
-                        const SizedBox(height: 16),
-                        CustomTextField(
-                          hintText: 'Giới tính (Nam/Nữ)',
-                          prefixIcon: Icons.wc,
-                          controller: _genderController,
-                        ),
-                        const SizedBox(height: 16),
-                        CustomTextField(
-                          hintText: 'Ngày sinh (YYYY-MM-DD)',
-                          prefixIcon: Icons.calendar_today,
-                          controller: _dobController,
-                        ),
-                        const SizedBox(height: 16),
-                        CustomTextField(
-                          hintText: 'Địa chỉ',
-                          prefixIcon: Icons.location_on_outlined,
-                          controller: _addressController,
-                        ),
-                        const SizedBox(height: 32),
-                        CustomButton(
-                          text: 'Tiếp theo',
-                          onPressed: _nextStep,
-                        ),
-                        const SizedBox(height: 24),
-                      ],
+                    child: Form(
+                      key: _formKey1,
+                      child: Column(
+                        children: [
+                          CustomTextField(
+                            hintText: 'Họ và tên',
+                            prefixIcon: Icons.person_outline,
+                            validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập họ tên' : null,
+                            controller: _nameController,
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            hintText: 'Số điện thoại',
+                            prefixIcon: Icons.phone_outlined,
+                            validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập số điện thoại' : null,
+                            controller: _phoneController,
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            hintText: 'Email',
+                            prefixIcon: Icons.email_outlined,
+                            validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập email' : null,
+                            controller: _emailController,
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            hintText: 'Giới tính (Nam/Nữ)',
+                            prefixIcon: Icons.wc,
+                            validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập giới tính' : null,
+                            controller: _genderController,
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            hintText: 'Ngày sinh (YYYY-MM-DD)',
+                            prefixIcon: Icons.calendar_today,
+                            validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập ngày sinh' : null,
+                            controller: _dobController,
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            hintText: 'Địa chỉ',
+                            prefixIcon: Icons.location_on_outlined,
+                            validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập địa chỉ' : null,
+                            controller: _addressController,
+                          ),
+                          const SizedBox(height: 32),
+                          CustomButton(
+                            text: 'Tiếp theo',
+                            onPressed: _nextStep,
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
                     ),
                   ),
 
                   // PAGE 2: Password
                   SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Column(
-                      children: [
-                        CustomTextField(
-                          hintText: 'Mật khẩu',
-                          prefixIcon: Icons.lock_outline,
-                          isPassword: true,
-                          controller: _passwordController,
-                        ),
-                        const SizedBox(height: 16),
-                        CustomTextField(
-                          hintText: 'Xác nhận mật khẩu',
-                          prefixIcon: Icons.lock_outline,
-                          isPassword: true,
-                          controller: _confirmController,
-                        ),
-                        const SizedBox(height: 32),
-                        Consumer<AuthProvider>(
-                          builder: (context, auth, child) {
-                            return CustomButton(
-                              text: 'Hoàn tất Đăng ký',
-                              isLoading: auth.isLoading,
-                              onPressed: _handleRegister,
-                            );
-                          },
-                        ),
-                      ],
+                    child: Form(
+                      key: _formKey2,
+                      child: Column(
+                        children: [
+                          CustomTextField(
+                            hintText: 'Mật khẩu',
+                            prefixIcon: Icons.lock_outline,
+                            isPassword: true,
+                            validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập mật khẩu' : null,
+                            controller: _passwordController,
+                          ),
+                          const SizedBox(height: 16),
+                          CustomTextField(
+                            hintText: 'Xác nhận mật khẩu',
+                            prefixIcon: Icons.lock_outline,
+                            isPassword: true,
+                            validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng xác nhận mật khẩu' : null,
+                            controller: _confirmController,
+                          ),
+                          const SizedBox(height: 32),
+                          Consumer<AuthProvider>(
+                            builder: (context, auth, child) {
+                              return CustomButton(
+                                text: 'Hoàn tất Đăng ký',
+                                isLoading: auth.isLoading,
+                                onPressed: _handleRegister,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

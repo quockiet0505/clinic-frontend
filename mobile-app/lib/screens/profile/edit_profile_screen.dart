@@ -245,6 +245,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
 
 
+            const SizedBox(height: 24),
             // Save button
             GestureDetector(
               onTap: _isLoading ? null : _handleSave,

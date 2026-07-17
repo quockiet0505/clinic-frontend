@@ -5,6 +5,7 @@ import Table, { Column } from '@/components/tables/Table';
 import { EditButton, DeleteButton } from '@/components/common/ActionButtons';
 import { Button } from '@/components/ui/button';
 import EntityAvatar from '@/components/common/EntityAvatar';
+import ActionMenu from '@/components/common/ActionMenu';
 import { RoleDisplay } from '../utils/roleDisplay';
 import { Staff } from '../types/staff';
 
@@ -90,10 +91,11 @@ export default function StaffTable({ data, onEdit, onDelete, onToggleStatus, loa
     {
       key: 'actions',
       label: 'Thao tác',
-      className: 'w-[20%]',
+      className: 'w-[20%] lg:w-[15%]',
+      noTruncate: true,
       render: (staff) => (
-        <div className="flex gap-2">
-          <EditButton onClick={() => onEdit(staff)} label="Sửa" />
+        <ActionMenu>
+          <EditButton onClick={() => onEdit(staff)} label="Sửa" className="w-full justify-start" />
           {staff.accountId && onToggleStatus && (
             <Button
               onClick={() => {
@@ -102,18 +104,18 @@ export default function StaffTable({ data, onEdit, onDelete, onToggleStatus, loa
               }}
               variant="outline"
               size="sm"
-              className={`flex items-center gap-1.5 font-semibold px-2.5 h-8 rounded-[10px] ${
+              className={`w-full justify-start flex items-center gap-1.5 font-semibold px-2.5 h-8 rounded-[10px] transition-colors ${
                 staff.isActive === 0
-                  ? 'text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700'
-                  : 'text-amber-600 border-amber-200 hover:bg-amber-50 hover:text-amber-700'
+                  ? 'text-emerald-600 border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300'
+                  : 'text-amber-600 border-amber-200 hover:bg-amber-50 hover:text-amber-700 hover:border-amber-300'
               }`}
             >
               {staff.isActive === 0 ? <Unlock size={14} /> : <Lock size={14} />}
               <span>{staff.isActive === 0 ? 'Mở' : 'Khóa'}</span>
             </Button>
           )}
-          <DeleteButton onClick={() => onDelete(staff)} label="Xóa" />
-        </div>
+          <DeleteButton onClick={() => onDelete(staff)} label="Xóa" className="w-full justify-start" />
+        </ActionMenu>
       ),
     },
   ];
