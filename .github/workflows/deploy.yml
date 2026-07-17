@@ -67,10 +67,10 @@ jobs:
             
             # Update frontend services dynamically in Swarm
             echo 'Updating Admin Web...'
-            sudo docker service update --image asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/admin-web:${{ github.sha }} clinic_admin-web
+            sudo docker service update --image asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/admin-web:${{ github.sha }} --with-registry-auth clinic_admin-web
             
             echo 'Updating Patient Web...'
-            sudo docker service update --image asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/patient-web:${{ github.sha }} clinic_patient-web
+            sudo docker service update --image asia-southeast1-docker.pkg.dev/clinicqa-500817/clinic-artifact/patient-web:${{ github.sha }} --with-registry-auth clinic_patient-web
             
             # Force Nginx Proxy to restart to reload configs if needed
             echo 'Restarting Nginx Proxy...'
