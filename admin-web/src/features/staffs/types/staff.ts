@@ -21,6 +21,7 @@ export interface Staff {
   rating?: number;
   isActive?: number | boolean;
   isDeleted?: number;
+  accountId?: number;
 }
 
 export interface LeaveRequest {

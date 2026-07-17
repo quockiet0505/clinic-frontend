@@ -30,9 +30,9 @@ export default function InvoiceTable({ data, onActionClick, onPrintClick }: { da
         </TableHeader>
         <TableBody>
           {data.map((inv) => (
-            <TableRow key={inv.billId} className="hover:bg-slate-50/50">
+            <TableRow key={inv.invoiceId} className="hover:bg-slate-50/50">
               <TableCell className="px-8 py-4">
-                <p className="font-bold text-slate-900">BILL-{inv.billId}</p>
+                <p className="font-bold text-slate-900">BILL-{inv.invoiceId}</p>
                 <p className="text-xs text-slate-500 font-medium mt-0.5">{inv.createdAt}</p>
               </TableCell>
               <TableCell><span className="font-bold text-slate-700">{inv.patientName}</span></TableCell>
@@ -50,7 +50,7 @@ export default function InvoiceTable({ data, onActionClick, onPrintClick }: { da
                     {inv.status === 'PAID' ? 'View Details' : 'Collect Payment'}
                   </Button>
                   {inv.status === 'PAID' && (
-                    <Button onClick={() => onPrintClick(inv.billId)} variant="outline" size="icon" className="h-9 w-9 text-slate-500 hover:text-slate-700 rounded-xl border-slate-200">
+                    <Button onClick={() => onPrintClick(inv.invoiceId)} variant="outline" size="icon" className="h-9 w-9 text-slate-500 hover:text-slate-700 rounded-xl border-slate-200">
                       <Printer size={16} />
                     </Button>
                   )}

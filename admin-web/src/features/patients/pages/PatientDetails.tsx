@@ -143,7 +143,7 @@ export default function PatientDetails() {
                 <IconAction
                   icon={<Activity size={15} />}
                   label="Mở khóa đặt lịch"
-                  tone="blue"
+                  tone="sky"
                   onClick={async () => {
                     try {
                       await patientApi.unlockBooking(patient.patientId);
