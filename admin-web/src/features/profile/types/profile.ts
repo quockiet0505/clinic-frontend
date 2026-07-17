@@ -8,5 +8,6 @@ export interface UserProfile {
   email: string;
   address: string;
   roleName: string;
+  avatarUrl?: string;
   createdAt: string;
 }

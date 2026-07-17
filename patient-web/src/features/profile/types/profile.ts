@@ -24,6 +24,7 @@ export interface UpdateProfilePayload {
   gender?: string;
   dateOfBirth?: string;
   address?: string;
+  avatarUrl?: string;
   height?: number | null;
   weight?: number | null;
   bloodPressure?: string | null;

@@ -23,7 +23,10 @@ class FeedbackService {
         throw Exception(response.data['message'] ?? 'Gửi đánh giá bác sĩ thất bại');
       }
     } on DioException catch (e) {
-      throw Exception(e.response?.data?['message'] ?? 'Lỗi kết nối khi gửi đánh giá');
+      if (e.response != null && e.response?.data is Map) {
+        throw Exception(e.response?.data['message'] ?? e.response?.data['error'] ?? 'Lỗi từ máy chủ (${e.response?.statusCode})');
+      }
+      throw Exception('Lỗi kết nối mạng: ${e.message}');
     }
   }
 
@@ -46,7 +49,10 @@ class FeedbackService {
         throw Exception(response.data['message'] ?? 'Gửi đánh giá phòng khám thất bại');
       }
     } on DioException catch (e) {
-      throw Exception(e.response?.data?['message'] ?? 'Lỗi kết nối khi gửi đánh giá');
+      if (e.response != null && e.response?.data is Map) {
+        throw Exception(e.response?.data['message'] ?? e.response?.data['error'] ?? 'Lỗi từ máy chủ (${e.response?.statusCode})');
+      }
+      throw Exception('Lỗi kết nối mạng: ${e.message}');
     }
   }
   
@@ -70,7 +76,10 @@ class FeedbackService {
         throw Exception(response.data['message'] ?? 'Sửa đánh giá bác sĩ thất bại');
       }
     } on DioException catch (e) {
-      throw Exception(e.response?.data?['message'] ?? 'Lỗi kết nối khi sửa đánh giá');
+      if (e.response != null && e.response?.data is Map) {
+        throw Exception(e.response?.data['message'] ?? e.response?.data['error'] ?? 'Lỗi từ máy chủ (${e.response?.statusCode})');
+      }
+      throw Exception('Lỗi kết nối mạng: ${e.message}');
     }
   }
 
@@ -94,7 +103,10 @@ class FeedbackService {
         throw Exception(response.data['message'] ?? 'Sửa đánh giá phòng khám thất bại');
       }
     } on DioException catch (e) {
-      throw Exception(e.response?.data?['message'] ?? 'Lỗi kết nối khi sửa đánh giá');
+      if (e.response != null && e.response?.data is Map) {
+        throw Exception(e.response?.data['message'] ?? e.response?.data['error'] ?? 'Lỗi từ máy chủ (${e.response?.statusCode})');
+      }
+      throw Exception('Lỗi kết nối mạng: ${e.message}');
     }
   }
 
@@ -104,7 +116,10 @@ class FeedbackService {
       if (response.statusCode == 200) return response.data['data'] ?? [];
       throw Exception(response.data['message'] ?? 'Lỗi tải đánh giá bác sĩ');
     } on DioException catch (e) {
-      throw Exception(e.response?.data?['message'] ?? 'Lỗi kết nối mạng');
+      if (e.response != null && e.response?.data is Map) {
+        throw Exception(e.response?.data['message'] ?? e.response?.data['error'] ?? 'Lỗi máy chủ (${e.response?.statusCode})');
+      }
+      throw Exception('Lỗi kết nối mạng: ${e.message}');
     }
   }
 
@@ -114,7 +129,10 @@ class FeedbackService {
       if (response.statusCode == 200) return response.data['data'] ?? [];
       throw Exception(response.data['message'] ?? 'Lỗi tải đánh giá phòng khám');
     } on DioException catch (e) {
-      throw Exception(e.response?.data?['message'] ?? 'Lỗi kết nối mạng');
+      if (e.response != null && e.response?.data is Map) {
+        throw Exception(e.response?.data['message'] ?? e.response?.data['error'] ?? 'Lỗi máy chủ (${e.response?.statusCode})');
+      }
+      throw Exception('Lỗi kết nối mạng: ${e.message}');
     }
   }
 }

@@ -22,4 +22,15 @@ export const profileApi = {
       { toastSuccess: 'Đổi mật khẩu thành công' }
     );
   },
+
+  uploadAvatar: async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await axiosInstance.post('/upload/image', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return res.data.data;
+  },
 };

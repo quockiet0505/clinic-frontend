@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import React, { useEffect, useState } from 'react';
-import { Mail, MapPin, Phone, User as UserIcon, ShieldCheck, Key, CalendarDays } from 'lucide-react';
+import { Mail, MapPin, Phone, User as UserIcon, ShieldCheck, Key, CalendarDays, Camera, Loader2 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SectionContainer } from '@/components/common';
 import { ProfileInfoForm } from '../components/ProfileInfoForm';
@@ -13,6 +14,7 @@ export const MyProfile: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'security'>('info');
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   const fetchProfile = async () => {
     setLoading(true); setError(null);
@@ -24,6 +26,26 @@ export const MyProfile: React.FC = () => {
   };
 
   useEffect(() => { fetchProfile(); }, []);
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setUploadingAvatar(true);
+      try {
+        const avatarUrl = await profileApi.uploadAvatar(file);
+        if (profile) {
+          const updatedData = { ...profile, avatarUrl };
+          await profileApi.updateMyProfile(updatedData);
+          setProfile(updatedData);
+          toast.success('Cập nhật ảnh đại diện thành công');
+        }
+      } catch (error) {
+        toast.error('Lỗi khi cập nhật ảnh đại diện');
+      } finally {
+        setUploadingAvatar(false);
+      }
+    }
+  };
 
   if (loading) {
     return (
@@ -104,8 +126,31 @@ export const MyProfile: React.FC = () => {
             {/* ── Profile Card Sidebar ── */}
             <div className="lg:col-span-4 lg:sticky top-24">
               <div className="rounded-2xl border border-slate-200 shadow-sm bg-white p-6 flex flex-col items-center shrink-0">
-                <div className="w-24 h-24 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-4xl shadow-inner mb-4">
-                  {profile.fullName ? profile.fullName.charAt(0).toUpperCase() : 'U'}
+                <div className="relative mb-4 group">
+                  <div className="w-24 h-24 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-4xl shadow-inner overflow-hidden">
+                    {profile.avatarUrl ? (
+                      <img src={profile.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      profile.fullName ? profile.fullName.charAt(0).toUpperCase() : 'U'
+                    )}
+                  </div>
+                  <label className="absolute inset-0 bg-black/40 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl cursor-pointer">
+                    {uploadingAvatar ? (
+                      <Loader2 size={24} className="animate-spin" />
+                    ) : (
+                      <>
+                        <Camera size={20} className="mb-1" />
+                        <span className="text-[10px] font-medium">Thay đổi</span>
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={handleAvatarChange} 
+                          disabled={uploadingAvatar}
+                        />
+                      </>
+                    )}
+                  </label>
                 </div>
                 <h2 className="text-xl font-bold text-slate-800 text-center">{profile.fullName}</h2>
                 <div className="flex items-center gap-1.5 mt-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-xs font-semibold border border-blue-100">

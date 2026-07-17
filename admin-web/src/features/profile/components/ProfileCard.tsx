@@ -1,15 +1,53 @@
 // features/profile/components/ProfileCard.tsx
 import React from 'react';
-import { Mail, Phone, MapPin, CalendarDays, ShieldCheck } from 'lucide-react';
+import { Mail, Phone, MapPin, CalendarDays, ShieldCheck, Camera, Loader2 } from 'lucide-react';
 import { UserProfile } from '../types/profile';
 
-export default function ProfileCard({ user }: { user: UserProfile }) {
+interface ProfileCardProps {
+  user: UserProfile;
+  onAvatarChange?: (file: File) => void;
+  uploadingAvatar?: boolean;
+}
+
+export default function ProfileCard({ user, onAvatarChange, uploadingAvatar }: ProfileCardProps) {
   const initial = user.fullName ? user.fullName.charAt(0).toUpperCase() : 'U';
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      onAvatarChange?.(e.target.files[0]);
+    }
+  };
 
   return (
     <div className="w-full lg:w-80 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col items-center shrink-0">
-      <div className="w-24 h-24 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-4xl shadow-inner mb-4">
-        {initial}
+      <div className="relative mb-4 group">
+        <div className="w-24 h-24 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-4xl shadow-inner overflow-hidden">
+          {user.avatarUrl ? (
+            <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+          ) : (
+            initial
+          )}
+        </div>
+        
+        {onAvatarChange && (
+          <label className="absolute inset-0 bg-black/40 text-white flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl cursor-pointer">
+            {uploadingAvatar ? (
+              <Loader2 size={24} className="animate-spin" />
+            ) : (
+              <>
+                <Camera size={20} className="mb-1" />
+                <span className="text-[10px] font-medium">Thay đổi</span>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={handleFileChange} 
+                  disabled={uploadingAvatar}
+                />
+              </>
+            )}
+          </label>
+        )}
       </div>
       <h2 className="text-xl font-bold text-slate-800 text-center">{user.fullName}</h2>
       <div className="flex items-center gap-1.5 mt-2 px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-xs font-semibold border border-blue-100">

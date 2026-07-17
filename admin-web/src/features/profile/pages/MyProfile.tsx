@@ -28,6 +28,7 @@ export default function MyProfile() {
   const [userData, setUserData] = useState<UserProfile>(defaultUserData);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const toastShown = useRef(false); // ngăn toast hiển thị 2 lần
 
   const [passwordData, setPasswordData] = useState({
@@ -75,6 +76,22 @@ export default function MyProfile() {
     }
   };
 
+  const handleAvatarChange = async (file: File) => {
+    setUploadingAvatar(true);
+    try {
+      // 1. Upload image
+      const avatarUrl = await profileApi.uploadAvatar(file);
+      // 2. Update profile
+      const updated = await profileApi.updateProfile({ ...userData, avatarUrl });
+      setUserData(updated);
+      toast.success('Cập nhật ảnh đại diện thành công');
+    } catch (error) {
+      toast.error('Lỗi khi cập nhật ảnh đại diện');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
   const handleUpdatePassword = async () => {
     if (passwordData.new !== passwordData.confirm) {
       toast.error('Mật khẩu xác nhận không khớp');
@@ -112,7 +129,11 @@ export default function MyProfile() {
       />
 
       <div className="flex flex-col lg:flex-row gap-6 flex-1 overflow-hidden">
-        <ProfileCard user={userData} />
+        <ProfileCard 
+          user={userData} 
+          onAvatarChange={handleAvatarChange}
+          uploadingAvatar={uploadingAvatar}
+        />
 
         <div className="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
           <div className="flex border-b border-slate-100 px-6 pt-2 shrink-0">
