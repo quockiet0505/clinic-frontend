@@ -1,0 +1,18 @@
+appId: com.clinic.management
+---
+# Luồng Đặt lịch khám (TC 2.1)
+- launchApp:
+    clearState: false # Tiếp tục phiên đăng nhập trước đó
+
+- tapOn: "Đặt lịch khám"
+- tapOn: "Khám Nội tổng quát"
+- tapOn: "Bác sĩ Trần Văn B"
+
+# Cuộn để tìm ngày và giờ
+- swipe:
+    direction: UP
+- tapOn: "15:00"
+- tapOn: "Xác nhận đặt lịch"
+
+- assertVisible: "Đặt lịch thành công"
+- assertVisible: "Mã phiếu khám:"

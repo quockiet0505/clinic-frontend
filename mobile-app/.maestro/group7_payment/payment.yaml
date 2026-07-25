@@ -1,0 +1,17 @@
+appId: com.clinic.management
+---
+# Luồng Thanh Toán (TC 7.1)
+- launchApp:
+    clearState: false
+
+- tapOn: "Hóa đơn" # Tab hoặc menu hóa đơn
+- tapOn: "Chưa thanh toán"
+
+- tapOn: "Thanh toán ngay"
+- tapOn: "VNPay"
+- tapOn: "Xác nhận thanh toán"
+
+# Chờ App mở WebView thanh toán
+- extendedWaitUntil:
+    visible: "Cổng thanh toán VNPay"
+    timeout: 10000
