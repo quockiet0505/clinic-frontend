@@ -49,6 +49,6 @@ export const laboratoryApi = {
   },
 
   submitResult: async (data: unknown): Promise<void> => {
-    await axiosInstance.post('/service-results', data);
+    await axiosInstance.post('/service-results', data, { toastSuccess: 'Cập nhật kết quả thành công' });
   },
 };

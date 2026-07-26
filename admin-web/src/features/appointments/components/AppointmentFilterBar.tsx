@@ -75,7 +75,7 @@ export const AppointmentFilterBar: React.FC<AppointmentFilterBarProps> = ({
     <FilterBar
       searchValue={search}
       onSearchChange={onSearchChange}
-      searchPlaceholder="Tìm bệnh nhân..."
+      searchPlaceholder="Tìm bệnh nhân (tên hoặc SĐT)..."
       tabs={{
         options: tabs,
         value: activeTab,

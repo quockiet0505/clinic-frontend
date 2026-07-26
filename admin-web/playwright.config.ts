@@ -5,7 +5,7 @@ export default defineConfig({
   fullyParallel: true,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:5174', // Port chuẩn của Admin Web
+    baseURL: 'http://localhost:5173', // Port chuẩn của Admin Web
     trace: 'on-first-retry',
   },
   projects: [

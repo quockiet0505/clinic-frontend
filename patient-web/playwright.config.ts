@@ -5,7 +5,7 @@ export default defineConfig({
   fullyParallel: true,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:5173', // Port chuẩn của Patient Web
+    baseURL: 'http://localhost:5174', // Port chuẩn của Patient Web
     trace: 'on-first-retry',
   },
   projects: [
@@ -14,4 +14,10 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:5174',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120 * 1000,
+  },
 });

@@ -5,6 +5,10 @@ import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from "vite"
 
 export default defineConfig({
+  server: {
+    port: 5174,
+    strictPort: true,
+  },
   plugins: [
     react(),
     tailwindcss(),
@@ -14,6 +18,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  // @ts-ignore - vitest options
   test: {
     globals: true,
     environment: "jsdom",

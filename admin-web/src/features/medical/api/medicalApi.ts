@@ -80,7 +80,15 @@ export const medicalApi = {
       dosage: string;
     }[];
   }): Promise<void> => {
-    await axiosInstance.post('/prescriptions', data, {
+    const mappedData = {
+      ...data,
+      items: data.items.map((i: any) => ({
+        ...i,
+        frequency: '1 lần/ngày',
+        durationDays: 7
+      }))
+    };
+    await axiosInstance.post('/prescriptions', mappedData, {
       toastSuccess: 'Đã lưu đơn thuốc thành công',
     });
   },
