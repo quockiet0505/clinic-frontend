@@ -7,6 +7,7 @@ import { SectionContainer } from '@/components/common';
 import { ProfileInfoForm } from '../components/ProfileInfoForm';
 import { PasswordChangeForm } from '../components/PasswordChangeForm';
 import { profileApi } from '../api/profileApi';
+import { getImageUrl } from '@/utils/url';
 import type { PatientProfile } from '../types/profile';
 
 export const MyProfile: React.FC = () => {
@@ -37,7 +38,6 @@ export const MyProfile: React.FC = () => {
           const updatedData = { ...profile, avatarUrl };
           await profileApi.updateMyProfile(updatedData);
           setProfile(updatedData);
-          toast.success('Cập nhật ảnh đại diện thành công');
         }
       } catch (error) {
         toast.error('Lỗi khi cập nhật ảnh đại diện');
@@ -129,7 +129,7 @@ export const MyProfile: React.FC = () => {
                 <div className="relative mb-4 group">
                   <div className="w-24 h-24 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-4xl shadow-inner overflow-hidden">
                     {profile.avatarUrl ? (
-                      <img src={profile.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                      <img src={getImageUrl(profile.avatarUrl)} alt="Avatar" className="w-full h-full object-cover" />
                     ) : (
                       profile.fullName ? profile.fullName.charAt(0).toUpperCase() : 'U'
                     )}

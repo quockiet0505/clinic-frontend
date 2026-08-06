@@ -36,4 +36,55 @@ class Validators {
     }
     return null;
   }
+
+  static String? validateHeight(String? value) {
+    if (value == null || value.isEmpty) return null;
+    final height = double.tryParse(value);
+    if (height == null || height <= 0 || height > 300) {
+      return 'Chiều cao không hợp lệ';
+    }
+    return null;
+  }
+
+  static String? validateWeight(String? value) {
+    if (value == null || value.isEmpty) return null;
+    final weight = double.tryParse(value);
+    if (weight == null || weight <= 0 || weight > 500) {
+      return 'Cân nặng không hợp lệ';
+    }
+    return null;
+  }
+
+  static String? validatePulse(String? value) {
+    if (value == null || value.isEmpty) return null;
+    final pulse = int.tryParse(value);
+    if (pulse == null || pulse <= 0) {
+      return 'Nhịp tim không hợp lệ';
+    }
+    return null;
+  }
+
+  static String? validateBloodPressure(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    final bpRegex = RegExp(r'^\d{2,3}\/\d{2,3}$');
+    if (!bpRegex.hasMatch(value.trim())) {
+      return 'Huyết áp không hợp lệ (VD: 120/80)';
+    }
+    return null;
+  }
+
+  static String? validateDate(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Vui lòng nhập ngày';
+    }
+    try {
+      final date = DateTime.parse(value);
+      if (date.isAfter(DateTime.now())) {
+        return 'Ngày không được ở tương lai';
+      }
+    } catch (e) {
+      return 'Định dạng ngày không hợp lệ (YYYY-MM-DD)';
+    }
+    return null;
+  }
 }

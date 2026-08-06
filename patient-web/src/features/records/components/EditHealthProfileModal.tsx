@@ -50,8 +50,32 @@ export const EditHealthProfileModal: React.FC<EditHealthProfileModalProps> = ({
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
   const handleSubmit = async () => {
     if (!profile) return;
+    
+    // Validation
+    const errs: Record<string, string> = {};
+    if (formData.height && (isNaN(Number(formData.height)) || Number(formData.height) <= 0 || Number(formData.height) > 300)) {
+      errs.height = 'Chiều cao không hợp lệ';
+    }
+    if (formData.weight && (isNaN(Number(formData.weight)) || Number(formData.weight) <= 0 || Number(formData.weight) > 500)) {
+      errs.weight = 'Cân nặng không hợp lệ';
+    }
+    if (formData.pulse && (isNaN(Number(formData.pulse)) || Number(formData.pulse) <= 0)) {
+      errs.pulse = 'Nhịp tim không hợp lệ';
+    }
+    if (formData.bloodPressure && !/^\d{2,3}\/\d{2,3}$/.test(formData.bloodPressure.trim())) {
+      errs.bloodPressure = 'Huyết áp không hợp lệ (ví dụ: 120/80)';
+    }
+
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+    setErrors({});
+
     setIsSubmitting(true);
     try {
       await profileApi.updateMyProfile({
@@ -86,6 +110,7 @@ export const EditHealthProfileModal: React.FC<EditHealthProfileModalProps> = ({
       icon={<Activity className="w-6 h-6 text-primary-500" />}
       fields={HEALTH_FIELDS}
       values={formData}
+      errors={errors}
       onChange={handleChange}
       onSubmit={handleSubmit}
       isSubmitting={isSubmitting}

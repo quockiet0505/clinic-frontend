@@ -84,7 +84,6 @@ export default function MyProfile() {
       // 2. Update profile
       const updated = await profileApi.updateProfile({ ...userData, avatarUrl });
       setUserData(updated);
-      toast.success('Cập nhật ảnh đại diện thành công');
     } catch (error) {
       toast.error('Lỗi khi cập nhật ảnh đại diện');
     } finally {
@@ -93,6 +92,10 @@ export default function MyProfile() {
   };
 
   const handleUpdatePassword = async () => {
+    if (!passwordData.current) {
+      toast.error('Vui lòng nhập mật khẩu hiện tại');
+      return;
+    }
     if (passwordData.new !== passwordData.confirm) {
       toast.error('Mật khẩu xác nhận không khớp');
       return;

@@ -26,7 +26,7 @@ export interface FormModalAction {
   label: string;
   onClick?: () => void;
   type?: 'submit' | 'cancel' | 'custom';
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: 'primary' | 'secondary' | 'danger' | 'cancel';
   icon?: React.ReactNode;
   disabled?: boolean;
 }
@@ -53,6 +53,7 @@ interface FormModalProps {
   footerActions?: FormModalAction[];
   /** Custom slot rendered below the field grid, inside the scrollable body */
   renderExtra?: React.ReactNode;
+  errors?: Record<string, string>;
 }
 
 const inputBase =
@@ -68,6 +69,7 @@ const maxWidthClass: Record<string, string> = {
 const variantClass: Record<string, string> = {
   primary: 'bg-primary-500 hover:bg-primary-600 text-white shadow-sm shadow-primary-200',
   secondary: 'bg-slate-100 hover:bg-slate-200 text-slate-600',
+  cancel: 'bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-600 hover:border-red-200',
   danger: 'bg-red-500 hover:bg-red-600 text-white shadow-sm shadow-red-200',
 };
 
@@ -88,6 +90,7 @@ export const FormModal: React.FC<FormModalProps> = ({
   scrollable = true,
   footerActions,
   renderExtra,
+  errors = {},
 }) => {
   const gridClass =
     columns === 2 ? 'grid grid-cols-1 sm:grid-cols-2 gap-4' : 'flex flex-col gap-4';
@@ -112,8 +115,9 @@ export const FormModal: React.FC<FormModalProps> = ({
             onChange={(e) => onChange(field.name, e.target.value)}
             placeholder={field.placeholder}
             rows={3}
-            className={`${inputBase} resize-none`}
+            className={`${inputBase} resize-none ${errors[field.name] ? 'border-red-500 ring-red-500' : ''}`}
           />
+          {errors[field.name] && <p className="text-red-500 text-xs mt-1">{errors[field.name]}</p>}
         </div>
       );
     }
@@ -125,7 +129,7 @@ export const FormModal: React.FC<FormModalProps> = ({
           <select
             value={value}
             onChange={(e) => onChange(field.name, e.target.value)}
-            className={inputBase}
+            className={`${inputBase} ${errors[field.name] ? 'border-red-500 ring-red-500' : ''}`}
           >
             <option value="">{field.placeholder || 'Chọn...'}</option>
             {field.options?.map((opt) => (
@@ -134,6 +138,7 @@ export const FormModal: React.FC<FormModalProps> = ({
               </option>
             ))}
           </select>
+          {errors[field.name] && <p className="text-red-500 text-xs mt-1">{errors[field.name]}</p>}
         </div>
       );
     }
@@ -146,14 +151,15 @@ export const FormModal: React.FC<FormModalProps> = ({
           value={value}
           onChange={(e) => onChange(field.name, e.target.value)}
           placeholder={field.placeholder}
-          className="h-12 rounded-xl border-slate-200 bg-slate-50 focus-visible:ring-primary-100 focus-visible:border-primary-500 text-sm font-medium shadow-none"
+          className={`h-12 rounded-xl border-slate-200 bg-slate-50 focus-visible:ring-primary-100 focus-visible:border-primary-500 text-sm font-medium shadow-none ${errors[field.name] ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
         />
+        {errors[field.name] && <p className="text-red-500 text-xs mt-1">{errors[field.name]}</p>}
       </div>
     );
   };
 
   const defaultActions: FormModalAction[] = [
-    { label: 'Hủy', type: 'cancel', variant: 'secondary' },
+    { label: 'Hủy', type: 'cancel', variant: 'cancel' },
     { label: submitLabel, type: 'submit', variant: 'primary', icon: <Save className="w-4 h-4" /> },
   ];
 

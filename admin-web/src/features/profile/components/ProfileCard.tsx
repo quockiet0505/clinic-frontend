@@ -2,6 +2,7 @@
 import React from 'react';
 import { Mail, Phone, MapPin, CalendarDays, ShieldCheck, Camera, Loader2 } from 'lucide-react';
 import { UserProfile } from '../types/profile';
+import { getImageUrl } from '@/utils/image';
 
 interface ProfileCardProps {
   user: UserProfile;
@@ -23,7 +24,7 @@ export default function ProfileCard({ user, onAvatarChange, uploadingAvatar }: P
       <div className="relative mb-4 group">
         <div className="w-24 h-24 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-4xl shadow-inner overflow-hidden">
           {user.avatarUrl ? (
-            <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+            <img src={getImageUrl(user.avatarUrl)} alt="Avatar" className="w-full h-full object-cover" />
           ) : (
             initial
           )}

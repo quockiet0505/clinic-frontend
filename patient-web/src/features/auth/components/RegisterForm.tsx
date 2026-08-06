@@ -30,6 +30,27 @@ export const RegisterForm: React.FC = () => {
       setError('Vui lòng nhập đầy đủ tất cả thông tin cá nhân!');
       return;
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Email không hợp lệ!');
+      return;
+    }
+
+    const phoneRegex = /^(0|84)\d{9}$/;
+    if (!phoneRegex.test(phone)) {
+      setError('Số điện thoại không hợp lệ (Bắt đầu bằng 0 hoặc 84, gồm 10 số)!');
+      return;
+    }
+
+    const dob = new Date(dateOfBirth);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (dob > today) {
+      setError('Ngày sinh không được ở tương lai!');
+      return;
+    }
+
     setStep(2);
   };
 
@@ -39,6 +60,11 @@ export const RegisterForm: React.FC = () => {
     
     if (!password || !confirmPassword) {
       setError('Vui lòng nhập đầy đủ mật khẩu!');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Mật khẩu phải có ít nhất 6 ký tự!');
       return;
     }
 

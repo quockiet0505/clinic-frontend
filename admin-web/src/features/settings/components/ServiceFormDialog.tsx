@@ -101,6 +101,19 @@ export default function ServiceFormDialog({ service, onClose, onSave }: Props) {
       submitLabel="Lưu dịch vụ"
       compact={true}
       columns={2}
+      validate={(data) => {
+        const errs: Record<string, string> = {};
+        if (data.originalPrice !== undefined && Number(data.originalPrice) < 0) {
+          errs.originalPrice = 'Giá gốc không được nhỏ hơn 0';
+        }
+        if (data.discountAmount !== undefined && Number(data.discountAmount) < 0) {
+          errs.discountAmount = 'Giá ưu đãi không được nhỏ hơn 0';
+        }
+        if (data.estimatedDuration !== undefined && Number(data.estimatedDuration) <= 0) {
+          errs.estimatedDuration = 'Thời gian ước tính phải lớn hơn 0';
+        }
+        return errs;
+      }}
       renderBeforeFields={() => (
         <div className="col-span-2 space-y-2">
           <label className="block text-sm font-semibold text-slate-700">Ảnh minh họa dịch vụ</label>

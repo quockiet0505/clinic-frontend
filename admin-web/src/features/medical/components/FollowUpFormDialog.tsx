@@ -3,6 +3,7 @@ import { CalendarClock } from 'lucide-react';
 import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
 import { Button } from '@/components/ui/button';
 import { DialogFooter } from '@/components/ui/dialog';
+import { toast } from 'sonner';
 
 const fields: FieldConfig[] = [
   {
@@ -57,6 +58,15 @@ export default function FollowUpFormDialog({
   if (!open) return null;
 
   const submitFromForm = (data: Record<string, string>) => {
+    if (data.scheduledDate) {
+      const scheduledDate = new Date(data.scheduledDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (scheduledDate < today) {
+        toast.error('Ngày tái khám không được trong quá khứ');
+        return;
+      }
+    }
     onSubmit({
       scheduledDate: data.scheduledDate,
       scheduledTime: data.scheduledTime || '09:00',

@@ -108,14 +108,14 @@ class _LoginScreenState extends State<LoginScreen> {
               CustomTextField(
                   hintText: 'Địa chỉ Email',
                   prefixIcon: Icons.email_outlined,
-                  validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập email' : null,
+                  validator: Validators.validateEmail,
                   controller: _emailController),
               const SizedBox(height: 16),
               CustomTextField(
                   hintText: 'Mật khẩu',
                   prefixIcon: Icons.lock_outline,
                   isPassword: true,
-                  validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập mật khẩu' : null,
+                  validator: Validators.validatePassword,
                   controller: _passwordController),
               const SizedBox(height: 12),
               Align(

@@ -54,6 +54,17 @@ export default function LeaveApplicationDialog({ isOpen, onClose, onSubmit }: Pr
       submitLabel="Gửi Đơn"
       compact={true}
       columns={2}
+      validate={(data) => {
+        const errs: Record<string, string> = {};
+        if (data.fromDate && data.toDate) {
+          const from = new Date(data.fromDate);
+          const to = new Date(data.toDate);
+          if (to < from) {
+            errs.toDate = 'Ngày kết thúc không được nhỏ hơn ngày bắt đầu';
+          }
+        }
+        return errs;
+      }}
     />
   );
 }

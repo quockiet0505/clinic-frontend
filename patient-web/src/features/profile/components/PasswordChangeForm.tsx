@@ -20,6 +20,18 @@ export const PasswordChangeForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    if (!passwords.oldPass) {
+      toast.error('Vui lòng nhập mật khẩu hiện tại!');
+      setIsLoading(false);
+      return;
+    }
+
+    if (passwords.newPass.length < 6) {
+      toast.error('Mật khẩu mới phải có ít nhất 6 ký tự!');
+      setIsLoading(false);
+      return;
+    }
+
     if (passwords.newPass !== passwords.confirmPass) {
       toast.error('Mật khẩu xác nhận không khớp!');
       setIsLoading(false);

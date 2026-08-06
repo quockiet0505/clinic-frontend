@@ -167,6 +167,7 @@ class _EditMedicalProfileScreenState extends State<EditMedicalProfileScreen> {
                       icon: Icons.height_rounded,
                       hint: '170',
                       keyboardType: TextInputType.number,
+                      validator: Validators.validateHeight,
                     ),
                   ),
                   Container(width: 1, height: 60, color: const Color(0xFFF1F5F9)),
@@ -177,6 +178,7 @@ class _EditMedicalProfileScreenState extends State<EditMedicalProfileScreen> {
                       icon: Icons.monitor_weight_outlined,
                       hint: '65',
                       keyboardType: TextInputType.number,
+                      validator: Validators.validateWeight,
                     ),
                   ),
                 ],
@@ -190,6 +192,7 @@ class _EditMedicalProfileScreenState extends State<EditMedicalProfileScreen> {
                       controller: _bloodPressureController,
                       icon: Icons.monitor_heart_outlined,
                       hint: '120/80',
+                      validator: Validators.validateBloodPressure,
                     ),
                   ),
                   Container(width: 1, height: 60, color: const Color(0xFFF1F5F9)),
@@ -200,6 +203,7 @@ class _EditMedicalProfileScreenState extends State<EditMedicalProfileScreen> {
                       icon: Icons.favorite_border_rounded,
                       hint: '80',
                       keyboardType: TextInputType.number,
+                      validator: Validators.validatePulse,
                     ),
                   ),
                 ],
@@ -328,6 +332,7 @@ class _EditMedicalProfileScreenState extends State<EditMedicalProfileScreen> {
     required IconData icon,
     required String hint,
     TextInputType keyboardType = TextInputType.text,
+    String? Function(String?)? validator,
     int maxLines = 1,
   }) {
     return Padding(
@@ -340,6 +345,7 @@ class _EditMedicalProfileScreenState extends State<EditMedicalProfileScreen> {
           TextFormField(
             controller: controller,
             keyboardType: keyboardType,
+            validator: validator,
             maxLines: maxLines,
             style: const TextStyle(fontSize: 15, color: Color(0xFF0F172A), fontWeight: FontWeight.w500),
             decoration: InputDecoration(
@@ -360,6 +366,14 @@ class _EditMedicalProfileScreenState extends State<EditMedicalProfileScreen> {
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(color: Color(0xFF0EA5E9), width: 1.5),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFFDC2626)),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Color(0xFFDC2626), width: 1.5),
               ),
               contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             ),

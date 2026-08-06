@@ -39,6 +39,36 @@ export default function PatientFormDialog({ isOpen, onClose, onSubmit, initialDa
       submitLabel="Lưu Bệnh Nhân"
       compact={true}
       columns={2}
+      validate={(data) => {
+        const errs: Record<string, string> = {};
+        
+        if (data.phone) {
+          const phoneRegex = /^(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+          if (!phoneRegex.test(String(data.phone))) {
+            errs.phone = 'Số điện thoại không hợp lệ (10 số, bắt đầu bằng 0 hoặc 84)';
+          }
+        }
+        
+        if (data.dateOfBirth) {
+          const dob = new Date(data.dateOfBirth);
+          if (dob > new Date()) {
+            errs.dateOfBirth = 'Ngày sinh không được lớn hơn ngày hiện tại';
+          }
+        }
+
+        // Height, Weight, Pulse format validation (must be numbers > 0 if provided)
+        if (data.height && (isNaN(Number(data.height)) || Number(data.height) <= 0 || Number(data.height) > 300)) {
+          errs.height = 'Chiều cao không hợp lệ';
+        }
+        if (data.weight && (isNaN(Number(data.weight)) || Number(data.weight) <= 0 || Number(data.weight) > 500)) {
+          errs.weight = 'Cân nặng không hợp lệ';
+        }
+        if (data.pulse && (isNaN(Number(data.pulse)) || Number(data.pulse) <= 0)) {
+          errs.pulse = 'Nhịp tim không hợp lệ';
+        }
+
+        return errs;
+      }}
     />
   );
 }

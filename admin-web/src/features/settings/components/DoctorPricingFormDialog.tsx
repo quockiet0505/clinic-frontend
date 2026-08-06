@@ -79,8 +79,17 @@ export default function DoctorPricingFormDialog({ doctor, onClose, onSave }: Pro
       compact={true}
       columns={2}
       validate={(data) => {
-        if (isNew && !data.staffId) return false;
-        return data.originalPrice !== '' && data.originalPrice != null;
+        const errs: Record<string, string> = {};
+        if (isNew && !data.staffId) {
+          errs.staffId = 'Vui lòng chọn bác sĩ';
+        }
+        if (data.originalPrice !== undefined && Number(data.originalPrice) < 0) {
+          errs.originalPrice = 'Giá gốc không được nhỏ hơn 0';
+        }
+        if (data.discountAmount !== undefined && Number(data.discountAmount) < 0) {
+          errs.discountAmount = 'Giá ưu đãi không được nhỏ hơn 0';
+        }
+        return errs;
       }}
       renderBeforeFields={!isNew ? () => (
         <div className="col-span-2 rounded-xl bg-slate-50 border border-slate-200 px-4 py-3">

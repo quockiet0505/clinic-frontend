@@ -67,6 +67,13 @@ function buildInitialData(data?: Staff | null): Record<string, unknown> {
 export default function StaffFormDialog({ isOpen, onClose, onSubmit, initialData }: Props) {
   const isEdit = !!initialData?.staffId;
   const [expertises, setExpertises] = useState<Expertise[]>([]);
+  const [currentStaffType, setCurrentStaffType] = useState<string>('RECEPTIONIST');
+
+  useEffect(() => {
+    if (isOpen) {
+      setCurrentStaffType(initialData?.staffType || 'RECEPTIONIST');
+    }
+  }, [isOpen, initialData]);
 
   useEffect(() => {
     settingsApi
@@ -94,27 +101,7 @@ export default function StaffFormDialog({ isOpen, onClose, onSubmit, initialData
       { name: 'phone', label: 'Số điện thoại', type: 'text', placeholder: '0901234567' },
       { name: 'gender', label: 'Giới tính', type: 'select', options: GENDER_OPTIONS },
       { name: 'dateOfBirth', label: 'Ngày sinh', type: 'date' },
-      { name: 'expertiseId', label: 'Chuyên khoa', type: 'select', options: expertiseOptions },
       { name: 'address', label: 'Địa chỉ', type: 'text', colSpan: 2, placeholder: 'Địa chỉ liên hệ' },
-      { name: 'experience', label: 'Kinh nghiệm', type: 'text', colSpan: 2, placeholder: 'Ví dụ: 10 năm kinh nghiệm' },
-      {
-        name: 'specialtyTreatment',
-        label: 'Chuyên trị / Phạm vi khám',
-        type: 'textarea',
-        colSpan: 2,
-        rows: 3,
-        placeholder: 'Mô tả lĩnh vực điều trị (bác sĩ)',
-      },
-      {
-        name: 'isFeatured',
-        label: 'Nổi bật',
-        type: 'select',
-        options: [
-          { value: 'false', label: 'Không' },
-          { value: 'true', label: 'Có' },
-        ],
-      },
-      { name: 'featuredPriority', label: 'Thứ tự ưu tiên', type: 'number', placeholder: '0' },
     ];
 
     if (!isEdit) {
@@ -127,12 +114,37 @@ export default function StaffFormDialog({ isOpen, onClose, onSubmit, initialData
       });
     }
 
+    if (currentStaffType === 'DOCTOR') {
+      list.push(
+        { name: 'expertiseId', label: 'Chuyên khoa', type: 'select', required: true, options: expertiseOptions },
+        { name: 'experience', label: 'Kinh nghiệm', type: 'text', colSpan: 2, placeholder: 'Ví dụ: 10 năm kinh nghiệm' },
+        {
+          name: 'specialtyTreatment',
+          label: 'Chuyên trị / Phạm vi khám',
+          type: 'textarea',
+          colSpan: 2,
+          rows: 3,
+          placeholder: 'Mô tả lĩnh vực điều trị (bác sĩ)',
+        },
+        {
+          name: 'isFeatured',
+          label: 'Nổi bật',
+          type: 'select',
+          options: [
+            { value: 'false', label: 'Không' },
+            { value: 'true', label: 'Có' },
+          ],
+        },
+        { name: 'featuredPriority', label: 'Thứ tự ưu tiên', type: 'number', placeholder: '0' }
+      );
+    }
+
     return list;
-  }, [isEdit, expertiseOptions]);
+  }, [isEdit, expertiseOptions, currentStaffType]);
 
   const formInitialData = useMemo(() => buildInitialData(initialData), [initialData]);
 
-  const handleSubmit = (data: Record<string, unknown>, editMode: boolean) => {
+  const handleSubmit = (data: Record<string, unknown>) => {
     onSubmit(
       {
         fullName: String(data.fullName || '').trim(),
@@ -150,7 +162,7 @@ export default function StaffFormDialog({ isOpen, onClose, onSubmit, initialData
         isFeatured: data.isFeatured === 'true',
         featuredPriority: Number(data.featuredPriority) || 0,
       },
-      editMode,
+      isEdit,
     );
   };
 
@@ -169,9 +181,27 @@ export default function StaffFormDialog({ isOpen, onClose, onSubmit, initialData
       columns={2}
       wide
       validate={(data) => {
-        if (!String(data.fullName || '').trim()) return false;
-        if (!isEdit && (!data.email || !data.password)) return false;
-        return true;
+        const errs: Record<string, string> = {};
+        
+        if (data.email) {
+          const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+          if (!emailRegex.test(String(data.email))) {
+            errs.email = 'Email không hợp lệ (ví dụ: abc@gmail.com)';
+          }
+        }
+
+        if (data.phone) {
+          const phoneRegex = /^(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+          if (!phoneRegex.test(String(data.phone))) {
+            errs.phone = 'Số điện thoại không hợp lệ (10 số, bắt đầu bằng 0 hoặc 84)';
+          }
+        }
+        
+        if (!isEdit && data.password && String(data.password).length < 6) {
+          errs.password = 'Mật khẩu phải chứa ít nhất 6 ký tự';
+        }
+
+        return errs;
       }}
       renderBeforeFields={({ formData, onChange }) => (
         <AvatarPicker
@@ -180,6 +210,11 @@ export default function StaffFormDialog({ isOpen, onClose, onSubmit, initialData
           onImageUrlChange={(url) => onChange('imageUrl', url)}
         />
       )}
+      onValuesChange={(data) => {
+        if (data.staffType !== currentStaffType) {
+          setCurrentStaffType(data.staffType || 'RECEPTIONIST');
+        }
+      }}
     />
   );
 }

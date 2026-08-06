@@ -280,7 +280,7 @@ export const BookingForm: React.FC<BookingFormProps> = (props) => {
     }
     return services.map(s => ({
       value: String(s.serviceId),
-      label: `${s.serviceName} - ${s.price.toLocaleString('vi-VN')}đ`,
+      label: `${s.serviceName} - ${(s.discountAmount || s.originalPrice || s.price || 0).toLocaleString('vi-VN')}đ`,
       description: s.description,
       icon: BriefcaseMedical,
     }));

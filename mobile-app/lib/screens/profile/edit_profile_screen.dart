@@ -208,7 +208,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 controller: _nameController,
                 icon: Icons.person_outline_rounded,
                 hint: 'Nhập họ và tên đầy đủ',
-                validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập họ và tên' : null,
+                validator: (v) => Validators.validateRequired(v, 'họ và tên'),
               ),
               _buildDivider(),
               _buildTextField(
@@ -217,7 +217,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 icon: Icons.phone_outlined,
                 hint: 'Nhập số điện thoại',
                 keyboardType: TextInputType.phone,
-                validator: (v) => (v == null || v.isEmpty) ? 'Vui lòng nhập số điện thoại' : null,
+                validator: Validators.validatePhone,
               ),
               _buildDivider(),
               ClinicDropdownField<String>(
@@ -240,6 +240,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 controller: _addressController,
                 icon: Icons.location_on_outlined,
                 hint: 'Nhập địa chỉ của bạn',
+                validator: (v) => Validators.validateRequired(v, 'địa chỉ'),
               ),
             ]),
 

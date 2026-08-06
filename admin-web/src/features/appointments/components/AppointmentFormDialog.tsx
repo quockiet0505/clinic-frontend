@@ -117,12 +117,18 @@ export default function AppointmentFormDialog({ isOpen, onClose, onBook }: Props
   ];
 
   const validateForm = (data: Record<string, any>) => {
-    if (!data.patientId || !data.note) return false;
+    const errs: Record<string, string> = {};
+    if (!data.patientId) errs.patientId = 'Vui lòng chọn bệnh nhân';
+    if (!data.note) errs.note = 'Vui lòng nhập lý do khám';
+    
     const flow = data.bookingFlow || bookingFlow;
     if (flow === 'DOCTOR') {
-      return !!data.expertiseId && !!data.mainDoctorId;
+      if (!data.expertiseId) errs.expertiseId = 'Vui lòng chọn chuyên khoa';
+      if (!data.mainDoctorId) errs.mainDoctorId = 'Vui lòng chọn bác sĩ';
+    } else {
+      if (!data.serviceId) errs.serviceId = 'Vui lòng chọn dịch vụ';
     }
-    return !!data.serviceId;
+    return errs;
   };
 
   const handleSubmit = (data: any) => {

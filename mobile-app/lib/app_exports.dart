@@ -17,6 +17,7 @@ export 'package:clinic_management_system/models/user_model.dart';
 export 'package:clinic_management_system/models/doctor_model.dart';
 
 // Utils
+export 'package:clinic_management_system/utils/validators.dart';
 
 // Providers
 export 'package:clinic_management_system/providers/auth_provider.dart';

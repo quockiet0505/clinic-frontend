@@ -12,11 +12,11 @@ import { Field, FieldLabel, FieldError } from '@/components/ui/field';
 import { auth, googleProvider, signInWithPopup } from '@/config/firebase';
 
 const loginSchema = z.object({
-  email: z.string({ message: 'Please enter your email address' })
-    .min(1, 'Please enter your email address')
-    .email('Invalid email format'),
-  password: z.string({ message: 'Please enter your password' })
-    .min(6, 'Password must contain at least 6 characters'),
+  email: z.string({ message: 'Vui lòng nhập email' })
+    .min(1, 'Vui lòng nhập email')
+    .email('Email không đúng định dạng'),
+  password: z.string({ message: 'Vui lòng nhập mật khẩu' })
+    .min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
   rememberMe: z.boolean(),
 });
 

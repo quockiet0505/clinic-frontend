@@ -324,8 +324,8 @@ export const LabResults: React.FC = () => {
 
         {/* List */}
         <Card className="rounded-3xl border-0 shadow-sm bg-white overflow-hidden">
-          <div className="p-1 overflow-x-auto">
-            <table className="w-full text-sm text-left">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left table-fixed min-w-[910px]">
               <thead className="text-[13px] text-slate-500 uppercase bg-slate-50 rounded-t-2xl border-b border-slate-200">
                 <tr>
                   <th className="px-6 py-5 font-bold rounded-tl-2xl w-[120px]">Mã Phiếu</th>
@@ -370,9 +370,8 @@ const LabResultTableRow: React.FC<{ result: any }> = ({ result }) => {
   const enteredDate = new Date(result.enteredAt).toLocaleDateString('vi-VN');
 
   return (
-    <Dialog>
-      <tr className="border-b border-slate-200 last:border-0 even:bg-slate-100/60 hover:bg-primary-50/40 transition-colors group">
-        <td className="px-6 py-5 align-top">
+    <tr className="border-b border-slate-200 last:border-0 even:bg-slate-100/60 hover:bg-primary-50/40 transition-colors group">
+      <td className="px-6 py-5 align-top">
           <div className="font-bold text-slate-700">#{String(result.resultId).padStart(5, '0')}</div>
           <div className="text-slate-400 text-[13px] mt-0.5">{enteredDate}</div>
         </td>
@@ -409,28 +408,29 @@ const LabResultTableRow: React.FC<{ result: any }> = ({ result }) => {
           )}
         </td>
         <td className="px-6 py-5 text-right pr-6 align-top">
-          <div className="flex flex-col items-end gap-2">
-            <DialogTrigger asChild>
-              <button type="button" className="w-[140px] h-9 inline-flex items-center justify-center gap-1.5 text-[13px] font-bold text-white bg-primary-500 border border-transparent px-3 rounded-xl hover:bg-primary-600 active:scale-[0.98] transition-all cursor-pointer shadow-sm shadow-primary-500/20">
-                Xem chi tiết
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </DialogTrigger>
-            {result.recordId && (
-              <button
-                type="button"
-                className="w-[140px] h-9 inline-flex items-center justify-center gap-1.5 text-[13px] font-bold text-primary-700 bg-white border border-primary-200 px-3 rounded-xl hover:bg-primary-50 active:scale-[0.98] transition-all cursor-pointer"
-                onClick={() => window.location.href = `/records/detail/${result.recordId}`}
-              >
-                <FileText className="w-3.5 h-3.5" />
-                Mở bệnh án
-              </button>
-            )}
-          </div>
-          {/* Render Modal component via portal */}
-          <LabResultModalContent result={result} />
+          <Dialog>
+            <div className="flex flex-col items-end gap-2">
+              <DialogTrigger asChild>
+                <button type="button" className="w-[140px] h-9 inline-flex items-center justify-center gap-1.5 text-[13px] font-bold text-white bg-primary-500 border border-transparent px-3 rounded-xl hover:bg-primary-600 active:scale-[0.98] transition-all cursor-pointer shadow-sm shadow-primary-500/20">
+                  Xem chi tiết
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </DialogTrigger>
+              {result.recordId && (
+                <button
+                  type="button"
+                  className="w-[140px] h-9 inline-flex items-center justify-center gap-1.5 text-[13px] font-bold text-primary-700 bg-white border border-primary-200 px-3 rounded-xl hover:bg-primary-50 active:scale-[0.98] transition-all cursor-pointer"
+                  onClick={() => window.location.href = `/records/detail/${result.recordId}`}
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  Mở bệnh án
+                </button>
+              )}
+            </div>
+            {/* Render Modal component via portal */}
+            <LabResultModalContent result={result} />
+          </Dialog>
         </td>
       </tr>
-    </Dialog>
   );
 };

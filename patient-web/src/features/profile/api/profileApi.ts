@@ -56,6 +56,7 @@ export const profileApi = {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      skipToast: true,
     });
     return res.data.data;
   },

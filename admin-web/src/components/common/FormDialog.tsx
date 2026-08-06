@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogFooter, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Eye, EyeOff } from 'lucide-react';
 import CustomSelect from './CustomSelect';
 import SelectReact from 'react-select';
 
@@ -32,7 +33,7 @@ interface FormDialogProps {
   onSubmit: (data: Record<string, any>, isEdit: boolean) => void;
   submitLabel?: string;
   cancelLabel?: string;
-  validate?: (data: Record<string, any>) => boolean;
+  validate?: (data: Record<string, any>) => boolean | Record<string, string>;
   compact?: boolean;
   columns?: 1 | 2;
   wide?: boolean;
@@ -41,6 +42,7 @@ interface FormDialogProps {
     onChange: (name: string, value: any, setTouchedFlag?: boolean) => void;
   }) => React.ReactNode;
   renderFooter?: (formData: Record<string, any>) => React.ReactNode;
+  onValuesChange?: (data: Record<string, any>) => void;
 }
 
 export default function FormDialog({
@@ -60,9 +62,15 @@ export default function FormDialog({
   wide = false,
   renderBeforeFields,
   renderFooter,
+  onValuesChange,
 }: FormDialogProps) {
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>({});
+
+  const togglePasswordVisibility = (fieldName: string) => {
+    setShowPasswords(prev => ({ ...prev, [fieldName]: !prev[fieldName] }));
+  };
 
   useEffect(() => {
     if (open) {
@@ -86,7 +94,11 @@ export default function FormDialog({
   }, [open, initialData]);
 
   const handleChange = (name: string, value: any, setTouchedFlag: boolean = true) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => {
+      const next = { ...prev, [name]: value };
+      if (onValuesChange) onValuesChange(next);
+      return next;
+    });
     if (setTouchedFlag) {
       setTouched(prev => ({ ...prev, [name]: true }));
     } else {
@@ -103,7 +115,11 @@ export default function FormDialog({
     return false;
   };
 
-  const isValid = validate ? validate(formData) : !isRequiredMissing();
+  const validateResult = validate ? validate(formData) : true;
+  const customErrors = typeof validateResult === 'object' ? validateResult : {};
+  const isCustomValid = typeof validateResult === 'boolean' ? validateResult : Object.keys(customErrors).length === 0;
+
+  const isValid = isCustomValid && !isRequiredMissing();
 
   const handleSubmit = () => {
     if (!isValid) return;
@@ -126,6 +142,7 @@ export default function FormDialog({
 
     // ✅ TĂNG FONT CHO LABEL
     const labelClassName = compact ? 'text-sm font-semibold' : 'text-sm font-medium';
+    const customError = customErrors[field.name];
 
     switch (field.type) {
       case 'select':
@@ -204,13 +221,22 @@ export default function FormDialog({
         );
       case 'password':
         return (
-          <Input
-            type="password"
-            value={value}
-            onChange={(e) => handleChange(field.name, e.target.value)}
-            className={inputClassName}
-            placeholder={field.placeholder}
-          />
+          <div className="relative">
+            <Input
+              type={showPasswords[field.name] ? 'text' : 'password'}
+              value={value}
+              onChange={(e) => handleChange(field.name, e.target.value)}
+              className={`${inputClassName} pr-10`}
+              placeholder={field.placeholder}
+            />
+            <button
+              type="button"
+              onClick={() => togglePasswordVisibility(field.name)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              {showPasswords[field.name] ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         );
       case 'checkbox':
         return (
@@ -279,11 +305,15 @@ export default function FormDialog({
                     </label>
                   )}
                   {renderField(field)}
-                  {field.required && touched[field.name] && !formData[field.name] && (
+                  {field.required && touched[field.name] && !formData[field.name] ? (
                     <p className={`text-red-500 mt-1 ${compact ? 'text-xs' : 'text-xs'}`}>
                       Vui lòng nhập {field.label.toLowerCase()}
                     </p>
-                  )}
+                  ) : customErrors[field.name] && touched[field.name] ? (
+                    <p className={`text-red-500 mt-1 ${compact ? 'text-xs' : 'text-xs'}`}>
+                      {customErrors[field.name]}
+                    </p>
+                  ) : null}
                 </div>
               );
             })}

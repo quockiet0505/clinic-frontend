@@ -30,6 +30,7 @@ export const profileApi = {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      skipSuccessToast: true,
     });
     return res.data.data;
   },
