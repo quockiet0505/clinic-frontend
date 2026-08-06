@@ -42,54 +42,6 @@ class ClinicSegmentedTabs extends StatefulWidget {
 }
 
 class _ClinicSegmentedTabsState extends State<ClinicSegmentedTabs> {
-  final GlobalKey _trackKey = GlobalKey();
-  final Map<String, GlobalKey> _tabKeys = {};
-
-  double _indicatorLeft = 0;
-  double _indicatorWidth = 0;
-  bool _indicatorReady = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _syncTabKeys();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _updateIndicator());
-  }
-
-  @override
-  void didUpdateWidget(ClinicSegmentedTabs oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _syncTabKeys();
-    if (oldWidget.selectedValue != widget.selectedValue ||
-        oldWidget.tabs.length != widget.tabs.length) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _updateIndicator());
-    }
-  }
-
-  void _syncTabKeys() {
-    for (final tab in widget.tabs) {
-      _tabKeys.putIfAbsent(tab.value, () => GlobalKey());
-    }
-  }
-
-  void _updateIndicator() {
-    if (!mounted) return;
-    final trackContext = _trackKey.currentContext;
-    final tabContext = _tabKeys[widget.selectedValue]?.currentContext;
-    if (trackContext == null || tabContext == null) return;
-
-    final trackBox = trackContext.findRenderObject() as RenderBox?;
-    final tabBox = tabContext.findRenderObject() as RenderBox?;
-    if (trackBox == null || tabBox == null) return;
-
-    final tabOffset = tabBox.localToGlobal(Offset.zero, ancestor: trackBox);
-    setState(() {
-      _indicatorLeft = tabOffset.dx;
-      _indicatorWidth = tabBox.size.width;
-      _indicatorReady = true;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -107,9 +59,7 @@ class _ClinicSegmentedTabsState extends State<ClinicSegmentedTabs> {
                 widget.onChanged(tab.value);
               }
             },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutCubic,
+            child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               margin: const EdgeInsets.only(right: 8),
               decoration: BoxDecoration(

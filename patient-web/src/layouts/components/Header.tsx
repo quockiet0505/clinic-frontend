@@ -28,7 +28,6 @@ import type { Expertise, Service } from '@/features/appointments/types/appointme
 export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [language, setLanguage] = useState('vi');
   const [expertises, setExpertises] = useState<Expertise[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [logoUrl, setLogoUrl] = useState('/images/logo.png'); // fallback
@@ -88,11 +87,6 @@ export const Header: React.FC = () => {
   };
 
   const displayName = user?.fullName || user?.email?.split('@')[0] || 'Tài khoản';
-
-  const languageOptions = [
-    { label: 'Tiếng Việt', value: 'vi', icon: 'https://flagcdn.com/w20/vn.png' },
-    { label: 'English', value: 'en', icon: 'https://flagcdn.com/w20/gb.png' },
-  ];
 
   // Dữ liệu cho dropdown Bác sĩ (tĩnh)
   const doctorMenuItems = [
@@ -225,12 +219,15 @@ export const Header: React.FC = () => {
               </>
             )}
 
-            {/* Language Selector */}
-            <HoverDropdown
-              value={language}
-              items={languageOptions}
-              onChange={setLanguage}
-            />
+            {/* Language Icon (Vietnamese only) */}
+            <div className="flex items-center justify-center h-10 px-2">
+              <img
+                src="https://flagcdn.com/w20/vn.png"
+                alt="Tiếng Việt"
+                className="w-[28px] h-[20px] rounded-[2px] object-cover shadow-sm"
+                title="Tiếng Việt"
+              />
+            </div>
 
             <div className="w-px h-10 bg-slate-200" />
 
