@@ -22,7 +22,7 @@ export default function ActiveVisitsTable({ data, onConsult, onTriage, loading =
       key: 'queueNumber',
       label: 'STT',
       className: 'w-[12%]',
-      render: (visit) => <QueueNumberCell queueNumber={visit.queueNumber} />,
+      render: (visit) => <QueueNumberCell queueNumber={['DONE', 'CANCELLED'].includes(visit.status) ? null : visit.queueNumber} />,
     },
     {
       key: 'createdAt',

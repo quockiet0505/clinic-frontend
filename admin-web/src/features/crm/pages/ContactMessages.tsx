@@ -3,6 +3,7 @@ import { MessageSquare, Phone, Mail, CheckCircle } from 'lucide-react';
 import PageHeader from '@/components/common/PageHeader';
 import { StatsCard } from '@/components/common/StatsCard';
 import ContactMessageTable from '../components/ContactMessageTable';
+import ContactMessageFilterBar from '../components/ContactMessageFilterBar';
 import { ContactMessage } from '../types/crm';
 import { crmApi } from '../api/crmApi';
 
@@ -14,11 +15,13 @@ export default function ContactMessages() {
   const pageSize = 20;
 
   const [status, setStatus] = useState('ALL');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     const params = {
       status: status === 'ALL' ? undefined : status,
+      search: searchTerm || undefined,
       page: currentPage - 1,
       size: pageSize,
       sortBy: 'createdAt',
@@ -34,7 +37,7 @@ export default function ContactMessages() {
       setTotalElements(0);
     }
     setLoading(false);
-  }, [status, currentPage]);
+  }, [status, searchTerm, currentPage]);
 
   useEffect(() => {
     fetchData();
@@ -42,7 +45,7 @@ export default function ContactMessages() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [status]);
+  }, [status, searchTerm]);
 
   const handleUpdateStatus = async (message: ContactMessage, newStatus: string) => {
     try {
@@ -67,22 +70,12 @@ export default function ContactMessages() {
         </div>
       </div>
 
-      <div className="flex items-center gap-4 shrink-0 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-        <div className="flex items-center gap-2">
-          <label className="text-sm font-semibold text-slate-600">Trạng thái:</label>
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="h-9 px-3 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:border-blue-500"
-          >
-            <option value="ALL">Tất cả</option>
-            <option value="PENDING">Đang chờ</option>
-            <option value="PROCESSING">Đang xử lý</option>
-            <option value="RESOLVED">Đã giải quyết</option>
-            <option value="REJECTED">Từ chối</option>
-          </select>
-        </div>
-      </div>
+      <ContactMessageFilterBar
+        status={status}
+        setStatus={setStatus}
+        search={searchTerm}
+        onSearchChange={setSearchTerm}
+      />
 
       <div className="flex-1 min-h-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <ContactMessageTable

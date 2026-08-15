@@ -59,7 +59,7 @@ export default function AppointmentTable({
       key: 'queueNumber',
       label: 'STT',
       className: 'w-[10%]',
-      render: (item) => <QueueNumberCell queueNumber={item.queueNumber} />,
+      render: (item) => <QueueNumberCell queueNumber={['COMPLETED', 'CANCELLED', 'NO_SHOW'].includes(item.status) ? null : item.queueNumber} />,
     },
     {
       key: 'appointmentDate',
