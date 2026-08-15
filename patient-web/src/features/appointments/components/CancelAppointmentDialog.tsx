@@ -25,7 +25,7 @@ export const CancelAppointmentDialog: React.FC<CancelAppointmentDialogProps> = (
 
   const handleCancel = async () => {
     if (!reason.trim()) {
-      toast({ title: 'Error', description: 'Please provide a cancellation reason', variant: 'destructive' });
+      toast({ title: 'Lỗi', description: 'Vui lòng nhập lý do hủy lịch', variant: 'destructive' });
       return;
     }
     setLoading(true);
@@ -45,19 +45,19 @@ export const CancelAppointmentDialog: React.FC<CancelAppointmentDialogProps> = (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="rounded-2xl">
         <DialogHeader>
-          <DialogTitle>Cancel Appointment</DialogTitle>
-          <DialogDescription>Please tell us why you are cancelling this appointment.</DialogDescription>
+          <DialogTitle>Hủy lịch khám</DialogTitle>
+          <DialogDescription>Vui lòng cho chúng tôi biết lý do bạn muốn hủy lịch khám này.</DialogDescription>
         </DialogHeader>
         <Input
-          placeholder="Reason for cancellation"
+          placeholder="Lý do hủy lịch"
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           className="mt-2"
         />
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>Back</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={loading}>Quay lại</Button>
           <Button variant="destructive" onClick={handleCancel} disabled={loading}>
-            {loading ? 'Processing...' : 'Cancel Appointment'}
+            {loading ? 'Đang xử lý...' : 'Xác nhận hủy'}
           </Button>
         </DialogFooter>
       </DialogContent>
