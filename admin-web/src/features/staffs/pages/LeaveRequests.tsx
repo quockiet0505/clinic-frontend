@@ -25,7 +25,7 @@ export default function LeaveRequests() {
   const pageSize = 20;
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeView, setActiveView] = useState('TODAY');
+  const [activeView, setActiveView] = useState('PENDING');
   const [roleFilter, setRoleFilter] = useState('ALL');
   const [filterDate, setFilterDate] = useState(TODAY);
   const [selectedRequest, setSelectedRequest] = useState<LeaveRequest | null>(null);

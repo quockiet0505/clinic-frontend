@@ -37,7 +37,7 @@ export default function WeeklyCalendarGrid({ currentWeekStart, appointments, onA
       case 'CONFIRMED': return 'bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100/70';
       case 'PENDING': return 'bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100/70';
       case 'CHECKED_IN': return 'bg-sky-50 border-sky-200 text-sky-700 hover:bg-sky-100/70';
-      case 'IN_PROGRESS': return 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100/70';
+      case 'IN_PROGRESS': return 'bg-pink-50 border-pink-200 text-pink-700 hover:bg-pink-100/70';
       case 'COMPLETED': return 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100/70';
       case 'CANCELLED':
       case 'NO_SHOW': return 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100/70 line-through';
