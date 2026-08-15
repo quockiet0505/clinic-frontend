@@ -79,7 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       // success case
-      localStorage.setItem('token', result.data.token);
+      sessionStorage.setItem('token', result.data.token);
       const account = await authApi.getCurrentUser();
       await fetchFullUser(account);
       return { success: true };

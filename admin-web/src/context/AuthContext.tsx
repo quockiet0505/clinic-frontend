@@ -18,8 +18,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('clinic_token') || sessionStorage.getItem('clinic_token');
-    const storedUser = localStorage.getItem('clinic_user') || sessionStorage.getItem('clinic_user');
+    const token = sessionStorage.getItem('clinic_token');
+    const storedUser = sessionStorage.getItem('clinic_user');
     if (token && storedUser) {
       setUser(JSON.parse(storedUser));
     }
@@ -28,21 +28,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string, rememberMe: boolean = true) => {
     const res = await authApi.login(email, password);
-    const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem('clinic_token', res.token);
-    storage.setItem('clinic_user', JSON.stringify(res.user));
+    sessionStorage.setItem('clinic_token', res.token);
+    sessionStorage.setItem('clinic_user', JSON.stringify(res.user));
     setUser(res.user);
   };
 
   const googleLogin = async (idToken: string) => {
     const res = await authApi.googleLogin(idToken);
-    localStorage.setItem('clinic_token', res.token);
-    localStorage.setItem('clinic_user', JSON.stringify(res.user));
+    sessionStorage.setItem('clinic_token', res.token);
+    sessionStorage.setItem('clinic_user', JSON.stringify(res.user));
     setUser(res.user);
   };
 
   const logout = () => {
-    localStorage.removeItem('clinic_token');
+    localStorage.removeItem('clinic_token'); // Keep in case it exists from old version
     localStorage.removeItem('clinic_user');
     sessionStorage.removeItem('clinic_token');
     sessionStorage.removeItem('clinic_user');

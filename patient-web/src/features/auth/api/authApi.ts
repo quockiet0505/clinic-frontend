@@ -22,8 +22,7 @@ export const authApi = {
 
     const apiResponse = response.data;
 
-    const storage = rememberMe ? localStorage : sessionStorage;
-    storage.setItem(
+    sessionStorage.setItem(
       'token',
       apiResponse.data.token
     );
