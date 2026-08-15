@@ -34,87 +34,83 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
   const menuGroups = [
     {
       title: 'TỔNG QUAN',
-      allowedRoles: ['ADMIN', 'MANAGER'],
       items: [
-        { name: 'Bảng điều khiển', icon: LayoutDashboard, path: '/dashboard', exact: true },
-        { name: 'Đánh giá AI', icon: Bot, path: '/dashboard/ai-evaluation' },
+        { name: 'Bảng điều khiển', icon: LayoutDashboard, path: '/dashboard', exact: true, allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE', 'LAB_TECH'] },
+        { name: 'Đánh giá AI', icon: Bot, path: '/dashboard/ai-evaluation', allowedRoles: ['ADMIN'] },
       ]
     },
     {
       title: 'CÁ NHÂN',
-      allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE', 'LAB_TECH', 'RECEPTIONIST', 'NURSE'],
       items: [
-        { name: 'Lịch làm việc', icon: CalendarClock, path: '/my-schedule' },
+        { name: 'Lịch làm việc', icon: CalendarClock, path: '/my-schedule', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE', 'LAB_TECH'] },
       ]
     },
     {
       title: 'TIẾP TÂN / THU NGÂN',
-      allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE', 'RECEPTIONIST'],
       items: [
-        { name: 'Lịch hẹn', icon: CalendarDays, path: '/appointments', exact: true },
-        { name: 'Lịch theo tháng', icon: Calendar, path: '/appointments/calendar' },
-        { name: 'Nhắc nhở tái khám', icon: PhoneCall, path: '/appointments/follow-ups' },
-        { name: 'Bệnh nhân', icon: Users, path: '/patients' },
-        { name: 'Hóa đơn & Thanh toán', icon: ReceiptText, path: '/billing/invoices' },
+        { name: 'Lịch hẹn', icon: CalendarDays, path: '/appointments', exact: true, allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
+        { name: 'Lịch theo tháng', icon: Calendar, path: '/appointments/calendar', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE', 'DOCTOR'] },
+        { name: 'Nhắc nhở tái khám', icon: PhoneCall, path: '/appointments/follow-ups', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
+        { name: 'Bệnh nhân', icon: Users, path: '/patients', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE', 'DOCTOR'] },
+        { name: 'Hóa đơn & Thanh toán', icon: ReceiptText, path: '/billing/invoices', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
       ]
     },
     {
       title: 'KHÁM BỆNH',
-      allowedRoles: ['ADMIN', 'DOCTOR', 'NURSE'],
       items: [
-        { name: 'Chuẩn bị khám', icon: HeartPulse, path: '/medical/triage' },
-        { name: 'Đang khám', icon: Stethoscope, path: '/medical/active-visits' },
-        { name: 'Hồ sơ bệnh án', icon: History, path: '/medical/records' },
+        { name: 'Chuẩn bị khám', icon: HeartPulse, path: '/medical/triage', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE'] },
+        { name: 'Đang khám', icon: Stethoscope, path: '/medical/active-visits', allowedRoles: ['ADMIN', 'DOCTOR'] },
+        { name: 'Hồ sơ bệnh án', icon: History, path: '/medical/records', allowedRoles: ['ADMIN', 'DOCTOR'] },
       ]
     },
     {
       title: 'XÉT NGHIỆM',
-      allowedRoles: ['ADMIN', 'DOCTOR', 'LAB_TECH', 'RECEPTIONIST', 'NURSE'],
       items: [
-        { name: 'Chỉ định XN', icon: TestTube, path: '/laboratory/orders' },
-        { name: 'Kết quả XN', icon: Archive, path: '/laboratory/results' },
+        { name: 'Chỉ định XN', icon: TestTube, path: '/laboratory/orders', allowedRoles: ['ADMIN', 'DOCTOR', 'LAB_TECH'] },
+        { name: 'Kết quả XN', icon: Archive, path: '/laboratory/results', allowedRoles: ['ADMIN', 'DOCTOR', 'LAB_TECH'] },
       ]
     },
     {
       title: 'NHÀ THUỐC',
-      allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE', 'RECEPTIONIST'],
       items: [
-        { name: 'Danh mục thuốc', icon: Pill, path: '/pharmacy/inventory' },
-        { name: 'Đơn thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions' },
-        { name: 'Tra cứu tương tác', icon: Activity, path: '/pharmacy/interaction-checker' },
+        { name: 'Danh mục thuốc', icon: Pill, path: '/pharmacy/inventory', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE'] },
+        { name: 'Đơn thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
+        { name: 'Tra cứu tương tác', icon: Activity, path: '/pharmacy/interaction-checker', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE'] },
       ]
     },
     {
       title: 'QUẢN TRỊ',
-      allowedRoles: ['ADMIN'],
       items: [
-        { name: 'Nhân viên', icon: BriefcaseMedical, path: '/staffs', exact: true },
-        { name: 'Duyệt đơn nghỉ phép', icon: CalendarOff, path: '/staffs/leave-requests' },
+        { name: 'Nhân viên', icon: BriefcaseMedical, path: '/staffs', exact: true, allowedRoles: ['ADMIN'] },
+        { name: 'Duyệt đơn nghỉ phép', icon: CalendarOff, path: '/staffs/leave-requests', allowedRoles: ['ADMIN'] },
       ]
     },
     {
       title: 'GIAO TIẾP',
-      allowedRoles: ['ADMIN', 'MANAGER'],
       items: [
-        { name: 'Thông báo', icon: Bell, path: '/system/notifications' },
-        { name: 'Phản hồi', icon: MessageSquareHeart, path: '/system/contact-messages' },
-        { name: 'Bình luận', icon: MessageSquareHeart, path: '/system/feedback' },
+        { name: 'Thông báo', icon: Bell, path: '/system/notifications', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
+        { name: 'Phản hồi', icon: MessageSquareHeart, path: '/system/contact-messages', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
+        { name: 'Bình luận', icon: MessageSquareHeart, path: '/system/feedback', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
       ]
     },
     {
       title: 'CÀI ĐẶT',
-      allowedRoles: ['ADMIN'],
       items: [
-        { name: 'Cài đặt chung', icon: Settings, path: '/settings/general' },
-        { name: 'Phân quyền', icon: ShieldCheck, path: '/settings/roles' },
-        { name: 'Danh mục Dịch vụ', icon: Layers, path: '/settings/services' },
-        { name: 'Phí khám bệnh', icon: CircleDollarSign, path: '/settings/doctor_pricing' },
-        { name: 'Chuyên khoa', icon: Award, path: '/settings/expertise' },
+        { name: 'Cài đặt chung', icon: Settings, path: '/settings/general', allowedRoles: ['ADMIN'] },
+        { name: 'Phân quyền', icon: ShieldCheck, path: '/settings/roles', allowedRoles: ['ADMIN'] },
+        { name: 'Danh mục Dịch vụ', icon: Layers, path: '/settings/services', allowedRoles: ['ADMIN'] },
+        { name: 'Phí khám bệnh', icon: CircleDollarSign, path: '/settings/doctor_pricing', allowedRoles: ['ADMIN'] },
+        { name: 'Chuyên khoa', icon: Award, path: '/settings/expertise', allowedRoles: ['ADMIN'] },
       ]
     },
   ];
 
-  const filteredMenuGroups = menuGroups.filter(group => group.allowedRoles.includes(currentUserRole));
+  const filteredMenuGroups = menuGroups
+    .map(group => ({
+      ...group,
+      items: group.items.filter(item => item.allowedRoles.includes(currentUserRole))
+    }))
+    .filter(group => group.items.length > 0);
 
 
   return (
