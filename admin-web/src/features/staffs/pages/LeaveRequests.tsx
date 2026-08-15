@@ -10,7 +10,7 @@ import { LeaveRequest } from '../types/staff';
 import { staffApi } from '../api/staffApi';
 import toast from 'react-hot-toast';
 
-const TODAY = new Date().toISOString().split('T')[0];
+const TODAY = new Date().toLocaleDateString('sv-SE');
 
 const viewToTab: Record<string, string> = {
   TODAY: 'today',

@@ -4,7 +4,7 @@ import SearchInput from '@/components/common/SearchInput';
 import DateRangeFilter from '@/components/common/DateRangeFilter';
 import RefundLogTable from '../components/RefundLogTable';
 
-const TODAY = new Date().toISOString().split('T')[0];
+const TODAY = new Date().toLocaleDateString('sv-SE');
 
 const MOCK_REFUNDS = [
   { refundId: 1, billId: 9005, refundAmount: 50.00, reason: 'Patient cancelled service before testing.', processed_by_name: 'Admin User', refundedAt: TODAY },

@@ -5,7 +5,7 @@ import ChatSessionTable from '../components/ChatSessionTable';
 import ChatHistoryModal from '../components/ChatHistoryModal';
 import { ChatSession } from '../types/crm';
 
-const TODAY = new Date().toISOString().split('T')[0];
+const TODAY = new Date().toLocaleDateString('sv-SE');
 
 export default function AiChatLogs() {
   const [sessions] = useState<ChatSession[]>([

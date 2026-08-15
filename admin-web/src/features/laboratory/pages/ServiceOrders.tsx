@@ -11,7 +11,7 @@ import GradientButton from '@/components/common/GradientButton';
 import { ServiceOrder } from '../types/laboratory';
 import { laboratoryApi } from '../api/laboratoryApi';
 
-const TODAY = new Date().toISOString().split('T')[0];
+const TODAY = new Date().toLocaleDateString('sv-SE');
 
 export default function ServiceOrders() {
   const [orders, setOrders] = useState<ServiceOrder[]>([]);

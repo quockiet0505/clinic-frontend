@@ -6,7 +6,7 @@ import ExpenseTable from '../components/ExpenseTable';
 import ExpenseFormDialog from '../components/ExpenseFormDialog';
 import { ClinicExpense } from '../types/finance';
 
-const TODAY = new Date().toISOString().split('T')[0];
+const TODAY = new Date().toLocaleDateString('sv-SE');
 
 const MOCK_EXPENSES: ClinicExpense[] = [
   { expenseId: 1, categoryId: 2, categoryName: 'Utilities', amount: 150.00, expenseDate: TODAY, paymentMethod: 'TRANSFER', description: 'Monthly Electricity', created_by_name: 'Admin' },
