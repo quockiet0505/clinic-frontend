@@ -30,5 +30,4 @@ yarn-error.log*
 mobile-app/.flutter-plugins
 mobile-app/.flutter-plugins-dependencies
 
-public
 src/components/ui
