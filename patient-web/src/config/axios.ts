@@ -7,8 +7,14 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
+
+NProgress.configure({ showSpinner: false });
+
 axiosInstance.interceptors.request.use(
   (config) => {
+    NProgress.start();
     const token = sessionStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -16,7 +22,10 @@ axiosInstance.interceptors.request.use(
     
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    NProgress.done();
+    return Promise.reject(error);
+  }
 );
 
 // Tự động convert response data từ snake_case sang camelCase
@@ -25,6 +34,7 @@ axiosInstance.interceptors.response.use(
     if (response.data) {
       response.data = keysToCamel(response.data);
     }
+    NProgress.done();
     handleApiSuccessToast(response);
     return response;
   },
@@ -41,6 +51,7 @@ axiosInstance.interceptors.response.use(
     if (error.response && error.response.data) {
       error.response.data = keysToCamel(error.response.data);
     }
+    NProgress.done();
     handleApiErrorToast(error);
     return Promise.reject(error);
   }
