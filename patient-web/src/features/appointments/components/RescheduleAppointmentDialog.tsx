@@ -86,8 +86,8 @@ export const RescheduleAppointmentDialog: React.FC<RescheduleAppointmentDialogPr
       onSuccess();
       onOpenChange(false);
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Không thể dời lịch hẹn';
-      toast({ title: 'Lỗi', description: message, variant: 'destructive' });
+      console.error('Lỗi dời lịch:', error);
+      // NProgress và axios interceptor sẽ tự động hiển thị lỗi
     } finally {
       setLoading(false);
     }
