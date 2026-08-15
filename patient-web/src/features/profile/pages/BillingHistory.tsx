@@ -141,9 +141,14 @@ export const BillingHistory: React.FC = () => {
       </div>
 
       <SectionContainer className="max-w-4xl py-8">
-        <Card className="rounded-3xl border-0 shadow-sm bg-white overflow-hidden">
+        <Card className="rounded-3xl border-0 shadow-sm bg-white overflow-hidden relative">
+          {loading && invoices.length > 0 && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/20 backdrop-blur-[1px]">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent shadow-md"></div>
+            </div>
+          )}
           <div className="p-1 overflow-x-auto">
-            <table className="w-full text-sm text-left">
+            <table className={`w-full text-sm text-left ${loading ? 'opacity-60 pointer-events-none' : ''}`}>
               <thead className="text-[13px] text-slate-500 uppercase bg-slate-50 rounded-t-2xl border-b border-slate-200">
                 <tr>
                   <th className="px-6 py-5 font-bold rounded-tl-2xl">Mã Hóa đơn</th>
@@ -154,7 +159,7 @@ export const BillingHistory: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {loading ? (
+                {loading && invoices.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="text-center py-20 text-slate-500 font-medium">
                       <div className="flex flex-col items-center gap-2">

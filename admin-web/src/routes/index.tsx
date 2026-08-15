@@ -261,7 +261,7 @@ export const router = createBrowserRouter([
       { 
         path: 'pharmacy/prescriptions', 
         element: (
-          <RoleGuard allowedRoles={['ADMIN', 'RECEPTIONIST', 'NURSE']}>
+          <RoleGuard allowedRoles={['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE']}>
             <PrescriptionDispense />
           </RoleGuard>
         ) 

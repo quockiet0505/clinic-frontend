@@ -108,24 +108,7 @@ export const Prescriptions: React.FC = () => {
     return true;
   });
 
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-[#f0f9ff]">
-        <div className="bg-gradient-to-r from-[var(--color-banner-dark-start)] via-[var(--color-banner-dark-mid)] to-primary-500 py-12 px-4">
-          <SectionContainer className="max-w-4xl">
-            <div className="h-5 bg-white/10 rounded w-32 mb-3 animate-pulse" />
-            <div className="h-8 bg-white/10 rounded w-52 animate-pulse" />
-          </SectionContainer>
-        </div>
-        <SectionContainer className="max-w-4xl py-8">
-          <div className="flex flex-col gap-4">
-            <div className="h-[240px] bg-white border border-slate-200 rounded-3xl w-full animate-pulse" />
-            <div className="h-[240px] bg-white border border-slate-200 rounded-3xl w-full animate-pulse" />
-          </div>
-        </SectionContainer>
-      </main>
-    );
-  }
+
 
   const tabs: { id: StatusTab; label: string; count: number }[] = [
     { id: 'ALL', label: 'Tất cả', count: stats.total },
@@ -217,9 +200,14 @@ export const Prescriptions: React.FC = () => {
         </div>
 
         {/* List */}
-        <Card className="rounded-3xl border-0 shadow-sm bg-white overflow-hidden">
+        <Card className="rounded-3xl border-0 shadow-sm bg-white overflow-hidden relative">
+          {loading && prescriptions.length > 0 && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/20 backdrop-blur-[1px]">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent shadow-md"></div>
+            </div>
+          )}
           <div className="p-1 overflow-x-auto">
-            <table className="w-full text-sm text-left">
+            <table className={`w-full text-sm text-left ${loading ? 'opacity-60 pointer-events-none' : ''}`}>
               <thead className="text-[13px] text-slate-500 uppercase bg-slate-50 rounded-t-2xl border-b border-slate-200">
                 <tr>
                   <th className="px-6 py-5 font-bold rounded-tl-2xl w-[150px]">Mã Đơn thuốc</th>
@@ -230,7 +218,16 @@ export const Prescriptions: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredPrescriptions.length > 0 ? (
+                {loading && prescriptions.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="text-center py-20 text-slate-500 font-medium">
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+                        <p>Đang tải danh sách đơn thuốc...</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : filteredPrescriptions.length > 0 ? (
                   filteredPrescriptions.map((prescription: any) => (
                     <PrescriptionTableRow key={prescription.prescriptionId} prescription={prescription} />
                   ))

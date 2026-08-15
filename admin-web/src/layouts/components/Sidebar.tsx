@@ -74,7 +74,7 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
       title: 'NHÀ THUỐC',
       items: [
         { name: 'Danh mục thuốc', icon: Pill, path: '/pharmacy/inventory', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE'] },
-        { name: 'Đơn thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
+        { name: 'Đơn thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE'] },
         { name: 'Tra cứu tương tác', icon: Activity, path: '/pharmacy/interaction-checker', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE'] },
       ]
     },
