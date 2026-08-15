@@ -7,19 +7,29 @@ const axiosInstance = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
+
+NProgress.configure({ showSpinner: false });
+
 axiosInstance.interceptors.request.use(
   (config) => {
+    NProgress.start();
     const token = sessionStorage.getItem('clinic_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    NProgress.done();
+    return Promise.reject(error);
+  }
 );
 
 axiosInstance.interceptors.response.use(
   (response) => {
+    NProgress.done();
     handleApiSuccessToast(response);
     return response;
   },
@@ -33,6 +43,7 @@ axiosInstance.interceptors.response.use(
     } else {
       handleApiErrorToast(error);
     }
+    NProgress.done();
     return Promise.reject(error);
   }
 );
