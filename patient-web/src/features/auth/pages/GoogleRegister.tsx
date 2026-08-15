@@ -7,7 +7,7 @@ import { Loader2 } from 'lucide-react';
 export const GoogleRegister: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { googleLogin } = useAuth();
   
   const state = location.state as { idToken?: string; email?: string; fullName?: string } || {};
   
@@ -47,13 +47,8 @@ export const GoogleRegister: React.FC = () => {
       );
 
       // Successfully registered, now login automatically
-      // But wait! googleRegister returns token in authApi, but we need to fetch profile.
-      // The easiest way is to let the user login again via google, or manually log them in
-      // Actually, since we have googleLogin in AuthContext, we can just call it again
-      const { googleLogin } = useAuth(); // Oh wait, hook can't be called inside async without closure, but we can destructure it outside. Wait, I didn't destructure googleLogin above.
-      
-      // Let's just use the returned token directly or navigate them back to login
-      navigate('/auth/login', { replace: true, state: { message: 'Đăng ký thành công, vui lòng đăng nhập lại' } });
+      await googleLogin(state.idToken || '');
+      navigate('/', { replace: true });
       
     } catch (err: any) {
       setError(err.response?.data?.message || 'Đăng ký thất bại');
