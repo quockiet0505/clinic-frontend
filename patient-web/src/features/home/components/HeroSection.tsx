@@ -59,9 +59,7 @@ export const HeroSection: React.FC = () => {
 
   useEffect(() => {
     homeApi.getQuickActions().then(setQuickActions).catch(console.error);
-    homeApi.getBanner('main')
-      .then(url => setBannerUrl(url))
-      .catch(console.error);
+    // Banner API removed, using local static image
   }, []);
 
   const handleQuickActionClick = (title: string) => {

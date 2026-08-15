@@ -30,17 +30,15 @@ export const Header: React.FC = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [expertises, setExpertises] = useState<Expertise[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-  const [logoUrl, setLogoUrl] = useState('/images/logo.png'); // fallback
+  const [logoUrl] = useState('/images/logo.png'); // local static
 
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated, logout, loading } = useAuth();
 
-  // Fetch logo
+  // Fetch logo API removed
   useEffect(() => {
-    homeApi.getLogo()
-      .then(url => setLogoUrl(url))
-      .catch(() => console.error('Failed to load logo'));
+    // No longer fetching from API
   }, []);
 
   // Fetch dữ liệu cho dropdown chuyên khoa & xét nghiệm

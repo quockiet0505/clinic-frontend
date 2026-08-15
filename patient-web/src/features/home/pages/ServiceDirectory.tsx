@@ -29,9 +29,7 @@ export const ServiceDirectory: React.FC = () => {
 
   useEffect(() => {
     homeApi.getServices().then(setServices);
-    homeApi.getBanner('service')
-      .then(url => setBannerUrl(url))
-      .catch(console.error);
+    // Banner API removed, using local static image
   }, []);
 
   useEffect(() => {

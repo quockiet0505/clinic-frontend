@@ -41,9 +41,7 @@ export const DoctorDirectory: React.FC = () => {
       })
       .catch(console.error);
 
-    homeApi.getBanner('doctor')
-      .then(url => setBannerUrl(url))
-      .catch(console.error);
+    // Banner API removed, using local static image
   }, []);
 
   useEffect(() => {
