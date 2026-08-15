@@ -11,6 +11,7 @@ import PaymentCheckoutDialog from '../components/PaymentCheckoutDialog';
 import { BillInvoice, BillStatus } from '../types/finance';
 import { financeApi } from '../api/financeApi';
 import { PayButton, VerifyButton, RejectButton, ViewButton } from '@/components/common/ActionButtons';
+import ActionMenu from '@/components/common/ActionMenu';
 
 const getStatusBadge = (status: BillStatus) => {
   switch (status) {
@@ -56,6 +57,7 @@ export default function InvoiceList() {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [selectedInvoice, setSelectedInvoice] = useState<BillInvoice | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'CASH' | 'TRANSFER'>('CASH');
   
   const navigate = useNavigate();
 
@@ -259,7 +261,28 @@ export default function InvoiceList() {
                   <TableCell className="text-right pr-8">
                     <div className="flex items-center justify-end gap-2">
                       {inv.status === 'UNPAID' && (
-                        <PayButton onClick={() => setSelectedInvoice(inv)} />
+                        <ActionMenu>
+                          <Button
+                            onClick={() => {
+                              setSelectedInvoice(inv);
+                              setPaymentMethod('CASH');
+                            }}
+                            variant="ghost"
+                            className="w-full justify-start h-8 px-2 text-xs font-bold text-slate-700 rounded-lg hover:bg-slate-50 cursor-pointer"
+                          >
+                            Tiền mặt
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setSelectedInvoice(inv);
+                              setPaymentMethod('TRANSFER');
+                            }}
+                            variant="ghost"
+                            className="w-full justify-start h-8 px-2 text-xs font-bold text-slate-700 rounded-lg hover:bg-slate-50 cursor-pointer"
+                          >
+                            Chuyển khoản
+                          </Button>
+                        </ActionMenu>
                       )}
                       
                       {inv.status === 'PENDING_VERIFY' && (
@@ -293,6 +316,7 @@ export default function InvoiceList() {
 
       <PaymentCheckoutDialog 
         invoice={selectedInvoice} 
+        initialMethod={paymentMethod}
         onClose={() => setSelectedInvoice(null)} 
         onProcessPayment={handleProcessPayment} 
         onPaymentSuccess={() => { setSelectedInvoice(null); fetchInvoices(); }}
