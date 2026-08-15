@@ -38,7 +38,7 @@ export default function TriageQueue() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const todayStr = new Date().toISOString().split('T')[0];
+      const todayStr = new Date().toLocaleDateString('sv-SE');
       const queryFromDate = activeTab === 'today' ? todayStr : (fromDate || undefined);
       const queryToDate = activeTab === 'today' ? todayStr : (toDate || undefined);
 
