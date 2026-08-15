@@ -1,6 +1,6 @@
 // components/tables/Table.tsx
 import React from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 
 export interface Column<T> {
   key: keyof T | string;
@@ -36,14 +36,24 @@ export default function Table<T extends Record<string, any>>({
   data = [],
   columns,
   onRowClick,
+  loading = false,
   emptyMessage = 'Không có dữ liệu',
   pagination,
   rowClassName,
 }: TableProps<T>) {
   const safeData = data || [];
 
-  if (!safeData.length) {
-    return <div className="text-center py-12 text-slate-400 text-sm">{emptyMessage}</div>;
+  if (loading && !safeData.length) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-blue-500 h-full min-h-[200px]">
+        <Loader2 size={32} className="animate-spin mb-3" />
+        <p className="text-sm font-medium text-slate-500">Đang tải dữ liệu...</p>
+      </div>
+    );
+  }
+
+  if (!loading && !safeData.length) {
+    return <div className="text-center py-12 text-slate-400 text-sm h-full min-h-[200px] flex items-center justify-center">{emptyMessage}</div>;
   }
 
   // Server-side pagination: data is already the current page — do not slice
@@ -55,8 +65,13 @@ export default function Table<T extends Record<string, any>>({
   return (
     <div className="flex flex-col h-full w-full">
       {/* Vùng cuộn - chiếm toàn bộ không gian còn lại */}
-      <div className="flex-1 overflow-auto min-h-0">
-        <table className="w-full text-sm table-fixed border-collapse">
+      <div className="flex-1 overflow-auto min-h-0 relative">
+        {loading && safeData.length > 0 && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/20 backdrop-blur-[1px]">
+            <Loader2 size={32} className="animate-spin text-blue-500 drop-shadow-md" />
+          </div>
+        )}
+        <table className={`w-full text-sm table-fixed border-collapse ${loading ? 'opacity-60 pointer-events-none' : ''}`}>
           <thead className="sticky top-0 z-10 bg-slate-100/90 backdrop-blur-sm border-b border-slate-200 shadow-sm">
             <tr>
               {columns.map((col) => (
