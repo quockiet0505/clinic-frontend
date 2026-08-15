@@ -80,7 +80,7 @@ export default function MyScheduleTable({ data, onCancelRequest, loading = false
           <Button
             onClick={() => onCancelRequest(leave.leaveId)}
             variant="outline"
-            className="h-8 px-3 rounded-lg text-xs font-medium border-rose-200 text-rose-600 hover:bg-rose-50"
+            className="h-8 px-3 rounded-lg text-xs font-medium border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700"
           >
             <Trash2 size={14} className="mr-1.5" /> Hủy đơn
           </Button>
