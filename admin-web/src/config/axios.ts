@@ -34,7 +34,7 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401 || error.response?.status === 403) {
+    if (error.response?.status === 401) {
       localStorage.removeItem('clinic_token');
       localStorage.removeItem('clinic_user');
       sessionStorage.removeItem('clinic_token');
