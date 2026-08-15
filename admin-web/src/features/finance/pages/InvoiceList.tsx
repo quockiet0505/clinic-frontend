@@ -207,7 +207,7 @@ export default function InvoiceList() {
 
       <div className="bg-white rounded-[32px] shadow-sm border border-slate-200 flex-1 overflow-hidden flex flex-col">
         <div className="flex-1 overflow-y-auto custom-scrollbar">
-          <Table>
+          <Table isLoading={loading && displayedInvoices.length > 0}>
             <TableHeader className="bg-slate-50 sticky top-0 z-10">
               <TableRow className="h-14">
                 <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-8">Hóa đơn</TableHead>
@@ -218,7 +218,7 @@ export default function InvoiceList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {loading ? (
+              {loading && displayedInvoices.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-20">
                     <div className="flex flex-col items-center gap-2">

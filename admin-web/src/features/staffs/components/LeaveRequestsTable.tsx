@@ -10,9 +10,10 @@ interface Props {
   data: LeaveRequest[];
   onAction: (req: LeaveRequest) => void;
   pagination?: PaginationProps;
+  loading?: boolean;
 }
 
-export default function LeaveRequestsTable({ data, onAction, pagination }: Props) {
+export default function LeaveRequestsTable({ data, onAction, pagination, loading }: Props) {
   const totalPages = pagination ? Math.ceil(pagination.total / pagination.size) : 1;
   const start = pagination ? (pagination.page - 1) * pagination.size : 0;
   const end = pagination ? start + data.length : data.length;
@@ -20,7 +21,7 @@ export default function LeaveRequestsTable({ data, onAction, pagination }: Props
   return (
     <div className="bg-white rounded-[20px] shadow-sm border border-slate-200 overflow-hidden flex-1 flex flex-col min-h-0">
       <div className="flex-1 overflow-auto">
-      <Table>
+      <Table isLoading={loading}>
         <TableHeader className="bg-slate-50">
           <TableRow>
             <TableHead className="font-bold text-slate-600 uppercase text-[11px] px-6 h-12">Nhân viên</TableHead>

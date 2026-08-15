@@ -92,15 +92,12 @@ export default function LeaveRequests() {
         filterDate={filterDate}
         setFilterDate={setFilterDate}
       />
-      {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải danh sách...</div>
-      ) : (
-        <LeaveRequestsTable
-          data={requests}
-          onAction={setSelectedRequest}
-          pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
-        />
-      )}
+      <LeaveRequestsTable
+        data={requests}
+        loading={loading}
+        onAction={setSelectedRequest}
+        pagination={{ page: currentPage, size: pageSize, total: totalElements, onPageChange: setCurrentPage }}
+      />
 
       <ActionReasonDialog
         isOpen={!!selectedRequest}

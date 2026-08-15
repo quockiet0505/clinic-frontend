@@ -2,15 +2,24 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+interface TableProps extends React.ComponentProps<"table"> {
+  isLoading?: boolean;
+}
+
+function Table({ className, isLoading, ...props }: TableProps) {
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto"
+      className="relative w-full overflow-x-auto min-h-[150px]"
     >
+      {isLoading && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/40 backdrop-blur-[1px] rounded-md">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent shadow-md"></div>
+        </div>
+      )}
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn("w-full caption-bottom text-sm", isLoading && "opacity-50 pointer-events-none", className)}
         {...props}
       />
     </div>
