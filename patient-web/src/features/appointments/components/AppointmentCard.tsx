@@ -395,7 +395,7 @@ export const AppointmentCard: React.FC<AppointmentCardProps> = ({ appointment, o
       <CancelAppointmentDialog
         open={cancelDialogOpen}
         onOpenChange={setCancelDialogOpen}
-        appointmentId={appointment.id}
+        appointment={appointment}
         onSuccess={onCancelSuccess}
       />
 
