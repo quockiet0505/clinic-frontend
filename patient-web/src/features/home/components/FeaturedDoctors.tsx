@@ -79,7 +79,7 @@ export const FeaturedDoctors: React.FC<Props> = ({ doctors, isLoading }) => {
                 <div
                   key={doctor.staffId}
                   onClick={() => handleDoctorClick(doctor.staffId)}
-                  className="cursor-pointer w-full h-full bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#e8f1f8] flex flex-col overflow-hidden hover:border-[#00b5f1] hover:shadow-[0_6px_20px_rgba(0,181,241,0.15)] hover:-translate-y-1 transition-all duration-300 group"
+                  className="cursor-pointer w-full flex-1 bg-white rounded-xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] border border-[#e8f1f8] flex flex-col overflow-hidden hover:border-[#00b5f1] hover:shadow-[0_6px_20px_rgba(0,181,241,0.15)] hover:-translate-y-1 transition-all duration-300 group"
                 >
                   {/* Avatar */}
                   <div className="flex justify-center pt-6 pb-5">

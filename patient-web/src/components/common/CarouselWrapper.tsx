@@ -63,7 +63,7 @@ export const CarouselWrapper: React.FC<CarouselWrapperProps> = ({ children }) =>
         className="flex gap-5 overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory pt-6 pb-10 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
       >
         {childrenArray.map((child, index) => (
-          <div key={index} className="snap-start shrink-0 w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-13.33px)] xl:w-[calc(25%-15px)] h-full">
+          <div key={index} className="snap-start shrink-0 w-full sm:w-[calc(50%-10px)] lg:w-[calc(33.333%-13.33px)] xl:w-[calc(25%-15px)] h-auto flex flex-col">
             {child}
           </div>
         ))}
