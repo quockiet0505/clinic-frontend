@@ -25,6 +25,11 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
   const location = useLocation();
   const { user } = useAuth();
   const currentUserRole = user?.role || 'RECEPTIONIST';
+  const [imgError, setImgError] = React.useState(false);
+
+  React.useEffect(() => {
+    setImgError(false);
+  }, [logoUrl]);
 
   const menuGroups = [
     {
@@ -132,23 +137,12 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
       <div className={`flex items-center border-b border-slate-100 shrink-0 transition-all duration-300 ${isCollapsed ? 'h-14 justify-center px-2' : 'h-16 justify-between px-4'
         }`}>
         <div className={`flex items-center gap-3 min-w-0 ${isCollapsed ? 'justify-center' : ''}`}>
-          {logoUrl ? (
+          {logoUrl && !imgError ? (
             <img
               src={logoUrl}
               alt="Logo"
               className={`object-contain shrink-0 transition-all duration-300 ${isCollapsed ? 'w-14 h-14' : 'h-9'}`}
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.style.display = 'none';
-                const parent = e.currentTarget.parentElement;
-                if (parent) {
-                  const fallback = document.createElement('div');
-                  fallback.className = `flex items-center justify-center font-bold rounded-xl bg-blue-600 text-white ${isCollapsed ? 'w-8 h-8 text-xs' : 'w-8 h-8 text-sm'}`;
-                  fallback.innerText = 'TC';
-                  parent.insertBefore(fallback, e.currentTarget);
-                  e.currentTarget.remove();
-                }
-              }}
+              onError={() => setImgError(true)}
             />
           ) : (
             <div className={`flex items-center justify-center font-bold rounded-xl bg-blue-600 text-white ${isCollapsed ? 'w-8 h-8 text-xs' : 'w-8 h-8 text-sm'}`}>
