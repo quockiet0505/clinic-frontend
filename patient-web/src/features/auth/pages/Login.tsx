@@ -11,7 +11,9 @@ export const Login: React.FC = () => {
   const redirectUrl = searchParams.get('redirect') || '/';
 
   useEffect(() => {
-    // Logo is loaded directly from local public assets
+    homeApi.getLogo()
+      .then(url => setLogoUrl(url))
+      .catch(() => console.error('Failed to load logo'));
   }, []);
 
   return (

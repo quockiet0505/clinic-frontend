@@ -25,10 +25,13 @@ export const ServiceDirectory: React.FC = () => {
   const itemsPerPage = 10;
   const staticUrl = getStaticUrl();
 
-  const [bannerUrl, setBannerUrl] = useState('/images/banners/services-banner.png');
+  const [bannerUrl, setBannerUrl] = useState('/images/banners/service.jpg');
 
   useEffect(() => {
     homeApi.getServices().then(setServices);
+    homeApi.getBanner('service')
+      .then(url => setBannerUrl(url))
+      .catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -69,7 +72,7 @@ export const ServiceDirectory: React.FC = () => {
         <div className="absolute inset-0 z-0">
           <img
             src={bannerUrl}
-            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/banners/services-banner.png'; }}
+            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/banners/service.jpg'; }}
             alt="Service Banner"
             className="w-full h-full object-cover opacity-60 mix-blend-overlay"
           />

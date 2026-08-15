@@ -14,7 +14,15 @@ export default function AdminLayout() {
 
   // Lấy logo hiển thị sidebar
   useEffect(() => {
-    // Logo is loaded directly from local public assets
+    logoApi.getLogo('main')
+      .then(data => {
+        if (data && data.imageUrl) {
+          setLogoUrl(getImageUrl(data.imageUrl));
+        }
+      })
+      .catch(err => {
+        console.warn('Could not load logo from backend, using local fallback.', err);
+      });
   }, []);
 
   // Chờ AuthContext khởi tạo xong (đọc localStorage)

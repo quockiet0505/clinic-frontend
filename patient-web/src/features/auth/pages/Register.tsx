@@ -7,7 +7,9 @@ export const Register: React.FC = () => {
   const [logoUrl, setLogoUrl] = useState('/images/logo.png');
 
   useEffect(() => {
-    // Logo is loaded directly from local public assets
+    homeApi.getLogo()
+      .then(url => setLogoUrl(url))
+      .catch(() => console.error('Failed to load logo'));
   }, []);
 
   return (

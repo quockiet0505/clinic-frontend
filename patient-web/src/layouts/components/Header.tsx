@@ -38,7 +38,9 @@ export const Header: React.FC = () => {
 
   // Fetch logo
   useEffect(() => {
-    // Logo is loaded directly from local public assets to guarantee instant load times
+    homeApi.getLogo()
+      .then(url => setLogoUrl(url))
+      .catch(() => console.error('Failed to load logo'));
   }, []);
 
   // Fetch dữ liệu cho dropdown chuyên khoa & xét nghiệm

@@ -28,7 +28,7 @@ export const HeroSection: React.FC = () => {
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(true);
   const [quickActions, setQuickActions] = useState<QuickAction[]>([]);
-  const [bannerUrl, setBannerUrl] = useState('/images/banners/hero-banner.png');
+  const [bannerUrl, setBannerUrl] = useState('/images/banners/hero-banner.jpg');
   const [searchKeyword, setSearchKeyword] = useState('');
 
   const [placeholderText, setPlaceholderText] = useState('');
@@ -59,6 +59,9 @@ export const HeroSection: React.FC = () => {
 
   useEffect(() => {
     homeApi.getQuickActions().then(setQuickActions).catch(console.error);
+    homeApi.getBanner('main')
+      .then(url => setBannerUrl(url))
+      .catch(console.error);
   }, []);
 
   const handleQuickActionClick = (title: string) => {
@@ -113,7 +116,7 @@ export const HeroSection: React.FC = () => {
           src={bannerUrl}
           alt="Hero Banner"
           className="w-full h-full object-cover object-center"
-          onError={(e) => { e.currentTarget.src = '/images/banners/hero-banner.png'; }}
+          onError={(e) => { e.currentTarget.src = '/images/banners/hero-banner.jpg'; }}
         />
 
         {/*
