@@ -217,7 +217,21 @@ export const DoctorDirectory: React.FC = () => {
         </div>
       </div>
 
-        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12 ${isLoading ? 'opacity-50 pointer-events-none' : 'transition-opacity duration-300'}`}>
+        <div className="relative">
+          {isLoading && doctors.length > 0 && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#f0f9ff]/40 backdrop-blur-[1px] rounded-3xl">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent shadow-md"></div>
+            </div>
+          )}
+          {isLoading && doctors.length === 0 && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#f0f9ff]/40 backdrop-blur-[1px] rounded-3xl min-h-[300px]">
+              <div className="flex flex-col items-center gap-2">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent shadow-md"></div>
+                <p className="text-slate-500 font-medium">Đang tải danh sách bác sĩ...</p>
+              </div>
+            </div>
+          )}
+          <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12 ${isLoading ? 'opacity-50 pointer-events-none min-h-[300px]' : 'transition-opacity duration-300'}`}>
           {doctors.length > 0 ? (
             doctors.map((doctor, idx) => (
               <div key={doctor.staffId} className="bg-white rounded-[24px] p-5 border border-slate-100 shadow-[0_4px_20px_-8px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_40px_-10px_rgba(0,181,241,0.15)] hover:border-primary-200 transition-all duration-300 flex flex-col sm:flex-row gap-5 hover:-translate-y-1 group">
@@ -271,6 +285,7 @@ export const DoctorDirectory: React.FC = () => {
               <EmptyState title="Không tìm thấy bác sĩ" description="Vui lòng thay đổi bộ lọc hoặc tìm kiếm bằng từ khóa khác." />
             </div>
           )}
+          </div>
         </div>
 
         {totalPages > 1 && (

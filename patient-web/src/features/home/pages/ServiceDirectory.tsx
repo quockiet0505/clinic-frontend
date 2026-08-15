@@ -12,6 +12,7 @@ export const ServiceDirectory: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [services, setServices] = useState<ServicePackage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [priceFilter, setPriceFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
@@ -28,7 +29,10 @@ export const ServiceDirectory: React.FC = () => {
   const [bannerUrl, setBannerUrl] = useState('/images/banners/service.jpg');
 
   useEffect(() => {
-    homeApi.getServices().then(setServices);
+    setIsLoading(true);
+    homeApi.getServices()
+      .then(setServices)
+      .finally(() => setIsLoading(false));
     // Banner API removed, using local static image
   }, []);
 
@@ -172,7 +176,21 @@ export const ServiceDirectory: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="relative">
+          {isLoading && currentItems.length > 0 && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#f0f9ff]/40 backdrop-blur-[1px] rounded-3xl">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent shadow-md"></div>
+            </div>
+          )}
+          {isLoading && currentItems.length === 0 && (
+            <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#f0f9ff]/40 backdrop-blur-[1px] rounded-3xl min-h-[300px]">
+              <div className="flex flex-col items-center gap-2">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent shadow-md"></div>
+                <p className="text-slate-500 font-medium">Đang tải danh sách dịch vụ...</p>
+              </div>
+            </div>
+          )}
+          <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 ${isLoading ? 'opacity-50 pointer-events-none min-h-[300px]' : 'transition-opacity duration-300'}`}>
           {currentItems.length > 0 ? (
             currentItems.map((service) => {
               const hasDiscount = !!(service.discountAmount && service.originalPrice && service.discountAmount < service.originalPrice);
@@ -239,6 +257,7 @@ export const ServiceDirectory: React.FC = () => {
               <EmptyState title="Không tìm thấy dịch vụ" description="Vui lòng thử bộ lọc hoặc từ khóa tìm kiếm khác." />
             </div>
           )}
+          </div>
         </div>
 
         {totalPages > 1 && (
