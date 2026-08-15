@@ -51,6 +51,7 @@ import RefundLogs from '@/features/finance/pages/RefundLogs';
 
 // --- 7. CRM & COMMUNICATIONS ---
 import Feedbacks from '@/features/crm/pages/Feedbacks';
+import ContactMessages from '@/features/crm/pages/ContactMessages';
 import AiChatLogs from '@/features/crm/pages/AiChatLogs';
 import Notifications from '@/features/crm/pages/Notifications';
 
@@ -332,6 +333,14 @@ export const router = createBrowserRouter([
         element: (
           <RoleGuard allowedRoles={['ADMIN', 'RECEPTIONIST', 'NURSE']}>
             <Feedbacks />
+          </RoleGuard>
+        ) 
+      },
+      { 
+        path: 'system/contact-messages', 
+        element: (
+          <RoleGuard allowedRoles={['ADMIN', 'RECEPTIONIST', 'NURSE']}>
+            <ContactMessages />
           </RoleGuard>
         ) 
       },

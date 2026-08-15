@@ -15,6 +15,19 @@ export interface Feedback {
 }
 
 
+export interface ContactMessage {
+  messageId: number;
+  fullName: string;
+  phone: string;
+  email?: string;
+  subject: string;
+  content: string;
+  status: 'PENDING' | 'PROCESSING' | 'RESOLVED' | 'REJECTED';
+  repliedAt?: string;
+  replyContent?: string;
+  createdAt: string;
+}
+
 export interface AppNotification {
   notificationId: number;
   accountId?: number;

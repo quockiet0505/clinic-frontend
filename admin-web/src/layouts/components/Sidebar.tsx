@@ -97,7 +97,8 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
       allowedRoles: ['ADMIN', 'MANAGER'],
       items: [
         { name: 'Thông báo', icon: Bell, path: '/system/notifications' },
-        { name: 'Phản hồi', icon: MessageSquareHeart, path: '/system/feedback' },
+        { name: 'Phản hồi', icon: MessageSquareHeart, path: '/system/contact-messages' },
+        { name: 'Bình luận', icon: MessageSquareHeart, path: '/system/feedback' },
       ]
     },
     {

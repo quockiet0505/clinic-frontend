@@ -1,7 +1,13 @@
 import axiosInstance from '@/config/axios';
 import { BaseFilterParams } from '@/types/common';
 import { parsePagedResponse } from '@/utils/pagedApi';
-import { Feedback, AppNotification } from '../types/crm';
+import { Feedback, AppNotification, ContactMessage } from '../types/crm';
+
+interface ContactMessageQueryParams extends BaseFilterParams {
+  status?: string;
+  sortBy?: string;
+  sortDir?: string;
+}
 
 interface NotificationQueryParams extends BaseFilterParams {
   type?: string;
@@ -16,6 +22,22 @@ interface FeedbackQueryParams extends BaseFilterParams {
 }
 
 export const crmApi = {
+  getContactMessagesPaged: async (
+    params?: ContactMessageQueryParams
+  ): Promise<{ content: ContactMessage[]; totalElements: number }> => {
+    try {
+      const res = await axiosInstance.get('/contact-messages/admin', { params });
+      return parsePagedResponse<ContactMessage>(res.data);
+    } catch (error) {
+      console.error('Lỗi lấy tin nhắn liên hệ:', error);
+      return { content: [], totalElements: 0 };
+    }
+  },
+
+  updateContactMessageStatus: async (messageId: number, status: string): Promise<void> => {
+    await axiosInstance.put(`/contact-messages/admin/${messageId}/status`, null, { params: { status }, toastSuccess: 'Cập nhật trạng thái thành công' });
+  },
+
   getClinicFeedbacksPaged: async (
     params?: FeedbackQueryParams
   ): Promise<{ content: Feedback[]; totalElements: number }> => {
