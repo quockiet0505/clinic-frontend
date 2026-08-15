@@ -30,7 +30,7 @@ export const DoctorDirectory: React.FC = () => {
   const itemsPerPage = 10;
   const staticUrl = getStaticUrl(); // dùng cho avatar bác sĩ
 
-  const [bannerUrl, setBannerUrl] = useState('/images/banners/doctor.webp');
+  const [bannerUrl, setBannerUrl] = useState('/images/banners/doctors-banner.png');
 
   useEffect(() => {
     homeApi.getSpecialties()
@@ -39,10 +39,6 @@ export const DoctorDirectory: React.FC = () => {
           setSpecialties(data.map((item: any) => item.name).filter(Boolean));
         }
       })
-      .catch(console.error);
-
-    homeApi.getBanner('doctor')
-      .then(url => setBannerUrl(url))
       .catch(console.error);
   }, []);
 
@@ -96,7 +92,7 @@ export const DoctorDirectory: React.FC = () => {
         <div className="absolute inset-0 z-0">
           <img
             src={bannerUrl} // đã có full URL
-            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop'; }}
+            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = '/images/banners/doctors-banner.png'; }}
             alt="Doctor Banner"
             className="w-full h-full object-cover opacity-60 mix-blend-overlay"
           />
