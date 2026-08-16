@@ -61,6 +61,7 @@ export default function PrescriptionBuilder({ recordId }: { recordId: number }) 
         }))
       });
       setItems([]);
+      toast.success('Đã lưu đơn thuốc thành công');
     } catch (e: any) {
       if (e.response?.data?.message) {
         toast.error(e.response.data.message, { duration: 8000 });

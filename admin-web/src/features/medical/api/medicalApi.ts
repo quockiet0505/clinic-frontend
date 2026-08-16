@@ -89,7 +89,7 @@ export const medicalApi = {
       }))
     };
     await axiosInstance.post('/prescriptions', mappedData, {
-      toastSuccess: 'Đã lưu đơn thuốc thành công',
+      skipToast: true,
     });
   },
 
