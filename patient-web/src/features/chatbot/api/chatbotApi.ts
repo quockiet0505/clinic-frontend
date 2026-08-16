@@ -9,7 +9,7 @@ interface AiChatResponse {
 }
 
 function getAccessToken(): string | null {
-  return localStorage.getItem('token');
+  return localStorage.getItem('token') || sessionStorage.getItem('token');
 }
 
 export const chatbotApi = {

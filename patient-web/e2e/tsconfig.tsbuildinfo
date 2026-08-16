@@ -1,0 +1,1 @@
+{"root":["./group1_auth/auth.spec.ts","./group2_booking/booking.spec.ts","./group3_reschedule/reschedule.spec.ts","./group7_payment/payment.spec.ts","./group8_ai_chatbot/chatbot.spec.ts"],"version":"6.0.3"}
