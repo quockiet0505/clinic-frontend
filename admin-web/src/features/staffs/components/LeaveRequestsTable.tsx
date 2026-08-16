@@ -29,7 +29,7 @@ export default function LeaveRequestsTable({ data, onAction, pagination, loading
             <User size={14} className="text-slate-400 shrink-0" />
             {req.fullName}
           </p>
-          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5">
+          <p className="text-[10px] text-slate-500 font-bold tracking-wider mt-0.5">
             {req.staffType === 'DOCTOR' ? 'Bác sĩ' : req.staffType === 'RECEPTIONIST' ? 'Tiếp tân' : req.staffType === 'NURSE' ? 'Y tá' : req.staffType === 'LAB_TECH' ? 'Kỹ thuật viên' : 'Quản trị viên'} 
             {' • '} 
             {req.leaveType === 'SICK' ? 'Nghỉ ốm' : req.leaveType === 'ANNUAL' ? 'Nghỉ phép năm' : 'Nghỉ khác'}
