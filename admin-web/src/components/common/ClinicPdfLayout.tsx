@@ -30,6 +30,7 @@ export interface PdfTableRow {
 export interface PdfExtraSection {
   title: string;
   content: string;
+  images?: string[];
   price?: number | null;
 }
 
@@ -283,6 +284,19 @@ export const ClinicPdfLayout: React.FC<ClinicPdfLayoutProps> = ({
               <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6', fontSize: '13px', paddingLeft: '8px', borderLeft: '1px solid #000' }}>
                 {sec.content || 'Chưa có dữ liệu.'}
               </div>
+              {sec.images && sec.images.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px', paddingLeft: '8px' }}>
+                  {sec.images.map((imgUrl, imgIdx) => (
+                    <img 
+                      key={imgIdx} 
+                      src={imgUrl} 
+                      alt="Đính kèm" 
+                      style={{ width: '120px', height: '120px', objectFit: 'cover', border: '1px solid #ccc', borderRadius: '4px' }} 
+                      crossOrigin="anonymous"
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           ))}
 

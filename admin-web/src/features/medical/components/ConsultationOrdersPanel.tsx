@@ -59,7 +59,19 @@ export default function ConsultationOrdersPanel({ orders, patient, record }: Pro
           </div>
 
           {/* Result Content */}
-          {order.result ? (
+          {order.result ? (() => {
+            let urls: string[] = [];
+            if (order.result.attachmentUrls) {
+              try {
+                urls = JSON.parse(order.result.attachmentUrls);
+              } catch {
+                urls = [order.result.attachmentUrls];
+              }
+            } else if (order.result.attachmentUrl) {
+              urls = [order.result.attachmentUrl];
+            }
+            
+            return (
             <div className="space-y-4">
               <div>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 select-none">Kết quả xét nghiệm</p>
@@ -73,19 +85,7 @@ export default function ConsultationOrdersPanel({ orders, patient, record }: Pro
                   </p>
                 </div>
               )}
-              {(() => {
-                let urls: string[] = [];
-                if (order.result.attachmentUrls) {
-                  try {
-                    urls = JSON.parse(order.result.attachmentUrls);
-                  } catch {
-                    urls = [order.result.attachmentUrls];
-                  }
-                } else if (order.result.attachmentUrl) {
-                  urls = [order.result.attachmentUrl];
-                }
-                if (urls.length === 0) return null;
-                return (
+              {urls.length > 0 && (
                   <div>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 select-none">Tài liệu / Ảnh đính kèm</p>
                     <div className="flex flex-wrap gap-3">
@@ -110,8 +110,7 @@ export default function ConsultationOrdersPanel({ orders, patient, record }: Pro
                       ))}
                     </div>
                   </div>
-                );
-              })()}
+              )}
               <div className="flex items-center justify-between text-[11px] text-slate-400 font-bold border-t border-slate-100 pt-3 select-none">
                 <div className="flex items-center gap-4">
                   <span>Nhập bởi: {order.result.enteredByName || order.result.enteredBy || 'N/A'}</span>
@@ -147,14 +146,16 @@ export default function ConsultationOrdersPanel({ orders, patient, record }: Pro
                   extraSections={[
                     {
                       title: 'KẾT QUẢ',
-                      content: order.result.resultData || '—'
+                      content: order.result.resultData || '—',
+                      images: urls
                     }
                   ]}
                   conclusion={order.result.conclusion}
                 />
               </div>
             </div>
-          ) : (
+            );
+          })() : (
             <p className="text-xs font-semibold text-amber-700 bg-amber-50/50 border border-amber-100/60 rounded-xl px-4 py-3 select-none">
               Đang chờ phòng cận lâm sàng thực hiện và nhập kết quả xét nghiệm...
             </p>
