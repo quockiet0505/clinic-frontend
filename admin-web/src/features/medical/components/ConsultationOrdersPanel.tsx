@@ -114,7 +114,7 @@ export default function ConsultationOrdersPanel({ orders, patient, record }: Pro
               })()}
               <div className="flex items-center justify-between text-[11px] text-slate-400 font-bold border-t border-slate-100 pt-3 select-none">
                 <div className="flex items-center gap-4">
-                  <span>Nhập bởi: {order.result.enteredBy}</span>
+                  <span>Nhập bởi: {order.result.enteredByName || order.result.enteredBy || 'N/A'}</span>
                   <span>Thời gian: {order.result.enteredAt}</span>
                 </div>
                 <button
@@ -140,7 +140,7 @@ export default function ConsultationOrdersPanel({ orders, patient, record }: Pro
                     code: patient?.patientId ? `PAT-${patient?.patientId}` : '',
                   }}
                   doctorName={record?.mainDoctorName ?? 'N/A'}
-                  technicianName={order.result.enteredBy}
+                  technicianName={order.result.enteredByName || order.result.enteredBy || 'N/A'}
                   resultData={{
                     title: order.serviceName ?? 'Kết quả xét nghiệm',
                     result: order.result.resultData,

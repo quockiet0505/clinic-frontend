@@ -22,7 +22,8 @@ export interface ServiceResult {
   conclusion: string;
   attachmentUrl?: string;
   attachmentUrls?: string;
-  enteredBy: string;
+  enteredBy?: string; // Tạm giữ để tương thích nếu có
+  enteredByName?: string; // Tên thật từ backend
   enteredAt: string;
 }
 
