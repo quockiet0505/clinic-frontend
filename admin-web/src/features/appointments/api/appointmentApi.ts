@@ -109,17 +109,18 @@ export const appointmentApi = {
   },
 
   update: async (id: number, data: any): Promise<void> => {
-    await axiosInstance.put(`/appointments/${id}`, data);
+    await axiosInstance.put(`/appointments/${id}`, data, { skipSuccessToast: true });
   },
 
   getTimeSlots: async (
     appointmentDate: string,
-    options: { doctorId?: number; expertiseId?: number; serviceId?: number }
+    options: { doctorId?: number; expertiseId?: number; serviceId?: number; ignoreAppointmentId?: number }
   ): Promise<any[]> => {
     const params = new URLSearchParams({ date: appointmentDate });
     if (options.doctorId) params.set('doctorId', String(options.doctorId));
     if (options.expertiseId) params.set('expertiseId', String(options.expertiseId));
     if (options.serviceId) params.set('serviceId', String(options.serviceId));
+    if (options.ignoreAppointmentId) params.set('ignoreAppointmentId', String(options.ignoreAppointmentId));
     const response = await axiosInstance.get(`/appointments/slots?${params.toString()}`);
     return response.data.data;
   },

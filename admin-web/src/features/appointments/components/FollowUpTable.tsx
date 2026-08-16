@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import Table, { Column } from '@/components/tables/Table';
 import StatusBadge from '@/components/common/StatusBadge';
 import { FollowUp } from '../types/appointment';
+import { formatDateTime } from '@/utils/formatters';
 
 interface Props {
   data: FollowUp[];
@@ -45,7 +46,7 @@ export default function FollowUpTable({ data, onLogCall, onSendReminder, loading
           <p className="text-sm font-medium text-slate-700">{item.note.split('|')[0]}</p>
           <div className="flex items-center gap-1 text-xs text-slate-500 mt-1.5">
             <History size={12} />
-            <span>Đến hạn: {item.scheduledDatetime}</span>
+            <span>Đến hạn: {formatDateTime(item.scheduledDatetime)}</span>
           </div>
         </div>
       ),

@@ -61,9 +61,27 @@ export default function AppointmentRescheduleDialog({ isOpen, onClose, appointme
         const slots = await appointmentApi.getTimeSlots(selectedDate, {
           doctorId: appointment.mainDoctorId,
           serviceId: appointment.serviceId,
+          ignoreAppointmentId: appointment.appointmentId,
         });
+        
+        const todayStr = new Date().toLocaleDateString('sv-SE'); // E.g., '2026-08-16'
+        let filteredSlots = slots || [];
+
+        if (selectedDate === todayStr) {
+          const now = new Date();
+          const currentHour = now.getHours();
+          const currentMinute = now.getMinutes();
+
+          filteredSlots = filteredSlots.filter((s: SlotItem) => {
+            const [sh, sm] = s.timeStart.split(':').map(Number);
+            if (sh > currentHour) return true;
+            if (sh === currentHour && sm > currentMinute) return true;
+            return false;
+          });
+        }
+
         setAvailableSlots(
-          (slots || []).filter((s: SlotItem) => s.isAvailable ?? s.available)
+          filteredSlots.filter((s: SlotItem) => s.isAvailable ?? s.available)
         );
         setSelectedSlot(null);
       } catch {

@@ -21,6 +21,7 @@ export interface ServiceResult {
   resultData: string;
   conclusion: string;
   attachmentUrl?: string;
+  attachmentUrls?: string;
   enteredBy: string;
   enteredAt: string;
 }

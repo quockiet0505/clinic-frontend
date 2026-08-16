@@ -52,6 +52,37 @@ export default function ConsultationOrdersPanel({ orders }: Props) {
                   </p>
                 </div>
               )}
+              {(() => {
+                let urls: string[] = [];
+                if (order.result.attachmentUrls) {
+                  try {
+                    urls = JSON.parse(order.result.attachmentUrls);
+                  } catch {
+                    urls = [order.result.attachmentUrls];
+                  }
+                } else if (order.result.attachmentUrl) {
+                  urls = [order.result.attachmentUrl];
+                }
+                if (urls.length === 0) return null;
+                return (
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 select-none">Tài liệu / Ảnh đính kèm</p>
+                    <div className="flex flex-wrap gap-2">
+                      {urls.map((url, idx) => (
+                        <a
+                          key={idx}
+                          href={url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors cursor-pointer"
+                        >
+                          Xem file đính kèm {urls.length > 1 ? `#${idx + 1}` : ''}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
               <div className="flex items-center justify-between text-[11px] text-slate-400 font-bold border-t border-slate-100 pt-3 select-none">
                 <span>Nhập bởi: {order.result.enteredBy}</span>
                 <span>Thời gian: {order.result.enteredAt}</span>
