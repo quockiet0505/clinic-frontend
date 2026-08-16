@@ -66,6 +66,13 @@ export const appointmentApi = {
     });
   },
 
+  updateStatus: async (id: number, status: string, notify: boolean = false): Promise<void> => {
+    await axiosInstance.patch(`/appointments/${id}/status`, null, {
+      params: { status, notify },
+      skipSuccessToast: true,
+    });
+  },
+
   confirm: async (id: number): Promise<void> => {
     await axiosInstance.patch(`/appointments/${id}/status`, null, {
       params: { status: 'CONFIRMED' },

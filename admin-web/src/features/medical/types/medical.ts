@@ -67,7 +67,7 @@ export interface MedicalRecord {
   diagnosis: string;
   treatment: string;
   note?: string;
-  status: 'IN_PROGRESS' | 'WAITING_RESULT' | 'DONE' | 'CANCELLED';
+  status: 'PENDING' | 'IN_PROGRESS' | 'WAITING_RESULT' | 'DONE' | 'CANCELLED';
   createdAt: string;
   updatedAt: string;
   consultationFinalFee?: number;

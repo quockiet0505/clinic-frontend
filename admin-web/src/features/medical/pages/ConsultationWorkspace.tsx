@@ -81,6 +81,28 @@ export default function ConsultationWorkspace() {
 
   const patientLabel = record?.patientFullName || record?.patientName || 'bệnh nhân';
 
+  const handleStartExamination = async () => {
+    if (record?.status === 'PENDING') {
+      try {
+        await medicalApi.updateRecord(record.recordId, {
+          patientId: record.patientId,
+          mainDoctorId: record.mainDoctorId,
+          appointmentId: record.appointmentId,
+          diagnosis: form.diagnosis,
+          treatment: form.treatment,
+          status: 'IN_PROGRESS'
+        });
+        if (record.appointmentId) {
+          await appointmentApi.updateStatus(record.appointmentId, 'IN_PROGRESS', false);
+        }
+        await loadRecord();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    setIsExamining(true);
+  };
+
   const handleSaveDraft = async () => {
     if (!record) return;
     setSavingDraft(true);
@@ -219,7 +241,7 @@ export default function ConsultationWorkspace() {
                   icon={<ChevronRight size={14} />}
                   label="Bắt đầu khám"
                   tone="primary"
-                  onClick={() => setIsExamining(true)}
+                  onClick={handleStartExamination}
                 />
               }
             />
