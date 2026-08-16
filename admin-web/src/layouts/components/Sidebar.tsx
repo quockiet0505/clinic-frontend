@@ -48,17 +48,17 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
     {
       title: 'TIẾP TÂN / THU NGÂN',
       items: [
-        { name: 'Lịch hẹn', icon: CalendarDays, path: '/appointments', exact: true, allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
-        { name: 'Lịch theo tháng', icon: Calendar, path: '/appointments/calendar', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE', 'DOCTOR'] },
-        { name: 'Nhắc nhở tái khám', icon: PhoneCall, path: '/appointments/follow-ups', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
-        { name: 'Bệnh nhân', icon: Users, path: '/patients', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE', 'DOCTOR'] },
-        { name: 'Hóa đơn & Thanh toán', icon: ReceiptText, path: '/billing/invoices', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
+        { name: 'Lịch hẹn', icon: CalendarDays, path: '/appointments', exact: true, allowedRoles: ['ADMIN', 'RECEPTIONIST'] },
+        { name: 'Lịch theo tháng', icon: Calendar, path: '/appointments/calendar', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'DOCTOR'] },
+        { name: 'Nhắc nhở tái khám', icon: PhoneCall, path: '/appointments/follow-ups', allowedRoles: ['ADMIN', 'RECEPTIONIST'] },
+        { name: 'Bệnh nhân', icon: Users, path: '/patients', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'DOCTOR', 'NURSE'] },
+        { name: 'Hóa đơn & Thanh toán', icon: ReceiptText, path: '/billing/invoices', allowedRoles: ['ADMIN', 'RECEPTIONIST'] },
       ]
     },
     {
       title: 'KHÁM BỆNH',
       items: [
-        { name: 'Chuẩn bị khám', icon: HeartPulse, path: '/medical/triage', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE'] },
+        { name: 'Chuẩn bị khám', icon: HeartPulse, path: '/medical/triage', allowedRoles: ['ADMIN', 'NURSE'] },
         { name: 'Đang khám', icon: Stethoscope, path: '/medical/active-visits', allowedRoles: ['ADMIN', 'DOCTOR'] },
         { name: 'Hồ sơ bệnh án', icon: History, path: '/medical/records', allowedRoles: ['ADMIN', 'DOCTOR'] },
       ]
@@ -73,9 +73,9 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
     {
       title: 'NHÀ THUỐC',
       items: [
-        { name: 'Danh mục thuốc', icon: Pill, path: '/pharmacy/inventory', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE'] },
-        { name: 'Đơn thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE'] },
-        { name: 'Tra cứu tương tác', icon: Activity, path: '/pharmacy/interaction-checker', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST', 'NURSE'] },
+        { name: 'Danh mục thuốc', icon: Pill, path: '/pharmacy/inventory', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST'] },
+        { name: 'Đơn thuốc', icon: ClipboardPlus, path: '/pharmacy/prescriptions', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST'] },
+        { name: 'Tra cứu tương tác', icon: Activity, path: '/pharmacy/interaction-checker', allowedRoles: ['ADMIN', 'DOCTOR', 'RECEPTIONIST'] },
       ]
     },
     {
@@ -89,8 +89,8 @@ export default function Sidebar({ isCollapsed, onToggle, isMobileOpen, onMobileC
       title: 'GIAO TIẾP',
       items: [
         { name: 'Thông báo', icon: Bell, path: '/system/notifications', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
-        { name: 'Phản hồi', icon: MessageSquareHeart, path: '/system/contact-messages', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
-        { name: 'Bình luận', icon: MessageSquareHeart, path: '/system/feedback', allowedRoles: ['ADMIN', 'RECEPTIONIST', 'NURSE'] },
+        { name: 'Phản hồi', icon: MessageSquareHeart, path: '/system/contact-messages', allowedRoles: ['ADMIN', 'RECEPTIONIST'] },
+        { name: 'Bình luận', icon: MessageSquareHeart, path: '/system/feedback', allowedRoles: ['ADMIN', 'RECEPTIONIST'] },
       ]
     },
     {
