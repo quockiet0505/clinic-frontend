@@ -17,8 +17,8 @@ export const PatientFilterBar: React.FC<PatientFilterBarProps> = ({
 }) => {
   const genderOptions: TabOption[] = [
     { value: 'ALL', label: 'Tất cả' },
-    { value: 'MALE', label: 'Nam' },
-    { value: 'FEMALE', label: 'Nữ' },
+    { value: 'Nam', label: 'Nam' },
+    { value: 'Nữ', label: 'Nữ' },
   ];
 
   return (

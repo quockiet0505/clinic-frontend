@@ -80,7 +80,22 @@ export const appointmentApi = {
     const res = await axiosInstance.get<ApiResponse<TimeSlotRaw[]>>(
       `/appointments/slots?${params.toString()}`
     );
-    return res.data.data.map(enrichTimeSlot);
+    
+    const now = new Date();
+    const minBookingTime = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    const [year, month, day] = appointmentDate.split('-').map(Number);
+
+    return res.data.data.map(slot => {
+      const enriched = enrichTimeSlot(slot);
+      if (enriched.isAvailable) {
+        const [hour, minute] = enriched.timeStart.split(':').map(Number);
+        const slotDate = new Date(year, month - 1, day, hour, minute, 0, 0);
+        if (slotDate <= minBookingTime) {
+          enriched.isAvailable = false;
+        }
+      }
+      return enriched;
+    });
   },
 
   // Authenticated endpoints
