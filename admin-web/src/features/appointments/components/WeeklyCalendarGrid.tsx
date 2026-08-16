@@ -47,17 +47,17 @@ export default function WeeklyCalendarGrid({ currentWeekStart, appointments, onA
   };
 
 
-  return (
-    <div className="flex flex-col h-full bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden relative">
-      {loading && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/50 backdrop-blur-[2px]">
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-            <span className="text-sm font-medium text-slate-600">Đang tải dữ liệu...</span>
-          </div>
-        </div>
-      )}
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-blue-500 h-full min-h-[400px] bg-white rounded-2xl border border-slate-200/80 shadow-sm">
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-3"></div>
+        <p className="text-sm font-medium text-slate-500">Đang tải dữ liệu...</p>
+      </div>
+    );
+  }
 
+  return (
+    <div className="flex flex-col h-full bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       {/* Header days - thu nhỏ chữ và padding */}
       <div className="grid grid-cols-8 border-b border-slate-200 bg-slate-100 shrink-0">
         <div className="py-2 px-1 text-center border-r border-slate-200 flex items-center justify-center text-slate-500">
