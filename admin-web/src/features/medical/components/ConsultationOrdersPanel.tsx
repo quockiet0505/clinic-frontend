@@ -136,7 +136,7 @@ export default function ConsultationOrdersPanel({ orders, patient, record }: Pro
                   issuedDate={new Date(order.result.enteredAt).toLocaleDateString('vi-VN')}
                   patient={{
                     name: patient?.fullName ?? record?.patientName ?? 'N/A',
-                    age: patient?.age ? String(patient.age) : undefined,
+                    dob: patient?.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString('vi-VN') : (patient?.age ? `${patient.age} tuổi` : undefined),
                     gender: patient?.gender === 'MALE' ? 'Nam' : 'Nữ',
                     phone: patient?.phone,
                     address: patient?.address
