@@ -60,7 +60,7 @@ export const MyProfile: React.FC = () => {
   }
 
   if (error || !profile) {
-    const isForbidden = error === 'Forbidden' || error?.includes('403');
+    const isForbidden = error === 'Forbidden' || error?.includes('403') || error?.includes('Access denied');
     return (
       <main className="min-h-screen bg-[#f0f9ff] flex items-center justify-center">
         <div className="p-10 text-center max-w-md bg-white rounded-3xl shadow-sm border border-slate-200">
