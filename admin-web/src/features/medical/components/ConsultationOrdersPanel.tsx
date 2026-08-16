@@ -1,10 +1,16 @@
 import React from 'react';
 import { FlaskConical, CheckCircle2, Hourglass, XCircle } from 'lucide-react';
 import StatusBadge from '@/components/common/StatusBadge';
-import type { ServiceOrder } from '../types/medical';
+import type { ServiceOrder, MedicalRecordDetail } from '../types/medical';
+import { Download, Loader2 } from 'lucide-react';
+import { ClinicPdfLayout } from '@/components/common/ClinicPdfLayout';
+import { generatePdf } from '@/utils/generatePdf';
+import { useState } from 'react';
 
 interface Props {
   orders: ServiceOrder[];
+  patient?: any;
+  record?: MedicalRecordDetail | null;
 }
 
 const statusIcon = (status: string) => {
@@ -14,7 +20,22 @@ const statusIcon = (status: string) => {
   return <FlaskConical size={14} className="text-slate-500" />;
 };
 
-export default function ConsultationOrdersPanel({ orders }: Props) {
+export default function ConsultationOrdersPanel({ orders, patient, record }: Props) {
+  const [pdfLoadingMap, setPdfLoadingMap] = useState<Record<number, boolean>>({});
+
+  const handleDownloadPdf = async (order: ServiceOrder) => {
+    if (!order.result) return;
+    setPdfLoadingMap((prev) => ({ ...prev, [order.orderId]: true }));
+    try {
+      const pdfId = `pdf-result-${order.orderId}`;
+      const filename = `RES-${String(order.result.resultId).padStart(5, '0')}.pdf`;
+      await generatePdf(pdfId, filename);
+    } catch (error) {
+      console.error('Lỗi khi tải PDF:', error);
+    } finally {
+      setPdfLoadingMap((prev) => ({ ...prev, [order.orderId]: false }));
+    }
+  };
   if (!orders.length) {
     return (
       <div className="text-center p-10 text-slate-400 font-medium border-2 border-dashed border-slate-200 rounded-xl select-none">
@@ -67,16 +88,24 @@ export default function ConsultationOrdersPanel({ orders }: Props) {
                 return (
                   <div>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5 select-none">Tài liệu / Ảnh đính kèm</p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-3">
                       {urls.map((url, idx) => (
                         <a
                           key={idx}
                           href={url}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-colors cursor-pointer"
+                          className="group relative block overflow-hidden rounded-xl border border-slate-200 bg-slate-50 w-24 h-24 sm:w-32 sm:h-32 transition-all hover:ring-2 hover:ring-blue-500 hover:border-transparent"
                         >
-                          Xem file đính kèm {urls.length > 1 ? `#${idx + 1}` : ''}
+                          <img
+                            src={url}
+                            alt={`Đính kèm ${idx + 1}`}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                            loading="lazy"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                            <span className="text-white opacity-0 group-hover:opacity-100 text-xs font-semibold bg-black/60 px-2 py-1 rounded-lg backdrop-blur-sm transition-opacity">Phóng to</span>
+                          </div>
                         </a>
                       ))}
                     </div>
@@ -84,8 +113,52 @@ export default function ConsultationOrdersPanel({ orders }: Props) {
                 );
               })()}
               <div className="flex items-center justify-between text-[11px] text-slate-400 font-bold border-t border-slate-100 pt-3 select-none">
-                <span>Nhập bởi: {order.result.enteredBy}</span>
-                <span>Thời gian: {order.result.enteredAt}</span>
+                <div className="flex items-center gap-4">
+                  <span>Nhập bởi: {order.result.enteredBy}</span>
+                  <span>Thời gian: {order.result.enteredAt}</span>
+                </div>
+                <button
+                  onClick={() => handleDownloadPdf(order)}
+                  disabled={pdfLoadingMap[order.orderId]}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                >
+                  {pdfLoadingMap[order.orderId] ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+                  Tải Phiếu KQ
+                </button>
+              </div>
+
+              {/* Hidden PDF Layout */}
+              <div id={`pdf-result-${order.orderId}`} className="hidden">
+                <ClinicPdfLayout
+                  type="LAB_RESULT"
+                  patientInfo={{
+                    name: patient?.fullName ?? record?.patientName ?? 'N/A',
+                    age: patient?.age ?? 'N/A',
+                    gender: patient?.gender === 'MALE' ? 'Nam' : 'Nữ',
+                    phone: patient?.phone,
+                    address: patient?.address,
+                    code: patient?.patientId ? `PAT-${patient?.patientId}` : '',
+                  }}
+                  doctorName={record?.mainDoctorName ?? 'N/A'}
+                  technicianName={order.result.enteredBy}
+                  resultData={{
+                    title: order.serviceName ?? 'Kết quả xét nghiệm',
+                    result: order.result.resultData,
+                    conclusion: order.result.conclusion,
+                    attachmentUrls: (() => {
+                      if (order.result?.attachmentUrls) {
+                        try {
+                          return JSON.parse(order.result.attachmentUrls);
+                        } catch {
+                          return [order.result.attachmentUrls];
+                        }
+                      }
+                      if (order.result?.attachmentUrl) return [order.result.attachmentUrl];
+                      return [];
+                    })(),
+                  }}
+                  date={new Date(order.result.enteredAt)}
+                />
               </div>
             </div>
           ) : (

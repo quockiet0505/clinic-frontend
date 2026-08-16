@@ -405,7 +405,7 @@ export default function ConsultationWorkspace() {
                 {activeTab === 'notes' && (
                   <ConsultationForm value={form} onChange={setForm} readOnly={isReadOnly} />
                 )}
-                {activeTab === 'orders' && <ConsultationOrdersPanel orders={orders} />}
+                {activeTab === 'orders' && <ConsultationOrdersPanel orders={orders} patient={patient} record={record} />}
                 {activeTab === 'prescriptions' && (
                   canPrescribe ? (
                     <PrescriptionBuilder recordId={recordId} />
