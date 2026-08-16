@@ -130,34 +130,27 @@ export default function ConsultationOrdersPanel({ orders, patient, record }: Pro
               {/* Hidden PDF Layout */}
               <div id={`pdf-result-${order.orderId}`} className="hidden">
                 <ClinicPdfLayout
-                  type="LAB_RESULT"
-                  patientInfo={{
+                  id={`pdf-result-${order.orderId}`}
+                  documentTitle="KẾT QUẢ CẬN LÂM SÀNG"
+                  documentCode={`RES-${String(order.result.resultId).padStart(5, '0')}`}
+                  issuedDate={new Date(order.result.enteredAt).toLocaleDateString('vi-VN')}
+                  patient={{
                     name: patient?.fullName ?? record?.patientName ?? 'N/A',
-                    age: patient?.age ?? 'N/A',
+                    age: patient?.age ? String(patient.age) : undefined,
                     gender: patient?.gender === 'MALE' ? 'Nam' : 'Nữ',
                     phone: patient?.phone,
-                    address: patient?.address,
-                    code: patient?.patientId ? `PAT-${patient?.patientId}` : '',
+                    address: patient?.address
                   }}
                   doctorName={record?.mainDoctorName ?? 'N/A'}
                   technicianName={order.result.enteredByName || order.result.enteredBy || 'N/A'}
-                  resultData={{
-                    title: order.serviceName ?? 'Kết quả xét nghiệm',
-                    result: order.result.resultData,
-                    conclusion: order.result.conclusion,
-                    attachmentUrls: (() => {
-                      if (order.result?.attachmentUrls) {
-                        try {
-                          return JSON.parse(order.result.attachmentUrls);
-                        } catch {
-                          return [order.result.attachmentUrls];
-                        }
-                      }
-                      if (order.result?.attachmentUrl) return [order.result.attachmentUrl];
-                      return [];
-                    })(),
-                  }}
-                  date={new Date(order.result.enteredAt)}
+                  serviceName={order.serviceName}
+                  extraSections={[
+                    {
+                      title: 'KẾT QUẢ',
+                      content: order.result.resultData || '—'
+                    }
+                  ]}
+                  conclusion={order.result.conclusion}
                 />
               </div>
             </div>
