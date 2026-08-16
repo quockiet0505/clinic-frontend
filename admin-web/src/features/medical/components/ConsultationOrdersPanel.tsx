@@ -5,6 +5,7 @@ import type { ServiceOrder, MedicalRecordDetail } from '../types/medical';
 import { Download, Loader2 } from 'lucide-react';
 import { ClinicPdfLayout } from '@/components/common/ClinicPdfLayout';
 import { generatePdf } from '@/utils/generatePdf';
+import { getImageUrl } from '@/utils/image';
 import { useState } from 'react';
 
 interface Props {
@@ -70,6 +71,8 @@ export default function ConsultationOrdersPanel({ orders, patient, record }: Pro
             } else if (order.result.attachmentUrl) {
               urls = [order.result.attachmentUrl];
             }
+            
+            urls = urls.map(u => getImageUrl(u));
             
             return (
             <div className="space-y-4">

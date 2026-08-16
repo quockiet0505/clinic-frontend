@@ -24,6 +24,7 @@ import { SectionContainer } from '@/components/common/SectionContainer';
 import DetailPageHeader, { ActionButton } from '@/components/common/DetailPageHeader';
 import { ClinicPdfLayout } from '@/components/common/ClinicPdfLayout';
 import { generatePdf, printPdfLayout } from '@/utils/generatePdf';
+import { getImageUrl } from '@/utils/image';
 import { medicalApi } from '../api/medicalApi';
 import { staffApi } from '../../staffs/api/staffApi';
 import { patientApi } from '../../patients/api/patientApi';
@@ -572,17 +573,40 @@ export default function MedicalRecordDetail() {
                             </p>
                           )}
 
-                          {order.result?.attachmentUrl && (
-                            <a
-                              href={order.result.attachmentUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-primary-600 hover:text-primary-700 transition-colors"
-                            >
-                              <ExternalLink className="w-3.5 h-3.5" />
-                              Xem file đính kèm
-                            </a>
-                          )}
+                          {(() => {
+                            let urls: string[] = [];
+                            if (order.result?.attachmentUrls) {
+                              try {
+                                urls = JSON.parse(order.result.attachmentUrls);
+                              } catch {
+                                urls = [order.result.attachmentUrls];
+                              }
+                            } else if (order.result?.attachmentUrl) {
+                              urls = [order.result.attachmentUrl];
+                            }
+                            urls = urls.map(u => getImageUrl(u));
+                            if (urls.length === 0) return null;
+                            
+                            return (
+                              <div className="mt-4 flex flex-wrap gap-3">
+                                {urls.map((u, i) => (
+                                  <a
+                                    key={i}
+                                    href={u}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group relative block overflow-hidden rounded-xl border border-slate-200 bg-slate-50 w-24 h-24 transition-all hover:ring-2 hover:ring-blue-500"
+                                  >
+                                    <img
+                                      src={u}
+                                      alt={`Đính kèm ${i + 1}`}
+                                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                    />
+                                  </a>
+                                ))}
+                              </div>
+                            );
+                          })()}
                         </article>
                       );
                     })}
