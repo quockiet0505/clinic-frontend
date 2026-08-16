@@ -35,7 +35,7 @@ export function buildRescheduleDates(maxDaysAhead = 7): RescheduleDateOption[] {
 
   for (let cursor = new Date(today); cursor <= maxDate; cursor.setDate(cursor.getDate() + 1)) {
     if (cursor.getTime() < today.getTime()) continue;
-    if (cursor.getDay() === 0) continue; // Skip Sunday
+    if (cursor.getDay() === 0 && cursor.getTime() !== today.getTime()) continue; // Skip Sunday unless it is today
 
     const yyyy = cursor.getFullYear();
     const mm = String(cursor.getMonth() + 1).padStart(2, '0');
