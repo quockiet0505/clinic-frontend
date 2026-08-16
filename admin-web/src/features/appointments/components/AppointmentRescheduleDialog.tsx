@@ -116,8 +116,7 @@ export default function AppointmentRescheduleDialog({ isOpen, onClose, appointme
       onRescheduled();
       onClose();
     } catch (error: unknown) {
-      const err = error as { response?: { data?: { message?: string } } };
-      toast.error(err.response?.data?.message || 'Lỗi khi dời lịch hẹn');
+      // Let the global axios response interceptor handle the error toast
     } finally {
       setLoading(false);
     }
