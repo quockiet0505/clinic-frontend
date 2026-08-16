@@ -172,9 +172,10 @@ export const appointmentApi = {
       timeEnd: string;
       mainDoctorId?: number;
       rescheduleReason: string;
-    }
+    },
+    config?: import('axios').AxiosRequestConfig
   ) => {
-    const res = await axiosInstance.put(`/appointments/${id}`, data);
+    const res = await axiosInstance.put(`/appointments/${id}`, data, config);
     return res.data.data;
   },
 

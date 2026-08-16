@@ -80,7 +80,7 @@ export const RescheduleAppointmentDialog: React.FC<RescheduleAppointmentDialogPr
         timeEnd: selectedSlot.timeEnd,
         mainDoctorId: appointment.mainDoctorId,
         rescheduleReason: reason,
-      });
+      }, { skipSuccessToast: true });
 
       toast({ title: 'Thành công', description: 'Đã dời lịch hẹn thành công' });
       onSuccess();
