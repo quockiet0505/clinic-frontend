@@ -48,6 +48,7 @@ export default function AdminDashboard() {
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const [reportData, setReportData] = useState<{ filter: ReportFilter, stats: DashboardStats, revenue: RevenueStatsSummary } | null>(null);
   const [reportAction, setReportAction] = useState<'pdf' | 'print' | null>(null);
@@ -62,6 +63,7 @@ export default function AdminDashboard() {
   ];
 
   const fetchOverviewData = useCallback(async () => {
+    setLoading(true);
     try {
       const currentMonth = new Date().getMonth() + 1;
       const [statsData, monthlyStats, recent, revenueData, serviceData] = await Promise.all([
@@ -78,6 +80,8 @@ export default function AdminDashboard() {
       setTopServices(serviceData.content || []);
     } catch (error) {
       console.error('Error loading overview:', error);
+    } finally {
+      setLoading(false);
     }
   }, [year]);
 
@@ -220,6 +224,7 @@ export default function AdminDashboard() {
           recentApts={recentApts}
           revenueTrend={revenueTrend}
           topServices={topServices}
+          loading={loading}
         />
       </div>
       {visitedTabs.has('doctors') && (

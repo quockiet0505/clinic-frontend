@@ -203,7 +203,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               children: [
                                 Icon(Icons.notifications_off_rounded, size: 80, color: Colors.grey[300]),
                                 const SizedBox(height: 16),
-                                Text('notifications_empty'.tr(), style: AppStyles.bodyLarge.copyWith(color: AppColors.textSubLight)),
+                                Text('Không có thông báo', style: AppStyles.bodyLarge.copyWith(color: AppColors.textSubLight)),
                               ],
                             ),
                           ),

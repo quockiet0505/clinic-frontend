@@ -181,25 +181,22 @@ export default function AppointmentCalendar() {
         formatDate={formatDate}
       />
 
-      {loading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400">Đang tải dữ liệu...</div>
-      ) : (
-        <div className="flex-1 overflow-hidden min-h-0 rounded-[32px] shadow-sm">
-          {filteredAppointments.length === 0 ? (
-            <div className="flex items-center justify-center h-full bg-white rounded-2xl border border-slate-200">
-              <p className="text-slate-400 font-medium">
-                {fromDate || toDate ? 'Không có lịch hẹn trong khoảng ngày đã chọn' : 'Không có lịch hẹn nào'}
-              </p>
-            </div>
-          ) : (
-            <WeeklyCalendarGrid
-              currentWeekStart={currentWeekStart}
-              appointments={filteredAppointments}
-              onAppointmentClick={(app) => console.log('Clicked:', app)}
-            />
-          )}
-        </div>
-      )}
+      <div className="flex-1 overflow-hidden min-h-0 rounded-[32px] shadow-sm">
+        {filteredAppointments.length === 0 && !loading ? (
+          <div className="flex items-center justify-center h-full bg-white rounded-2xl border border-slate-200">
+            <p className="text-slate-400 font-medium">
+              {fromDate || toDate ? 'Không có lịch hẹn trong khoảng ngày đã chọn' : 'Không có lịch hẹn nào'}
+            </p>
+          </div>
+        ) : (
+          <WeeklyCalendarGrid
+            currentWeekStart={currentWeekStart}
+            appointments={filteredAppointments}
+            onAppointmentClick={(app) => console.log('Clicked:', app)}
+            loading={loading}
+          />
+        )}
+      </div>
     </div>
   );
 }

@@ -18,6 +18,7 @@ export default function AppointmentList() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [totalElements, setTotalElements] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
   const pageSize = 20;
 
   // ---- Filters ----
@@ -37,6 +38,7 @@ export default function AppointmentList() {
 
   // ---- Fetch data ----
   const fetchData = useCallback(async () => {
+    setLoading(true);
     try {
       const res = await appointmentApi.getAllPaged({
         search: search || undefined,
@@ -58,6 +60,8 @@ export default function AppointmentList() {
       console.error('Error fetching appointments:', error);
       setAppointments([]);
       setTotalElements(0);
+    } finally {
+      setLoading(false);
     }
   }, [search, status, activeTab, fromDate, toDate, source, currentPage]);
 
@@ -245,7 +249,7 @@ export default function AppointmentList() {
           onSendToLab={handleSendToLab}
           onReturnFromLab={handleReturnFromLab}
           onComplete={handleComplete}
-          loading={false}
+          loading={loading}
           pagination={{
             page: currentPage,
             size: pageSize,

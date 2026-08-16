@@ -141,16 +141,47 @@ class _GoogleRegisterScreenState extends State<GoogleRegisterScreen> {
                 controller: _phoneController,
               ),
               const SizedBox(height: 16),
-              CustomTextField(
-                hintText: 'Giới tính (Nam/Nữ)',
-                prefixIcon: Icons.wc,
-                controller: _genderController,
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  hintText: 'Giới tính',
+                  prefixIcon: const Icon(Icons.wc, color: AppColors.textSubLight),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                items: const [
+                  DropdownMenuItem(value: 'Nam', child: Text('Nam')),
+                  DropdownMenuItem(value: 'Nữ', child: Text('Nữ')),
+                ],
+                onChanged: (val) {
+                  if (val != null) _genderController.text = val;
+                },
+                validator: (v) => v == null || v.isEmpty ? 'Vui lòng chọn giới tính' : null,
               ),
               const SizedBox(height: 16),
-              CustomTextField(
-                hintText: 'Ngày sinh (YYYY-MM-DD)',
-                prefixIcon: Icons.calendar_today,
-                controller: _dobController,
+              GestureDetector(
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime(2000),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime.now(),
+                  );
+                  if (picked != null) {
+                    _dobController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+                  }
+                },
+                child: AbsorbPointer(
+                  child: CustomTextField(
+                    hintText: 'Ngày sinh (YYYY-MM-DD)',
+                    prefixIcon: Icons.calendar_today,
+                    controller: _dobController,
+                  ),
+                ),
               ),
               const SizedBox(height: 16),
               CustomTextField(

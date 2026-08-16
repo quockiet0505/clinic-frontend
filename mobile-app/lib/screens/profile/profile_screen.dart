@@ -36,8 +36,8 @@ class ProfileScreen extends StatelessWidget {
           final medicalHistory = user?['medicalHistory'];
 
           String genderLabel = '---';
-          if (gender == 'MALE') genderLabel = 'Nam';
-          if (gender == 'FEMALE') genderLabel = 'Nữ';
+          if (gender == 'MALE' || gender == 'Nam') genderLabel = 'Nam';
+          if (gender == 'FEMALE' || gender == 'Nữ') genderLabel = 'Nữ';
 
           String dobFormatted = '---';
           if (dob != null) {
@@ -83,6 +83,14 @@ class ProfileScreen extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: _buildCard([
+                    _buildInfoRow(
+                      icon: Icons.cake_outlined,
+                      iconBg: const Color(0xFFF1F5F9),
+                      iconColor: const Color(0xFF64748B),
+                      title: 'Ngày sinh',
+                      value: dobFormatted,
+                    ),
+                    _buildDivider(),
                     _buildInfoRow(
                       icon: Icons.location_on_outlined,
                       iconBg: const Color(0xFFF1F5F9),

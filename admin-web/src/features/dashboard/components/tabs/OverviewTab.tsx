@@ -19,6 +19,7 @@ interface Props {
   recentApts: RecentAppointment[];
   revenueTrend: RevenueMonthlyTrend[];
   topServices: ServiceStat[];
+  loading?: boolean;
 }
 
 /* ── Inline SVG Sparkline ─────────────────────────────────── */
@@ -85,7 +86,7 @@ function KpiCard({ icon, label, value, gradient, shadow, sparkData, sparkColor, 
 }
 
 /* ── OverviewTab ──────────────────────────────────────────── */
-export default function OverviewTab({ stats, monthlyData, recentApts, revenueTrend, topServices }: Props) {
+export default function OverviewTab({ stats, monthlyData, recentApts, revenueTrend, topServices, loading = false }: Props) {
   // Sparkline data từ monthlyData
   const completedSparkData = useMemo(
     () => monthlyData.map(m => m.completed),
@@ -116,7 +117,15 @@ export default function OverviewTab({ stats, monthlyData, recentApts, revenueTre
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative min-h-[400px]">
+      {loading && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/50 backdrop-blur-[2px] rounded-2xl">
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+            <span className="text-sm font-medium text-slate-600">Đang tải dữ liệu...</span>
+          </div>
+        </div>
+      )}
 
       {/* ── [A] 4 KPI Cards ─────────────────────────────── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
