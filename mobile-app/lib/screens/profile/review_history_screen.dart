@@ -184,151 +184,153 @@ class _ReviewHistoryScreenState extends State<ReviewHistoryScreen> {
           surfaceTintColor: Colors.transparent,
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  'Cập nhật đánh giá',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2937)),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Chia sẻ trải nghiệm của bạn để giúp chúng tôi cải thiện dịch vụ',
-                  style: TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF9FAFB),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFF3F4F6)),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    'Cập nhật đánh giá',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF1F2937)),
+                    textAlign: TextAlign.center,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(5, (index) {
-                      return GestureDetector(
-                        onTap: () => setStateDialog(() => rating = index + 1),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Icon(
-                            index < rating ? Icons.star_rounded : Icons.star_border_rounded,
-                            size: 40,
-                            color: index < rating ? Colors.amber : const Color(0xFFD1D5DB),
-                          ),
-                        ),
-                      );
-                    }),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Chia sẻ trải nghiệm của bạn để giúp chúng tôi cải thiện dịch vụ',
+                    style: TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Góp ý thêm',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF374151)),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: commentController,
-                  maxLines: 4,
-                  decoration: InputDecoration(
-                    hintText: 'Nhập bình luận của bạn (không bắt buộc)...',
-                    hintStyle: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
-                    filled: true,
-                    fillColor: const Color(0xFFF9FAFB),
-                    contentPadding: const EdgeInsets.all(16),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
-                    focusedBorder: OutlineInputBorder(
+                  const SizedBox(height: 24),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF9FAFB),
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                      border: Border.all(color: const Color(0xFFF3F4F6)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(5, (index) {
+                        return GestureDetector(
+                          onTap: () => setStateDialog(() => rating = index + 1),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Icon(
+                              index < rating ? Icons.star_rounded : Icons.star_border_rounded,
+                              size: 40,
+                              color: index < rating ? Colors.amber : const Color(0xFFD1D5DB),
+                            ),
+                          ),
+                        );
+                      }),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Theme(
-                  data: ThemeData(
-                    unselectedWidgetColor: const Color(0xFFD1D5DB),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'Góp ý thêm',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF374151)),
                   ),
-                  child: CheckboxListTile(
-                    value: isAnonymous,
-                    onChanged: (v) => setStateDialog(() => isAnonymous = v ?? false),
-                    title: const Text('Đánh giá ẩn danh', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF4B5563))),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
-                    activeColor: AppColors.primary,
-                    visualDensity: VisualDensity.compact,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextButton(
-                        onPressed: isSubmitting ? null : () => Navigator.pop(context),
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        ),
-                        child: const Text('Hủy', style: TextStyle(color: Color(0xFF6B7280), fontWeight: FontWeight.w600, fontSize: 16)),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: commentController,
+                    maxLines: 4,
+                    decoration: InputDecoration(
+                      hintText: 'Nhập bình luận của bạn (không bắt buộc)...',
+                      hintStyle: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
+                      filled: true,
+                      fillColor: const Color(0xFFF9FAFB),
+                      contentPadding: const EdgeInsets.all(16),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      flex: 2,
-                      child: ElevatedButton(
-                        onPressed: isSubmitting ? null : () async {
-                          if (rating == 0) {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Vui lòng chọn số sao')));
-                            return;
-                          }
-                          setStateDialog(() => isSubmitting = true);
-                          try {
-                            if (isDoctor) {
-                              await _feedbackService.updateDoctorReview(
-                                reviewId: feedback['reviewId'] ?? feedback['id'] ?? feedback['feedbackId'],
-                                doctorId: feedback['doctorId'],
-                                appointmentId: feedback['appointmentId'] ?? 0,
-                                rating: rating,
-                                comment: commentController.text,
-                                isAnonymous: isAnonymous,
-                              );
-                            } else {
-                              await _feedbackService.updateClinicReview(
-                                reviewId: feedback['feedbackId'] ?? feedback['id'],
-                                recordId: feedback['recordId'],
-                                appointmentId: feedback['appointmentId'],
-                                rating: rating,
-                                comment: commentController.text,
-                                isAnonymous: isAnonymous,
-                              );
-                            }
-                            if (mounted) {
-                              Navigator.pop(context);
-                              _fetchHistory();
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã cập nhật đánh giá')));
-                            }
-                          } catch (e) {
-                            setStateDialog(() => isSubmitting = false);
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        ),
-                        child: isSubmitting 
-                          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                          : const Text('Lưu thay đổi', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      ),
+                  ),
+                  const SizedBox(height: 16),
+                  Theme(
+                    data: ThemeData(
+                      unselectedWidgetColor: const Color(0xFFD1D5DB),
                     ),
-                  ],
-                ),
-              ],
+                    child: CheckboxListTile(
+                      value: isAnonymous,
+                      onChanged: (v) => setStateDialog(() => isAnonymous = v ?? false),
+                      title: const Text('Đánh giá ẩn danh', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF4B5563))),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: EdgeInsets.zero,
+                      activeColor: AppColors.primary,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: isSubmitting ? null : () => Navigator.pop(context),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                          child: const Text('Hủy', style: TextStyle(color: Color(0xFF6B7280), fontWeight: FontWeight.w600, fontSize: 16)),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 2,
+                        child: ElevatedButton(
+                          onPressed: isSubmitting ? null : () async {
+                            if (rating == 0) {
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Vui lòng chọn số sao')));
+                              return;
+                            }
+                            setStateDialog(() => isSubmitting = true);
+                            try {
+                              if (isDoctor) {
+                                await _feedbackService.updateDoctorReview(
+                                  reviewId: feedback['reviewId'] ?? feedback['id'] ?? feedback['feedbackId'],
+                                  doctorId: feedback['doctorId'],
+                                  appointmentId: feedback['appointmentId'] ?? 0,
+                                  rating: rating,
+                                  comment: commentController.text,
+                                  isAnonymous: isAnonymous,
+                                );
+                              } else {
+                                await _feedbackService.updateClinicReview(
+                                  reviewId: feedback['feedbackId'] ?? feedback['id'],
+                                  recordId: feedback['recordId'],
+                                  appointmentId: feedback['appointmentId'],
+                                  rating: rating,
+                                  comment: commentController.text,
+                                  isAnonymous: isAnonymous,
+                                );
+                              }
+                              if (mounted) {
+                                Navigator.pop(context);
+                                _fetchHistory();
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã cập nhật đánh giá')));
+                              }
+                            } catch (e) {
+                              setStateDialog(() => isSubmitting = false);
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                          child: isSubmitting 
+                            ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                            : const Text('Lưu thay đổi', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

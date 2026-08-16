@@ -33,10 +33,15 @@ class _ReviewScreenState extends State<ReviewScreen>
   String? _doctorCreatedAt;
   String? _clinicCreatedAt;
 
+  late TextEditingController _doctorCommentController;
+  late TextEditingController _clinicCommentController;
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    _doctorCommentController = TextEditingController();
+    _clinicCommentController = TextEditingController();
     _fetchExistingReviews();
   }
 
@@ -53,6 +58,7 @@ class _ReviewScreenState extends State<ReviewScreen>
               existingDoctor['feedbackId'] ?? existingDoctor['id'];
           _doctorRating = existingDoctor['rating'] ?? 0;
           _doctorComment = existingDoctor['comment'] ?? '';
+          _doctorCommentController.text = _doctorComment;
           _doctorIsAnonymous = existingDoctor['isAnonymous'] ?? false;
           _doctorCreatedAt = existingDoctor['createdAt'];
         });
@@ -69,6 +75,7 @@ class _ReviewScreenState extends State<ReviewScreen>
               existingClinic['feedbackId'] ?? existingClinic['id'];
           _clinicRating = existingClinic['rating'] ?? 0;
           _clinicComment = existingClinic['comment'] ?? '';
+          _clinicCommentController.text = _clinicComment;
           _clinicIsAnonymous = existingClinic['isAnonymous'] ?? false;
           _clinicCreatedAt = existingClinic['createdAt'];
         });
@@ -81,6 +88,8 @@ class _ReviewScreenState extends State<ReviewScreen>
   @override
   void dispose() {
     _tabController.dispose();
+    _doctorCommentController.dispose();
+    _clinicCommentController.dispose();
     super.dispose();
   }
 
@@ -186,7 +195,7 @@ class _ReviewScreenState extends State<ReviewScreen>
     required String title,
     required String subtitle,
     required int rating,
-    required String comment,
+    required TextEditingController commentController,
     required bool isAnonymous,
     required bool isSubmitting,
     required String? createdAt,
@@ -203,8 +212,6 @@ class _ReviewScreenState extends State<ReviewScreen>
         isEditable = DateTime.now().difference(createdDate).inHours < 24;
       }
     }
-
-    final commentController = TextEditingController(text: comment);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
@@ -340,7 +347,7 @@ class _ReviewScreenState extends State<ReviewScreen>
             title: 'Trải nghiệm của bạn?',
             subtitle: 'Bạn đánh giá thế nào về BS. ${widget.appointment.doctorName}?',
             rating: _doctorRating,
-            comment: _doctorComment,
+            commentController: _doctorCommentController,
             isAnonymous: _doctorIsAnonymous,
             isSubmitting: _doctorSubmitting,
             createdAt: _doctorCreatedAt,
@@ -355,7 +362,7 @@ class _ReviewScreenState extends State<ReviewScreen>
             title: 'Đánh giá Phòng khám',
             subtitle: 'Bạn cảm thấy hài lòng với dịch vụ phòng khám chứ?',
             rating: _clinicRating,
-            comment: _clinicComment,
+            commentController: _clinicCommentController,
             isAnonymous: _clinicIsAnonymous,
             isSubmitting: _clinicSubmitting,
             createdAt: _clinicCreatedAt,

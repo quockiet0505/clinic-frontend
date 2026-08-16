@@ -221,7 +221,9 @@ class AppointmentProvider extends ChangeNotifier {
         bookingMode: bookingMode,
         date: selectedDate!,
         timeStart: selectedTimeSlot!['timeStart'],
-        timeEnd: selectedTimeSlot!['timeEnd'] ?? selectedTimeSlot!['timeStart'],
+        timeEnd: (selectedTimeSlot!['timeEnd'] == null || selectedTimeSlot!['timeEnd'].toString().isEmpty)
+            ? selectedTimeSlot!['timeStart']
+            : selectedTimeSlot!['timeEnd'],
         note: note,
         isAiSuggested: isAiSuggested,
       );

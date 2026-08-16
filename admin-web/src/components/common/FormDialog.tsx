@@ -168,6 +168,8 @@ export default function FormDialog({
             isSearchable
             placeholder={field.placeholder || "Chọn hoặc gõ tìm kiếm..."}
             classNamePrefix="react-select"
+            menuPortalTarget={typeof document !== 'undefined' ? document.body : undefined}
+            menuPosition="fixed"
             styles={{
               control: (base) => ({
                 ...base,
@@ -180,7 +182,7 @@ export default function FormDialog({
                   borderColor: '#93c5fd'
                 }
               }),
-              menu: (base) => ({
+              menuPortal: (base) => ({
                 ...base,
                 zIndex: 9999
               })
@@ -270,7 +272,19 @@ export default function FormDialog({
 
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className={`${wide ? 'sm:max-w-[672px]' : 'sm:max-w-[500px]'} p-0 border-0 rounded-[24px] shadow-2xl ${compact ? 'max-w-[480px]' : ''}`}>
+      <DialogContent 
+        className={`${wide ? 'sm:max-w-[672px]' : 'sm:max-w-[500px]'} p-0 border-0 rounded-[24px] shadow-2xl ${compact ? 'max-w-[480px]' : ''}`}
+        onInteractOutside={(e) => {
+          if (e.target instanceof Element && e.target.closest('.react-select__menu')) {
+            e.preventDefault();
+          }
+        }}
+        onPointerDownOutside={(e) => {
+          if (e.target instanceof Element && e.target.closest('.react-select__menu')) {
+            e.preventDefault();
+          }
+        }}
+      >
         {/* HEADER - Sky Blue gradient, đồng nhất với màu chủ đạo hệ thống */}
         <div className={`${compact ? 'px-6 pt-5 pb-4' : 'px-8 pt-7 pb-5'} bg-white border-b border-slate-100 rounded-t-[24px]`}>
           <div className="flex items-start gap-4">

@@ -18,14 +18,30 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   bool _isSubmitting = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final provider = context.read<AppointmentProvider>();
+        if (provider.myAppointments.isEmpty) {
+          provider.fetchMyAppointments();
+        }
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final appointmentProvider = context.watch<AppointmentProvider>();
-    final hasCompletedAppointment = appointmentProvider.myAppointments.any((a) => a.status == 'COMPLETED');
+    final completedAppointments = appointmentProvider.myAppointments.where((a) => a.status == 'COMPLETED').toList();
+    final hasCompletedAppointment = completedAppointments.isNotEmpty;
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const GradientAppBar(title: 'Đánh giá Phòng khám'),
-      body: !hasCompletedAppointment 
+      body: appointmentProvider.isLoading 
+        ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+        : !hasCompletedAppointment 
         ? Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -121,6 +137,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   setState(() => _isSubmitting = true);
                   try {
                     await FeedbackService().submitClinicReview(
+                      appointmentId: completedAppointments.first.appointmentId,
                       rating: _rating,
                       comment: _commentController.text,
                       isAnonymous: _isAnonymous,
