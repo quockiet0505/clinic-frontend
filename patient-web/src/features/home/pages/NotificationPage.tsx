@@ -85,7 +85,7 @@ export const NotificationPage: React.FC = () => {
   const getMeta = (type: string, content: string) => {
     const lc = content.toLowerCase();
     if (lc.includes('tái khám'))
-      return { label: 'Tái khám', icon: <CalendarClock className="w-4 h-4" />, bg: 'bg-violet-100', text: 'text-violet-700', border: 'border-violet-200', badgeBg: 'bg-violet-100 text-violet-700', dot: 'bg-violet-400', headerBg: 'from-violet-50 to-primary-50', headerBorder: 'border-violet-100' };
+      return { label: 'Tái khám', icon: <CalendarClock className="w-4 h-4" />, bg: 'bg-primary-100', text: 'text-primary-700', border: 'border-primary-200', badgeBg: 'bg-primary-100 text-primary-700', dot: 'bg-primary-400', headerBg: 'from-primary-50 to-primary-100/50', headerBorder: 'border-primary-100' };
     if (lc.includes('lịch hẹn') || lc.includes('appointment'))
       return { label: 'Lịch hẹn', icon: <Calendar className="w-4 h-4" />, bg: 'bg-sky-100', text: 'text-sky-700', border: 'border-sky-200', badgeBg: 'bg-sky-100 text-sky-700', dot: 'bg-sky-400', headerBg: 'from-sky-50 to-primary-50', headerBorder: 'border-sky-100' };
     if (lc.includes('xét nghiệm') || lc.includes('result') || lc.includes('kết quả'))
@@ -127,16 +127,16 @@ export const NotificationPage: React.FC = () => {
 
       <SectionContainer className="max-w-5xl py-8">
         {pendingFollowUps.length > 0 && (
-          <div className="mb-6 rounded-2xl border border-violet-200 bg-violet-50/80 p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <CalendarClock className="w-5 h-5 text-violet-600" />
-              <h2 className="font-bold text-violet-900">Lịch tái khám cần xác nhận</h2>
+          <div className="mb-6 rounded-2xl border border-primary-200 bg-primary-50/80 p-5">
+            <div className="flex items-center gap-2.5 mb-4">
+              <CalendarClock className="w-5 h-5 text-primary-600" />
+              <h2 className="font-bold text-primary-900">Lịch tái khám cần xác nhận</h2>
             </div>
             <div className="space-y-3">
               {pendingFollowUps.map((fu) => (
-                <div key={fu.followUpId} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white rounded-xl p-4 border border-violet-100">
-                  <div>
-                    <p className="font-semibold text-slate-800">{fu.doctorName}</p>
+                <div key={fu.followUpId} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white rounded-xl p-4 border border-primary-100">
+                  <div className="flex-1">
+                    <p className="font-bold text-slate-800 text-sm">BS. {fu.doctorName}</p>
                     <p className="text-sm text-slate-600">{formatDateTime(fu.scheduledDatetime)}</p>
                     {fu.note && <p className="text-xs text-slate-500 mt-1">{fu.note}</p>}
                   </div>
@@ -153,7 +153,7 @@ export const NotificationPage: React.FC = () => {
                       type="button"
                       disabled={actionLoading === fu.followUpId}
                       onClick={() => handleConfirmFollowUp(fu.followUpId)}
-                      className="px-4 py-2 text-sm font-bold rounded-xl bg-violet-600 hover:bg-violet-700 text-white cursor-pointer disabled:opacity-50"
+                      className="px-4 py-2 text-sm font-bold rounded-xl bg-primary-600 hover:bg-primary-700 text-white cursor-pointer disabled:opacity-50"
                     >
                       {actionLoading === fu.followUpId ? 'Đang xử lý...' : 'Xác nhận'}
                     </button>
@@ -239,7 +239,7 @@ export const NotificationPage: React.FC = () => {
                           type="button"
                           disabled={actionLoading !== null}
                           onClick={() => handleConfirmFollowUp(pendingFollowUps[0].followUpId)}
-                          className="px-4 py-2 bg-violet-600 hover:bg-violet-700 text-white text-[13px] font-bold rounded-xl transition-colors cursor-pointer disabled:opacity-50"
+                          className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-[13px] font-bold rounded-xl transition-colors cursor-pointer disabled:opacity-50"
                         >
                           Xác nhận tái khám
                         </button>
