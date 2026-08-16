@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { CalendarClock } from 'lucide-react';
 import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
 import { Button } from '@/components/ui/button';
@@ -74,6 +74,8 @@ export default function FollowUpFormDialog({
     });
   };
 
+  const initialData = useMemo(() => ({ scheduledDate: defaultDate, scheduledTime: '09:00', note: '' }), [defaultDate]);
+
   return (
     <FormDialog
       open={open}
@@ -86,7 +88,7 @@ export default function FollowUpFormDialog({
       }
       icon={<CalendarClock size={16} />}
       fields={fields}
-      initialData={{ scheduledDate: defaultDate, scheduledTime: '09:00', note: '' }}
+      initialData={initialData}
       onSubmit={submitFromForm}
       compact
       columns={2}

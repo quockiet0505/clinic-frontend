@@ -1,5 +1,5 @@
 // features/crm/components/NotificationDialog.tsx
-import React from 'react';
+import React, { useMemo } from 'react';
 import { BellRing } from 'lucide-react';
 import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
 
@@ -36,6 +36,8 @@ export default function NotificationDialog({ patient, onClose, onSend }: Props) 
   const isOpen = !!patient;
   if (!isOpen) return null;
 
+  const initialData = useMemo(() => ({ type: 'SYSTEM', content: '' }), []);
+
   return (
     <FormDialog
       open={isOpen}
@@ -46,7 +48,7 @@ export default function NotificationDialog({ patient, onClose, onSend }: Props) 
       fields={fields}
       onSubmit={(data) => onSend(data.type, data.content)}
       submitLabel="Gửi Thông Báo"
-      initialData={{ type: 'SYSTEM', content: '' }}
+      initialData={initialData}
       compact={true}
       columns={2}
     />

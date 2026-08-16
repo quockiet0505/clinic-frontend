@@ -156,6 +156,8 @@ export default function AppointmentFormDialog({ isOpen, onClose, onBook }: Props
     onBook(payload);
   };
 
+  const initialData = useMemo(() => ({ bookingFlow: 'DOCTOR' }), []);
+
   return (
     <FormDialog
       open={isOpen}
@@ -164,7 +166,7 @@ export default function AppointmentFormDialog({ isOpen, onClose, onBook }: Props
       description="Chỉ 2 luồng: khám bác sĩ (chọn khoa + BS) hoặc xét nghiệm/chụp (KTV xử lý, có check trùng lịch)."
       icon={<CalendarPlus size={16} />}
       fields={fields}
-      initialData={{ bookingFlow: 'DOCTOR' }}
+      initialData={initialData}
       validate={validateForm}
       onSubmit={handleSubmit}
       submitLabel="Lấy số khám"

@@ -249,8 +249,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
               Expanded(
                 child: ElevatedButton(
                   onPressed: loading ? null : () => _confirmFollowUp(fu.followUpId),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
-                  child: Text(loading ? '...' : 'Xác nhận'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text(
+                    loading ? '...' : 'Xác nhận',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ],

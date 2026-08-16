@@ -61,6 +61,8 @@ export default function CreateNotificationDialog({ isOpen, onClose, onCreate }: 
     },
   ];
 
+  const initialData = useMemo(() => ({ accountId: '', type: 'SYSTEM', content: '' }), []);
+
   return (
     <FormDialog
       open={isOpen}
@@ -69,7 +71,7 @@ export default function CreateNotificationDialog({ isOpen, onClose, onCreate }: 
       description="Thông báo SYSTEM hiển thị trên app/web của bệnh nhân. Chọn đúng người nhận."
       icon={<BellRing size={20} />}
       fields={fields}
-      initialData={{ accountId: '', type: 'SYSTEM', content: '' }}
+      initialData={initialData}
       onSubmit={(data) => {
         if (!data.accountId) return;
         onCreate({

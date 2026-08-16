@@ -1,5 +1,5 @@
 // features/follow-ups/components/FollowUpCallDialog.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { PhoneCall } from 'lucide-react';
 import FormDialog, { FieldConfig } from '@/components/common/FormDialog';
 
@@ -47,6 +47,8 @@ export default function FollowUpCallDialog({ patient, onClose, onSubmit }: Props
 
   if (!isOpen) return null;
 
+  const initialData = useMemo(() => ({ status: 'COMPLETED', result: '' }), []);
+
   return (
     <FormDialog
       key={key}
@@ -58,7 +60,7 @@ export default function FollowUpCallDialog({ patient, onClose, onSubmit }: Props
       fields={fields}
       onSubmit={handleSubmit}
       submitLabel="Lưu Thay Đổi"
-      initialData={{ status: 'COMPLETED', result: '' }}
+      initialData={initialData}
       compact={true}
       columns={2}
     />
